@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+*{
+  padding: 0;
+  margin:0;
+  box-sizing: border-box;
+}
+
+@keyframes spin-slow{
+  0%{
+     transform: rotate(0deg);
+  }
+  100%{
+   transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow{
+  animation:  spin-slow 5s linear infinite;
+}
+
+.background{
+  background: linear-gradient(218deg, #E4EAF1 38.82%, rgba(209, 219, 233, 0.00) 61.22%);
+}
+
+

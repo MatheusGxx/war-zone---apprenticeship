@@ -1,0 +1,19 @@
+FROM node:latest
+
+RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
+    sh -c 'echo "deb [farch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' && \
+    apt-get update && \
+    apt-get install -y google-chrome-stable && \
+    rm -rf
+    
+WORKDIR /app
+
+COPY backinterconsulta/ApiAutomacoes .
+
+RUN npm install
+
+RUN npm install --ignore-scripts=false --verbose sharp
+
+EXPOSE 8081
+
+CMD [ "npm", "run", "dev" ]
