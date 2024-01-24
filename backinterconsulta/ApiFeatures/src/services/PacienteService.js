@@ -28,7 +28,8 @@ export const EspecialidadesDisponiveis = async (body, res) =>{
 
   const { doenca, id } = body
 
-   const ModelPaciente = await models.ModelRegisterMédico.find({
+  try{
+    const ModelPaciente = await models.ModelRegisterMédico.find({
       $or: [
         { 'DoencasAndSintomas.Doenca': { $in: doenca } },
         { 'DoencasAndSintomas.Sintomas': { $in: doenca } },
@@ -54,6 +55,9 @@ export const EspecialidadesDisponiveis = async (body, res) =>{
   } else {
     return res.status(404).json({ message: 'Nao Atendemos essa Doença ainda' })
   } 
+  }catch(error){
+   console.log(error)
+  }
 }
 
 
@@ -61,21 +65,26 @@ export const EspecialidadesDisponiveis = async (body, res) =>{
 export const getEspecialista = async (body, res) =>{
 
   const { slugIdentificador } = body
-  
-  const ModelEspecialista = await models.ModelRegisterMédico.findOne({ Slug: slugIdentificador})
 
-  if(ModelEspecialista){
-    return res.status(200).json({ ModelEspecialista })
-  }else{
-    return res.status(404).json({ message: 'Médico nao cadastrado =/ '})
+  try{ 
+    const ModelEspecialista = await models.ModelRegisterMédico.findOne({ Slug: slugIdentificador})
+
+    if(ModelEspecialista){
+      return res.status(200).json({ ModelEspecialista })
+    }else{
+      return res.status(404).json({ message: 'Médico nao cadastrado =/ '})
+    }
+  }catch(error){
+    console.log(error)
   }
 }
 
 
 export const GetRecomendacoesEspecialistas = async (body, res) => {
   const { slugIdentificador } = body
-
-  const ModelEspecialista = await models.ModelRegisterMédico.findOne({ Slug: slugIdentificador })
+   
+  try{
+    const ModelEspecialista = await models.ModelRegisterMédico.findOne({ Slug: slugIdentificador })
 
   if (ModelEspecialista) {
       const ExtractAreadeAtuaçaoModel = ModelEspecialista.AreadeAtuacao
@@ -89,133 +98,143 @@ export const GetRecomendacoesEspecialistas = async (body, res) => {
   }else{
      return res.status(404).json({ message:'Atualmente nao Temos médico para essa Especialidade'})
   }
+  }catch(error){
+    console.log(error)
+  }
 }
 
 export const GetPaciente = async(body, res) => {
   const { id } = body
-
-  const ModelPaciente = await models.ModelRegisterPaciente.findById(id)
+  
+  try{
+    const ModelPaciente = await models.ModelRegisterPaciente.findById(id)
 
   if(ModelPaciente){
     return res.status(200).json({ ModelPaciente })
   }else{  
     return res.json({ message: 'Paciente nao cadastrado no Banco de dados'})
   }
+  }catch(error){
+    console.log(error)
+  }
 }
 
 export const getBlood = async (params, res) =>{
   const { id } = params
+
+  try{
+    const getPaciente = await models.ModelRegisterPaciente.findById(id)
+
+    const TipoSanguineo = getPaciente.TipoSanguineo
+    const Cidade = getPaciente.Cidade
+    
+    let Compativeis
+    let QueryCompativeis
   
-  const getPaciente = await models.ModelRegisterPaciente.findById(id)
-  console.log(getPaciente)
-
-  const TipoSanguineo = getPaciente.TipoSanguineo
-  const Cidade = getPaciente.Cidade
+    switch(TipoSanguineo){
+      case 'A+':
+        Compativeis = ['A+', 'A-', 'O+', 'O-']
   
-  let Compativeis
-  let QueryCompativeis
-
-  switch(TipoSanguineo){
-    case 'A+':
-      Compativeis = ['A+', 'A-', 'O+', 'O-']
-
+         QueryCompativeis = await models.ModelCasosClinicos.find({
+          TipoSanguineo: { $in: Compativeis },
+          'Historico.Cidade': Cidade
+        })
+  
+         res.status(200).json({ QueryCompativeis, TipoSanguineo, Cidade})
+       break
+       
+       case 'A-':
+  
+       Compativeis = ['A-', 'O-']
+  
        QueryCompativeis = await models.ModelCasosClinicos.find({
-        TipoSanguineo: { $in: Compativeis },
-        'Historico.Cidade': Cidade
-      })
-
-       res.status(200).json({ QueryCompativeis, TipoSanguineo, Cidade})
-     break
-     
-     case 'A-':
-
-     Compativeis = ['A-', 'O-']
-
-     QueryCompativeis = await models.ModelCasosClinicos.find({
-       TipoSanguineo: { $in: Compativeis},
-       Cidade: Cidade
-     })
-
-      res.status(200).json({ QueryCompativeis, TipoSanguineo, Cidade})
-    
-     break
-
-     case 'B+':
-
-     Compativeis = ['B+', 'B-', 'O+', 'O-']
-
-     QueryCompativeis = await models.ModelCasosClinicos.find({
-       TipoSanguineo: { $in: Compativeis},
-        'Historico.Cidade': Cidade
-     })
-
-      res.status(200).json({ QueryCompativeis, TipoSanguineo, Cidade })
-    
-     break
-
-     case 'B-':
-
-     Compativeis = ['B-', 'O-']
-
-     QueryCompativeis = await models.ModelCasosClinicos.find({
-       TipoSanguineo: { $in: Compativeis},
-       'Historico.Cidade': Cidade
-     })
-
-      res.status(200).json({ QueryCompativeis, TipoSanguineo, Cidade})
-
-     break
-
-     case 'AB+':
-
-    QueryCompativeis = await models.ModelCasosClinicos.find({ TipoSanguineo: { $exists: true } })
-
-    res.status(200).json({ QueryCompativeis, TipoSanguineo, Cidade})
+         TipoSanguineo: { $in: Compativeis},
+         Cidade: Cidade
+       })
+  
+        res.status(200).json({ QueryCompativeis, TipoSanguineo, Cidade})
       
-    
-     break
-
-     case 'AB-':
-
-     Compativeis = ['A-', 'B-', 'AB-', 'O-']
-
-     QueryCompativeis = await models.ModelCasosClinicos.find({
-       TipoSanguineo: { $in: Compativeis},
-       'Historico.Cidade': Cidade
-     })
-
+       break
+  
+       case 'B+':
+  
+       Compativeis = ['B+', 'B-', 'O+', 'O-']
+  
+       QueryCompativeis = await models.ModelCasosClinicos.find({
+         TipoSanguineo: { $in: Compativeis},
+          'Historico.Cidade': Cidade
+       })
+  
+        res.status(200).json({ QueryCompativeis, TipoSanguineo, Cidade })
+      
+       break
+  
+       case 'B-':
+  
+       Compativeis = ['B-', 'O-']
+  
+       QueryCompativeis = await models.ModelCasosClinicos.find({
+         TipoSanguineo: { $in: Compativeis},
+         'Historico.Cidade': Cidade
+       })
+  
+        res.status(200).json({ QueryCompativeis, TipoSanguineo, Cidade})
+  
+       break
+  
+       case 'AB+':
+  
+      QueryCompativeis = await models.ModelCasosClinicos.find({ TipoSanguineo: { $exists: true } })
+  
       res.status(200).json({ QueryCompativeis, TipoSanguineo, Cidade})
-    
-     break
-
-     case 'O+':
-
-     Compativeis = ['O+', ' O-']
-
-     QueryCompativeis = await models.ModelCasosClinicos.find({
-       TipoSanguineo: { $in: Compativeis},
-       'Historico.Cidade': Cidade
-     })
-
-      res.status(200).json({ QueryCompativeis, TipoSanguineo, Cidade})
-    
-     break
-
-     case 'O-':
-
-     Compativeis = ['O-']
-
-     QueryCompativeis = await models.ModelCasosClinicos.find({
-       TipoSanguineo: { $in: Compativeis},
-       'Historico.Cidade': Cidade
-     })
-
-      res.status(200).json({ QueryCompativeis, TipoSanguineo, Cidade})
-    
-     break
-
-     default:
-      res.status(404).json({ QueryCompativeis: 'Infelizmente por hora nao temos pessoas compativeis com o seu Sangue na sua cidade.'})
+        
+      
+       break
+  
+       case 'AB-':
+  
+       Compativeis = ['A-', 'B-', 'AB-', 'O-']
+  
+       QueryCompativeis = await models.ModelCasosClinicos.find({
+         TipoSanguineo: { $in: Compativeis},
+         'Historico.Cidade': Cidade
+       })
+  
+        res.status(200).json({ QueryCompativeis, TipoSanguineo, Cidade})
+      
+       break
+  
+       case 'O+':
+  
+       Compativeis = ['O+', ' O-']
+  
+       QueryCompativeis = await models.ModelCasosClinicos.find({
+         TipoSanguineo: { $in: Compativeis},
+         'Historico.Cidade': Cidade
+       })
+  
+        res.status(200).json({ QueryCompativeis, TipoSanguineo, Cidade})
+      
+       break
+  
+       case 'O-':
+  
+       Compativeis = ['O-']
+  
+       QueryCompativeis = await models.ModelCasosClinicos.find({
+         TipoSanguineo: { $in: Compativeis},
+         'Historico.Cidade': Cidade
+       })
+  
+        res.status(200).json({ QueryCompativeis, TipoSanguineo, Cidade})
+      
+       break
+  
+       default:
+        res.status(404).json({ QueryCompativeis: 'Infelizmente por hora nao temos pessoas compativeis com o seu Sangue na sua cidade.'})
+    }
+  }catch(error){
+    console.log(error)
   }
 }
 
@@ -239,6 +258,7 @@ export const getMedicoStatus = async (id, res) => {
 
 export const UpdateOnlineDoctor = async (body, res) => {
   const { id, status } = body
+
   try {
     const updatedDoctor = await models.ModelRegisterMédico.findByIdAndUpdate(
       id,
@@ -281,6 +301,7 @@ export const GetDataSintomasAndDoenca = async (res) => {
 export const VerifyDataPatient = async (body, res) => {
     const { id } = body
 
+    try{
     const getDataPatient = await models.ModelRegisterPaciente.findById(id)
 
     if(!getDataPatient){
@@ -299,5 +320,8 @@ export const VerifyDataPatient = async (body, res) => {
        return res.status(200).json({ valid: true })
     }else{
        return res.json({ valid: false })
+    }
+    }catch(error){
+      console.log(error)
     }
 }

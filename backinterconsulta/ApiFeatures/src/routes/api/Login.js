@@ -5,7 +5,6 @@ import {
    Register,
    RegisterEnd,
    getListDoencasDoctor,
-   Teste
 } from '../../services/LoginService.js'
 
 const router = Router()
@@ -125,17 +124,6 @@ router.post('/obrigado/:id',  uploadPhotos.single("file") ,async (req, res ) => 
         getListDoencasDoctor(body, res)
         console.log(req.body)
 })
-
-router.post('/teste',
-       async(req, res) => {
-        const body  ={
-          email: req.body.email
-        }
-
-        Teste(body, res)
-        console.log(req.body)
-       }
-)
 
 
 export default router

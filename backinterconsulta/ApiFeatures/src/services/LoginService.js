@@ -115,8 +115,7 @@ export const Register = async (body, res) =>{
           route
         } 
 
-       const com = await axios.post('http://back-a:8081/api/automatic-whatsapp', idMédico)
-       console.log(`Comunicaçao entre containers ${com}`)
+       //await axios.post('http://back-a:8081/api/automatic-whatsapp', idMédico)
       }
       break;
 
@@ -143,7 +142,7 @@ export const Register = async (body, res) =>{
          route
        }
 
-       await axios.post('http://localhost:8080/api/automatic-whatsapp', idPaciente)
+       await axios.post('http://back-a:8081/api/automatic-whatsapp', idPaciente)
 
       }
       break;
@@ -170,7 +169,7 @@ export const Register = async (body, res) =>{
           route,
         }
 
-        await axios.post('http://localhost:8080/api/automatic-whatsapp', idUnidade)
+        await axios.post('http://back-a:8081/api/automatic-whatsapp', idUnidade)
       }
       break;
 
@@ -244,8 +243,7 @@ export const RegisterEnd = async (body, params, file, res) =>{
 
    const { id } = params
    
-  try{
-
+  /*try{
   const dataMedico = { NomeConhecido, TituloEspecialista, FormacaoEspecialista,  AnoGraduacao, PosGraduacao, EspecialidadeMedica, AreadeAtuacao, CRM,  InstituicaoResidencia, DataNascimento, RQE, Certificacao, PrecoConsulta, ResumoProfissional,  FerramentasTerapeuticas, Slug, NomeTitular, NumeroConta, NumeroAgencia, Banco, ChavePix,  CPNJMedico, RazaoSocialEmpresa,NomeFantasia,  EnderecoMedico, Bairro,Cidade, Estado, CEPMedico, EmailContador,
   TelefoneContador,}
 
@@ -257,7 +255,7 @@ export const RegisterEnd = async (body, params, file, res) =>{
    VefiryData(route, dataMedico, dataPaciente, dataUnidade )
    }catch(e){
     console.log(e)
-   }
+   }*/
    
   let error = null
 
@@ -365,7 +363,7 @@ export const RegisterEnd = async (body, params, file, res) =>{
             route
           }
 
-          await axios.post('http://localhost:8080/api/automatic-whatsapp', dataMedico)
+          //await axios.post('http://back-a:8081/api/automatic-whatsapp', dataMedico)
         
           }catch(err){
             console.log(err)
@@ -451,7 +449,7 @@ export const RegisterEnd = async (body, params, file, res) =>{
               route
             }
 
-            await axios.post('http://localhost:8080/api/automatic-whatsapp', dataPaciente)
+            await axios.post('http://back-a:8081/api/automatic-whatsapp', dataPaciente)
         }catch(error){
           throw new Error(error)
         }
@@ -500,7 +498,7 @@ export const RegisterEnd = async (body, params, file, res) =>{
           route
         }
 
-        await axios.post('http://localhost:8080/api/automatic-whatsapp', dataUnidade)
+        await axios.post('http://back-a:8081/api/automatic-whatsapp', dataUnidade)
 
         }catch(err){
           console.log(err)
@@ -521,34 +519,24 @@ export const RegisterEnd = async (body, params, file, res) =>{
 
 export const getListDoencasDoctor = async (body, res) => {
   const { id , Especialidade } = body
+  
+    try{
+      const getDoctor = await models.ModelRegisterMédico.findById(id)
 
-  const getDoctor = await models.ModelRegisterMédico.findById(id)
-
-  if(!getDoctor){
-    return res.status(400).json({ message: 'Médico nao cadastrado no Interconsulta'})
-  }
-
-  const QueryEspecialidadeList = await models.List.findOne({ Especialidade: Especialidade })
-
-  getDoctor.DoencasAndSintomas = QueryEspecialidadeList.DoencasESintomas
-  const ImageEspecialidade = `icons/${Especialidade}.png`
-
-  getDoctor.FotoEspecialidade = ImageEspecialidade
-
-  getDoctor.save()
-
+      if(!getDoctor){
+        return res.status(400).json({ message: 'Médico nao cadastrado no Interconsulta'})
+      }
+    
+      const QueryEspecialidadeList = await models.List.findOne({ Especialidade: Especialidade })
+    
+      getDoctor.DoencasAndSintomas = QueryEspecialidadeList.DoencasESintomas
+      const ImageEspecialidade = `icons/${Especialidade}.png`
+    
+      getDoctor.FotoEspecialidade = ImageEspecialidade
+    
+      getDoctor.save()
+  
+    }catch(error){
+      console.log(error)
+    }
 }
-
-
-
-export const Teste = async (body, res) => {
-  const { email } = body
-
-  if(!email){
-    return res.status(500).json({message: 'Email nao encontrado no banco de dados'})
-  }
-
-  const queryNewEmail = await models.ModelRegisterPaciente.findOne({ email: email })
-  console.log(queryNewEmail)
-}
- 

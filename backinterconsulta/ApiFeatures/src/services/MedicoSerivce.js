@@ -7,26 +7,34 @@ export const getInfosMedico = async (params, res) =>{
 
   const { id } = params 
 
-   const getMedico = await models.ModelRegisterMédico.findById(id)
+  try{
+    const getMedico = await models.ModelRegisterMédico.findById(id)
    
-   if(getMedico){
-    const InformacoesMedico = getMedico
-    return res.status(200).json({ InformacoesMedico })
-   }else{
-    return res.status(404).json({ message: 'Medico nao cadastrado no banco de dados do interconsulta'})
-   }
+    if(getMedico){
+     const InformacoesMedico = getMedico
+     return res.status(200).json({ InformacoesMedico })
+    }else{
+     return res.status(404).json({ message: 'Medico nao cadastrado no banco de dados do interconsulta'})
+    }
+  }catch(e){
+    console.log(e)
+  }
 }
 
 export const GetSlug = async (params, res) =>{
   const { id } = params
 
-  const ModelMedico = await models.ModelRegisterMédico.findById(id)
+  try{
+    const ModelMedico = await models.ModelRegisterMédico.findById(id)
 
-  if(ModelMedico){
-    const SlugMedico = ModelMedico.Slug
-    return res.status(200).json({ SlugMedico })
-  }else{
-    return res.status(404).json({ message: 'Medico nao esta cadastrado no banco de dados do interconsulta =/'})
+    if(ModelMedico){
+      const SlugMedico = ModelMedico.Slug
+      return res.status(200).json({ SlugMedico })
+    }else{
+      return res.status(404).json({ message: 'Medico nao esta cadastrado no banco de dados do interconsulta =/'})
+    }
+  }catch(e){
+    console.log(e)
   }
 }
 
@@ -35,7 +43,8 @@ export const RegisterHorarios = async (body, res, params) =>{
 
   const { id }  = params
 
-  const Medico = await models.ModelRegisterMédico.findById(id)
+  try{
+    const Medico = await models.ModelRegisterMédico.findById(id)
 
   if(Medico){
 
@@ -207,13 +216,17 @@ export const RegisterHorarios = async (body, res, params) =>{
   }else{
     return res.status(404).json({ message: 'Medico nao cadastrado no banco de dados'})
   }
+  }catch(error){
+    console.log(error)
+  }
 }
 
 
 export const getHorarios = async (params, res) =>{
    const { id } = params
 
-   const ModelMedico = await models.ModelRegisterMédico.findById(id)
+   try{
+    const ModelMedico = await models.ModelRegisterMédico.findById(id)
 
     if(ModelMedico){
       const QueryHistorico = ModelMedico.Horarios
@@ -221,210 +234,232 @@ export const getHorarios = async (params, res) =>{
     }else{
       return res.status(400).json({ message: 'Medico nao existe no banco de dados do interconsulta =/'})
     }
+   }catch(e){
+    console.log(e)
+   }
 }
 
 export const deleteHorarios = async (params, res) => {
-  const { id, idH } = params;
+  const { id, idH } = params
 
-  const ModelMedico = await models.ModelRegisterMédico.findById(id);
+  try{
+    const ModelMedico = await models.ModelRegisterMédico.findById(id)
 
-
-  if (ModelMedico) {
-    // Encontre o horário no array Horarios com base no idHorario
-    const horario = ModelMedico.Horarios.find((horario) => horario.idH === idH)
-    
-    const IntervalosAtendimentos = horario.IntervaloAtendimentos.map((data) => data.Intervalo)
-    
-    const QuantidadeAtendimentosHorario = IntervalosAtendimentos.length 
-    console.log(QuantidadeAtendimentosHorario)
-
-    if (horario) {
-      // Exclua o horário do MongoDB com base no _id do horário
-      await models.ModelRegisterMédico.findByIdAndUpdate(id, {
-        $pull: { Horarios: { _id: horario._id } },
-      });
-
-      //Mensagem Front End
-      const IntervalosAtendimentos = ModelMedico.Horarios.map((data) => data.IntervaloAtendimentos)
-
-      const todosOsIntervalos = IntervalosAtendimentos.flatMap((data) => data.map((intervalo) => intervalo.Intervalo))
-  
-      const QuantidadeIntervalos = todosOsIntervalos.length - QuantidadeAtendimentosHorario
-    
-      const QuantidadeAtendimentosHora = 60 / 15
-  
-      const Horas = QuantidadeIntervalos / QuantidadeAtendimentosHora
-  
-      const RendaMedica = QuantidadeIntervalos * 80
-
-      const RendaFormatada = RendaMedica.toLocaleString('pt-BR', {
-        style: 'currency',
-        currency: 'BRL',
-       })
+    if (ModelMedico) {
+      // Encontre o horário no array Horarios com base no idHorario
+      const horario = ModelMedico.Horarios.find((horario) => horario.idH === idH)
       
+      const IntervalosAtendimentos = horario.IntervaloAtendimentos.map((data) => data.Intervalo)
+      
+      const QuantidadeAtendimentosHorario = IntervalosAtendimentos.length 
+      console.log(QuantidadeAtendimentosHorario)
+  
+      if (horario) {
+        // Exclua o horário do MongoDB com base no _id do horário
+        await models.ModelRegisterMédico.findByIdAndUpdate(id, {
+          $pull: { Horarios: { _id: horario._id } },
+        });
+  
+        //Mensagem Front End
+        const IntervalosAtendimentos = ModelMedico.Horarios.map((data) => data.IntervaloAtendimentos)
+  
+        const todosOsIntervalos = IntervalosAtendimentos.flatMap((data) => data.map((intervalo) => intervalo.Intervalo))
+    
+        const QuantidadeIntervalos = todosOsIntervalos.length - QuantidadeAtendimentosHorario
+      
+        const QuantidadeAtendimentosHora = 60 / 15
+    
+        const Horas = QuantidadeIntervalos / QuantidadeAtendimentosHora
+    
+        const RendaMedica = QuantidadeIntervalos * 80
+  
+        const RendaFormatada = RendaMedica.toLocaleString('pt-BR', {
+          style: 'currency',
+          currency: 'BRL',
+         })
+        
+       
+         let mensagem = ''
      
-       let mensagem = ''
-   
-       if (Horas === 1) {
-        mensagem = `${ModelMedico.NomeEspecialista}, se você se dedicar ${formatarHoras(Horas)} hora no interconsulta, você pode ter uma renda de até ${RendaFormatada} como ${ModelMedico.EspecialidadeMedica}`;
-      } else {
-        const minutos = Math.round(Horas * 60); // Arredondar para o número inteiro mais próximo
-        const horas = Math.floor(minutos / 60);
-        const minutosRestantes = minutos % 60;
-      
-        if (horas > 0 && minutosRestantes > 0) {
-          mensagem = `${ModelMedico.NomeEspecialista}, se você se dedicar ${horas} horas e ${minutosRestantes} minutos no interconsulta, você pode ter uma renda de até ${RendaFormatada} como ${ModelMedico.EspecialidadeMedica}`;
-        } else if (horas > 1) {
-          mensagem = `${ModelMedico.NomeEspecialista}, se você se dedicar ${horas} horas no interconsulta, você pode ter uma renda de até ${RendaFormatada} como ${ModelMedico.EspecialidadeMedica}`;
+         if (Horas === 1) {
+          mensagem = `${ModelMedico.NomeEspecialista}, se você se dedicar ${formatarHoras(Horas)} hora no interconsulta, você pode ter uma renda de até ${RendaFormatada} como ${ModelMedico.EspecialidadeMedica}`;
         } else {
-          mensagem = `${ModelMedico.NomeEspecialista}, se você se dedicar ${minutosRestantes} minutos no interconsulta, você pode ter uma renda de até ${RendaFormatada} como ${ModelMedico.EspecialidadeMedica}`;
+          const minutos = Math.round(Horas * 60); // Arredondar para o número inteiro mais próximo
+          const horas = Math.floor(minutos / 60);
+          const minutosRestantes = minutos % 60;
+        
+          if (horas > 0 && minutosRestantes > 0) {
+            mensagem = `${ModelMedico.NomeEspecialista}, se você se dedicar ${horas} horas e ${minutosRestantes} minutos no interconsulta, você pode ter uma renda de até ${RendaFormatada} como ${ModelMedico.EspecialidadeMedica}`;
+          } else if (horas > 1) {
+            mensagem = `${ModelMedico.NomeEspecialista}, se você se dedicar ${horas} horas no interconsulta, você pode ter uma renda de até ${RendaFormatada} como ${ModelMedico.EspecialidadeMedica}`;
+          } else {
+            mensagem = `${ModelMedico.NomeEspecialista}, se você se dedicar ${minutosRestantes} minutos no interconsulta, você pode ter uma renda de até ${RendaFormatada} como ${ModelMedico.EspecialidadeMedica}`;
+          }
         }
+      return res.status(200).json({ mensagem })
       }
-    return res.status(200).json({ mensagem })
+    } else {
+      return res
+        .status(400)
+        .json({ message: 'Médico não encontrado no banco de dados do Interconsulta' });
     }
-  } else {
-    return res
-      .status(400)
-      .json({ message: 'Médico não encontrado no banco de dados do Interconsulta' });
+  }catch(e){
+    console.log(e)
   }
-};
+ 
+}
 
 
 export const VerifyMedico = async(params, res) => {
 
   const { id } = params
 
-  const ModelMedico = await models.ModelRegisterMédico.findById(id)
-  if(ModelMedico){
-    const QueryHorariosMedico = ModelMedico.Horarios
-    return res.status(200).json({ QueryHorariosMedico })
-  }else{
-    return res.status(404).json({ message: 'Medico nao esta cadastrado no banco de dados do interconsulta =/'})
+  try{
+    const ModelMedico = await models.ModelRegisterMédico.findById(id)
+    if(ModelMedico){
+      const QueryHorariosMedico = ModelMedico.Horarios
+      return res.status(200).json({ QueryHorariosMedico })
+    }else{
+      return res.status(404).json({ message: 'Medico nao esta cadastrado no banco de dados do interconsulta =/'})
+    }
+  }catch(e){
+    console.log(e)
   }
+
 }
 
 
 export const getCasosClinicos = async (params, res) => {
   const { id } = params
 
-  const ModelMedico = await models.ModelRegisterMédico.findById(id);
 
-  if (!ModelMedico) {
-    return res.status(404).json({ message: 'Médico não está cadastrado no banco de dados do interconsulta =/' });
-  }
+  try{
+    const ModelMedico = await models.ModelRegisterMédico.findById(id);
 
-  const Especialidade = ModelMedico.EspecialidadeMedica
-
-  const EspecialidadeEncontrada = EspecialidadesAtendidas.includes(Especialidade);
-
-  if (EspecialidadeEncontrada) {
-    const ImageEspecialidade = `icons/${EspecialidadeEncontrada}.png`
-
-    const documentosComAreaDeAtuacao = await models.ModelCasosClinicos.find({
-      'Historico': {
-        $elemMatch: {
-          'EspecialidadeMedica': EspecialidadeEncontrada
-        }
-      }
-    })
-   
-    if (documentosComAreaDeAtuacao.length > 0) {
-     
-        await models.ModelCasosClinicos.updateMany(
-        {
-          'Historico': {
-            $elemMatch: {
-              'EspecialidadeMedica': EspecialidadeEncontrada
-            }
-          }
-        },
-        {
-          $set: {
-            'Historico.$[elem].FotoEspecialidade': ImageEspecialidade
-          }
-        },
-        {
-          arrayFilters: [
-            {
-              'elem.EspecialidadeMedica': EspecialidadeEncontrada
-            }
-          ]
-        }
-      )
-
-      const HistoricoCasosClinicos = await models.ModelCasosClinicos.find({
+    if (!ModelMedico) {
+      return res.status(404).json({ message: 'Médico não está cadastrado no banco de dados do interconsulta =/' });
+    }
+  
+    const Especialidade = ModelMedico.EspecialidadeMedica
+  
+    const EspecialidadeEncontrada = EspecialidadesAtendidas.includes(Especialidade);
+  
+    if (EspecialidadeEncontrada) {
+      const ImageEspecialidade = `icons/${EspecialidadeEncontrada}.png`
+  
+      const documentosEspecialidade = await models.ModelCasosClinicos.find({
         'Historico': {
           $elemMatch: {
             'EspecialidadeMedica': EspecialidadeEncontrada
           }
         }
       })
-
-      res.status(200).json({ HistoricoCasosClinicos })
-      
-
+     
+      if (documentosEspecialidade.length > 0) {
+       
+          await models.ModelCasosClinicos.updateMany(
+          {
+            'Historico': {
+              $elemMatch: {
+                'EspecialidadeMedica': EspecialidadeEncontrada
+              }
+            }
+          },
+          {
+            $set: {
+              'Historico.$[elem].FotoEspecialidade': ImageEspecialidade
+            }
+          },
+          {
+            arrayFilters: [
+              {
+                'elem.EspecialidadeMedica': EspecialidadeEncontrada
+              }
+            ]
+          }
+        )
+  
+        const HistoricoCasosClinicos = await models.ModelCasosClinicos.find({
+          'Historico': {
+            $elemMatch: {
+              'EspecialidadeMedica': EspecialidadeEncontrada
+            }
+          }
+        })
+  
+        res.status(200).json({ HistoricoCasosClinicos })
+        
+  
+      } else {
+        console.log('Especialidade não encontrada em nenhum histórico.');
+        return res.status(404).json({ message: 'Especialidade não encontrada em nenhum histórico.' });
+      }
     } else {
-      console.log('Área de Atuação não encontrada em nenhum históric;o.');
-      return res.status(404).json({ message: 'Área de Atuação não encontrada em nenhum histórico.' });
+      return res.status(400).json({ message: 'Especialidade Errada' });
     }
-  } else {
-    return res.status(400).json({ message: 'Área de Atuação Errada' });
+  }catch(e){
+    console.log(e)
   }
+
 }
 
 
 export const DeleteIntervalo = async (params, res ) =>{
   const { id, idHorarioo } = params
-  
-  const DeleteIntervalo = await models.ModelRegisterMédico.findOneAndUpdate(
-    { 'Horarios.IntervaloAtendimentos._id': id },
-    {
-      $pull: {
-        'Horarios.$.IntervaloAtendimentos': { _id: id }
+
+  try{
+    const DeleteIntervalo = await models.ModelRegisterMédico.findOneAndUpdate(
+      { 'Horarios.IntervaloAtendimentos._id': id },
+      {
+        $pull: {
+          'Horarios.$.IntervaloAtendimentos': { _id: id }
+        }
       }
-    }
-  )
-
-  const getHorarioforID = await models.ModelRegisterMédico.findOne({
-    'Horarios._id': idHorarioo
-  })
-  
-  const getHorarios = getHorarioforID.Horarios;
-
-  const getIntervaloInicial = getHorarios
-    .flatMap((interval) =>
-      interval.IntervaloAtendimentos.map((data) => data.Intervalo)
     )
- 
-  if(getIntervaloInicial.length > 0){
-    const primeiroHorario = getIntervaloInicial[0]
-    const ultimoHorario = getIntervaloInicial[getIntervaloInicial.length - 1]
   
-    const SplitPrimeiroHorario = primeiroHorario.split(' - ')[0]
-    const SplitUltimoHorario =  ultimoHorario.split(' - ')[1]
-  
-    const UpdateInicioAndFimHorario = await models.ModelRegisterMédico.findOneAndUpdate(
-    {
+    const getHorarioforID = await models.ModelRegisterMédico.findOne({
       'Horarios._id': idHorarioo
-    },
-    {
-      $set:{
-        'Horarios.$.inicio' : SplitPrimeiroHorario,
-        'Horarios.$.fim': SplitUltimoHorario 
-      }
-    },
-    { new: true }
-    )
-  }else{
-
-    const getMedico = await models.ModelRegisterMédico.findOneAndUpdate(
-      { 'Horarios._id': idHorarioo },
-      { $pull: { 'Horarios': { _id: idHorarioo } } },
+    })
+    
+    const getHorarios = getHorarioforID.Horarios;
+  
+    const getIntervaloInicial = getHorarios
+      .flatMap((interval) =>
+        interval.IntervaloAtendimentos.map((data) => data.Intervalo)
+      )
+   
+    if(getIntervaloInicial.length > 0){
+      const primeiroHorario = getIntervaloInicial[0]
+      const ultimoHorario = getIntervaloInicial[getIntervaloInicial.length - 1]
+    
+      const SplitPrimeiroHorario = primeiroHorario.split(' - ')[0]
+      const SplitUltimoHorario =  ultimoHorario.split(' - ')[1]
+    
+      const UpdateInicioAndFimHorario = await models.ModelRegisterMédico.findOneAndUpdate(
+      {
+        'Horarios._id': idHorarioo
+      },
+      {
+        $set:{
+          'Horarios.$.inicio' : SplitPrimeiroHorario,
+          'Horarios.$.fim': SplitUltimoHorario 
+        }
+      },
       { new: true }
-    )
-  }
-
-  if(DeleteIntervalo){
-    res.status(200).json({ message: 'Intervalo Excluido com sucesso'})
+      )
+    }else{
+  
+      const getMedico = await models.ModelRegisterMédico.findOneAndUpdate(
+        { 'Horarios._id': idHorarioo },
+        { $pull: { 'Horarios': { _id: idHorarioo } } },
+        { new: true }
+      )
+    }
+  
+    if(DeleteIntervalo){
+      res.status(200).json({ message: 'Intervalo Excluido com sucesso'})
+    }
+  }catch(e){
+    console.log(e)
   }
 } 

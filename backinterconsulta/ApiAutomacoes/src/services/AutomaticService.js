@@ -1,7 +1,8 @@
 import { getClient, CreateInstance, EnviarMensagem, BulkMassage } from "../utils/Functions/Whatsapp.js";
 import { models } from '../../MongoDB/Schemas/Schemas.js'
 import { EmailQueue } from "../utils/Queues.js"
-import { WhatsappQueue } from "../utils/Queues.js";
+import { WhatsappQueue } from "../utils/Queues.js"
+import { ResumoQueue } from '../utils/Queues.js' 
 
 export const AutomaticWhatsapp = async (body, res) => {
   const { 
@@ -43,6 +44,18 @@ export const AutomaticWhatsapp = async (body, res) => {
      DataExclusaoPaciente,
      InicioExlusaoPaciente,
      FimExclusaoPaciente,
+     Diagnostico,
+     Tratamento,
+     Medicacao,
+     FerramentasTerapeuticas,
+     Progresso,
+     SolicitacaoMedicamentos,
+     SolicitacaoMateriais,
+     SolicitacaoExames,
+     RecomendacoesFuturas,
+     EstadoPaciente,
+     Solicitacao,
+     result,
      route 
   } = body
 
@@ -291,12 +304,29 @@ export const AutomaticWhatsapp = async (body, res) => {
 
         break
 
+       case '/resumo-casos-clinicos':
+         await ResumoQueue.add('Resumo', {
+          Diagnostico,
+          Tratamento,
+          Medicacao,
+          FerramentasTerapeuticas,
+          Progresso,
+          SolicitacaoMedicamentos,
+          SolicitacaoMateriais,
+          SolicitacaoExames,
+          RecomendacoesFuturas,
+          EstadoPaciente,
+          Solicitacao,
+          result
+         })
+        break
+
       default:
          res.status(404).json({ message: 'Rota Invalida'})
         break;
     }
 
   } catch (e) {
-    console.log(e);
+    console.log(e)
   }
 };

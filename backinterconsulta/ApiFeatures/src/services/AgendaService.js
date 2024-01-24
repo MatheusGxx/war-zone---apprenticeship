@@ -101,7 +101,7 @@ export const SavedConsultaPacienteParticular = async (body, res) => {
        NomePaciente: getPaciente.nome
     }
 
-    await axios.post('http://localhost:8080/api/automatic-whatsapp', body)
+    await axios.post('http://back-a:8081/api/automatic-whatsapp', body)
 
    }catch(e){
     throw new Error(e)
@@ -192,7 +192,6 @@ export const SavedConsultaPacienteParticular = async (body, res) => {
       throw new Error(error)
     }
     
-
  }
 
 export const getAgendamentos = async  (params, res) => {
@@ -315,13 +314,14 @@ export const GetPaciente = async (params, res) => {
 
 export const UpdateConsulta = async (body, res) => {
   const { id, status, idMedico, idPacienteParticular, CPFPacientePublico, NomePacientePublico, Data, Inicio, Fim, Solicitante } = body;
+  
+  try {
 
   let idUnidade 
   if(id){
     idUnidade = id.flat()
   }
   
-  try {
     const GenerateNanoID = generateFourDigitNumber()
     if(id){  //Paciente Publico
       const updateMedico = await models.ModelRegisterMédico.updateMany(
@@ -482,7 +482,7 @@ export const UpdateConsulta = async (body, res) => {
           route: '/confirmaçao-consulta-medico'
         }
 
-        await axios.post('http://localhost:8080/api/automatic-whatsapp', body)
+        await axios.post('http://back-a:8081/api/automatic-whatsapp', body)
       } else {
         res.status(500).json({ message: 'Erro ao fazer Atualização' });
       }
@@ -500,122 +500,126 @@ export const DeleteCasoClinico = async (body, res) => {
   
   const {idCasoClinico, IdentificadorCaso, CPFPaciente, Solicitante, idMedico, status, Data, Inicio, Fim, idHorario, HorarioSelecionado } = body
 
-   if(IdentificadorCaso && IdentificadorCaso.length > 0){ //PacientePublico   
-    const deleteCasoPublicoMédico = await models.ModelRegisterMédico.findOneAndUpdate(
-      {
-        _id: idMedico,
-        'ConsultasUnidadedeSaude.Casos.IdentificadorConsulta': IdentificadorCaso,
-        'ConsultasUnidadedeSaude.Casos.CPF': CPFPaciente
-      },
-      {
-        $pull: {
-          'ConsultasUnidadedeSaude': { 'Casos.IdentificadorConsulta': IdentificadorCaso }
-        }
-      },
-      { new: true }
-    )
-
-    const UpdateCasosUnidade = await models.ModelRegisterUnidadeSaude.findOneAndUpdate(
-      {
-        'ConsultasUnidadedeSaude.Casos.IdentificadorConsulta':  IdentificadorCaso,
-        'ConsultasUnidadedeSaude.Casos.CPF': CPFPaciente
-      },
-      {
-        $set: {
-          'ConsultasUnidadedeSaude.$.Status': `${Solicitante} Aguardando`
-        }
-      }
-    )
- 
-    if (deleteCasoPublicoMédico && UpdateCasosUnidade) {
-      res.status(200).json({ message: 'Atualizaçao Feita com Sucesso'})
-    } else {
-       res.status(400).json({ message: 'Erro ao realizar Atualizaçao'})
-    }
-   }else{ //Paciente Particular
-
-    const UpdateHorarioDoctor =  await models.ModelRegisterMédico.findOneAndUpdate(
-      {
-        _id: idMedico,
-        'Horarios._id': idHorario,
-        'Horarios.IntervaloAtendimentos.Intervalo':  HorarioSelecionado,
-      },
-      {
-        $set: {
-          'Horarios.$[horario].IntervaloAtendimentos.$[intervalo].Escolhido': 'Livre',
-          'Horarios.$[horario].IntervaloAtendimentos.$[intervalo].FotoPaciente': null,
+  try{
+    if(IdentificadorCaso && IdentificadorCaso.length > 0){ //PacientePublico   
+      const deleteCasoPublicoMédico = await models.ModelRegisterMédico.findOneAndUpdate(
+        {
+          _id: idMedico,
+          'ConsultasUnidadedeSaude.Casos.IdentificadorConsulta': IdentificadorCaso,
+          'ConsultasUnidadedeSaude.Casos.CPF': CPFPaciente
         },
-      },
-      {
-        arrayFilters: [
-          { 'horario._id': idHorario },
-          { 'intervalo.Intervalo': HorarioSelecionado },
-        ],
-        new: true,
-      },
-    )
-
-    const deletedCasoParticularMédico = await models.ModelRegisterMédico.findOneAndUpdate(
-      {
-        'ConsultasSolicitadasPacientes._id': idCasoClinico
-      },
-      {
-        $pull: {
-          'ConsultasSolicitadasPacientes': { _id: idCasoClinico }
+        {
+          $pull: {
+            'ConsultasUnidadedeSaude': { 'Casos.IdentificadorConsulta': IdentificadorCaso }
+          }
+        },
+        { new: true }
+      )
+  
+      const UpdateCasosUnidade = await models.ModelRegisterUnidadeSaude.findOneAndUpdate(
+        {
+          'ConsultasUnidadedeSaude.Casos.IdentificadorConsulta':  IdentificadorCaso,
+          'ConsultasUnidadedeSaude.Casos.CPF': CPFPaciente
+        },
+        {
+          $set: {
+            'ConsultasUnidadedeSaude.$.Status': `${Solicitante} Aguardando`
+          }
         }
-      },
-      { new: true }
-    )
- 
-    const AtualizandoRejeiçaoPaciente = await models.ModelRegisterPaciente.updateOne(
-      {
-       'ConsultasSolicitadasPacientes._id': idCasoClinico, 
-      },
-      {
-        $set: { 
-          'ConsultasSolicitadasPacientes.$.Status': status
-        }
-      }
-    )
-
-    if(deletedCasoParticularMédico && AtualizandoRejeiçaoPaciente.modifiedCount > 0  &&UpdateHorarioDoctor){
-      res.status(200).json({ message: 'Atualizaçao Feita com Sucesso'})
-
-
-      const Medico = await models.ModelRegisterMédico.findById(idMedico)
-
-      const Paciente = await models.ModelRegisterPaciente.find({
-        'ConsultasSolicitadasPacientes._id': idCasoClinico
-      })
-
-      const NomePacienteArr = Paciente.map((data) => data.nome)
-      const NomePaciente = NomePacienteArr.join(',')
-      
-      const TelefonePacienteArr = Paciente.map((data) => data.telefone)
-      const TelefonePaciente = TelefonePacienteArr.join(',')
-
-      const DoencaPacienteArr = Paciente.map((data) => data.Doenca)
-      const Doenca = DoencaPacienteArr.join(',')
-
-      const EmailPacienteArr = Paciente.map((data) => data.email)
-      const EmailPaciente = EmailPacienteArr.join(',')
-
+      )
    
-      const body = {
-        EmailPacienteRejeitouConsulta: EmailPaciente,
-        NomeMedicoRejeitouConsulta: Medico.NomeEspecialista,
-        NumeroPacienteRejeitouConsulta: TelefonePaciente,
-        NomePacienteRejeitouConsulta: NomePaciente,
-        DataRejeitouConsulta: Data,
-        InicioRejeitouConsulta: Inicio,
-        FimRejeitouConsulta: Fim,
-        DoencaRejeitouConsulta: Doenca,
-        route: '/rejeicao-consulta-medico'
+      if (deleteCasoPublicoMédico && UpdateCasosUnidade) {
+        res.status(200).json({ message: 'Atualizaçao Feita com Sucesso'})
+      } else {
+         res.status(400).json({ message: 'Erro ao realizar Atualizaçao'})
       }
-
-      await axios.post('http://localhost:8080/api/automatic-whatsapp', body)
-    }
-   }
+     }else{ //Paciente Particular
+  
+      const UpdateHorarioDoctor =  await models.ModelRegisterMédico.findOneAndUpdate(
+        {
+          _id: idMedico,
+          'Horarios._id': idHorario,
+          'Horarios.IntervaloAtendimentos.Intervalo':  HorarioSelecionado,
+        },
+        {
+          $set: {
+            'Horarios.$[horario].IntervaloAtendimentos.$[intervalo].Escolhido': 'Livre',
+            'Horarios.$[horario].IntervaloAtendimentos.$[intervalo].FotoPaciente': null,
+          },
+        },
+        {
+          arrayFilters: [
+            { 'horario._id': idHorario },
+            { 'intervalo.Intervalo': HorarioSelecionado },
+          ],
+          new: true,
+        },
+      )
+  
+      const deletedCasoParticularMédico = await models.ModelRegisterMédico.findOneAndUpdate(
+        {
+          'ConsultasSolicitadasPacientes._id': idCasoClinico
+        },
+        {
+          $pull: {
+            'ConsultasSolicitadasPacientes': { _id: idCasoClinico }
+          }
+        },
+        { new: true }
+      )
+   
+      const AtualizandoRejeiçaoPaciente = await models.ModelRegisterPaciente.updateOne(
+        {
+         'ConsultasSolicitadasPacientes._id': idCasoClinico, 
+        },
+        {
+          $set: { 
+            'ConsultasSolicitadasPacientes.$.Status': status
+          }
+        }
+      )
+  
+      if(deletedCasoParticularMédico && AtualizandoRejeiçaoPaciente.modifiedCount > 0  &&UpdateHorarioDoctor){
+        res.status(200).json({ message: 'Atualizaçao Feita com Sucesso'})
+  
+  
+        const Medico = await models.ModelRegisterMédico.findById(idMedico)
+  
+        const Paciente = await models.ModelRegisterPaciente.find({
+          'ConsultasSolicitadasPacientes._id': idCasoClinico
+        })
+  
+        const NomePacienteArr = Paciente.map((data) => data.nome)
+        const NomePaciente = NomePacienteArr.join(',')
+        
+        const TelefonePacienteArr = Paciente.map((data) => data.telefone)
+        const TelefonePaciente = TelefonePacienteArr.join(',')
+  
+        const DoencaPacienteArr = Paciente.map((data) => data.Doenca)
+        const Doenca = DoencaPacienteArr.join(',')
+  
+        const EmailPacienteArr = Paciente.map((data) => data.email)
+        const EmailPaciente = EmailPacienteArr.join(',')
+  
+     
+        const body = {
+          EmailPacienteRejeitouConsulta: EmailPaciente,
+          NomeMedicoRejeitouConsulta: Medico.NomeEspecialista,
+          NumeroPacienteRejeitouConsulta: TelefonePaciente,
+          NomePacienteRejeitouConsulta: NomePaciente,
+          DataRejeitouConsulta: Data,
+          InicioRejeitouConsulta: Inicio,
+          FimRejeitouConsulta: Fim,
+          DoencaRejeitouConsulta: Doenca,
+          route: '/rejeicao-consulta-medico'
+        }
+  
+        await axios.post('http://back-a:8081/api/automatic-whatsapp', body)
+      }
+     }
+  }catch(error){
+    console.log(error)
+  }
 }
 
 
@@ -682,7 +686,7 @@ export const DeleteCasoClinicoPacienteParticular = async (body, res) => {
          }
    
          
-       await axios.post('http://localhost:8080/api/automatic-whatsapp', body)
+       await axios.post('http://back-a:8081/api/automatic-whatsapp', body)
 
     } else {
       res.status(404).json({ message: 'Erro ao excluir consulta' });
@@ -770,52 +774,59 @@ export const ValidatorURL = async(params, res) => {
 }
 
 export const getLaudo = async (body, res) => {
-  const { id, IdentificadorConsulta } = body;
+  const { id, IdentificadorConsulta } = body
 
-  const getMedico = await models.ModelRegisterMédico.findOne({
-    _id: id,
-  });
-
-  if (getMedico) {
-    const consulta = getMedico.ConsultasSolicitadasPacientes.find(
-      (consulta) => consulta._id.toString() === IdentificadorConsulta
-    );
-
-    const Data = consulta.Data;
-    const NomePaciente = consulta.Solicitante;
-
-    // Enviar o PDF como base64 para garantir a transmissão correta
-    const pdfBase64 = consulta.PDF.toString('base64');
-
-    // Criar um objeto que contém o PDF e informações adicionais
-    const responseData = {
-      pdfBase64,
-      NomePaciente,
-      Data,
-    };
-
-    res.status(200).json(responseData);
-  } else {
-    return res
-      .status(404)
-      .json({ message: 'Médico não cadastrado no banco de dados do interconsulta' });
+  try{
+    const getMedico = await models.ModelRegisterMédico.findOne({
+      _id: id,
+    });
+  
+    if (getMedico) {
+      const consulta = getMedico.ConsultasSolicitadasPacientes.find(
+        (consulta) => consulta._id.toString() === IdentificadorConsulta
+      );
+  
+      const Data = consulta.Data;
+      const NomePaciente = consulta.Solicitante;
+  
+      // Enviar o PDF como base64 para garantir a transmissão correta
+      const pdfBase64 = consulta.PDF.toString('base64');
+  
+      // Criar um objeto que contém o PDF e informações adicionais
+      const responseData = {
+        pdfBase64,
+        NomePaciente,
+        Data,
+      };
+  
+      res.status(200).json(responseData);
+    } else {
+      return res
+        .status(404)
+        .json({ message: 'Médico não cadastrado no banco de dados do interconsulta' });
+    }
+  }catch(error){
+    console.log(error)
   }
-};
+}
 
 
 export const getDataMedico = async (body, res) =>{
   const { idMedico } = body
 
-  const getMedico = await models.ModelRegisterMédico.findById(idMedico)
+  try{
+    const getMedico = await models.ModelRegisterMédico.findById(idMedico)
 
-  if(!getMedico){
-    return res.status(404).json({ message: 'Médico nao esta cadastrado no banco de dados do Interconsulta'})
+    if(!getMedico){
+      return res.status(404).json({ message: 'Médico nao esta cadastrado no banco de dados do Interconsulta'})
+    }
+      
+    const FotoMédico = getMedico.Foto
+  
+    res.status(200).json({ FotoMédico })
+  }catch(error){
+    console.log(error)
   }
-    
-  const FotoMédico = getMedico.Foto
-
-  res.status(200).json({ FotoMédico })
-
 } 
 
 export const GetSchemaLinksDoctor = async (params, res) => {
@@ -843,17 +854,18 @@ export const GetSchemaLinksDoctor = async (params, res) => {
 
 export const getPhotoPatient = async (body, res) =>{
   const { id } = body
+  
+  try{
+    const getPaciente = await models.ModelRegisterPaciente.findById(id)
 
-  const getPaciente = await models.ModelRegisterPaciente.findById(id)
-
-  if(!getPaciente){
-    return res.status(400).json({ message: 'Paciente nao esta cadastrado no Interconsulta'})
+    if(!getPaciente){
+      return res.status(400).json({ message: 'Paciente nao esta cadastrado no Interconsulta'})
+    }
+    const FotoPaciente = getPaciente.Foto
+    return res.status(200).json({ FotoPaciente })
+  }catch(error){
+    console.log(error)
   }
-
-  const FotoPaciente = getPaciente.Foto
-
-
-  return res.status(200).json({ FotoPaciente })
 }
 
 export const TraduçaoAudioParaTexto = async (audioPath, res) => {
@@ -877,38 +889,42 @@ export const TraduçaoAudioParaTexto = async (audioPath, res) => {
 export const PaymentDoctor = async (body, res) => {
   const { id , ValorConsulta , TypePayment , TransictionCardID } = body
 
-  const getPaciente = await models.ModelRegisterPaciente.findById(id)
+  try{
+    const getPaciente = await models.ModelRegisterPaciente.findById(id)
 
-  const client = new MercadoPagoConfig({ accessToken: 'APP_USR-1485714438717131-011321-a805841cf5cb2ccf3b83011440e05639-505908896' })
-
-  let paymentMessage
-
-  const AmountNumeric = parseFloat(ValorConsulta)
-
-  switch (TypePayment) {
-     case 'Pix':
-      try {
-        const data = await Pix(Payment, client, AmountNumeric, getPaciente)
-        const PixCopiaECola = data.point_of_interaction.transaction_data.qr_code;
-        const PixQrCode = data.point_of_interaction.transaction_data.qr_code_base64;
-        const LinkPagamentoPix = data.point_of_interaction.transaction_data.ticket_url;
+    const client = new MercadoPagoConfig({ accessToken: 'APP_USR-1485714438717131-011321-a805841cf5cb2ccf3b83011440e05639-505908896' })
   
-        res.status(200).json({
-          TypePayment: 'Pix',
-          PixCopiaECola,
-          PixQrCode,
-          LinkPagamentoPix,
-        })
-      } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Internal Server Error' });
-      }
-        break
-     case 'Cartão de Crédito':
-        CartãoDeCrédito(Payment, client, ValorConsulta, getPaciente, TransictionCardID)
-        break;
-     default:
-        paymentMessage = 'Forma de Pagamento recusada';
+    let paymentMessage
+  
+    const AmountNumeric = parseFloat(ValorConsulta)
+  
+    switch (TypePayment) {
+       case 'Pix':
+        try {
+          const data = await Pix(Payment, client, AmountNumeric, getPaciente)
+          const PixCopiaECola = data.point_of_interaction.transaction_data.qr_code;
+          const PixQrCode = data.point_of_interaction.transaction_data.qr_code_base64;
+          const LinkPagamentoPix = data.point_of_interaction.transaction_data.ticket_url;
+    
+          res.status(200).json({
+            TypePayment: 'Pix',
+            PixCopiaECola,
+            PixQrCode,
+            LinkPagamentoPix,
+          })
+        } catch (error) {
+          console.error(error);
+          res.status(500).json({ error: 'Internal Server Error' });
+        }
+          break
+       case 'Cartão de Crédito':
+          CartãoDeCrédito(Payment, client, ValorConsulta, getPaciente, TransictionCardID)
+          break;
+       default:
+          paymentMessage = 'Forma de Pagamento recusada';
+    }
+  
+  }catch(error){
+    console.log(error)
   }
-
-};
+}

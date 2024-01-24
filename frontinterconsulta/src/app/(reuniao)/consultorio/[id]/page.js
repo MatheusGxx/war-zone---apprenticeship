@@ -96,12 +96,12 @@ function Room({ params }) {
               <Image src={IconNull} width={50} height={50} alt="Icon Null" />
               <h1 className='text-2xl text-red-600 font-bold'> Ops Infelizmente o Link dessa Reunião Expirou =/</h1>
             </div>
-
+            
+            <Link href="/agenda">
             <button className='p-2 bg-blue-600 rounded-xl'>
-              <Link href="/agenda">
                 <p className='text-white font-bold'> Voltar Para a Agenda </p>
-              </Link>
             </button>
+            </Link>
           </div>
         </>
       )}

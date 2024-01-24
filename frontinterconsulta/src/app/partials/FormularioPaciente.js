@@ -86,7 +86,7 @@ const FormularioPaciente = () => {
       NavegationPage.push(`/especialistas-disponiveis`)
     }catch(err){
       setSnackbarMessage(
-        'Ops Algo deu errado :(, parece que você não fez o primeiro cadastro, volte e faça o primeiro cadastro'
+        'Ops Algo deu errado :('
       );
       handleSnackBarOpen();
     }

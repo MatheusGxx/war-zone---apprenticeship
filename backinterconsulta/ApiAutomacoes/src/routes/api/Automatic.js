@@ -47,6 +47,18 @@ router.post('/automatic-whatsapp', async (req, res) => {
     DataExclusaoPaciente: req.body.DataExclusaoPaciente,
     InicioExlusaoPaciente: req.body.InicioExlusaoPaciente,
     FimExclusaoPaciente: req.body.FimExclusaoPaciente,
+    Diagnostico: req.body.Diagnostico,
+    Tratamento: req.body.Tratamento,
+    Medicacao: req.body.Medicacao,
+    FerramentasTerapeuticas: req.body.FerramentasTerapeuticas,
+    Progresso: req.body.Progresso,
+    SolicitacaoMedicamentos: req.body.SolicitacaoMateriais,
+    SolicitacaoMateriais: req.body.SolicitacaoMateriais,
+    SolicitacaoExames: req.body.SolicitacaoExames,
+    RecomendacoesFuturas: req.body.RecomendacoesFuturas,
+    EstadoPaciente: req.body.EstadoPaciente,
+    Solicitacao: req.body.Solicitacao,
+    result: req.body.result,
     route: req.body.route
   }
 

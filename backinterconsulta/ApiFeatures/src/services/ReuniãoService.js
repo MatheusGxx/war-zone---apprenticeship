@@ -1,14 +1,12 @@
 import { CreatingPDF } from "../utils/Functions/CreatingPDF.js"
 import { models } from '../../MongoDB/Schemas/Schemas.js' 
 import { getHistoricoPaciente } from "../utils/Functions/getHistoricoPaciente.js"
-import { GPT } from '../utils/Functions/IA.js'
-//import { ResumoQueue } from "../utils/Queues.js"
 
 
 export const CreatingDoctorLaudo = async (body, res) => {
   const { idMedico, IdentificadorConsultaPaciente, Diagnostico, TratamentoPrescrito, MedicacaoPrescrita, FerramentaTerapeutica, ProgressoPaciente, RecomendacoesFuturas } = body
 
-
+  try {
   const catchingPatientbyIdentifier = await models.ModelRegisterPaciente.find(
     {
     'ConsultasSolicitadasPacientes._id': IdentificadorConsultaPaciente
@@ -75,7 +73,6 @@ export const CreatingDoctorLaudo = async (body, res) => {
   Atenciosamente, ${getDataDoctor.NomeEspecialista}.
   `;
 
-  try {
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', 'attachment; filename=laudo.pdf');
 
@@ -116,8 +113,8 @@ export const getConsulta = async (body, res) => {
       }else{
         return res.status(404).json({ message: 'Consulta nao cadastrada no banco de dados do Interconsulta =/'})
       }
-     }catch(e){
-      throw new Error
+     }catch(error){
+      throw new Error(error)
      }
 }
 
@@ -139,8 +136,8 @@ export const getHistoricoPacientee = async (body, res) => {
    if(PacientePublico){
     getHistoricoPaciente(PacientePublico, ModelPacientePublico, res)
    }
-   }catch(e){
-    throw new Error
+   }catch(error){
+    throw new Error(error)
    }
 }
 
@@ -192,13 +189,10 @@ export const VerifyClickEndReuniao = async (body, res) => {
     )
     
     res.status(200).json({ Consulta });
-  }catch(e){
-    throw new Error
+  }catch(error){
+    throw new Error(error)
   }
-
- 
 }
-
 
 export const SavedConsultaMedico = async (body, res) => {
   const { id, IdentificadorConsulta, Diagnostico, Tratamento, Medicacao, FerramentasTerapeuticas, Progresso, SolicitacaoMedicamentos, SolicitacaoMateriais, SolicitacaoExames, RecomendacoesFuturas,   EstadoPaciente, Solicitacao, CRMMedicoAtendeu, DataInsercao } = body;
@@ -249,21 +243,23 @@ export const SavedConsultaMedico = async (body, res) => {
            new: true,
          }
        )
-
-       /*await ResumoQueue.add('Resumo',{
-           Diagnostico: Diagnostico,
-           Tratamento: Tratamento,
-           Medicacao: Medicacao,
-           FerramentasTerapeuticas: FerramentasTerapeuticas,
-           Progresso: Progresso,
-           SolicitacaoMedicamentos: SolicitacaoMedicamentos,
-           SolicitacaoMateriais: SolicitacaoMateriais,
-           SolicitacaoExames: SolicitacaoExames,
-           RecomendacoesFuturas: RecomendacoesFuturas,
-           EstadoPaciente: EstadoPaciente,
-           Solicitacao: Solicitacao,
-           result: result
-       })*/
+       
+      
+       await axios.post('http://back-a:8081/api/automatic-whatsapp', {
+        route: '/resumo-casos-clinicos',
+        Diagnostico: Diagnostico,
+        Tratamento: Tratamento,
+        Medicacao: Medicacao,
+        FerramentasTerapeuticas: FerramentasTerapeuticas,
+        Progresso: Progresso,
+        SolicitacaoMedicamentos: SolicitacaoMedicamentos,
+        SolicitacaoMateriais: SolicitacaoMateriais,
+        SolicitacaoExames: SolicitacaoExames,
+        RecomendacoesFuturas: RecomendacoesFuturas,
+        EstadoPaciente: EstadoPaciente,
+        Solicitacao: Solicitacao,
+        result: result
+       })
       
       if (updateStateConsultaMedico) {
         return res.status(200).json({ message: 'Atualização de Consulta Atendida do médico concluída com sucesso' });
@@ -363,55 +359,62 @@ export const CalculingAvaliationsDoctor = async (body,res) => {
 export const getDataPatient = async (body,res) => {
   const { idPaciente } = body
 
-  const getPaciente = await models.ModelRegisterPaciente.findById(idPaciente)
+  try{
+    const getPaciente = await models.ModelRegisterPaciente.findById(idPaciente)
 
-  const FotoPaciente = getPaciente.Foto
-
-  if(!getPaciente){
-    return res.status(404).json({ message: 'Paciente nao cadastrado no banco de dados do interconsulta.'})
-  }
-
-  res.status(200).json({ FotoPaciente })
+    const FotoPaciente = getPaciente.Foto
   
+    if(!getPaciente){
+      return res.status(404).json({ message: 'Paciente nao cadastrado no banco de dados do interconsulta.'})
+    }
+  
+    res.status(200).json({ FotoPaciente })
+  }catch(error){
+      console.log(error)
+  }
 }
 
 export const ConclusionConsultaDeleteHorario = async (body, res) => {
      const { idConsultaParticular } = body
 
-     const getConsultaParticular = await models.ModelRegisterMédico.findOne(
-      { 'ConsultasSolicitadasPacientes._id': idConsultaParticular },
-      { 'ConsultasSolicitadasPacientes.$': 1 } 
-    )
-
-     const idMedico = getConsultaParticular._id
-
-     const consultaParticular = getConsultaParticular.ConsultasSolicitadasPacientes[0]
-
-     const HorarioSelecionadoConsulta = consultaParticular.HorarioSelecionado
+     try{
+      const getConsultaParticular = await models.ModelRegisterMédico.findOne(
+        { 'ConsultasSolicitadasPacientes._id': idConsultaParticular },
+        { 'ConsultasSolicitadasPacientes.$': 1 } 
+      )
   
-     const idHorario = consultaParticular.idHorario
-
-     const UpdateHorarioDoctor = await models.ModelRegisterMédico.findOneAndUpdate(
-      {
-        _id: idMedico,
-        'Horarios._id': idHorario,
-        'Horarios.IntervaloAtendimentos.Intervalo': HorarioSelecionadoConsulta,
-      },
-      {
-        $pull: {
-          'Horarios.$.IntervaloAtendimentos': { Intervalo: HorarioSelecionadoConsulta },
+       const idMedico = getConsultaParticular._id
+  
+       const consultaParticular = getConsultaParticular.ConsultasSolicitadasPacientes[0]
+  
+       const HorarioSelecionadoConsulta = consultaParticular.HorarioSelecionado
+    
+       const idHorario = consultaParticular.idHorario
+  
+       const UpdateHorarioDoctor = await models.ModelRegisterMédico.findOneAndUpdate(
+        {
+          _id: idMedico,
+          'Horarios._id': idHorario,
+          'Horarios.IntervaloAtendimentos.Intervalo': HorarioSelecionadoConsulta,
         },
-      },
-      {
-        new: true,
-      }
-    )
-
-     if(UpdateHorarioDoctor){
-      return res.status(200).json({ message: 'Atualizaçao feita com Sucesso' })
-     }else{
-      return res.status(404).json({ message: 'Consulta Particular nao existe '})
-     }
+        {
+          $pull: {
+            'Horarios.$.IntervaloAtendimentos': { Intervalo: HorarioSelecionadoConsulta },
+          },
+        },
+        {
+          new: true,
+        }
+      )
+  
+       if(UpdateHorarioDoctor){
+        return res.status(200).json({ message: 'Atualizaçao feita com Sucesso' })
+       }else{
+        return res.status(404).json({ message: 'Consulta Particular nao existe '})
+       }
+     }catch(error){
+      console.log(error)
+     }   
 }
 
 
@@ -433,27 +436,17 @@ export const getConsultaParticularDoctor = async (body, res) => {
 };
 
 
-export const getConsultasProximas = async(body, res) => {
-  const { id } = body
-
-  const getDoctorById = await models.ModelRegisterMédico.findById(id)
-
-  if(!getDoctorById){
-    return res.status(200).json({ message: 'Médico nao esta cadastrado no Interconsulta'})
-  }
-
-  const getConsultaParticular = await getDoctorById.ConsultasSolicitadasPacientes
-}
-
-
 export const getHorariosProximos = async (body,res) => {
   const { idMedico } = body
 
-  const ConsultasConfirmadasDoctor = await models.ModelRegisterMédico.find({
-    _id: idMedico,
-  })
-
-  const ConsultasSolicitadasPacientes = ConsultasConfirmadasDoctor.map((data) => data.ConsultasSolicitadasPacientes.filter((data) => data.Status.includes('Confirmada')))
-  
-  return res.json({ ConsultasSolicitadasPacientes })
+  try{
+     const ConsultasConfirmadasDoctor = await models.ModelRegisterMédico.find({
+      _id: idMedico,
+     })
+    const ConsultasSolicitadasPacientes = ConsultasConfirmadasDoctor.map((data) => data.ConsultasSolicitadasPacientes.filter((data) => data.Status.includes('Confirmada')))
+    
+    return res.json({ ConsultasSolicitadasPacientes })
+  }catch(error){
+    console.log(error)
+  }
 }
