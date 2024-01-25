@@ -47,6 +47,20 @@
         - back-a
       networks:
         - net-interconsulta
+    
+    nginx:
+    image: nginx
+    container_name: nginx-container
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - backfeatures
+      - back-a
+      - frontend
+    networks:
+      - net-interconsulta
 
   networks:
     net-interconsulta:
