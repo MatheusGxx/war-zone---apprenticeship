@@ -8,6 +8,4 @@ RUN apt-get update && \
     apt-get install -y git && \ 
     npm install
 
-RUN npm run build
-
-CMD ["npm", "run", "start"]
+CMD ["npm", "run", "dev"]

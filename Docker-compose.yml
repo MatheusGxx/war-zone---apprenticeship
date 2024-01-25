@@ -19,7 +19,7 @@
         - 8080:8080
       depends_on:
         - redis
-      networks:
+      networks: 
         - net-interconsulta
     
     back-a:
