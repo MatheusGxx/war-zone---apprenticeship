@@ -5,7 +5,7 @@ import KeyboardVoiceIcon from '@mui/icons-material/KeyboardVoice'
 import GraphicEqIcon from '@mui/icons-material/GraphicEq'
 import SendIcon from '@mui/icons-material/Send'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
-import { config } from '../config.js'
+import { config2 } from '../config.js'
 
 import axios from 'axios'
 import { useMutation } from '@tanstack/react-query'
@@ -49,7 +49,6 @@ export const AgendamentoComponente = ({
     from: { opacity: 0 },
   })
 
-  const config2 = config
 
   const TranslationAudioToText = useMutation(formData => {
     return axios.post(`http://${config2.apiBaseUrl}/api/audio-to-text-translation`, formData);

@@ -6,7 +6,7 @@ import KeyboardVoiceIcon from '@mui/icons-material/KeyboardVoice';
 import GraphicEqIcon from '@mui/icons-material/GraphicEq';
 import SendIcon from '@mui/icons-material/Send';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
-import { config } from '../config.js'
+import { config2 } from '../config.js'
 import { useSpring, animated, config } from 'react-spring'
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
 import axios from 'axios'
@@ -28,8 +28,6 @@ export const ComponenteAudio = ({
   const [audioRecordings, setAudioRecordings] = useState([])
   const [sucessAudio, setIsSucessAudio] = useState(false)
   const [resumo, setResumo] = useState('')
-
-  const config2 = config
   
   const propsComponenteAudio = useSpring({
     opacity: 1,
