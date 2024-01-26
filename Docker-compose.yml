@@ -65,12 +65,12 @@
       networks:
         - net-interconsulta
       
-  certbot:
-   image: certbot/certbot:latest
-   volumes:
-    - ./certbot/www/:/var/www/certbot/:ro
-    - ./certbot/conf/:/etc/letsencrypt/:rw
-      
+    certbot:
+      image: certbot/certbot:latest
+      volumes:
+        - ./certbot/www/:/var/www/certbot/:ro
+        - ./certbot/conf/:/etc/letsencrypt/:rw
+        
 
   networks:
     net-interconsulta:
