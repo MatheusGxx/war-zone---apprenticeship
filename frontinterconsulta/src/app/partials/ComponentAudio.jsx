@@ -5,13 +5,13 @@ import { TextField, CircularProgress } from '@mui/material';
 import KeyboardVoiceIcon from '@mui/icons-material/KeyboardVoice';
 import GraphicEqIcon from '@mui/icons-material/GraphicEq';
 import SendIcon from '@mui/icons-material/Send';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'
+import { config } from '../config.js'
 import { useSpring, animated, config } from 'react-spring'
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
 import axios from 'axios'
 import { useMutation } from '@tanstack/react-query'
 import secureLocalStorage from 'react-secure-storage'
-import { config } from '../config.js'
 
 export const ComponenteAudio = ({
   doenca,
@@ -28,6 +28,8 @@ export const ComponenteAudio = ({
   const [audioRecordings, setAudioRecordings] = useState([])
   const [sucessAudio, setIsSucessAudio] = useState(false)
   const [resumo, setResumo] = useState('')
+
+  const config2 = config
   
   const propsComponenteAudio = useSpring({
     opacity: 1,
@@ -40,14 +42,12 @@ export const ComponenteAudio = ({
     config: config.default,
   });
 
-  
-
   useEffect(() => {
 
   },[resumoIA, fraseDoença])
 
   const TranslationAudioToText = useMutation(formData => {
-    return axios.post(`http://${config.apiBaseUrl}/api/audio-to-text-translation`, formData);
+    return axios.post(`http://${config2.apiBaseUrl}/api/audio-to-text-translation`, formData);
   }, {
     onSuccess: (data) => {
       if (data && data.data && data.data.success) {
