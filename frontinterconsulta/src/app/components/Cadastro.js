@@ -6,8 +6,9 @@ import Image from 'next/image';
 import { TextField, CircularProgress, Snackbar, Alert, Stack, SnackbarContent } from '@mui/material';
 import IconBack from '../partials/IconBack.js';
 import { useRouter, usePathname } from 'next/navigation';
-import { useMutation } from '@tanstack/react-query';
-import axios from 'axios';
+import { useMutation } from '@tanstack/react-query'
+import { config } from '../config.js'
+import axios from 'axios'
 
 const Cadastro = ({ title, OneRoute, SecondRoute, TreeRoute, apelido, mensagem}) => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -25,7 +26,7 @@ const Cadastro = ({ title, OneRoute, SecondRoute, TreeRoute, apelido, mensagem})
 
   const CreateRequestMutation = useMutation(
     async (valueRequest) => {
-      const response = await axios.post('http://interconsulta.org/api/register', valueRequest);
+      const response = await axios.post(`http://${config.apiBaseUrl}/api/register`, valueRequest);
       return response.data._id
     },
     {
