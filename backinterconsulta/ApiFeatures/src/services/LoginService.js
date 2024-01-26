@@ -115,7 +115,7 @@ export const Register = async (body, res) =>{
           route
         } 
 
-       //await axios.post('http://back-a:8081/api/automatic-whatsapp', idMédico)
+       await axios.post('http://back-a:8081/api/automatic-whatsapp', idMédico)
       }
       break;
 

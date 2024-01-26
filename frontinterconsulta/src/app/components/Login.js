@@ -16,8 +16,8 @@ const Login = ({title, ImagemLateral, MessageButton, secondRoute, treeRoute, pla
 
   const[email, setEmail] = useState('')
   const[senha, setSenha] = useState('')
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const[snackbarOpen, setSnackbarOpen] = useState(false);
+  const[snackbarMessage, setSnackbarMessage] = useState('');
 
   const Router = useRouter()
   const route = usePathname() 
