@@ -6,6 +6,7 @@ import secureLocalStorage from 'react-secure-storage'
 import Logo from '../public/logo.png'
 import Logo2 from '../public/Logo2.png'
 import Link from 'next/link'
+import { config } from '../config.js'
 
 export const PopUpUnidade = ({ NomeMedico, onClose, Status}) => {
 

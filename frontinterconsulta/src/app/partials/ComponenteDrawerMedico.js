@@ -15,6 +15,7 @@ import secureLocalStorage from 'react-secure-storage'
 import { useEffect } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import axios from 'axios'
+import { config } from '../config.js'
 
 export const ComponentDrawerMédico = ({ Navigation, Loggout, Image }) =>{ 
 
@@ -31,7 +32,7 @@ export const ComponentDrawerMédico = ({ Navigation, Loggout, Image }) =>{
   },[])
 
   const getSlug = useMutation(async() =>{
-  const request = await axios.post(`http://localhost:8080/api/get-slug/${id}`)
+  const request = await axios.post(`http://${config.apiBaseUrl}/api/get-slug/${id}`)
   return request.data.SlugMedico
   })
 

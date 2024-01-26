@@ -9,6 +9,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { NotLogged } from '../partials/NotLoggedPopUp'
 import secureLocalStorage from 'react-secure-storage'
 import Rating from '@mui/material/Rating'
+import { config } from '../config.js'
 
 export default function PerfilMédico({ params }) {
   const [especialista, setEspecialista] = useState('')
@@ -38,18 +39,18 @@ export default function PerfilMédico({ params }) {
   const id = idLocal || ''
 
   const RequestEspecialista = async () => {
-    const response = await axios.get(`http://localhost:8080/api/get-especialista/${params}`)
+    const response = await axios.get(`http://${config.apiBaseUrl}/api/get-especialista/${params}`)
     setidMedico(response.data.ModelEspecialista._id)
     return response.data.ModelEspecialista
   }
 
   const RequestRecomendaçoes = async () =>{
-    const response = await axios.get(`http://localhost:8080/api/get-recomendacoes/${params}`)
+    const response = await axios.get(`http://${config.apiBaseUrl}/api/get-recomendacoes/${params}`)
     return response.data.QueryEspecialidadesDB
   }
 
   const RequestPaciente = async () =>{
-    const response = await axios.get(`http://localhost:8080/api/get-paciente/${id}`)
+    const response = await axios.get(`http://${config.apiBaseUrl}/api/get-paciente/${id}`)
     return response.data.ModelPaciente 
   }
 
@@ -132,7 +133,7 @@ export default function PerfilMédico({ params }) {
                       <div className='flex-col'>
 
                       <div className="flex gap-8 sm:flex sm:flex-col md:flex md:flex-col w-full">
-                        <Image src={`http://localhost:8080/${ModelEspecialista.Foto}`} width={350} height={350} alt="Foto Especialista" className='rounded-lg lg:w-full' />
+                        <Image src={`http://${config.apiBaseUrl}/${ModelEspecialista.Foto}`} width={350} height={350} alt="Foto Especialista" className='rounded-lg lg:w-full' />
                         
                         <div className='flex flex-col gap-3'>
                           
@@ -195,7 +196,7 @@ export default function PerfilMédico({ params }) {
                                     {avaliacoes.map((avaliacao, index) => (
                                       <div key={index} className="flex flex-col mt-5 gap-3">
                                         <div className="flex justify-center items-center">
-                                          <Image src={`http://localhost:8080/${avaliacao.Foto}`} alt="Foto do Paciente" width={60} height={60} className="sm:rounded-full rounded-lg" />
+                                          <Image src={`http://${config.apiBaseUrl}/${avaliacao.Foto}`} alt="Foto do Paciente" width={60} height={60} className="sm:rounded-full rounded-lg" />
                                         </div>
                                         <div className="flex gap-1 flex-col">
                                           <div className="flex justify-center items-center">
@@ -299,7 +300,7 @@ export default function PerfilMédico({ params }) {
 
           {QueryEspecialidadesDB.map((item, index) => (
             <div key={index} className='flex gap-12 cursor-pointer' onClick={() => HandleNavigation(item.Slug)}>
-                <Image src={`http://localhost:8080/${item.Foto}`} height={100} width={100} alt="Foto Especialista" className='rounded-lg'/> 
+                <Image src={`http://${config.apiBaseUrl}/${item.Foto}`} height={100} width={100} alt="Foto Especialista" className='rounded-lg'/> 
               <div className="flex-col">
                 <h1 className="text-center text-blue-900 font-bold">{item.NomeEspecialista}</h1>
                 <h1 className='text-center text-blue-600 font-bold'>{item.AreadeAtuacao}</h1>

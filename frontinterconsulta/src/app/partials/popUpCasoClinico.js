@@ -21,6 +21,7 @@ import HealthAndSafetyIcon from '@mui/icons-material/HealthAndSafety'
 import CoPresentIcon from '@mui/icons-material/CoPresent'
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance'
 import secureLocalStorage from 'react-secure-storage'
+import { config } from '../config.js'
 
 import { useMutation } from '@tanstack/react-query'
 import axios from 'axios'
@@ -69,7 +70,7 @@ export const CasosClinico = ({
 
   const Paciente = useMutation(async (body) => {
     try {
-      const request = await axios.post(`http://localhost:8080/api/get-historic-patient`, body)
+      const request = await axios.post(`http://${config.apiBaseUrl}/api/get-historic-patient`, body)
        setNomePaciente(request.data.Pacientee.nome)
        setIdade(request.data.Pacientee.Idade)
        setSexo(request.data.Pacientee.Genero)
@@ -85,7 +86,7 @@ export const CasosClinico = ({
 
   const Medico = useMutation(async (body) => {
     try {
-      const request = await axios.post(`http://localhost:8080/api/get-data-doctor`, body)
+      const request = await axios.post(`http://${config.apiBaseUrl}/api/get-data-doctor`, body)
       return request.data
     } catch (error) {
       console.error("Erro ao buscar a Foto do Médico", error)

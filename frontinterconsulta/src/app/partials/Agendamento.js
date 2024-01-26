@@ -18,6 +18,7 @@ import axios from 'axios'
 import { Checkout } from "../components/Checkout.jsx"
 import { AgendamentoComponente } from "../components/AgendamentoComponent.jsx"
 import { parse, isBefore, compareAsc } from 'date-fns'
+import { config } from '../config.js'
 
 const AgendamentoConsulta = ({ 
   EspecialidadeMedica,
@@ -118,7 +119,7 @@ const AgendamentoConsulta = ({
 
    const getPhotoPaciente = useMutation(async (valueRequest) => {
     try {
-      const response = await axios.post('http://localhost:8080/api/foto-paciente', valueRequest)
+      const response = await axios.post(`http://${config.apiBaseUrl}/api/foto-paciente`, valueRequest)
       setFotoPaciente(response.data.FotoPaciente);
       return response.data.FotoPaciente
     } catch (error) {
@@ -146,7 +147,7 @@ useEffect(() => {
 
 
    const AgendamentoMarcado = useMutation(async (valueRequest) =>{
-    const request = axios.post('http://localhost:8080/api/agendamento-paciente-particular', valueRequest)
+    const request = axios.post(`http://${config.apiBaseUrl}/api/agendamento-paciente-particular`, valueRequest)
     return request.data
    })
  

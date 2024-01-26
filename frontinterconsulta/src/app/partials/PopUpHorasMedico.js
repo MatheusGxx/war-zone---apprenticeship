@@ -13,7 +13,8 @@ import axios from 'axios'
 import { format, addHours, parse, isWithinInterval } from 'date-fns';
 import secureLocalStorage from 'react-secure-storage'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle'
-import { TempoConsulta } from './TempoConsulta';
+import { TempoConsulta } from './TempoConsulta'
+import { config } from '../config.js'
 
 function PopUpMedicoHoras({ onClose }) {
   const [open, setOpen] = useState(false);
@@ -53,7 +54,7 @@ function PopUpMedicoHoras({ onClose }) {
 
   const getInfoMedico = useMutation(
     async (valueRequest) => {
-      const request = await axios.post(`http://localhost:8080/api/info-medico/${VerifyID}`, valueRequest)
+      const request = await axios.post(`http://${config.apiBaseUrl}/api/info-medico/${VerifyID}`, valueRequest)
       return request.data.InformacoesMedico
     },
     {
@@ -64,7 +65,7 @@ function PopUpMedicoHoras({ onClose }) {
   );
   const CreateMutationRequest = useMutation(
     async (valueRequest) => {
-      const request = await axios.post(`http://localhost:8080/api/register-horarios/${VerifyID}`, valueRequest)
+      const request = await axios.post(`http://${config.apiBaseUrl}/api/register-horarios/${VerifyID}`, valueRequest)
       setMensagem(request.data.message)
       return request.data.message;
     },

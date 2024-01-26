@@ -3,6 +3,7 @@ import { useState } from 'react'
 import Image from 'next/image'
 import Logo from '../public/logo.png'
 import SecondLogo from '../public/Logo2.png'
+import { config } from '../config.js'
 
 import { TextField, CircularProgress, Snackbar, Alert } from '@mui/material'
 import { useRouter, usePathname } from 'next/navigation'
@@ -23,7 +24,7 @@ const Login = ({title, ImagemLateral, MessageButton, secondRoute, treeRoute, pla
   const route = usePathname() 
 
   const CreateRequestMutation = useMutation(async (valueRequest) =>{
-    const response = await axios.post('http://localhost:8080/api/login', valueRequest)
+    const response = await axios.post(`http://${config.apiBaseUrl}/api/login`, valueRequest)
     console.log(response.data)
     return response.data
   },{

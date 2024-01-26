@@ -6,6 +6,7 @@ import {
 } from '@mui/material'
 import secureLocalStorage from 'react-secure-storage'
 import { usePathname } from 'next/navigation'
+import { config } from '../config.js'
 
 
 export const DrawerComponent = ({ open, Close, Navigation}) =>{

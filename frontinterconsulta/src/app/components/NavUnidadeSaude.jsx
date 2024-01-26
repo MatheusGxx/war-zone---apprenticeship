@@ -3,6 +3,7 @@ import DrawerPerfil from '../partials/DrawerNav'
 import secureLocalStorage from 'react-secure-storage'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 import Avatar from '@mui/material/Avatar'
+import { config } from '../config.js'
 
 
 export const NavUnidadeSaude = ({
@@ -32,12 +33,12 @@ export const NavUnidadeSaude = ({
                 className='mt-[-5px] relative cursor-pointer'
                 onClick={OpenDrawerMedico}
                  >
-                <Avatar alt="Foto Médico" src={`http://localhost:8080/${FotoUnidade}`} className='cursor-pointer'/>
+                <Avatar alt="Foto Médico" src={`http://${config.apiBaseUrl}/${FotoUnidade}`} className='cursor-pointer'/>
 
                 <DrawerPerfil
                  open={openDrawer}
                  Close={OpenDrawerMedico}
-                 Image={`http://localhost:8080/${FotoUnidade}`}
+                 Image={`http://${config.apiBaseUrl}/${FotoUnidade}`}
                  Loggout={LoggoutDrawerMedico}
                  Navigation={HandleNavigationDrawer}
                  />
@@ -49,12 +50,12 @@ export const NavUnidadeSaude = ({
                 className='mt-[-5px] relative cursor-pointer'
                 onClick={OpenDrawerMedico}
                  >
-                <Avatar alt="Foto Médico" src={`http://localhost:8080/${FotoPaciente}`} className='cursor-pointer'/>
+                <Avatar alt="Foto Médico" src={`http://${config.apiBaseUrl}/${FotoPaciente}`} className='cursor-pointer'/>
 
                 <DrawerPerfil
                  open={openDrawer}
                  Close={OpenDrawerMedico}
-                 Image={`http://localhost:8080/${FotoUnidade}`}
+                 Image={`http://${config.apiBaseUrl}/${FotoUnidade}`}
                  Loggout={LoggoutDrawerMedico}
                  Navigation={HandleNavigationDrawer}
                  />

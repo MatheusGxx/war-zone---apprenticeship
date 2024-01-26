@@ -14,7 +14,8 @@ import secureLocalStorage from 'react-secure-storage'
 import { FormControl, InputLabel, Select, MenuItem } from "@mui/material"
 import { parse } from 'date-fns'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle'
-import { TempoConsulta } from './TempoConsulta';
+import { TempoConsulta } from './TempoConsulta'
+import { config } from '../config.js'
 
 function HorariosMedicos({ onClose }) {
   const [open, setOpen] = useState(false);
@@ -42,7 +43,7 @@ function HorariosMedicos({ onClose }) {
 
   const getInfoMedico = useMutation(
     async (valueRequest) => {
-      const request = await axios.post(`http://localhost:8080/api/info-medico/${VerifyID}`, valueRequest)
+      const request = await axios.post(`http://${config.apiBaseUrl}/api/info-medico/${VerifyID}`, valueRequest)
       return request.data.InformacoesMedico
     },
     {
@@ -54,7 +55,7 @@ function HorariosMedicos({ onClose }) {
 
   const CreateMutationRequest = useMutation(
     async (valueRequest) => {
-      const request = await axios.post(`http://localhost:8080/api/register-horarios/${VerifyID}`, valueRequest)
+      const request = await axios.post(`http://${config.apiBaseUrl}/api/register-horarios/${VerifyID}`, valueRequest)
       setMensagem(request.data.message)
       return request.data.message
     },
@@ -67,7 +68,7 @@ function HorariosMedicos({ onClose }) {
 
   const DeleteMutationRequest = useMutation(
     async () => {
-      const request = await axios.delete(`http://localhost:8080/api/delete-horarios/${VerifyID}/${idHorario}`)
+      const request = await axios.delete(`http://${config.apiBaseUrl}/api/delete-horarios/${VerifyID}/${idHorario}`)
       setMensagem(request.data.mensagem)
       return request.data.mensagem
     },
@@ -80,7 +81,7 @@ function HorariosMedicos({ onClose }) {
 
   const DeleteIntervalRequest = useMutation(
     async ({ id, idHorarioo }) => {
-      const request = await axios.delete(`http://localhost:8080/api/delete-intervalo/${id}/${idHorarioo}`);
+      const request = await axios.delete(`http://${config.apiBaseUrl}/api/delete-intervalo/${id}/${idHorarioo}`);
       return request.data
     },
     {
@@ -91,7 +92,7 @@ function HorariosMedicos({ onClose }) {
   )
 
   const RequestGetHistorico = async () => {
-    const response = await axios.get(`http://localhost:8080/api/get-horarios/${VerifyID}`);
+    const response = await axios.get(`http://${config.apiBaseUrl}/api/get-horarios/${VerifyID}`);
     setHistorico(response.data.QueryHistorico)
     return response.data.QueryHistorico
   };

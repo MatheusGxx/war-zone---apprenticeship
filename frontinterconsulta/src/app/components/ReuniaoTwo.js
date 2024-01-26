@@ -9,6 +9,7 @@ import { PopUpEndReunião } from '../partials/popUpEndReuniao.js'
 import { useState } from 'react'
 import { useRouter } from "next/navigation"
 import { Snackbar, Alert } from '@mui/material'
+import { config } from '../config.js'
 
 const ReuniaoTwo = () =>{ 
 
@@ -35,12 +36,12 @@ const ReuniaoTwo = () =>{
   const Router = useRouter()
   
   const VerifyEndRoomMutation = useMutation( async (valueBody) =>{
-    const request = await axios.post('http://localhost:8080/api/verify-conclusion-room', valueBody)
+    const request = await axios.post(`http://${config.apiBaseUrl}/api/verify-conclusion-room`, valueBody)
     return request.data.Consulta
   })
 
   const SavedConsulta = useMutation(async(valueBody) =>{
-    const request = await axios.post('http://localhost:8080/api/conclusion-room-patient', valueBody)
+    const request = await axios.post(`http://${config.apiBaseUrl}/api/conclusion-room-patient`, valueBody)
     return request.data
  })
 

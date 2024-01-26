@@ -4,13 +4,15 @@ import { TextField, Checkbox } from '@mui/material'
 import KeyboardVoiceIcon from '@mui/icons-material/KeyboardVoice'
 import GraphicEqIcon from '@mui/icons-material/GraphicEq'
 import SendIcon from '@mui/icons-material/Send'
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'
+import { config } from '../config.js'
 
 import axios from 'axios'
 import { useMutation } from '@tanstack/react-query'
 import Avatar from '@mui/material/Avatar'
 import { CircularProgress } from '@mui/material'
 import { useSpring, animated, config } from 'react-spring'
+import { config } from '../config.js'
 
 export const AgendamentoComponente = ({
     setDoenca,
@@ -49,7 +51,7 @@ export const AgendamentoComponente = ({
   })
 
   const TranslationAudioToText = useMutation(formData => {
-    return axios.post('http://localhost:8080/api/audio-to-text-translation', formData);
+    return axios.post(`http://${config.apiBaseUrl}/api/audio-to-text-translation`, formData);
   }, {
     onSuccess: (data) => {
       if (data && data.data && data.data.success) {

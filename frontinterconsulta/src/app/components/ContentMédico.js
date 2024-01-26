@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation"
 
 import PopUpMedicoHoras from "../partials/PopUpHorasMedico"
 import secureLocalStorage from 'react-secure-storage'
+import { config } from '../config.js'
 
 const ContentMédico = () => {
 
@@ -39,7 +40,7 @@ const ContentMédico = () => {
 
 
   const CreateRequestMutation = useMutation(async () => {
-    const request = await axios.post(`http://localhost:8080/api/get-casos-clinicos/${id}`);
+    const request = await axios.post(`http://${config.apiBaseUrl}/api/get-casos-clinicos/${id}`);
     setSelectedCasosClinicos(request.data.HistoricoCasosClinicos.length)
     return request.data.HistoricoCasosClinicos 
   })

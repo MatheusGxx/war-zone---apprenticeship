@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import Rating from '@mui/material/Rating'
+import { config } from '../config';
 
 
 export const AvaliacoesCarousel = ({ avaliacoes, readOnlyMode }) => {
@@ -11,7 +12,7 @@ export const AvaliacoesCarousel = ({ avaliacoes, readOnlyMode }) => {
             <h1>{data.AvaliacoesText}</h1>
             <div className="flex gap-5">
               <Image
-                src={`http://localhost:8080/${data.Foto}`}
+                src={`http://${config.apiBaseUrl}/${data.Foto}`}
                 height={50}
                 width={50}
                 alt="Logo Interconsulta"

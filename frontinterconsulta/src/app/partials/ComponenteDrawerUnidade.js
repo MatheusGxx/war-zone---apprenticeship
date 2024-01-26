@@ -11,6 +11,7 @@ import ExitToAppIcon from '@mui/icons-material/ExitToApp'
 import EventAvailableIcon from '@mui/icons-material/EventAvailable'
 import secureLocalStorage from 'react-secure-storage'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle'
+import { config } from '../config.js'
 
 export const ComponentDrawerUnidade = ({ Navigation, Loggout, Image }) => {
 

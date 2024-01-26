@@ -13,7 +13,7 @@ const Obrigado = () =>{
       <div className='flex flex-col'> 
       
        {IdentificadorPosConsultaMedico && <ObrigadoMédico/> }
-       {IdentificadorPosConsultaPaciente&& <ObrigadoPaciente/> }
+       {IdentificadorPosConsultaPaciente && <ObrigadoPaciente/> }
    
       </div>
 

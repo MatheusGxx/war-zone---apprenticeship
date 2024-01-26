@@ -19,6 +19,7 @@ import { usePathname } from 'next/navigation';
 import { useMutation } from '@tanstack/react-query'
 import secureLocalStorage from 'react-secure-storage'
 import axios from 'axios'
+import { config } from '../config.js'
 
 const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="left" ref={ref} {...props} />;
@@ -77,7 +78,7 @@ export const PopUpBlood = ({
   };
 
   const RequestGetBlood = useMutation(async () => {
-    const response = await axios.post(`http://localhost:8080/api/get-blood/${id}`);
+    const response = await axios.post(`http://${config.apiBaseUrl}/api/get-blood/${id}`);
     setQuantidade(response.data.QueryCompativeis.length)
     setTipo(response.data.TipoSanguineo)
     setCidade(response.data.Cidade)
@@ -87,7 +88,7 @@ export const PopUpBlood = ({
   })
 
   const RequestNotificationPaciente = useMutation(async (valueRequest) => {
-    const response = await axios.post('http://localhost:8080/api/automatic-whatsapp', valueRequest)
+    const response = await axios.post(`http://${config.apiBaseUrl}/api/automatic-whatsapp`, valueRequest)
     return response.data
   })
 

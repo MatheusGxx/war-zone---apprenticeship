@@ -14,6 +14,7 @@ import { RegisterTreePatient } from "./RegisterTreePatient"
 import { RegisterFourPatient } from "./RegisterFourPatient"
 import { RegisterFivePatient } from "./RegisterFivePatient"
 import { useEndRegister } from "../context/context"
+import { config } from '../config.js'
 
 export const EndRegisterPatient = () => {
   const [open, setOpen] = useState(false);
@@ -49,7 +50,7 @@ export const EndRegisterPatient = () => {
   const Router = usePathname()
    
   const CreateRequestMutation  = useMutation( async (valueRequest) => {
-    const response = await axios.post(`http://localhost:8080/api/obrigado/${id}`, valueRequest)
+    const response = await axios.post(`http://${config.apiBaseUrl}/api/obrigado/${id}`, valueRequest)
     return response.data
   },{
     onSuccess:(data) => {

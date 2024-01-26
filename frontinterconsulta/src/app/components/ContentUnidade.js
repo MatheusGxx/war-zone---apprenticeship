@@ -12,6 +12,7 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import secureLocalStorage from 'react-secure-storage'
 import { usePathname } from 'next/navigation.js';
 import { parse } from 'date-fns'
+import { config } from '../config.js'
 
 const ContentUnidade = () => {
   const[atuacao, setAtuacao] = useState('')
@@ -57,12 +58,12 @@ const ContentUnidade = () => {
   const Route = usePathname()
 
   const CreateRequestMutation = useMutation(async (valueRequest) => {
-    const response = await axios.post(`http://localhost:8080/api/process-planilha/${id}`, valueRequest)
+    const response = await axios.post(`http://${config.apiBaseUrl}/api/process-planilha/${id}`, valueRequest)
     return response.data
   })
 
   const NotificationDoctor = useMutation(async (valueRequest) => {
-    const request = await axios.post('http://localhost:8080/api/agendamento-unidade-de-saude', valueRequest)
+    const request = await axios.post(`http://${config.apiBaseUrl}/api/agendamento-unidade-de-saude`, valueRequest)
     return request.data
   })
     

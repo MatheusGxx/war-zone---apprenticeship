@@ -4,6 +4,7 @@ import { Dialog, DialogTitle, DialogContent } from '@mui/material'
 import Logo2 from '../public/Logo2.png'
 import Logo from '../public/logo.png'
 import Image from 'next/image'
+import { config } from '../config.js'
 
 export const EndReuniaoDoctor = ({ nomeDoctor }) => {
     const [open, setOpen] = useState(false)

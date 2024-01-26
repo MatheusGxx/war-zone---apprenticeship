@@ -8,6 +8,7 @@ import secureLocalStorage from 'react-secure-storage'
 import Rating from '@mui/material/Rating'
 import { TextField } from '@mui/material'
 import { useRouter } from 'next/navigation'
+import { config } from '../config.js'
 
 const ObrigadoPaciente = () =>{
 
@@ -32,19 +33,19 @@ const ObrigadoPaciente = () =>{
   const Router = useRouter()
 
   const getDoctor = useMutation( async (valueBody) =>{
-    const request = await axios.post('http://localhost:8080/api/get-medico-avaliations', valueBody)
+    const request = await axios.post(`http://${config.apiBaseUrl}/api/get-medico-avaliations`, valueBody)
     setidMedico(request.data.getMedico.map((data) => data._id))
     setNomeMedico(request.data.getMedico.map((data) => data.NomeEspecialista))
     setSlugDoctor(request.data.getMedico.map((data) => data.Slug))
     return request.data.getMedico
   })
   const AvaliationsDoctor = useMutation( async (valueBody) =>{
-    const request = await axios.post('http://localhost:8080/api/avaliation-doctor', valueBody)
+    const request = await axios.post(`http://${config.apiBaseUrl}/api/avaliation-doctor`, valueBody)
     return request.data
   })
 
   const getDataPatient = useMutation( async (valueBody) =>{
-    const request = await axios.post('http://localhost:8080/api/get-data-patient', valueBody)
+    const request = await axios.post(`http://${config.apiBaseUrl}/api/get-data-patient`, valueBody)
     setFotoPatient(request.data.FotoPaciente)
     return request.data.FotoPaciente
   })
@@ -105,7 +106,7 @@ const ObrigadoPaciente = () =>{
         {getDoctor.data?.map((medico, index) => (
            <div key={index} className="cursor-pointer flex flex-col">
                <div className="flex justify-center items-center sm:flex sm:justify-center mb-4 mt-5">
-                 <Image src={`http://localhost:8080/${medico.Foto}`} alt="Foto do Médico" width={150} height={150} className="sm:rounded-full rounded-xl" />
+                 <Image src={`http://${config.apiBaseUrl}/${medico.Foto}`} alt="Foto do Médico" width={150} height={150} className="sm:rounded-full rounded-xl" />
             </div>
            <div className="flex justify-center gap-3">
              <p className="sm:text-center text-center text-blue-500 font-bold">{medico.NomeEspecialista}</p>

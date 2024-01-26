@@ -10,6 +10,7 @@ import { CasosClinicoReuniao } from "../partials/PopUpCasoClinicoReuniao.js"
 import { PopUpEndReunião } from '../partials/popUpEndReuniao.js'
 import { useRouter } from 'next/navigation'
 import { UseReuniaoAcabando } from "../context/context.js"
+import { config } from '../config.js'
 
 const ReuniaoMédico = () =>{
 
@@ -54,17 +55,17 @@ const ReuniaoMédico = () =>{
   },[startConsulta, nameInitialPatient])
 
   const VerifyEndRoomMutation = useMutation( async (valueBody) =>{
-    const request = await axios.post('http://localhost:8080/api/verify-conclusion-room', valueBody)
+    const request = await axios.post(`http://${config.apiBaseUrl}/api/verify-conclusion-room`, valueBody)
     return request.data.Consulta
   })
 
   const SavedConsulta = useMutation(async(valueBody) =>{
-     const request = await axios.post('http://localhost:8080/api/conclusion-room-medico', valueBody)
+     const request = await axios.post(`http://${config.apiBaseUrl}/api/conclusion-room-medico`, valueBody)
      return request.data
   })
  
   const RequestCreatingDoctorLaudo = useMutation(async (valueRequest) => {
-    const response = await axios.post('http://localhost:8080/api/create-laudo-medico', valueRequest, {
+    const response = await axios.post(`http://${config.apiBaseUrl}/api/create-laudo-medico`, valueRequest, {
       responseType: 'blob',
  })
     return response.data;
@@ -81,7 +82,7 @@ const ReuniaoMédico = () =>{
   })
 
   const ConclusionConsultaDeleteHorario = useMutation(async(valueBody) =>{
-    const request = await axios.post('http://localhost:8080/api/conclusion-consulta-delete-horario', valueBody)
+    const request = await axios.post(`http://${config.apiBaseUrl}/api/conclusion-consulta-delete-horario`, valueBody)
     return request.data
  })
   
@@ -96,7 +97,7 @@ const ReuniaoMédico = () =>{
   
   const getPacientes = useMutation(async (valueBody) => {
     try {
-      const request = await axios.post(`http://localhost:8080/api/get-consulta`, valueBody);
+      const request = await axios.post(`http://${config.apiBaseUrl}/api/get-consulta`, valueBody);
       const pacientes = request.data.getConsulta || []
       setTotalPatients(pacientes.length)
       const NomeInitialPatient = request.data.getConsulta.map((data) => data.nome)

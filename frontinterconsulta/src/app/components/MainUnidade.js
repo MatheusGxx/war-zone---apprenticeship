@@ -24,7 +24,7 @@ const MainUnidade = ({title, subTitle, Component}) =>{
         <h2 className="text-3xl font-bold text-blue-900 sm:text-sm md:whitespace-nowrap lg:text-2xl md:text-center xl:text-center">
           <div className='flex gap-5'>
             {title} {NomeUnidade ? `do ${NomeUnidade}` : ''}
-            {NomeUnidade && <Image src={`http://localhost:8080/${FotoUnidade}`} width={50} height={50} alt='Logo Unidade de Saude' className='rounded-full' />}
+            {NomeUnidade && <Image src={`http://${config.apiBaseUrl}/${FotoUnidade}`} width={50} height={50} alt='Logo Unidade de Saude' className='rounded-full' />}
           </div>
         </h2>
   

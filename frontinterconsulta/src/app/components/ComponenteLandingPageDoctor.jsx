@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import { Accordion,AccordionSummary, AccordionDetails } from '@mui/material'
 import Rating from '@mui/material/Rating'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import { config } from '../config.js'
 
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import DoneIcon from '@mui/icons-material/Done'
@@ -55,7 +56,7 @@ export const ComponentLandingPageDoctor = ({ params }) => {
   const id = idLocal || ''
 
   const RequestEspecialista = async () => {
-    const response = await axios.get(`http://localhost:8080/api/get-especialista/${params}`)
+    const response = await axios.get(`http://${config.apiBaseUrl}/api/get-especialista/${params}`)
     setidMedico(response.data.ModelEspecialista._id)
     const avaliacoes = response.data.ModelEspecialista.Avaliacoes || []
     setAvaliacoes(avaliacoes)

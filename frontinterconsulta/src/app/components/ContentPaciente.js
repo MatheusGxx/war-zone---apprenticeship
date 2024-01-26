@@ -13,6 +13,7 @@ import Rating from '@mui/material/Rating'
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { EndRegisterPatient } from "../partials/PopUpEndCadastroPaciente"
 import { useEndRegister } from '../context/context.js'
+import { config } from '../config.js'
 
 const ContentPaciente = () => {
   const[selectedDoenca, setSelectedDoenca] = useState('')
@@ -54,7 +55,7 @@ const ContentPaciente = () => {
   const VerifyDataPatient = useMutation(
     async (valueRequest) => {
       try {
-        const response = await axios.post('http://localhost:8080/api/verify-data-patient', valueRequest)
+        const response = await axios.post(`http://${config.apiBaseUrl}/api/verify-data-patient`, valueRequest)
         setIsValid(response.data.valid)
         return response.data.valid
       } catch (error) {
@@ -120,7 +121,7 @@ const ContentPaciente = () => {
   
   const CreateRequestMutation = useMutation(
     async (valueRequest) => {
-      const response = await axios.post('http://localhost:8080/api/especialidades', valueRequest);
+      const response = await axios.post(`http://${config.apiBaseUrl}/api/especialidades`, valueRequest);
       const ids = response.data.ModelPaciente.map(item => item._id)
       setIDDoctor(ids)
       return response.data
@@ -128,7 +129,7 @@ const ContentPaciente = () => {
   )
   const getSintomasAndDoencas = useMutation(
     async (valueRequest) => {
-      const response = await axios.post('http://localhost:8080/api/get-sintomas-doencas', valueRequest)
+      const response = await axios.post(`http://${config.apiBaseUrl}/api/get-sintomas-doencas`, valueRequest)
       setSintomasAndDoencas(response.data.arr)
       return response.data
     }
@@ -178,7 +179,6 @@ const ContentPaciente = () => {
     }
   }
 
-  
   /*const PoolingStateDoctor = async (idDoctor) => {
     const response = await axios.get('http://localhost:8080/api/verify-status', { params: { id: idDoctor } });
     return response.data;

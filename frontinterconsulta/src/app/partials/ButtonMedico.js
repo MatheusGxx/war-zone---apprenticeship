@@ -7,6 +7,7 @@ import PopUpMedicoHoras from "./PopUpHorasMedico"
 import HorariosMedicos from "./HorariosMedico"
 import { useHistorico } from "../context/context"
 import secureLocalStorage from 'react-secure-storage'
+import { config } from '../config.js'
 
 export const ButtonMedico = () => {
   const [notLogged, setNotLogged] = useState(false);
@@ -49,7 +50,7 @@ export const ButtonMedico = () => {
   }, [verify.length, notLogged]);
 
   const CreateRequestMutation = useMutation(async () => {
-    const response = await axios.post(`http://localhost:8080/api/verify-medico/${id}`);
+    const response = await axios.post(`http://${config.apiBaseUrl}/api/verify-medico/${id}`);
     setVerifyMedico(response.data.QueryHorariosMedico);
     return response.data;
   })

@@ -4,13 +4,14 @@ import { useQuery } from '@tanstack/react-query'
 import Image from 'next/image'
 import Logo from '../public/logo.png'
 import DownloadingIcon from '@mui/icons-material/Downloading';
+import { config } from '../config.js'
 
 const Baixar = () =>{
   const[download, setDownload] = useState('')
 
   async function fetchDownload() {
     try {
-      const response = await axios.get('http://localhost:8080/api/get-planilha', {
+      const response = await axios.get(`http://${config.apiBaseUrl}/api/get-planilha`, {
         responseType: 'blob',
       });
 

@@ -6,6 +6,7 @@ import { ComponentDrawerMédico } from './ComponenteDrawerMedico'
 import { ComponentDrawerUnidade } from './ComponenteDrawerUnidade'
 import { ComponentDrawerPaciente } from './ComponenteDrawerPaciente'
 import secureLocalStorage from 'react-secure-storage'
+import { config } from '../config.js'
 
 
 const DrawerPerfil = ({ open, Close, Loggout, Image, Navigation}) => {

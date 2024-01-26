@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation'
 import FormularioMédico from '../partials/FormularioMédico.js'
 import FormularioUnidade from '../partials/FormularioUnidade'
 import FormularioPaciente from '../partials/FormularioPaciente'
+import { config } from '../config.js'
 
 
 const Obrigado = ({ImagemLateral, title, copy}) =>{

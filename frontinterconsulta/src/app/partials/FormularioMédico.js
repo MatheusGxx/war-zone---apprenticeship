@@ -16,6 +16,7 @@ import { RegisterFourDoctor } from "./RegisterFourDoctor.jsx";
 import { RegisterFiveDoctor } from './RegisterFiveDoctor.jsx'
 import { RegisterSixDoctor } from './RegisterSixDoctor.jsx'
 import { RegisterMédicoSeven } from './RegisterDoctorSeven.jsx'
+import { config } from '../config.js'
 
 const FormularioMédico = () => {
   const [open, setOpen] = useState(false);
@@ -67,7 +68,7 @@ const FormularioMédico = () => {
   const NavegationPage = useRouter()
 
   const CreateRequestMutation  = useMutation( async (valueRequest) => {
-    const response = await axios.post(`http://localhost:8080/api/obrigado/${parametrer}`, valueRequest)
+    const response = await axios.post(`http://${config.apiBaseUrl}/api/obrigado/${parametrer}`, valueRequest)
     return response.data
   },{
     onSuccess:(data) =>{
@@ -82,7 +83,7 @@ const FormularioMédico = () => {
   })
 
   const getListDoencasDoctor = useMutation( async (valueRequest) => {
-    const response = await axios.post(`http://localhost:8080/api/saved-list-doencas-and-photo-especiality`, valueRequest)
+    const response = await axios.post(`http://${config.apiBaseUrl}/api/saved-list-doencas-and-photo-especiality`, valueRequest)
     return response.data
   })
 

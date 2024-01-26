@@ -11,7 +11,8 @@ import Cards from 'react-credit-cards-2';
 import axios from 'axios'
 import 'react-credit-cards-2/dist/es/styles-compiled.css'
 import secureLocalStorage from 'react-secure-storage'
-import copyToClipboard from 'clipboard-copy';
+import copyToClipboard from 'clipboard-copy'
+import { config } from '../config.js'
 
 export const Checkout = ({ 
     FotoMedico,
@@ -74,7 +75,7 @@ export const Checkout = ({
 
   const PaymentDoctor = useMutation(
     async (valueRequest) => {
-      const request = await axios.post('http://localhost:8080/api/payment', valueRequest);
+      const request = await axios.post(`http://${config.apiBaseUrl}:8080/api/payment`, valueRequest);
       return request.data;
     },
     {

@@ -10,6 +10,7 @@ import { useTimer } from 'react-timer-hook'
 import { useRouter } from "next/navigation"
 import { UseReuniaoAcabando } from '../context/context'
 import { EndReuniaoDoctor } from './PopUpEndReuniaoDoctor'
+import { config } from '../config.js'
 
 const NavReunião = () => {
 

@@ -11,6 +11,7 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
 import axios from 'axios'
 import { useMutation } from '@tanstack/react-query'
 import secureLocalStorage from 'react-secure-storage'
+import { config } from '../config.js'
 
 export const ComponenteAudio = ({
   doenca,
@@ -46,7 +47,7 @@ export const ComponenteAudio = ({
   },[resumoIA, fraseDoença])
 
   const TranslationAudioToText = useMutation(formData => {
-    return axios.post('http://localhost:8080/api/audio-to-text-translation', formData);
+    return axios.post(`http://${config.apiBaseUrl}/api/audio-to-text-translation`, formData);
   }, {
     onSuccess: (data) => {
       if (data && data.data && data.data.success) {

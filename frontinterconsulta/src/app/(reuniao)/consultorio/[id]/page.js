@@ -12,6 +12,7 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import Link from 'next/link'
 import JaasComponent from '@/app/components/Jaas.jsx';
+import { config } from '@/app/config.js'
 
 function Room({ params }) {
   const [validator, setValidator] = useState('')
@@ -24,7 +25,7 @@ function Room({ params }) {
   const id = idLocal || '';
 
   const getValidatorLink = async () => {
-    const response = await axios.get(`http://localhost:8080/api/validator-link/${params.id}`);
+    const response = await axios.get(`http://${config.apiBaseUrl}/api/validator-link/${params.id}`);
     return response.data;
   };
 

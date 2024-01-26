@@ -4,6 +4,7 @@ import Image from 'next/image'
 import Logo from '../public/logo.png'
 import Logo2 from '../public/Logo2.png'
 import secureLocalStorage from 'react-secure-storage'
+import { config } from '../config.js'
 
 export const PopUpEndReunião = ({PersonaNaoclicou, onClose}) => {
 

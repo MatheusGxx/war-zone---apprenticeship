@@ -3,6 +3,7 @@ import DrawerPerfil from '../partials/DrawerNav'
 import secureLocalStorage from 'react-secure-storage'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 import Avatar from '@mui/material/Avatar'
+import { config } from '../config.js'
 
 export const NavMédico = ({ 
   OpenDrawerMedico, 
@@ -24,12 +25,12 @@ export const NavMédico = ({
                 className='mt-[-5px] relative'
                 onClick={OpenDrawerMedico}
                  >
-                <Avatar alt="Foto Médico" src={`http://localhost:8080/${FotoMedico}`} className='cursor-pointer'/>
+                <Avatar alt="Foto Médico" src={`http://${config.apiBaseUrl}/${FotoMedico}`} className='cursor-pointer'/>
 
                 <DrawerPerfil
                  open={openDrawer}
                  Close={OpenDrawerMedico}
-                 Image={`http://localhost:8080/${FotoMedico}`}
+                 Image={`http://${config.apiBaseUrl}/${FotoMedico}`}
                  Loggout={LoggoutDrawerMedico}
                  Navigation={HandleNavigationDrawer}n
                  />

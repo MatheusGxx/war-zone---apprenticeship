@@ -33,7 +33,8 @@ import { PopUpAviso } from '../partials/popUpAviso'
 import { NotDateConsulta } from '../partials/NotConsulta'
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf'
 import { FormControl, InputLabel, Select, MenuItem } from "@mui/material"
-import { saveAs } from 'file-saver';
+import { saveAs } from 'file-saver'
+import { config } from '../config.js'
 
 export const MainAgenda = () => {
 
@@ -99,7 +100,7 @@ export const MainAgenda = () => {
   const DeleteCasoClinico = useMutation(
     async (body) => {
       try {
-        const response = await axios.delete('http://localhost:8080/api/delete-caso-clinico', { data: body });
+        const response = await axios.delete(`http://${config.apiBaseUrl}/api/delete-caso-clinico`, { data: body });
         return response.data; 
       } catch (error) {
         console.error('Error during delete mutation:', error);
