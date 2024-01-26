@@ -54,10 +54,8 @@
       restart: always
       ports:
         - "80:80" 
-        - "443:443"
       volumes:
-        - ./nginx.conf:/etc/nginx/conf/:ro
-        - ./certbot/www/:/var/www/certbot/:ro
+        - ./nginx.conf:/etc/nginx/conf/
       depends_on:
         - backfeatures
         - back-a
@@ -65,15 +63,6 @@
       networks:
         - net-interconsulta
       
-    certbot:
-      image: certbot/certbot:latest
-      volumes:
-        - ./certbot/www/:/var/www/certbot/:ro
-        - ./certbot/conf/:/etc/letsencrypt/:rw
-      networks:
-        - net-interconsulta
-        
-
   networks:
     net-interconsulta:
       driver: bridge
