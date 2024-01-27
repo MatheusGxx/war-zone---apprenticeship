@@ -49,19 +49,20 @@
         - net-interconsulta
     
     nginx:
-      image: nginx
-      container_name: nginx-container
-      restart: always
-      ports:
-        - "80:80" 
-      volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/nginx.conf
-      depends_on:
-        - backfeatures
-        - back-a
-        - frontend
-      networks:
-        - net-interconsulta
+      build:
+      context: .
+      dockerfile: Dockerfile-reverseProxy
+    container_name: nginx-container
+    restart: always
+    ports:
+      - "80:80" 
+    depends_on:
+      - backfeatures
+      - back-a
+      - frontend
+    networks:
+      - net-interconsulta
+
       
   networks:
     net-interconsulta:
