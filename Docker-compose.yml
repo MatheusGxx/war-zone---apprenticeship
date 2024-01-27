@@ -63,15 +63,17 @@ services:
     networks:
       - net-interconsulta
     volumes:
-      - /var/www/html
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
 
   certbot:
     image: certbot/certbot
     container_name: certbot
     restart: unless-stopped
-    command: certonly --webroot --webroot-path=/var/www/html --email matheussoaresfff02@gmail.com --agree-tos -d interconsulta.org -d www.interconsulta.org
-    volumes:
-      - /var/www/html:/var/www/html
+    command: certonly --webroot -w /var/www/certbot --force-renewal --email matheussoaresfff02@gmail.com -d www.interconsulta.org -d interconsulta.org --agree-tos
+    volumes: 
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
     depends_on:
       - nginx
     networks:
