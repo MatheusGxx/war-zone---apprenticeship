@@ -63,6 +63,18 @@ services:
     networks:
       - net-interconsulta
 
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    restart: unless-stopped
+    command: certonly --webroot --webroot-path=/var/www/html --email matheussoaresfff02@gmail.com --agree-tos -d interconsulta.org -d www.interconsulta.org
+    volumes:
+      - /var/www/html:/var/www/html
+    depends_on:
+      - nginx
+    networks:
+      - net-interconsulta
+
 networks:
   net-interconsulta:
     driver: bridge
