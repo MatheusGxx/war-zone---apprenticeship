@@ -62,6 +62,8 @@ services:
       - frontend
     networks:
       - net-interconsulta
+    volumes:
+      - /var/www/html
 
   certbot:
     image: certbot/certbot
