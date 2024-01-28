@@ -194,7 +194,7 @@ export const CasosClinico = ({
                   <div className="w-full flex flex-col justify-center items-center">
                     <div className="flex justify-center items-center gap-5">
                     <Image
-                        src={`http://localhost:8080/${Medico.isSuccess ? Medico.data.FotoMédico : ''}`}
+                        src={`http://${config.apiBaseUrl}/${Medico.isSuccess ? Medico.data.FotoMédico : ''}`}
                         alt="Foto do Médico"
                         width={50}
                         height={50}

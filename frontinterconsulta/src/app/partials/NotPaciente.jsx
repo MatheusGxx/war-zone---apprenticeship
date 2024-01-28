@@ -36,7 +36,7 @@ export const NotPaciente = ({
   const Router = useRouter()
 
   const GenerateLink = useMutation(async (valueRequest) => {
-    const response = await axios.post('http://localhost:8080/api/generate-link', valueRequest)
+    const response = await axios.post(`http://${config.apiBaseUrl}/api/generate-link`, valueRequest)
     return response.data
   })
 

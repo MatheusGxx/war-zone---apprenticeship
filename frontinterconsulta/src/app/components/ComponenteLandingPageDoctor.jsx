@@ -81,12 +81,12 @@ export const ComponentLandingPageDoctor = ({ params }) => {
   }
 
   const RequestRecomendaçoes = async () =>{
-    const response = await axios.get(`http://localhost:8080/api/get-recomendacoes/${params}`)
+    const response = await axios.get(`http://${config.apiBaseUrl}/api/get-recomendacoes/${params}`)
     return response.data.QueryEspecialidadesDB
   }
 
   const RequestPaciente = async () =>{
-    const response = await axios.get(`http://localhost:8080/api/get-paciente/${id}`)
+    const response = await axios.get(`http://${config.apiBaseUrl}/api/get-paciente/${id}`)
     return response.data.ModelPaciente 
   }
 
@@ -199,7 +199,7 @@ export const ComponentLandingPageDoctor = ({ params }) => {
       {isSuccess ? 
       <>
       <div className='flex flex-col w-full justify-center items-center gap-2'>
-      <Image src={`http://localhost:8080/${ModelEspecialista.Foto}`}
+      <Image src={`http://${config.apiBaseUrl}/${ModelEspecialista.Foto}`}
          alt="Foto do Médico" 
          width={450}  
          height={450}
@@ -243,7 +243,7 @@ export const ComponentLandingPageDoctor = ({ params }) => {
 
    {SucessPaciente ? 
     <img
-    src={`http://localhost:8080/${ModelPaciente.GifDoenca}`} 
+    src={`http://${config.apiBaseUrl}/${ModelPaciente.GifDoenca}`} 
     alt="Gif Doença"
     width={500} 
     height={500}
@@ -295,7 +295,7 @@ export const ComponentLandingPageDoctor = ({ params }) => {
          <div className="flex flex-col gap-5 justify-center items-center">
           {isSuccess ?
              <div className='border-blue-500 border-4 rounded-full w-20'>  
-             <Image src={`http://localhost:8080/${ModelEspecialista.FotoEspecialidade}`}
+             <Image src={`http://${config.apiBaseUrl}/${ModelEspecialista.FotoEspecialidade}`}
                 alt="Foto do Médico" 
                 width={100}
                 height={100}
@@ -384,7 +384,7 @@ export const ComponentLandingPageDoctor = ({ params }) => {
                   <h1>  {data.AvaliacoesText} </h1>
                   <div className='flex gap-5'>
                     <Image  
-                      src={`http://localhost:8080/${data.Foto}`} 
+                      src={`http://${config.apiBaseUrl}/${data.Foto}`} 
                       height={50} 
                       width={50} 
                       alt="Logo Interconsulta" 

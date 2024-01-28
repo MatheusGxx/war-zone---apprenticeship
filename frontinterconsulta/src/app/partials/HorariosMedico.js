@@ -275,7 +275,7 @@ function HorariosMedicos({ onClose }) {
                 <MenuItem key={key} value={intervalos._id}>
                   <div className="flex justify-center items-center gap-10 w-full">
                     {intervalos.FotoPaciente ?
-                      <Image src={`http://localhost:8080/${intervalos.FotoPaciente}`} alt="Foto do Paciente" width={50} height={50} className="rounded-full" /> :
+                      <Image src={`http://${config.apiBaseUrl}/${intervalos.FotoPaciente}`} alt="Foto do Paciente" width={50} height={50} className="rounded-full" /> :
                       <AccountCircleIcon color="primary" fontSize='large'/>
                     }
                     <p>{intervalos.Intervalo}</p>

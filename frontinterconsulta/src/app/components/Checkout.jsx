@@ -125,7 +125,7 @@ export const Checkout = ({
     return(
         <>
           <div className="flex justify-center items-center flex-col gap-4">
-           <Image src={`http://localhost:8080/${FotoMedico}`}
+           <Image src={`http://${config.apiBaseUrl}/${FotoMedico}`}
               alt="Foto do Médico" 
               width={200}
               height={200}

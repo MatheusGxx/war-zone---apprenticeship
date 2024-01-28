@@ -180,7 +180,7 @@ const ContentPaciente = () => {
   }
 
   /*const PoolingStateDoctor = async (idDoctor) => {
-    const response = await axios.get('http://localhost:8080/api/verify-status', { params: { id: idDoctor } });
+    const response = await axios.get('http://${config.apiBaseUrl}/api/verify-status', { params: { id: idDoctor } });
     return response.data;
   };
   
@@ -249,7 +249,7 @@ const ContentPaciente = () => {
                       )} 
                      className="cursor-pointer flex flex-col justify-center items-center border-blue-500 border-2 rounded-lg p-2">
                       <div className="sm:flex sm:justify-center mb-4">
-                        <Image src={`http://localhost:8080/${medico.Foto}`} alt="Foto do Médico" width={150} height={150} className="sm:rounded-full rounded-xl" />
+                        <Image src={`http://${config.apiBaseUrl}/${medico.Foto}`} alt="Foto do Médico" width={150} height={150} className="sm:rounded-full rounded-xl" />
                       </div>
                       <div className="flex gap-3 justify-center items-center">
                         <p className="sm:text-center text-center text-blue-500 font-bold">{medico.NomeEspecialista}</p>
@@ -313,7 +313,7 @@ const ContentPaciente = () => {
                       )} 
                      className="cursor-pointer flex flex-col justify-center items-center">
                       <div className="sm:flex sm:justify-center mb-4">
-                        <Image src={`http://localhost:8080/${medico.Foto}`} alt="Foto do Médico" width={150} height={150} className="sm:rounded-full rounded-xl" />
+                        <Image src={`http://${config.apiBaseUrl}/${medico.Foto}`} alt="Foto do Médico" width={150} height={150} className="sm:rounded-full rounded-xl" />
                       </div>
                       <div className="flex gap-3 justify-center items-center">
                         <p className="sm:text-center text-center text-blue-500 font-bold">{medico.NomeEspecialista}</p>

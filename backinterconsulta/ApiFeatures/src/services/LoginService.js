@@ -114,8 +114,11 @@ export const Register = async (body, res) =>{
           IdentificadorMedico,
           route
         } 
-
-       await axios.post('http://back-a:8081/api/automatic-whatsapp', idMédico)
+        
+        //Production
+        await axios.post('http://back-a:8081/api/automatic-whatsapp', idMédico)
+        //Development
+       //await axios.post('http://localhost:8081/api/automatic-whatsapp', idMédico)
       }
       break;
 
@@ -141,8 +144,11 @@ export const Register = async (body, res) =>{
          IdentificadorPaciente,
          route
        }
-
+       
+       //Production
        await axios.post('http://back-a:8081/api/automatic-whatsapp', idPaciente)
+       //Development
+       //await axios.post('http://localhost:8081/api/automatic-whatsapp', idPaciente)
 
       }
       break;
@@ -363,7 +369,7 @@ export const RegisterEnd = async (body, params, file, res) =>{
             route
           }
 
-          //await axios.post('http://back-a:8081/api/automatic-whatsapp', dataMedico)
+          await axios.post('http://back-a:8081/api/automatic-whatsapp', dataMedico)
         
           }catch(err){
             console.log(err)

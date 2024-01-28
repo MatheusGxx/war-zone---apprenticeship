@@ -78,7 +78,7 @@ function PopUpMedicoHoras({ onClose }) {
   
   const DeleteMutationRequest = useMutation(
     async () => {
-      const request = await axios.delete(`http://localhost:8080/api/delete-horarios/${VerifyID}/${idHorario}`)
+      const request = await axios.delete(`http://${config.apiBaseUrl}/api/delete-horarios/${VerifyID}/${idHorario}`)
       setMensagem(request.data.mensagem)
       return request.data.mensagem
     },
@@ -91,7 +91,7 @@ function PopUpMedicoHoras({ onClose }) {
 
   const DeleteIntervalRequest = useMutation(
     async ({ id, idHorarioo }) => {
-      const request = await axios.delete(`http://localhost:8080/api/delete-intervalo/${id}/${idHorarioo}`);
+      const request = await axios.delete(`http://${config.apiBaseUrl}/api/delete-intervalo/${id}/${idHorarioo}`);
       return request.data
     },
     {
@@ -102,7 +102,7 @@ function PopUpMedicoHoras({ onClose }) {
   )
 
   const RequestGetHistorico = async () => {
-    const response = await axios.get(`http://localhost:8080/api/get-horarios/${VerifyID}`);
+    const response = await axios.get(`http://${config.apiBaseUrl}/api/get-horarios/${VerifyID}`);
     setHistorico(response.data.QueryHistorico)
     return response.data.QueryHistorico
   };
@@ -282,7 +282,7 @@ function PopUpMedicoHoras({ onClose }) {
                     <MenuItem key={key} value={intervalos._id}>
                       <div className="flex justify-center items-center gap-10 w-full">
                         {intervalos.FotoPaciente ?
-                          <Image src={`http://localhost:8080/${intervalos.FotoPaciente}`} alt="Foto do Paciente" width={50} height={50} className="rounded-full" /> :
+                          <Image src={`http://${config.apiBaseUrl}/${intervalos.FotoPaciente}`} alt="Foto do Paciente" width={50} height={50} className="rounded-full" /> :
                           <AccountCircleIcon color="primary" fontSize='large'/>
                         }
                         <p>{intervalos.Intervalo}</p>

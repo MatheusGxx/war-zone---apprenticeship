@@ -90,7 +90,7 @@ const ContentMédico = () => {
                 >
                   <div className=" flex justify-center items-center sm:flex sm:justify-center mb-2 sm:mb-0">
                     <Image
-                      src={`http://localhost:8080/${casosClinicosData.Historico[0].FotoAreaAtuacao}`}
+                      src={`http://${config.apiBaseUrl}/${casosClinicosData.Historico[0].FotoAreaAtuacao}`}
                       alt="Foto do Caso Clinico"
                       width={200}
                       height={200}
