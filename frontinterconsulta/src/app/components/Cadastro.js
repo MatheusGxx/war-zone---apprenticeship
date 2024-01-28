@@ -26,7 +26,7 @@ const Cadastro = ({ title, OneRoute, SecondRoute, TreeRoute, apelido, mensagem})
 
   const CreateRequestMutation = useMutation(
     async (valueRequest) => {
-      const response = await axios.post(`http://${config.apiBaseUrl}/api/register`, valueRequest);
+      const response = await axios.post(`https://${config.apiBaseUrl}/api/register`, valueRequest);
       return response.data._id
     },
     {
