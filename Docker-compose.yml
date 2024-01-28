@@ -21,6 +21,8 @@ services:
       - redis
     networks:
       - net-interconsulta
+    volumes:
+      - backfeatures-uploads:/app/uploads
 
   back-a:
     build:
@@ -77,6 +79,9 @@ services:
       - nginx
     networks:
       - net-interconsulta
+
+volumes:
+  backfeatures-uploads:
 
 networks:
   net-interconsulta:
