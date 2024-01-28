@@ -71,7 +71,6 @@ services:
   certbot:
     image: certbot/certbot  
     container_name: certbot
-    command: certonly --webroot -w /var/www/certbot --force-renewal --email matheussoaresfff02@gmail.com -d www.agendamedica.digital -d  agendamedica.digital --agree-tos
     volumes: 
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
