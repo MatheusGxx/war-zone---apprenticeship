@@ -69,7 +69,6 @@ services:
   certbot:
     image: certbot/certbot  
     container_name: certbot
-    #restart: unless-stopped
     command: certonly --webroot -w /var/www/certbot --force-renewal --email matheussoaresfff02@gmail.com -d www.interconsulta.org -d interconsulta.org --agree-tos
     volumes: 
       - ./certbot/conf:/etc/letsencrypt
