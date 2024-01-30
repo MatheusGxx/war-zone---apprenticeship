@@ -20,6 +20,18 @@ export default function RootLayout({ children }) {
             gtag('config', 'G-9BND46GSNV');
           `}
         </script>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=AW-11476579486"></script>
+        <script>
+          {
+            `
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+          
+            gtag('config', 'AW-11476579486');
+            `
+          }
+        </script>
       </head>
       <body className="background">
         <div>
