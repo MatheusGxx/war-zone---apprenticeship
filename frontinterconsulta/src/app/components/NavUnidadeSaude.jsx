@@ -33,12 +33,12 @@ export const NavUnidadeSaude = ({
                 className='mt-[-5px] relative cursor-pointer'
                 onClick={OpenDrawerMedico}
                  >
-                <Avatar alt="Foto Médico" src={`http://${config.apiBaseUrl}/${FotoUnidade}`} className='cursor-pointer'/>
+                <Avatar alt="Foto Médico" src={`${config.apiBaseUrl}/${FotoUnidade}`} className='cursor-pointer'/>
 
                 <DrawerPerfil
                  open={openDrawer}
                  Close={OpenDrawerMedico}
-                 Image={`http://${config.apiBaseUrl}/${FotoUnidade}`}
+                 Image={`${config.apiBaseUrl}/${FotoUnidade}`}
                  Loggout={LoggoutDrawerMedico}
                  Navigation={HandleNavigationDrawer}
                  />
@@ -50,12 +50,12 @@ export const NavUnidadeSaude = ({
                 className='mt-[-5px] relative cursor-pointer'
                 onClick={OpenDrawerMedico}
                  >
-                <Avatar alt="Foto Médico" src={`http://${config.apiBaseUrl}/${FotoPaciente}`} className='cursor-pointer'/>
+                <Avatar alt="Foto Médico" src={`${config.apiBaseUrl}/${FotoPaciente}`} className='cursor-pointer'/>
 
                 <DrawerPerfil
                  open={openDrawer}
                  Close={OpenDrawerMedico}
-                 Image={`http://${config.apiBaseUrl}/${FotoUnidade}`}
+                 Image={`${config.apiBaseUrl}/${FotoUnidade}`}
                  Loggout={LoggoutDrawerMedico}
                  Navigation={HandleNavigationDrawer}
                  />

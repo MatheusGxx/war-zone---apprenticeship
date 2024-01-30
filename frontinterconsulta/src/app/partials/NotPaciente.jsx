@@ -36,7 +36,7 @@ export const NotPaciente = ({
   const Router = useRouter()
 
   const GenerateLink = useMutation(async (valueRequest) => {
-    const response = await axios.post(`http://${config.apiBaseUrl}/api/generate-link`, valueRequest)
+    const response = await axios.post(`${config.apiBaseUrl}/api/generate-link`, valueRequest)
     return response.data
   })
 
@@ -122,7 +122,7 @@ export const NotPaciente = ({
           {tempoFaltando === 'Consulta Expirada' ? 
             <p> {NomePaciente} sua consulta esta Expirada </p> : 
             tempoFaltando  ?
-            <p>{NomePaciente} faltam {tempoFaltando} minutos, para a sua consulta</p>  :
+            <p>{NomePaciente} falta {tempoFaltando} minutos, para a sua consulta</p>  :
             consultaoOpen ? <p> {NomePaciente} {consultaoOpen} </p> :
              `Ir para a consulta com ${NomeMedico}`
             }

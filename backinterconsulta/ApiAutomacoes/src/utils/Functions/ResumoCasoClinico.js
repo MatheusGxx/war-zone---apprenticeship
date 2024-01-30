@@ -34,10 +34,11 @@ export const ResumoCasoClinico = async (
   const ResumoCasoClinico = FraseCasoClinico.content
   console.log(`Resumo do Caso Clinico: ${ResumoCasoClinico}`)
 
-  const idHistorico = result.Historico[result.Historico.length - 1]._id;
-
+  const idHistorico = result.Historico[result.Historico.length - 1]._id
+  console.log(idHistorico)
+  
   if (ResumoCasoClinico) {
-    await models.ModelRegisterPaciente.findOneAndUpdate(
+    const updateCasoClinico = await models.ModelRegisterPaciente.findOneAndUpdate(
       { 'Historico._id': idHistorico },
       {
         $set: {
@@ -47,6 +48,7 @@ export const ResumoCasoClinico = async (
       {
         new: true,
       }
-    );
+    )
+    console.log(updateCasoClinico)
   }
 }

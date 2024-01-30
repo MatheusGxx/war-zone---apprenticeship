@@ -50,7 +50,7 @@ export const ButtonMedico = () => {
   }, [verify.length, notLogged]);
 
   const CreateRequestMutation = useMutation(async () => {
-    const response = await axios.post(`http://${config.apiBaseUrl}/api/verify-medico/${id}`);
+    const response = await axios.post(`${config.apiBaseUrl}/api/verify-medico/${id}`);
     setVerifyMedico(response.data.QueryHorariosMedico);
     return response.data;
   })

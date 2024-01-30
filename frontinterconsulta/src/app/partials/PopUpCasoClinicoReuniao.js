@@ -66,7 +66,7 @@ export const CasosClinicoReuniao = ({
 
   const Paciente = useMutation(async (body) => {
     try {
-      const request = await axios.post(`http://${config.apiBaseUrl}/api/get-historic-patient`, body)
+      const request = await axios.post(`${config.apiBaseUrl}/api/get-historic-patient`, body)
        setNomePaciente(request.data.Pacientee.nome)
        setIdade(request.data.Pacientee.Idade)
        setSexo(request.data.Pacientee.Genero)

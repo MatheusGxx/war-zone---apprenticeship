@@ -58,12 +58,12 @@ const ContentUnidade = () => {
   const Route = usePathname()
 
   const CreateRequestMutation = useMutation(async (valueRequest) => {
-    const response = await axios.post(`http://${config.apiBaseUrl}/api/process-planilha/${id}`, valueRequest)
+    const response = await axios.post(`${config.apiBaseUrl}/api/process-planilha/${id}`, valueRequest)
     return response.data
   })
 
   const NotificationDoctor = useMutation(async (valueRequest) => {
-    const request = await axios.post(`http://${config.apiBaseUrl}/api/agendamento-unidade-de-saude`, valueRequest)
+    const request = await axios.post(`${config.apiBaseUrl}/api/agendamento-unidade-de-saude`, valueRequest)
     return request.data
   })
     

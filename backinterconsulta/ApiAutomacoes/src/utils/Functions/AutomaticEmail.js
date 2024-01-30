@@ -6,9 +6,9 @@ const Transporter = nodemailer.createTransport({
         type: 'OAuth2',
         user: 'interconsulta.org@gmail.com',
         pass: '@InterConsulta2024',
-        clientId: '344062049191-7okfjjoeq54l8k8ekv0e4lleb75muv31.apps.googleusercontent.com',
-        clientSecret: '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',
-        refreshToken: '1//04mpC4q1QMJvtCgYIARAAGAQSNwF-L9Ir6DoMY6BXsBFaKsjQ-YugmG3fazaFOsdCoFKYDMLgzeqiHGuFDZZi87vFJRkIKCEf_bs'
+        clientId: '344062049191-m8scc33258dk9j18vct372cgv9o6m40a.apps.googleusercontent.com',
+        clientSecret: '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',
+        refreshToken: '1//04wlLgCOD6CflCgYIARAAGAQSNwF-L9IrTa-_RI7EGqlFEvBdZiGPxxFd9E4b0B48oHytrHsd1rhyB4Y7-XTLc-P9cbN8NeYlpnE'
     }
 })
 

@@ -111,7 +111,7 @@ const NavReunião = () => {
           <div  className='mt-[-10px] cursor-pointer flex justify-center gap-8 mr-5' >
               <Avatar 
               style={{ width: 40, height: 40 }} 
-              src={`http://${config.apiBaseUrl}/${FotoMedico ? FotoMedico : FotoPaciente ? FotoPaciente : FotoUnidade ? FotoUnidade : null}`}/>
+              src={`${config.apiBaseUrl}/${FotoMedico ? FotoMedico : FotoPaciente ? FotoPaciente : FotoUnidade ? FotoUnidade : null}`}/>
             <div className='flex justify-center items-center'>
                <h1 className='font-bold'> {NomeMédico ? NomeMédico : NomePaciente ? NomePaciente : null} </h1>
             </div>

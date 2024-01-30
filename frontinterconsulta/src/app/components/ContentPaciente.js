@@ -38,7 +38,7 @@ const ContentPaciente = () => {
   const queryClient = useQueryClient()
   const { registerEndOk } = useEndRegister()
 
-  const DoencaLocal = typeof window !== 'undefined' ? secureLocalStorage.getItem('Doenca') : false
+  const DoencaLocal = secureLocalStorage.getItem('Doenca') 
 
   const DoencaLabel = DoencaLocal ? DoencaLocal : 'Doenças e Sintomas'
 
@@ -46,7 +46,7 @@ const ContentPaciente = () => {
 
   const Router = useRouter()
 
-  const idLocal = typeof window !== 'undefined' ? secureLocalStorage.getItem('id') : false
+  const idLocal =  secureLocalStorage.getItem('id') 
 
   const id = idLocal || ''
 
@@ -55,7 +55,7 @@ const ContentPaciente = () => {
   const VerifyDataPatient = useMutation(
     async (valueRequest) => {
       try {
-        const response = await axios.post(`http://${config.apiBaseUrl}/api/verify-data-patient`, valueRequest)
+        const response = await axios.post(`${config.apiBaseUrl}/api/verify-data-patient`, valueRequest)
         setIsValid(response.data.valid)
         return response.data.valid
       } catch (error) {
@@ -121,7 +121,7 @@ const ContentPaciente = () => {
   
   const CreateRequestMutation = useMutation(
     async (valueRequest) => {
-      const response = await axios.post(`http://${config.apiBaseUrl}/api/especialidades`, valueRequest);
+      const response = await axios.post(`${config.apiBaseUrl}/api/especialidades`, valueRequest);
       const ids = response.data.ModelPaciente.map(item => item._id)
       setIDDoctor(ids)
       return response.data
@@ -129,7 +129,7 @@ const ContentPaciente = () => {
   )
   const getSintomasAndDoencas = useMutation(
     async (valueRequest) => {
-      const response = await axios.post(`http://${config.apiBaseUrl}/api/get-sintomas-doencas`, valueRequest)
+      const response = await axios.post(`${config.apiBaseUrl}/api/get-sintomas-doencas`, valueRequest)
       setSintomasAndDoencas(response.data.arr)
       return response.data
     }
@@ -180,7 +180,7 @@ const ContentPaciente = () => {
   }
 
   /*const PoolingStateDoctor = async (idDoctor) => {
-    const response = await axios.get('http://${config.apiBaseUrl}/api/verify-status', { params: { id: idDoctor } });
+    const response = await axios.get('${config.apiBaseUrl}/api/verify-status', { params: { id: idDoctor } });
     return response.data;
   };
   
@@ -249,7 +249,7 @@ const ContentPaciente = () => {
                       )} 
                      className="cursor-pointer flex flex-col justify-center items-center border-blue-500 border-2 rounded-lg p-2">
                       <div className="sm:flex sm:justify-center mb-4">
-                        <Image src={`http://${config.apiBaseUrl}/${medico.Foto}`} alt="Foto do Médico" width={150} height={150} className="sm:rounded-full rounded-xl" />
+                        <Image src={`${config.apiBaseUrl}/${medico.Foto}`} alt="Foto do Médico" width={150} height={150} className="sm:rounded-full rounded-xl" />
                       </div>
                       <div className="flex gap-3 justify-center items-center">
                         <p className="sm:text-center text-center text-blue-500 font-bold">{medico.NomeEspecialista}</p>
@@ -313,7 +313,7 @@ const ContentPaciente = () => {
                       )} 
                      className="cursor-pointer flex flex-col justify-center items-center">
                       <div className="sm:flex sm:justify-center mb-4">
-                        <Image src={`http://${config.apiBaseUrl}/${medico.Foto}`} alt="Foto do Médico" width={150} height={150} className="sm:rounded-full rounded-xl" />
+                        <Image src={`${config.apiBaseUrl}/${medico.Foto}`} alt="Foto do Médico" width={150} height={150} className="sm:rounded-full rounded-xl" />
                       </div>
                       <div className="flex gap-3 justify-center items-center">
                         <p className="sm:text-center text-center text-blue-500 font-bold">{medico.NomeEspecialista}</p>

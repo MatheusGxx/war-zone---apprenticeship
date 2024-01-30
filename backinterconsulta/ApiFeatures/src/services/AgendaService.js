@@ -100,8 +100,11 @@ export const SavedConsultaPacienteParticular = async (body, res) => {
        FimAgendamento: Fim,
        NomePaciente: getPaciente.nome
     }
-
-    await axios.post('http://back-a:8081/api/automatic-whatsapp', body)
+    
+    //Production
+    axios.post('http://back-a:8081/api/automatic-whatsapp', body)
+    //Development
+    //axios.post('http://localhost:8081/api/automatic-whatsapp', body)
 
    }catch(e){
     throw new Error(e)
@@ -481,8 +484,11 @@ export const UpdateConsulta = async (body, res) => {
           FimAceitouConsulta: Fim[0],
           route: '/confirmaçao-consulta-medico'
         }
-
-        await axios.post('http://back-a:8081/api/automatic-whatsapp', body)
+        
+        //Production
+        axios.post('http://back-a:8081/api/automatic-whatsapp', body)
+       //Development
+       //axios.post('http://localhost:8081/api/automatic-whatsapp', body)
       } else {
         res.status(500).json({ message: 'Erro ao fazer Atualização' });
       }
@@ -613,8 +619,11 @@ export const DeleteCasoClinico = async (body, res) => {
           DoencaRejeitouConsulta: Doenca,
           route: '/rejeicao-consulta-medico'
         }
-  
-        await axios.post('http://back-a:8081/api/automatic-whatsapp', body)
+        
+        //Production
+        axios.post('http://back-a:8081/api/automatic-whatsapp', body)
+       //Development
+      //axios.post('http://localhost:8081/api/automatic-whatsapp', body)
       }
      }
   }catch(error){
@@ -685,8 +694,10 @@ export const DeleteCasoClinicoPacienteParticular = async (body, res) => {
          route: '/exclusion-consulta-paciente'
          }
    
-         
-       await axios.post('http://back-a:8081/api/automatic-whatsapp', body)
+      //Production
+      axios.post('http://back-a:8081/api/automatic-whatsapp', body)
+      //Development
+      //axios.post('http://localhost:8081/api/automatic-whatsapp', body)
 
     } else {
       res.status(404).json({ message: 'Erro ao excluir consulta' });
@@ -789,10 +800,8 @@ export const getLaudo = async (body, res) => {
       const Data = consulta.Data;
       const NomePaciente = consulta.Solicitante;
   
-      // Enviar o PDF como base64 para garantir a transmissão correta
       const pdfBase64 = consulta.PDF.toString('base64');
   
-      // Criar um objeto que contém o PDF e informações adicionais
       const responseData = {
         pdfBase64,
         NomePaciente,

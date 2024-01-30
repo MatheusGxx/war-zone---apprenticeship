@@ -51,7 +51,7 @@ export const AgendamentoComponente = ({
 
 
   const TranslationAudioToText = useMutation(formData => {
-    return axios.post(`http://${config2.apiBaseUrl}/api/audio-to-text-translation`, formData);
+    return axios.post(`${config2.apiBaseUrl}/api/audio-to-text-translation`, formData);
   }, {
     onSuccess: (data) => {
       if (data && data.data && data.data.success) {
@@ -215,7 +215,7 @@ const IniciarGravacao = async () => {
               
              :
              <div className='flex gap-10'>
-             <Avatar alt="Foto Médico" src={`http://${config2.apiBaseUrl}/${FotoPaciente}`} />
+             <Avatar alt="Foto Médico" src={`${config2.apiBaseUrl}/${FotoPaciente}`} />
              <div className='flex justify-center items-center'>
                <p className='sm:whitespace-pre-wrap'>
                {`Conte quais são os Sintomas que ${doenca} esta te causando`} <br/>

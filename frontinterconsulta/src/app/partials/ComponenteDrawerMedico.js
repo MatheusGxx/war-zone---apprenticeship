@@ -32,7 +32,7 @@ export const ComponentDrawerMédico = ({ Navigation, Loggout, Image }) =>{
   },[])
 
   const getSlug = useMutation(async() =>{
-  const request = await axios.post(`http://${config.apiBaseUrl}/api/get-slug/${id}`)
+  const request = await axios.post(`${config.apiBaseUrl}/api/get-slug/${id}`)
   return request.data.SlugMedico
   })
 

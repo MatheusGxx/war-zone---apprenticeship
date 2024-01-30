@@ -65,7 +65,7 @@ const workerResumo = new Worker('Resumo', async job => {
         )
     
      
-     console.log(`Dados do Worker do Resumo: ${job.data}`)
+     console.log(job.data)
     }catch(error){
         console.error('Erro ao processar o Worker do Resumo')
     }

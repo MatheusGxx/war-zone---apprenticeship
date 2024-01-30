@@ -100,7 +100,7 @@ export const MainAgenda = () => {
   const DeleteCasoClinico = useMutation(
     async (body) => {
       try {
-        const response = await axios.delete(`http://${config.apiBaseUrl}/api/delete-caso-clinico`, { data: body });
+        const response = await axios.delete(`${config.apiBaseUrl}/api/delete-caso-clinico`, { data: body });
         return response.data; 
       } catch (error) {
         console.error('Error during delete mutation:', error);
@@ -115,7 +115,7 @@ export const MainAgenda = () => {
   )
 
   const UpdateConsulta = useMutation(async (valueRequest) => {
-    const response = await axios.post(`http://${config.apiBaseUrl}/api/update-consulta`, valueRequest)
+    const response = await axios.post(`${config.apiBaseUrl}/api/update-consulta`, valueRequest)
     return response.data
   },
   {
@@ -127,7 +127,7 @@ export const MainAgenda = () => {
   const DeleteCasoClinicoPacienteParticular = useMutation(
     async (body) => {
       try {
-        const response = await axios.delete(`http://${config.apiBaseUrl}/api/delete-caso-clinico-paciente-particular`,{ data: body })
+        const response = await axios.delete(`${config.apiBaseUrl}/api/delete-caso-clinico-paciente-particular`,{ data: body })
         return response.data; 
       } catch (error) {
         console.error('Error during delete mutation Paciente Particular:', error);
@@ -142,12 +142,12 @@ export const MainAgenda = () => {
   )
 
   const GenerateLink = useMutation(async (valueRequest) => {
-    const response = await axios.post(`http://${config.apiBaseUrl}/api/generate-link`, valueRequest)
+    const response = await axios.post(`${config.apiBaseUrl}/api/generate-link`, valueRequest)
     return response.data
   })
 
   const getLaudo = useMutation(async (valueRequest) => {
-    const response = await axios.post(`http://${config.apiBaseUrl}/api/get-laudo`, valueRequest, {
+    const response = await axios.post(`${config.apiBaseUrl}/api/get-laudo`, valueRequest, {
       responseType: 'json',
     });
   
@@ -168,7 +168,7 @@ export const MainAgenda = () => {
 
   const RequestGetConsultas = async () => {
     try{
-      const request = await axios.get(`http://${config.apiBaseUrl}/api/get-consultas/${id}`)
+      const request = await axios.get(`${config.apiBaseUrl}/api/get-consultas/${id}`)
       return request.data
     }catch(e){
       throw new Error('Error Fetching Data')
@@ -182,7 +182,7 @@ export const MainAgenda = () => {
   )
 
   const RequestGetConsultasConfirmadas = async (id) =>{
-    const response = await axios.get(`http://${config.apiBaseUrl}/api/get-consultas-links-doctor/${id}`)
+    const response = await axios.get(`${config.apiBaseUrl}/api/get-consultas-links-doctor/${id}`)
     return response.data.consultasConfirmadasComLinkPreenchido
   }
 
@@ -536,7 +536,7 @@ const HandleConsulta = async (id) => {
                 {consultasConfirmadasComLinkPreenchido.map((consultas, key) => (
                   <MenuItem key={key} value={consultas._id}>
                    <div className="flex justify-center items-center gap-5 w-full">
-                   <Image src={`http://${config.apiBaseUrl}/${consultas.FotoPaciente}`} alt="Foto do Médico" width={50} height={50} className="rounded-full" />
+                   <Image src={`${config.apiBaseUrl}/${consultas.FotoPaciente}`} alt="Foto do Médico" width={50} height={50} className="rounded-full" />
                      <h1 className="font-bold text-blue-900"> Paciente: {consultas.Solicitante} </h1>
                      <h1 className='font-bold text-blue-900'> Data: {consultas.Data}</h1>
                      <h1 className='font-bold text-blue-900'> Inicio: {consultas.Inicio}</h1>

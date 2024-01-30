@@ -12,7 +12,7 @@ export const AvaliacoesCarousel = ({ avaliacoes, readOnlyMode }) => {
             <h1>{data.AvaliacoesText}</h1>
             <div className="flex gap-5">
               <Image
-                src={`http://${config.apiBaseUrl}/${data.Foto}`}
+                src={`${config.apiBaseUrl}/${data.Foto}`}
                 height={50}
                 width={50}
                 alt="Logo Interconsulta"

@@ -70,7 +70,7 @@ export const CasosClinico = ({
 
   const Paciente = useMutation(async (body) => {
     try {
-      const request = await axios.post(`http://${config.apiBaseUrl}/api/get-historic-patient`, body)
+      const request = await axios.post(`${config.apiBaseUrl}/api/get-historic-patient`, body)
        setNomePaciente(request.data.Pacientee.nome)
        setIdade(request.data.Pacientee.Idade)
        setSexo(request.data.Pacientee.Genero)
@@ -86,7 +86,7 @@ export const CasosClinico = ({
 
   const Medico = useMutation(async (body) => {
     try {
-      const request = await axios.post(`http://${config.apiBaseUrl}/api/get-data-doctor`, body)
+      const request = await axios.post(`${config.apiBaseUrl}/api/get-data-doctor`, body)
       return request.data
     } catch (error) {
       console.error("Erro ao buscar a Foto do Médico", error)
@@ -194,7 +194,8 @@ export const CasosClinico = ({
                   <div className="w-full flex flex-col justify-center items-center">
                     <div className="flex justify-center items-center gap-5">
                     <Image
-                        src={`http://${config.apiBaseUrl}/${Medico.isSuccess ? Medico.data.FotoMédico : ''}`}
+                        src={`
+                        ${config.apiBaseUrl}/${Medico.isSuccess ? Medico.data.FotoMédico : ''}`}
                         alt="Foto do Médico"
                         width={50}
                         height={50}

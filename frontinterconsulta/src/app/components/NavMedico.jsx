@@ -25,12 +25,12 @@ export const NavMédico = ({
                 className='mt-[-5px] relative'
                 onClick={OpenDrawerMedico}
                  >
-                <Avatar alt="Foto Médico" src={`http://${config.apiBaseUrl}/${FotoMedico}`} className='cursor-pointer'/>
+                <Avatar alt="Foto Médico" src={`${config.apiBaseUrl}/${FotoMedico}`} className='cursor-pointer'/>
 
                 <DrawerPerfil
                  open={openDrawer}
                  Close={OpenDrawerMedico}
-                 Image={`http://${config.apiBaseUrl}/${FotoMedico}`}
+                 Image={`${config.apiBaseUrl}/${FotoMedico}`}
                  Loggout={LoggoutDrawerMedico}
                  Navigation={HandleNavigationDrawer}n
                  />

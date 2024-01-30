@@ -75,7 +75,7 @@ export const Checkout = ({
 
   const PaymentDoctor = useMutation(
     async (valueRequest) => {
-      const request = await axios.post(`http://${config.apiBaseUrl}:8080/api/payment`, valueRequest);
+      const request = await axios.post(`${config.apiBaseUrl}/api/payment`, valueRequest);
       return request.data;
     },
     {
@@ -125,7 +125,7 @@ export const Checkout = ({
     return(
         <>
           <div className="flex justify-center items-center flex-col gap-4">
-           <Image src={`http://${config.apiBaseUrl}/${FotoMedico}`}
+           <Image src={`${config.apiBaseUrl}/${FotoMedico}`}
               alt="Foto do Médico" 
               width={200}
               height={200}

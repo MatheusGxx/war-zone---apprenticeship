@@ -34,7 +34,7 @@ const FormularioPaciente = () => {
   const regex = /^(\d{0,2})\/?(\d{0,2})\/?(\d{0,4})$/
    
   const CreateRequestMutation  = useMutation( async (valueRequest) => {
-    const response = await axios.post(`http://${config.apiBaseUrl}/api/obrigado/${id}`, valueRequest)
+    const response = await axios.post(`${config.apiBaseUrl}/api/obrigado/${id}`, valueRequest)
     return response.data
   },{
     onSuccess:(data) =>{
@@ -48,7 +48,7 @@ const FormularioPaciente = () => {
   
   const getSintomasAndDoencas = useMutation(
     async (valueRequest) => {
-      const response = await axios.post(`http://${config.apiBaseUrl}/api/get-sintomas-doencas`, valueRequest)
+      const response = await axios.post(`${config.apiBaseUrl}/api/get-sintomas-doencas`, valueRequest)
       setSintomasAndDoencas(response.data.arr)
       return response.data
     }
@@ -56,7 +56,7 @@ const FormularioPaciente = () => {
 
   const ResumoDoença = useMutation(async (valueRequest) => {
     try {
-      const response = await axios.post(`http://${config.apiBaseUrl}/api/get-doenca?doenca=${valueRequest}`);
+      const response = await axios.post(`${config.apiBaseUrl}/api/get-doenca?doenca=${valueRequest}`);
       setFraseDoença(response.data)
     } catch (error) {
       console.error('Erro na solicitação:', error)

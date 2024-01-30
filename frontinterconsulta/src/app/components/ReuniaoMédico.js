@@ -55,20 +55,20 @@ const ReuniaoMédico = () =>{
   },[startConsulta, nameInitialPatient])
 
   const VerifyEndRoomMutation = useMutation( async (valueBody) =>{
-    const request = await axios.post(`http://${config.apiBaseUrl}/api/verify-conclusion-room`, valueBody)
+    const request = await axios.post(`${config.apiBaseUrl}/api/verify-conclusion-room`, valueBody)
     return request.data.Consulta
   })
 
   const SavedConsulta = useMutation(async(valueBody) =>{
-     const request = await axios.post(`http://${config.apiBaseUrl}/api/conclusion-room-medico`, valueBody)
+     const request = await axios.post(`${config.apiBaseUrl}/api/conclusion-room-medico`, valueBody)
      return request.data
   })
  
   const RequestCreatingDoctorLaudo = useMutation(async (valueRequest) => {
-    const response = await axios.post(`http://${config.apiBaseUrl}/api/create-laudo-medico`, valueRequest, {
+    const response = await axios.post(`${config.apiBaseUrl}/api/create-laudo-medico`, valueRequest, {
       responseType: 'blob',
  })
-    return response.data;
+    return response.data
   }, {
     onSuccess: (data) => {
       const blob = new Blob([data], { type: 'application/pdf' });
@@ -82,7 +82,7 @@ const ReuniaoMédico = () =>{
   })
 
   const ConclusionConsultaDeleteHorario = useMutation(async(valueBody) =>{
-    const request = await axios.post(`http://${config.apiBaseUrl}/api/conclusion-consulta-delete-horario`, valueBody)
+    const request = await axios.post(`${config.apiBaseUrl}/api/conclusion-consulta-delete-horario`, valueBody)
     return request.data
  })
   
@@ -97,7 +97,7 @@ const ReuniaoMédico = () =>{
   
   const getPacientes = useMutation(async (valueBody) => {
     try {
-      const request = await axios.post(`http://${config.apiBaseUrl}/api/get-consulta`, valueBody);
+      const request = await axios.post(`${config.apiBaseUrl}/api/get-consulta`, valueBody);
       const pacientes = request.data.getConsulta || []
       setTotalPatients(pacientes.length)
       const NomeInitialPatient = request.data.getConsulta.map((data) => data.nome)
@@ -208,8 +208,8 @@ const ReuniaoMédico = () =>{
         setSolicitarExames('')
         setRecomendacoes('')
         Router.push('/obrigado')
-      }catch(e){
-     
+      }catch(error){
+        console.log(error)
       }  
     }
   }

@@ -25,8 +25,8 @@ function Room({ params }) {
   const id = idLocal || '';
 
   const getValidatorLink = async () => {
-    const response = await axios.get(`http://${config.apiBaseUrl}/api/validator-link/${params.id}`);
-    return response.data;
+    const response = await axios.get(`${config.apiBaseUrl}/api/validator-link/${params.id}`);
+    return response.data
   };
 
   const key = ['Validator', validator];

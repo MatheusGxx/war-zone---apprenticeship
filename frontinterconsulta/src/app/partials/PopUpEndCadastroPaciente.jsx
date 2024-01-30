@@ -50,7 +50,7 @@ export const EndRegisterPatient = () => {
   const Router = usePathname()
    
   const CreateRequestMutation  = useMutation( async (valueRequest) => {
-    const response = await axios.post(`http://${config.apiBaseUrl}/api/obrigado/${id}`, valueRequest)
+    const response = await axios.post(`${config.apiBaseUrl}/api/obrigado/${id}`, valueRequest)
     return response.data
   },{
     onSuccess:(data) => {

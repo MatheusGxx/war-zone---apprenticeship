@@ -36,12 +36,12 @@ const ReuniaoTwo = () =>{
   const Router = useRouter()
   
   const VerifyEndRoomMutation = useMutation( async (valueBody) =>{
-    const request = await axios.post(`http://${config.apiBaseUrl}/api/verify-conclusion-room`, valueBody)
+    const request = await axios.post(`${config.apiBaseUrl}/api/verify-conclusion-room`, valueBody)
     return request.data.Consulta
   })
 
   const SavedConsulta = useMutation(async(valueBody) =>{
-    const request = await axios.post(`http://${config.apiBaseUrl}/api/conclusion-room-patient`, valueBody)
+    const request = await axios.post(`${config.apiBaseUrl}/api/conclusion-room-patient`, valueBody)
     return request.data
  })
 

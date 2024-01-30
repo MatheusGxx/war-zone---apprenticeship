@@ -40,7 +40,7 @@ const ContentMédico = () => {
 
 
   const CreateRequestMutation = useMutation(async () => {
-    const request = await axios.post(`http://${config.apiBaseUrl}/api/get-casos-clinicos/${id}`);
+    const request = await axios.post(`${config.apiBaseUrl}/api/get-casos-clinicos/${id}`);
     setSelectedCasosClinicos(request.data.HistoricoCasosClinicos.length)
     return request.data.HistoricoCasosClinicos 
   })
@@ -90,7 +90,7 @@ const ContentMédico = () => {
                 >
                   <div className=" flex justify-center items-center sm:flex sm:justify-center mb-2 sm:mb-0">
                     <Image
-                      src={`http://${config.apiBaseUrl}/${casosClinicosData.Historico[0].FotoAreaAtuacao}`}
+                      src={`${config.apiBaseUrl}/${casosClinicosData.Historico[0].FotoAreaAtuacao}`}
                       alt="Foto do Caso Clinico"
                       width={200}
                       height={200}

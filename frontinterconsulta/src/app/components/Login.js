@@ -24,7 +24,7 @@ const Login = ({title, ImagemLateral, MessageButton, secondRoute, treeRoute, pla
   const route = usePathname() 
 
   const CreateRequestMutation = useMutation(async (valueRequest) =>{
-    const response = await axios.post(`http://${config.apiBaseUrl}/api/login`, valueRequest)
+    const response = await axios.post(`${config.apiBaseUrl}/api/login`, valueRequest)
     console.log(response.data)
     return response.data
   },{

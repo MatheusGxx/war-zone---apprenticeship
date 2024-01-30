@@ -11,7 +11,7 @@ const Baixar = () =>{
 
   async function fetchDownload() {
     try {
-      const response = await axios.get(`http://${config.apiBaseUrl}/api/get-planilha`, {
+      const response = await axios.get(`${config.apiBaseUrl}/api/get-planilha`, {
         responseType: 'blob',
       });
 

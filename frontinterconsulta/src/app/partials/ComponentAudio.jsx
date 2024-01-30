@@ -45,7 +45,7 @@ export const ComponenteAudio = ({
   },[resumoIA, fraseDoença])
 
   const TranslationAudioToText = useMutation(formData => {
-    return axios.post(`http://${config2.apiBaseUrl}/api/audio-to-text-translation`, formData);
+    return axios.post(`${config2.apiBaseUrl}/api/audio-to-text-translation`, formData);
   }, {
     onSuccess: (data) => {
       if (data && data.data && data.data.success) {

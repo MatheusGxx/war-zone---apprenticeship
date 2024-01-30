@@ -33,19 +33,19 @@ const ObrigadoPaciente = () =>{
   const Router = useRouter()
 
   const getDoctor = useMutation( async (valueBody) =>{
-    const request = await axios.post(`http://${config.apiBaseUrl}/api/get-medico-avaliations`, valueBody)
+    const request = await axios.post(`${config.apiBaseUrl}/api/get-medico-avaliations`, valueBody)
     setidMedico(request.data.getMedico.map((data) => data._id))
     setNomeMedico(request.data.getMedico.map((data) => data.NomeEspecialista))
     setSlugDoctor(request.data.getMedico.map((data) => data.Slug))
     return request.data.getMedico
   })
   const AvaliationsDoctor = useMutation( async (valueBody) =>{
-    const request = await axios.post(`http://${config.apiBaseUrl}/api/avaliation-doctor`, valueBody)
+    const request = await axios.post(`${config.apiBaseUrl}/api/avaliation-doctor`, valueBody)
     return request.data
   })
 
   const getDataPatient = useMutation( async (valueBody) =>{
-    const request = await axios.post(`http://${config.apiBaseUrl}/api/get-data-patient`, valueBody)
+    const request = await axios.post(`${config.apiBaseUrl}/api/get-data-patient`, valueBody)
     setFotoPatient(request.data.FotoPaciente)
     return request.data.FotoPaciente
   })
@@ -106,7 +106,7 @@ const ObrigadoPaciente = () =>{
         {getDoctor.data?.map((medico, index) => (
            <div key={index} className="cursor-pointer flex flex-col">
                <div className="flex justify-center items-center sm:flex sm:justify-center mb-4 mt-5">
-                 <Image src={`http://${config.apiBaseUrl}/${medico.Foto}`} alt="Foto do Médico" width={150} height={150} className="sm:rounded-full rounded-xl" />
+                 <Image src={`${config.apiBaseUrl}/${medico.Foto}`} alt="Foto do Médico" width={150} height={150} className="sm:rounded-full rounded-xl" />
             </div>
            <div className="flex justify-center gap-3">
              <p className="sm:text-center text-center text-blue-500 font-bold">{medico.NomeEspecialista}</p>
@@ -150,7 +150,7 @@ const ObrigadoPaciente = () =>{
            className="w-72 h-12 rounded-full bg-indigo-950 text-white font-bold  animate-pulse"
            >
             <p className='sm:text-sm text-center whitespace-nowrap'> 
-            <a href={`https://api.whatsapp.com/send?text=${encodeURIComponent('Perfil Médico:')} ${encodeURIComponent(`https://interconsulta.org/especialista/${slugDoctor}?utm_source=whatzapp&utm_medium=convite`)}`} 
+            <a href={`https://api.whatsapp.com/send?text=${encodeURIComponent('Perfil Médico:')} ${encodeURIComponent(`https://agendamedica.digital/especialista/${slugDoctor}?utm_source=whatzapp&utm_medium=convite`)}`} 
              target='_blank'> 
               Compartilhar Perfil do {NomeMedico}
             </a>

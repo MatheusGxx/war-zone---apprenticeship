@@ -1,6 +1,7 @@
 import { CreatingPDF } from "../utils/Functions/CreatingPDF.js"
 import { models } from '../../MongoDB/Schemas/Schemas.js' 
 import { getHistoricoPaciente } from "../utils/Functions/getHistoricoPaciente.js"
+import axios from 'axios'
 
 
 export const CreatingDoctorLaudo = async (body, res) => {
@@ -46,27 +47,27 @@ export const CreatingDoctorLaudo = async (body, res) => {
   Contato: ${catchingPatientbyIdentifier.map((data) => data.telefone).join(', ')}
   
   
-  Diagnóstico -
+  Diagnóstico:
   
   ${Diagnostico}
   
-  Tratamento Prescrito - 
+  Tratamento Prescrito:
   
-  ${TratamentoPrescrito}
+  ${TratamentoPrescrito}:
   
-  Medicação prescrita -
+  Medicação prescrita:
 
   ${MedicacaoPrescrita}
   
-  Ferramenta Terapêutica Prescrita - 
+  Ferramenta Terapêutica Prescrita:
   
   ${FerramentaTerapeutica}
   
-  Progresso do Paciente - 
+  Progresso do Paciente:
   
   ${ProgressoPaciente}
   
-  Recomendações Futuras - 
+  Recomendações Futuras:
 
   ${RecomendacoesFuturas}
   
@@ -203,8 +204,9 @@ export const SavedConsultaMedico = async (body, res) => {
     const AreaAtuacao = getMedico.AreadeAtuacao
     const Especialidade = getMedico.EspecialidadeMedica
     if (getMedico) {
+
       const updateStateConsultaMedico = await models.ModelRegisterMédico.findByIdAndUpdate(
-        id, // Pass only the document ID as the first parameter
+        id, 
         {
           $set: {
             'ConsultasSolicitadasPacientes.$[element].Status': `Atendida por ${getMedico.NomeEspecialista}`,
@@ -212,7 +214,7 @@ export const SavedConsultaMedico = async (body, res) => {
         },
         {
           arrayFilters: [{ 'element._id': IdentificadorConsulta }],
-          new: true, // Return the modified document
+          new: true, 
         }
       )
 
@@ -244,8 +246,10 @@ export const SavedConsultaMedico = async (body, res) => {
          }
        )
        
-      
-       await axios.post('http://back-a:8081/api/automatic-whatsapp', {
+      if (updateStateConsultaMedico) {
+        res.status(200).json({ message: 'Atualização de Consulta Atendida do médico concluída com sucesso' })
+       //Production
+       axios.post('http://back-a:8081/api/automatic-whatsapp', {
         route: '/resumo-casos-clinicos',
         Diagnostico: Diagnostico,
         Tratamento: Tratamento,
@@ -260,9 +264,23 @@ export const SavedConsultaMedico = async (body, res) => {
         Solicitacao: Solicitacao,
         result: result
        })
-      
-      if (updateStateConsultaMedico) {
-        return res.status(200).json({ message: 'Atualização de Consulta Atendida do médico concluída com sucesso' });
+      //Development
+        /*axios.post('http://localhost:8081/api/automatic-whatsapp', {
+          route: '/resumo-casos-clinicos',
+          Diagnostico: Diagnostico,
+          Tratamento: Tratamento,
+          Medicacao: Medicacao,
+          FerramentasTerapeuticas: FerramentasTerapeuticas,
+          Progresso: Progresso,
+          SolicitacaoMedicamentos: SolicitacaoMedicamentos,
+          SolicitacaoMateriais: SolicitacaoMateriais,
+          SolicitacaoExames: SolicitacaoExames,
+          RecomendacoesFuturas: RecomendacoesFuturas,
+          EstadoPaciente: EstadoPaciente,
+          Solicitacao: Solicitacao,
+          result: result
+         })*/
+        
       } else {  
         return res.status(200).json({ message: 'Erro ao atualizar a Consulta Atendida do Médico' });
       }

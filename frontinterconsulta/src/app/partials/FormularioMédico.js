@@ -68,7 +68,7 @@ const FormularioMédico = () => {
   const NavegationPage = useRouter()
 
   const CreateRequestMutation  = useMutation( async (valueRequest) => {
-    const response = await axios.post(`http://${config.apiBaseUrl}/api/obrigado/${parametrer}`, valueRequest)
+    const response = await axios.post(`${config.apiBaseUrl}/api/obrigado/${parametrer}`, valueRequest)
     return response.data
   },{
     onSuccess:(data) =>{
@@ -83,7 +83,7 @@ const FormularioMédico = () => {
   })
 
   const getListDoencasDoctor = useMutation( async (valueRequest) => {
-    const response = await axios.post(`http://${config.apiBaseUrl}/api/saved-list-doencas-and-photo-especiality`, valueRequest)
+    const response = await axios.post(`${config.apiBaseUrl}/api/saved-list-doencas-and-photo-especiality`, valueRequest)
     return response.data
   })
 

@@ -43,7 +43,7 @@ function HorariosMedicos({ onClose }) {
 
   const getInfoMedico = useMutation(
     async (valueRequest) => {
-      const request = await axios.post(`http://${config.apiBaseUrl}/api/info-medico/${VerifyID}`, valueRequest)
+      const request = await axios.post(`${config.apiBaseUrl}/api/info-medico/${VerifyID}`, valueRequest)
       return request.data.InformacoesMedico
     },
     {
@@ -55,7 +55,7 @@ function HorariosMedicos({ onClose }) {
 
   const CreateMutationRequest = useMutation(
     async (valueRequest) => {
-      const request = await axios.post(`http://${config.apiBaseUrl}/api/register-horarios/${VerifyID}`, valueRequest)
+      const request = await axios.post(`${config.apiBaseUrl}/api/register-horarios/${VerifyID}`, valueRequest)
       setMensagem(request.data.message)
       return request.data.message
     },
@@ -68,7 +68,7 @@ function HorariosMedicos({ onClose }) {
 
   const DeleteMutationRequest = useMutation(
     async () => {
-      const request = await axios.delete(`http://${config.apiBaseUrl}/api/delete-horarios/${VerifyID}/${idHorario}`)
+      const request = await axios.delete(`${config.apiBaseUrl}/api/delete-horarios/${VerifyID}/${idHorario}`)
       setMensagem(request.data.mensagem)
       return request.data.mensagem
     },
@@ -81,7 +81,7 @@ function HorariosMedicos({ onClose }) {
 
   const DeleteIntervalRequest = useMutation(
     async ({ id, idHorarioo }) => {
-      const request = await axios.delete(`http://${config.apiBaseUrl}/api/delete-intervalo/${id}/${idHorarioo}`);
+      const request = await axios.delete(`${config.apiBaseUrl}/api/delete-intervalo/${id}/${idHorarioo}`);
       return request.data
     },
     {
@@ -92,7 +92,7 @@ function HorariosMedicos({ onClose }) {
   )
 
   const RequestGetHistorico = async () => {
-    const response = await axios.get(`http://${config.apiBaseUrl}/api/get-horarios/${VerifyID}`);
+    const response = await axios.get(`${config.apiBaseUrl}/api/get-horarios/${VerifyID}`);
     setHistorico(response.data.QueryHistorico)
     return response.data.QueryHistorico
   };
@@ -275,7 +275,7 @@ function HorariosMedicos({ onClose }) {
                 <MenuItem key={key} value={intervalos._id}>
                   <div className="flex justify-center items-center gap-10 w-full">
                     {intervalos.FotoPaciente ?
-                      <Image src={`http://${config.apiBaseUrl}/${intervalos.FotoPaciente}`} alt="Foto do Paciente" width={50} height={50} className="rounded-full" /> :
+                      <Image src={`${config.apiBaseUrl}/${intervalos.FotoPaciente}`} alt="Foto do Paciente" width={50} height={50} className="rounded-full" /> :
                       <AccountCircleIcon color="primary" fontSize='large'/>
                     }
                     <p>{intervalos.Intervalo}</p>

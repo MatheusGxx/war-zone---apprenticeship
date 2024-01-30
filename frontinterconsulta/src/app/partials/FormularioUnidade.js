@@ -33,7 +33,7 @@ const FormularioUnidade = () => {
   const NavegationPage = useRouter()
    
   const CreateRequestMutation = useMutation( async (valueRequest) =>{
-    const response = await axios.post(`http://${config.apiBaseUrl}/api/obrigado/${parametrer}`, valueRequest)
+    const response = await axios.post(`${config.apiBaseUrl}/api/obrigado/${parametrer}`, valueRequest)
     return response.data
   },{
     onSuccess:(data) =>{

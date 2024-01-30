@@ -19,7 +19,6 @@ export const ValidatorDateAndTime = (DateQuery, TimeStart, TimeEnd) => { // Veri
 
 
 export const calculateTimeDifference = (dataConsulta, horaInicio, horaFim) => {
-  console.log(horaInicio)
   const agora = new Date();
   const dataInicioConsulta = parse(`${dataConsulta} ${horaInicio}`, 'dd/MM/yyyy HH:mm', new Date());
   const dataFimConsulta = parse(`${dataConsulta} ${horaFim}`, 'dd/MM/yyyy HH:mm', new Date());
