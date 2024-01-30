@@ -199,12 +199,19 @@ export const ComponentLandingPageDoctor = ({ params }) => {
       {isSuccess ? 
       <>
       <div className='flex flex-col w-full justify-center items-center gap-2'>
-      <Image src={`${config.apiBaseUrl}/${ModelEspecialista.Foto}`}
+      {ModelEspecialista.Foto ?
+         <Image src={`${config.apiBaseUrl}/${ModelEspecialista.Foto}`}
          alt="Foto do Médico" 
          width={450}  
          height={450}
-         className='rounded-xl'/>
-
+         className='rounded-xl'/> 
+      : 
+      <Image src={Logo}
+      alt="Foto do Médico" 
+      width={350}  
+      height={350}
+      className='rounded-xl'/> 
+      }
       <h1 className='font-bold text-blue-500 text-xl'>
         {ModelEspecialista.EspecialidadeMedica}
       </h1>

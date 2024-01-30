@@ -443,7 +443,6 @@ useEffect(() => {
 
          </DialogContent>
        <DialogActions className="flex justify-center items-center">
-       <div className="flex justify-center items-center">
          <button  className="w-72 h-12 rounded-full bg-red-600 text-white font-light"
           onClick={HandleCheckout}>
             <p className="font-bold text-white">
@@ -451,7 +450,6 @@ useEffect(() => {
           {AgendamentoMarcado.isError && 'Erro ao Agendar'}
             </p>
          </button>
-       </div>
        </DialogActions>
 
        <div className="flex justify-end p-4">
