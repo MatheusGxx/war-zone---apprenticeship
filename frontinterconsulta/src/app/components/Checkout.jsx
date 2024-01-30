@@ -13,6 +13,7 @@ import 'react-credit-cards-2/dist/es/styles-compiled.css'
 import secureLocalStorage from 'react-secure-storage'
 import copyToClipboard from 'clipboard-copy'
 import { config } from '../config.js'
+import Logo from '../public/logo.png'
 
 export const Checkout = ({ 
     FotoMedico,
@@ -125,12 +126,21 @@ export const Checkout = ({
     return(
         <>
           <div className="flex justify-center items-center flex-col gap-4">
-           <Image src={`${config.apiBaseUrl}/${FotoMedico}`}
+            {FotoMedico ? 
+              <Image src={`${config.apiBaseUrl}/${FotoMedico}`}
+                alt="Foto do Médico" 
+                width={200}
+                height={200}
+                className="rounded-xl"
+             />
+             : 
+             <Image src={Logo}
               alt="Foto do Médico" 
               width={200}
               height={200}
               className="rounded-xl"
              />
+            }
              <Rating 
              value={avaliacoes}
              readOnly={readOnlyMode} 

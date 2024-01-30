@@ -249,7 +249,11 @@ const ContentPaciente = () => {
                       )} 
                      className="cursor-pointer flex flex-col justify-center items-center border-blue-500 border-2 rounded-lg p-2">
                       <div className="sm:flex sm:justify-center mb-4">
-                        <Image src={`${config.apiBaseUrl}/${medico.Foto}`} alt="Foto do Médico" width={150} height={150} className="sm:rounded-full rounded-xl" />
+                        {medico.Foto ? 
+                         <Image src={`${config.apiBaseUrl}/${medico.Foto}`} alt="Foto do Médico" width={150} height={150} className="sm:rounded-full rounded-xl" /> 
+                         : 
+                         <Image src={Logo} alt="Foto do Médico" width={150} height={150} className="sm:rounded-full rounded-xl" />
+                        }
                       </div>
                       <div className="flex gap-3 justify-center items-center">
                         <p className="sm:text-center text-center text-blue-500 font-bold">{medico.NomeEspecialista}</p>
@@ -313,7 +317,11 @@ const ContentPaciente = () => {
                       )} 
                      className="cursor-pointer flex flex-col justify-center items-center">
                       <div className="sm:flex sm:justify-center mb-4">
-                        <Image src={`${config.apiBaseUrl}/${medico.Foto}`} alt="Foto do Médico" width={150} height={150} className="sm:rounded-full rounded-xl" />
+                      {medico.Foto ? 
+                         <Image src={`${config.apiBaseUrl}/${medico.Foto}`} alt="Foto do Médico" width={150} height={150} className="sm:rounded-full rounded-xl" /> 
+                         : 
+                         <Image src={Logo} alt="Foto do Médico" width={150} height={150} className="sm:rounded-full rounded-xl" />
+                      }
                       </div>
                       <div className="flex gap-3 justify-center items-center">
                         <p className="sm:text-center text-center text-blue-500 font-bold">{medico.NomeEspecialista}</p>
