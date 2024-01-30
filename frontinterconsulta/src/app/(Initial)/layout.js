@@ -32,7 +32,7 @@ export default function RootLayout({ children }) {
             `
           }
         </script>
-        <meta name="facebook-domain-verification" content="u1pxl4m3s5llr0711fkbma7ls4fzjv" />
+        <meta name="facebook-domain-verification" content="42lez4znwi7yz7059c2waqprd9v5ap" />
       </head>
       <body className="background">
         <div>
