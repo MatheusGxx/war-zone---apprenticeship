@@ -743,11 +743,11 @@ export const GenerateLink = async (body, res) =>{
             })
           })
         })
+
+        res.status(200).json({ message: `/consultorio/${LinksConsulta}`})   
       }catch(error){
         console.log(error)
       }
- 
-     res.status(200).json({ message: `/consultorio/${LinksConsulta}`})   
     }else{
       try{
         const TempoFaltando = await calculateTimeDifference(dataConsulta, inicioConsulta, fimConsulta)
