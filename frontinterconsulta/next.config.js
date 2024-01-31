@@ -23,19 +23,19 @@ module.exports = {
       {
         protocol: 'https',
         hostname: 'interconsulta.org',
-        port: '8080',
+        port: '',
         pathname: '/uploads/**',
       },
       {
         protocol: 'https',
         hostname: 'interconsulta.org',
-        port: '8080',
+        port: '',
         pathname: '/icons/**'
       },
       {
         protocol: 'https',
         hostname: 'interconsulta.org',
-        port: '8080',
+        port: '',
         pathname: '/icons-doencas/**',
       }
     ],
