@@ -103,6 +103,11 @@ export const getConsulta = async (body, res) => {
      const { IdentificadorConsulta } = body
 
      try{
+
+      if (!IdentificadorConsulta || typeof IdentificadorConsulta !== 'string' || IdentificadorConsulta.trim() === '') {
+        throw new Error('IdentificadorConsulta inválido');
+      }
+      
       const getConsulta = await models.ModelRegisterPaciente.find(
         {
         'ConsultasSolicitadasPacientes._id': IdentificadorConsulta
@@ -249,21 +254,21 @@ export const SavedConsultaMedico = async (body, res) => {
       if (updateStateConsultaMedico) {
         res.status(200).json({ message: 'Atualização de Consulta Atendida do médico concluída com sucesso' })
        //Production
-        axios.post('http://back-a:8081/api/automatic-whatsapp', {
-          route: '/resumo-casos-clinicos',
-          Diagnostico: Diagnostico,
-          Tratamento: Tratamento,
-          Medicacao: Medicacao,
-          FerramentasTerapeuticas: FerramentasTerapeuticas,
-          Progresso: Progresso,
-          SolicitacaoMedicamentos: SolicitacaoMedicamentos,
-          SolicitacaoMateriais: SolicitacaoMateriais,
-          SolicitacaoExames: SolicitacaoExames,
-          RecomendacoesFuturas: RecomendacoesFuturas,
-          EstadoPaciente: EstadoPaciente,
-          Solicitacao: Solicitacao,
-          result: result
-        })
+       axios.post('http://back-a:8081/api/automatic-whatsapp', {
+        route: '/resumo-casos-clinicos',
+        Diagnostico: Diagnostico,
+        Tratamento: Tratamento,
+        Medicacao: Medicacao,
+        FerramentasTerapeuticas: FerramentasTerapeuticas,
+        Progresso: Progresso,
+        SolicitacaoMedicamentos: SolicitacaoMedicamentos,
+        SolicitacaoMateriais: SolicitacaoMateriais,
+        SolicitacaoExames: SolicitacaoExames,
+        RecomendacoesFuturas: RecomendacoesFuturas,
+        EstadoPaciente: EstadoPaciente,
+        Solicitacao: Solicitacao,
+        result: result
+       })
       //Development
         /*axios.post('http://localhost:8081/api/automatic-whatsapp', {
           route: '/resumo-casos-clinicos',
