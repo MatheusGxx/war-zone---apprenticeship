@@ -250,7 +250,7 @@ const ContentPaciente = () => {
                      className="cursor-pointer flex flex-col justify-center items-center border-blue-500 border-2 rounded-lg p-2">
                       <div className="sm:flex sm:justify-center mb-4">
                         {medico.Foto ? 
-                         <Image src={`${config.apiBaseUrl}/${medico.Foto}`} alt="Foto do Médico" width={150} height={150} className="sm:rounded-full rounded-xl" /> 
+                         <Image src={`${config.apiBaseUrl}/${medico.Foto}`} alt="Foto do Médico" width={100} height={100} className="sm:rounded-full rounded-xl" /> 
                          : 
                          <Image src={Logo} alt="Foto do Médico" width={100} height={100} className="sm:rounded-full rounded-xl" />
                         }
@@ -318,7 +318,7 @@ const ContentPaciente = () => {
                      className="cursor-pointer flex flex-col justify-center items-center">
                       <div className="sm:flex sm:justify-center mb-4">
                       {medico.Foto ? 
-                         <Image src={`${config.apiBaseUrl}/${medico.Foto}`} alt="Foto do Médico" width={150} height={150} className="sm:rounded-full rounded-xl" /> 
+                         <Image src={`${config.apiBaseUrl}/${medico.Foto}`} alt="Foto do Médico" width={100} height={100} className="sm:rounded-full rounded-xl" /> 
                          : 
                          <Image src={Logo} alt="Foto do Médico" width={100} height={100} className="sm:rounded-full rounded-xl" />
                       }
