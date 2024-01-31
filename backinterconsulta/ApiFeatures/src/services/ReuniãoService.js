@@ -104,10 +104,10 @@ export const getConsulta = async (body, res) => {
 
      try{
 
-      if (!IdentificadorConsulta || typeof IdentificadorConsulta !== 'string' || IdentificadorConsulta.trim() === '') {
-        throw new Error('IdentificadorConsulta inválido');
+      if (!IdentificadorConsulta || IdentificadorConsulta === '') {
+        return console.log('Identificador Consulta é uma String Vazia...')
       }
-      
+
       const getConsulta = await models.ModelRegisterPaciente.find(
         {
         'ConsultasSolicitadasPacientes._id': IdentificadorConsulta
@@ -115,7 +115,7 @@ export const getConsulta = async (body, res) => {
       )
       
       if(getConsulta.length > 0){
-        return  res.status(200).json({ getConsulta })
+        return res.status(200).json({ getConsulta })
       }else{
         return res.status(404).json({ message: 'Consulta nao cadastrada no banco de dados do Interconsulta =/'})
       }
