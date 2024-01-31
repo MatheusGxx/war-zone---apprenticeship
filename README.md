@@ -11,7 +11,7 @@
       para:
      'mongodb+srv://matheusfff02:030503Aa@cluster0.qoa8un4.mongodb.net/'
 
-     # Ir na API de features e descomentar a request pra API de de automaçoes de 'Development' e comentar a de 'Production' para as requests entre as duas apis rodarem localmente em ambiente de desenvolvimento.
+     # Ir na API de features e descomentar a request pra API de de automaçoes de 'Development' e comentar a de 'Production' para as requests entre as duas apis rodarem localmente em ambiente de desenvolvimento., arquivos para mudar: LoginService, AgendaService, ReuniãoService
 
      # Mudar a config do Redis na API de Automaçao na propriedade host, trocar o valor de 'redis' para 'localhost'
 

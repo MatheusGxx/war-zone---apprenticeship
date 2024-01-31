@@ -442,7 +442,7 @@ useEffect(() => {
          }
 
          </DialogContent>
-       <DialogActions className="flex justify-center items-center">
+       <DialogActions style={{display:'flex', justifyContent:'center'}}>
          <button  className="w-72 h-12 rounded-full bg-red-600 text-white font-light"
           onClick={HandleCheckout}>
             <p className="font-bold text-white">

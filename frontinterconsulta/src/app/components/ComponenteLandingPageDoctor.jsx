@@ -230,7 +230,7 @@ export const ComponentLandingPageDoctor = ({ params }) => {
       {quantidadeAvaliacoess === 1 ? 
        <h1 className='text-blue-500 font-bold'>Indicado por {quantidadeAvaliacoess} Paciente! </h1> : 
        quantidadeAvaliacoess > 1 ? 
-       <h1>Indicados por {quantidadeAvaliacoess} Paciente! </h1>
+       <h1>Indicados por {quantidadeAvaliacoess} Pacientes! </h1>
        :
        quantidadeAvaliacoess === null &&
        null 

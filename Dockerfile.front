@@ -2,6 +2,8 @@ FROM node:latest
 
 WORKDIR /front
 
+RUN ln -sf /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime
+
 COPY frontinterconsulta/ .
 
 RUN apt-get update && \
