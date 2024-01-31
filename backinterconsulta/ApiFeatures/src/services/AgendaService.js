@@ -728,31 +728,39 @@ export const GenerateLink = async (body, res) =>{
 
 
     if(isValid){
-      const documentosAtualizados = await models.ModelRegisterMédico.find({
-        'ConsultasSolicitadasPacientes._id': { $in: IdentificadorConsultaParticular }
-      })
-
+      try{
+        const documentosAtualizados = await models.ModelRegisterMédico.find({
+          'ConsultasSolicitadasPacientes._id': { $in: IdentificadorConsultaParticular }
+        })
   
-      let LinksConsulta
-      
-      documentosAtualizados.forEach(doc => {
-        doc.ConsultasSolicitadasPacientes.forEach(consulta => {
-          consulta.LinkConsulta.forEach(link => {
-            LinksConsulta = link.Link
+    
+        let LinksConsulta
+        
+        documentosAtualizados.forEach(doc => {
+          doc.ConsultasSolicitadasPacientes.forEach(consulta => {
+            consulta.LinkConsulta.forEach(link => {
+              LinksConsulta = link.Link
+            })
           })
         })
-      })
-    
+      }catch(error){
+        console.log(error)
+      }
+ 
      res.status(200).json({ message: `/consultorio/${LinksConsulta}`})   
     }else{
-     const TempoFaltando = await calculateTimeDifference(dataConsulta, inicioConsulta, fimConsulta)
-     console.log(TempoFaltando)
-
-     if (TempoFaltando === 'Consulta Expirada') {
-        res.json({ TempoFaltando: TempoFaltando })
-    } else {
-       res.json({ TempoFaltando: TempoFaltando })
-    }
+      try{
+        const TempoFaltando = await calculateTimeDifference(dataConsulta, inicioConsulta, fimConsulta)
+        console.log(TempoFaltando)
+   
+        if (TempoFaltando === 'Consulta Expirada') {
+           res.json({ TempoFaltando: TempoFaltando })
+       } else {
+          res.json({ TempoFaltando: TempoFaltando })
+       }
+      }catch(error){
+         console.log(error)
+      }
     }
   }catch(error){
     throw new Error('Error in TryCatch Generatelink', error)
