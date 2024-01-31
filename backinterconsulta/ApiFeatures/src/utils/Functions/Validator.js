@@ -25,7 +25,6 @@ export const calculateTimeDifference = (dataConsulta, horaInicio, horaFim) => {
   const agora = new Date();
   const dataInicioConsulta = parse(`${dataConsulta} ${horaInicio}`, 'dd/MM/yyyy HH:mm', new Date());
   const dataFimConsulta = parse(`${dataConsulta} ${horaFim}`, 'dd/MM/yyyy HH:mm', new Date());
-  C
 
   if (isAfter(agora, dataFimConsulta)) {
     return 'Consulta Expirada'

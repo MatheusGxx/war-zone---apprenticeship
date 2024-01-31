@@ -245,14 +245,14 @@ export const AutomaticWhatsapp = async (body, res) => {
 
         await WhatsappQueue.add('Whatsapp Fila', {
           numero:`${TelefoneMedicoAgendamento}`,
-          mensagem: `Ola ${NomeMedico}, o Paciente, ${NomePaciente} agendou uma consulta com voce\nna Data de ${DataAgendamento} as ${InicioAgendamento} a ${FimAgendamento}\nEntre no Link abaixo para confirmar a sua consulta: www.interconsulta.org/agenda`
+          mensagem: `Ola ${NomeMedico}, o Paciente, ${NomePaciente} agendou uma consulta com voce\nna Data de ${DataAgendamento} as ${InicioAgendamento} a ${FimAgendamento} Entre no Link abaixo para confirmar a sua consulta:\nwww.interconsulta.org/agenda`
         })
 
         await EmailQueue.add('Email Fila',
         {
           to: `${EmailMedico}`, 
           subject: `${NomeMedico} voce tem uma nova consulta marcada!`,
-          message:`Ola ${NomeMedico}, o Paciente, ${NomePaciente} agendou uma consulta com voce\nna Data de ${DataAgendamento} as ${InicioAgendamento} a ${FimAgendamento}\nEntre no Link abaixo para confirmar a sua consulta: www.interconsulta.org/agenda`
+          message:`Ola ${NomeMedico}, o Paciente, ${NomePaciente} agendou uma consulta com voce\nna Data de ${DataAgendamento} as ${InicioAgendamento} a ${FimAgendamento} Entre no Link abaixo para confirmar a sua consulta:\nwww.interconsulta.org/agenda`
         })
         
         break
@@ -261,14 +261,14 @@ export const AutomaticWhatsapp = async (body, res) => {
 
         await WhatsappQueue.add('Whatsapp Fila', {
           numero:`${NumeroPacienteAceitouConsulta}`,
-          mensagem:`${NomeMedicoAceitouConsulta} Informa: Ola ${NomePacienteAceitouConsulta} acabei de aceitar a consulta\nda Data de: ${DataAceitouConsulta} que começa das ${InicioAceitouConsulta} a ${FimAceitouConsulta}\nentre agora na sua agenda para acessar o Link da consulta:\n www.interconsulta.org/agenda`
+          mensagem:`${NomeMedicoAceitouConsulta} Informa: Ola ${NomePacienteAceitouConsulta} acabei de aceitar a consulta\nda Data de: ${DataAceitouConsulta} que começa das ${InicioAceitouConsulta} a ${FimAceitouConsulta}\nentre agora na sua agenda para acessar o Link da consulta:\nwww.interconsulta.org/agenda`
         })
 
         await EmailQueue.add('Email Fila',
         {
           to: `${EmailPacienteAceitouConsulta}`, 
           subject: `Ola Paciente ${NomeMedicoAceitouConsulta}, o médico aceitou a sua consulta`,
-          message:`${NomeMedicoAceitouConsulta} Informa: Ola ${NomePacienteAceitouConsulta} acabei de aceitar a consulta\nda Data de: ${DataAceitouConsulta} que começa das ${InicioAceitouConsulta} a ${FimAceitouConsulta}\nentre agora na sua agenda para acessar o Link da consulta:\n www.interconsulta.org/agenda`
+          message:`${NomeMedicoAceitouConsulta} Informa: Ola ${NomePacienteAceitouConsulta} acabei de aceitar a consulta\nda Data de: ${DataAceitouConsulta} que começa das ${InicioAceitouConsulta} a ${FimAceitouConsulta}\nentre agora na sua agenda para acessar o Link da consulta:\nwww.interconsulta.org/agenda`
         })
 
         break
