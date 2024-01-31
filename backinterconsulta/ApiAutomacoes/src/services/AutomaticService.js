@@ -261,14 +261,14 @@ export const AutomaticWhatsapp = async (body, res) => {
 
         await WhatsappQueue.add('Whatsapp Fila', {
           numero:`${NumeroPacienteAceitouConsulta}`,
-          mensagem:`Ola ${NomePacienteAceitouConsulta} o ${NomeMedicoAceitouConsulta} acabou de aceitar a sua consulta\nda Data de: ${DataAceitouConsulta} que começa das ${InicioAceitouConsulta} a ${FimAceitouConsulta}\nentre agora na sua agenda para acessar o Link da consulta:\n www.interconsulta.org/agenda`
+          mensagem:`${NomeMedicoAceitouConsulta} Informa: Ola ${NomePacienteAceitouConsulta} acabei de aceitar a consulta\nda Data de: ${DataAceitouConsulta} que começa das ${InicioAceitouConsulta} a ${FimAceitouConsulta}\nentre agora na sua agenda para acessar o Link da consulta:\n www.interconsulta.org/agenda`
         })
 
         await EmailQueue.add('Email Fila',
         {
           to: `${EmailPacienteAceitouConsulta}`, 
           subject: `Ola Paciente ${NomeMedicoAceitouConsulta}, o médico aceitou a sua consulta`,
-          message:`Ola ${NomePacienteAceitouConsulta} o ${NomeMedicoAceitouConsulta} acabou de aceitar a sua consulta\nda Data de: ${DataAceitouConsulta} que começa das ${InicioAceitouConsulta} a ${FimAceitouConsulta}\nentre agora na sua agenda para acessar o Link da consulta:\n www.interconsulta.org/agenda`
+          message:`${NomeMedicoAceitouConsulta} Informa: Ola ${NomePacienteAceitouConsulta} acabei de aceitar a consulta\nda Data de: ${DataAceitouConsulta} que começa das ${InicioAceitouConsulta} a ${FimAceitouConsulta}\nentre agora na sua agenda para acessar o Link da consulta:\n www.interconsulta.org/agenda`
         })
 
         break
@@ -276,14 +276,14 @@ export const AutomaticWhatsapp = async (body, res) => {
 
         await WhatsappQueue.add('Whatsapp Fila', {
           numero:`${NumeroPacienteRejeitouConsulta}`,
-          mensagem: `Ola ${NomePacienteRejeitouConsulta} o ${NomeMedicoRejeitouConsulta} infelizmente teve que cancelar a consulta de voces\nda Data de: ${DataRejeitouConsulta} que começa das ${InicioRejeitouConsulta} a ${FimRejeitouConsulta}\nmas nao desanime temos outros profissionais no Interconsulta  que podem atender o seu problema com ${ DoencaRejeitouConsulta}\nAcesse agora www.interconsulta.org/especialistas-disponiveis para encontrar um agora mesmo!`
+          mensagem:`${NomeMedicoRejeitouConsulta} Informa: Ola ${NomePacienteRejeitouConsulta}, infelizmente tive que cancelar a nossa consulta\nda Data de: ${DataRejeitouConsulta} que começa das ${InicioRejeitouConsulta} a ${FimRejeitouConsulta}\nmas nao desanime voce pode marcar outra consulta comigo em outro horario agora mesmo! entre no link abaixo e agende de novo como agora mesmo!\nwww.interconsulta.org/especialistas-disponiveis`
         })
 
         await EmailQueue.add('Email Fila',
         {
           to: `${EmailPacienteRejeitouConsulta}`, 
-          subject: `Ola Paciente ${NomePacienteRejeitouConsulta}, infelizmente o médico cancelou a sua consulta`,
-          message: `Ola ${NomePacienteRejeitouConsulta} o ${NomeMedicoRejeitouConsulta} infelizmente teve que cancelar a consulta de voces\nda Data de: ${DataRejeitouConsulta} que começa das ${InicioRejeitouConsulta} a ${FimRejeitouConsulta}\nmas nao desanime temos outros profissionais no Interconsulta  que podem atender o seu problema com ${ DoencaRejeitouConsulta}\nAcesse agora www.interconsulta.org/especialistas-disponiveis para encontrar um agora mesmo!`
+          subject:`Ola Paciente ${NomePacienteRejeitouConsulta}, infelizmente o médico cancelou a sua consulta`,
+          message:`${NomeMedicoRejeitouConsulta} Informa: Ola ${NomePacienteRejeitouConsulta}, infelizmente tive que cancelar a nossa consulta\nda Data de: ${DataRejeitouConsulta} que começa das ${InicioRejeitouConsulta} a ${FimRejeitouConsulta}\nmas nao desanime voce pode marcar outra consulta comigo em outro horario agora mesmo! entre no link abaixo e agende de novo como agora mesmo!\nwww.interconsulta.org/especialistas-disponiveis`
         })
 
         break
