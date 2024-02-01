@@ -193,14 +193,24 @@ export const CasosClinico = ({
                   <>
                   <div className="w-full flex flex-col justify-center items-center">
                     <div className="flex justify-center items-center gap-5">
-                    <Image
-                        src={`
-                        ${config.apiBaseUrl}/${Medico.isSuccess ? Medico.data.FotoMédico : ''}`}
-                        alt="Foto do Médico"
+                      {Medico.isSuccess && Medico.data.FotoMédico ?
+                         <Image
+                         src={`
+                         ${config.apiBaseUrl}/${Medico.isSuccess ? Medico.data.FotoMédico : ''}`}
+                         alt="Foto do Médico"
+                         width={50}
+                         height={50}
+                         className="sm:rounded-full rounded-full"
+                       />
+                        : 
+                        <Image
+                        src={Logo}
+                        alt="Logo Interconsulta"
                         width={50}
                         height={50}
                         className="sm:rounded-full rounded-full"
                       />
+                      }
                     <p className='text-blue-500'>{NomeMedico} Voce que atendeu esse caso!</p>
                     </div>
                     <div className='flex gap-5  justify-cente items-center'>

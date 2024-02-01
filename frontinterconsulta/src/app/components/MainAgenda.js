@@ -536,7 +536,11 @@ const HandleConsulta = async (id) => {
                 {consultasConfirmadasComLinkPreenchido.map((consultas, key) => (
                   <MenuItem key={key} value={consultas._id}>
                    <div className="flex justify-center items-center gap-5 w-full">
-                   <Image src={`${config.apiBaseUrl}/${consultas.FotoPaciente}`} alt="Foto do Médico" width={50} height={50} className="rounded-full" />
+                     {consultas.FotoPaciente ?
+                       <Image src={`${config.apiBaseUrl}/${consultas.FotoPaciente}`} alt="Foto do Médico" width={50} height={50} className="rounded-full" />
+                       : 
+                       <Image src={Logo} alt="Logo Interconsulta" width={50} height={50} className="rounded-full" />
+                     }
                      <h1 className="font-bold text-blue-900"> Paciente: {consultas.Solicitante} </h1>
                      <h1 className='font-bold text-blue-900'> Data: {consultas.Data}</h1>
                      <h1 className='font-bold text-blue-900'> Inicio: {consultas.Inicio}</h1>

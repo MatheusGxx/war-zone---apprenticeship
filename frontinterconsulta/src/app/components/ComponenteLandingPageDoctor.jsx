@@ -390,13 +390,23 @@ export const ComponentLandingPageDoctor = ({ params }) => {
                 <div className='w-1/4 flex flex-col gap-5' key={index}>
                   <h1>  {data.AvaliacoesText} </h1>
                   <div className='flex gap-5'>
-                    <Image  
-                      src={`${config.apiBaseUrl}/${data.Foto}`} 
-                      height={50} 
-                      width={50} 
-                      alt="Logo Interconsulta" 
-                      className='rounded-full'
-                    />
+                    {data.Foto ?
+                       <Image  
+                       src={`${config.apiBaseUrl}/${data.Foto}`} 
+                       height={50} 
+                       width={50} 
+                       alt="Logo Interconsulta" 
+                       className='rounded-full'
+                     /> 
+                     : 
+                     <Image  
+                     src={Logo} 
+                     height={50} 
+                     width={50} 
+                     alt="Logo Interconsulta" 
+                     className='rounded-full'
+                   /> 
+                    }
                     <div className="flex justify-center items-center">
                       <h1 className="font-bold text-blue-500"> {data.NomePaciente} </h1>
                     </div>

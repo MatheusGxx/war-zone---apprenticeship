@@ -117,7 +117,7 @@ export const PopUpBlood = ({
         onClose={handleClickClose}
         TransitionComponent={Transition}
       >
-        <AppBar sx={{ position: 'relative' }} className="bg-white">
+        <AppBar sx={{ position: 'relative', backgroundColor: 'white' }}>
           <Toolbar>
             <CloseIcon
               edge="start"

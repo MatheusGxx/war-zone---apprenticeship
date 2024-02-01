@@ -106,7 +106,11 @@ const ObrigadoPaciente = () =>{
         {getDoctor.data?.map((medico, index) => (
            <div key={index} className="cursor-pointer flex flex-col">
                <div className="flex justify-center items-center sm:flex sm:justify-center mb-4 mt-5">
-                 <Image src={`${config.apiBaseUrl}/${medico.Foto}`} alt="Foto do Médico" width={150} height={150} className="sm:rounded-full rounded-xl" />
+                {medico.Foto ?
+                  <Image src={`${config.apiBaseUrl}/${medico.Foto}`} alt="Foto do Médico" width={150} height={150} className="sm:rounded-full rounded-xl" />
+                  : 
+                  <Image src={Logo} alt="Logo Interconsulta" width={150} height={150} className="sm:rounded-full rounded-xl" />
+                }
             </div>
            <div className="flex justify-center gap-3">
              <p className="sm:text-center text-center text-blue-500 font-bold">{medico.NomeEspecialista}</p>
