@@ -100,28 +100,26 @@ export const CreatingDoctorLaudo = async (body, res) => {
 }
 
 export const getConsulta = async (body, res) => {
-     const { IdentificadorConsulta } = body
+  const { IdentificadorConsulta } = body
 
-     try{
+  try {
+    if (!IdentificadorConsulta || IdentificadorConsulta === '') {
+      return res.status(400).json({ message: 'Identificador Consulta é uma String Vazia...' })
+    }
 
-      if (!IdentificadorConsulta || IdentificadorConsulta === '') {
-        return console.log('Identificador Consulta é uma String Vazia...')
-      }
+    const getConsulta = await models.ModelRegisterPaciente.find({
+      'ConsultasSolicitadasPacientes._id': IdentificadorConsulta
+    })
 
-      const getConsulta = await models.ModelRegisterPaciente.find(
-        {
-        'ConsultasSolicitadasPacientes._id': IdentificadorConsulta
-        },
-      )
-      
-      if(getConsulta.length > 0){
-        return res.status(200).json({ getConsulta })
-      }else{
-        return res.status(404).json({ message: 'Consulta nao cadastrada no banco de dados do Interconsulta =/'})
-      }
-     }catch(error){
-      throw new Error(error)
-     }
+    if (getConsulta.length > 0) {
+      return res.status(200).json({ getConsulta })
+    } else {
+      return res.status(404).json({ message: 'Consulta nao cadastrada no banco de dados do Interconsulta =/' })
+    }
+  } catch (error) {
+    console.error(error); // Log o erro para o console do servidor
+    return res.status(500).json({ message: 'Erro interno do servidor' });
+  }
 }
 
 

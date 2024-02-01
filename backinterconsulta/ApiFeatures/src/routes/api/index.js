@@ -7,7 +7,7 @@ import Reunião from './Reunião.js'
 
 import { Router } from 'express'
 
-const router = Router()
+const router = Router() 
 
 router.use('/', Login)
 router.use('/', Médico)
