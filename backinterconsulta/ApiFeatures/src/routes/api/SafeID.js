@@ -19,7 +19,7 @@ router.get('/authorize-safeid/:id',
             url: url,
             idDoctor: id,
       })
-      console.log(savedURL)
+      console.log(`Salvando url e ID do médico no banco de dados: ${savedURL}`)
 
       await savedURL.save()
 
@@ -34,7 +34,7 @@ router.get('/authorize-safeid/:id',
         console.log(code)
 
         const lastSavedURL = await models.SafeID.findOne().sort({ _id: -1 });
-        console.log(lastSavedURL)
+        console.log(`Salvando code no banco de dados: ${lastSavedURL}`)
 
         if (!lastSavedURL) {
           return res.status(404).json({ message: 'Nenhum SafeID encontrado' });
@@ -51,7 +51,7 @@ router.get('/authorize-safeid/:id',
         await lastSavedURL.save()
 
         const data = generateToken(code, verifier, res)
-        console.log(data)
+        console.log(`Token de acesso: ${data}`)
       }catch(error){
         return res.status(200).json({ message: 'Erro ao receber code da api do SafeID'})
       }  
