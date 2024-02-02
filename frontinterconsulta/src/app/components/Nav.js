@@ -11,7 +11,7 @@ import { NavMédico } from './NavMedico'
 import { NavPaciente } from './NavPaciente'
 import { NavUnidadeSaude } from './NavUnidadeSaude'
 
-const Nav = () =>{
+const Nav = () => {
 
   const [open, setOpen] = useState(false)
   const [openDrawer, setOpenDrawer] = useState(false)
