@@ -10,48 +10,51 @@ const router = Router()
 const { verifier, challenge } = generateChallenge(); 
 
 router.get('/authorize-safeid/:id',
-    async (req, res, next) => {
+    async (req, res) => {
       const url = await getSafeId(challenge)
     
       const { id } = req.params
 
-      req.idDoctor = id;
+      const savedURL = new models.SafeID({
+            url: url,
+            idDoctor: id,
+      })
+      console.log(savedURL)
 
-       await models.ModelRegisterMédico.findByIdAndUpdate(
-        id,
-        {
-          $set: { 'SafeID.element.link': url }, 
-        },
-        { new: true } 
-      )
+      await savedURL.save()
 
-      next()
-     
       return res.json({ url })
 })  
 
-router.get('/get-code-safeid', 
-   async (req, res) => {
+  router.get('/get-code-safeid', 
+    async (req, res) => {
 
-    try{
-      const { idDoctor } = req
-      console.log(`ID do Médico passado pelo Endpoint authorize: ${idDoctor}`)
-      const { code, state, error } = req.query
-      console.log(code)
-  
-      const Medico = await models.ModelRegisterMédico.findById(idDoctor)
-  
-      Medico.SafeID[Medico.SafeID.length - 1].code = code
-  
-      Medico.save()
-  
-      const data = generateToken(code, verifier)
-      console.log(data)
-    }catch(error){
-      return res.status(200).json({ message: 'Erro ao receber code da api do SafeID'})
-    }
-  
-})
+      try{
+        const { code, state, error } = req.query
+        console.log(code)
+
+        const lastSavedURL = await models.SafeID.findOne().sort({ _id: -1 });
+
+        if (!lastSavedURL) {
+          return res.status(404).json({ message: 'Nenhum SafeID encontrado' });
+        }
+
+        lastSavedURL.SafeID.push({
+          link: lastSavedURL.url,
+          idDoctor: lastSavedURL.idDoctor,
+          code: code,
+          token: null,  // Você pode definir o token como null inicialmente, se necessário
+          idSignature: null  // Defina como null ou forneça um valor inicial, se necessário
+        });
+
+        await lastSavedURL.save()
+
+        const data = generateToken(code, verifier)
+        console.log(data)
+      }catch(error){
+        return res.status(200).json({ message: 'Erro ao receber code da api do SafeID'})
+      }  
+  })
 
 
 export default router
