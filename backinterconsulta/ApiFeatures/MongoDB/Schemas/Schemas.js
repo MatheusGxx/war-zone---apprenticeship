@@ -186,12 +186,10 @@ const RegisterMédico = new mongoose.Schema({
   }],
   mediaAvaliacoes : Number,
   SafeID:[{
-    authAPI: [{
       link: String,
       code: String,
       token: String,
       idSignature: String,
-    }],
   }]
 })
 
