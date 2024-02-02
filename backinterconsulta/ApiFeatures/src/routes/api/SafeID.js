@@ -11,15 +11,21 @@ const { verifier, challenge } = generateChallenge();
 
 router.get('/authorize-safeid/:id',
     async (req, res) => {
+      
       const url = await getSafeId(challenge)
     
       const { id } = req.params
 
       const savedURL = new models.SafeID({
-            url: url,
+        SafeID: [
+          {
+            link: url,
             idDoctor: id,
-      })
-      console.log(`Salvando url e ID do médico no banco de dados: ${savedURL}`)
+          }
+        ]
+      });
+    
+      console.log(`Salvando url e ID do médico no banco de dados: ${savedURL}`);
 
       await savedURL.save()
 
@@ -50,7 +56,7 @@ router.get('/authorize-safeid/:id',
 
         await lastSavedURL.save()
 
-        const data = generateToken(code, verifier, res)
+        const data = await generateToken(code, verifier, res)
         console.log(`Token de acesso: ${data}`)
       }catch(error){
         return res.status(200).json({ message: 'Erro ao receber code da api do SafeID'})
