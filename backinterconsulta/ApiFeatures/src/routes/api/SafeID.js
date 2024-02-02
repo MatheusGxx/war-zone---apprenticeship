@@ -10,10 +10,10 @@ router.get('/authorize-safeid',
       return res.json({ url })
 })
 
-router.get('/get-code-safeid'), 
+router.get('/get-code-safeid', 
    async (req, res) => {
     const { code, state, error } = req.query
     console.log(code)
-}
+})
 
 export default router
