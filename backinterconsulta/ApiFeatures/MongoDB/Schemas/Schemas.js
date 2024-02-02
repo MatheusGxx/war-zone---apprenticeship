@@ -340,5 +340,4 @@ export const models = {
   ModelRegisterUnidadeSaude,
   ModelCasosClinicos,
   List,
-  SafeID,
 };
