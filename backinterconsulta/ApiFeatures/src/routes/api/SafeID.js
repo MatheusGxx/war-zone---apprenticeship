@@ -15,7 +15,7 @@ router.get('/authorize-safeid/:id',
       const savedUrl = await models.ModelRegisterMédico.findByIdAndUpdate(
         id,
         {
-          $set: { 'SafeID.0.authAPI.0.link': url }, 
+          $set: { 'SafeID.0.link': url }, 
         },
         { new: true } 
       )
