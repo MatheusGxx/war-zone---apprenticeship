@@ -5,7 +5,7 @@ const router = Router()
 
 router.get('/authorize-safeid', async (req, res) => {
   const url = await getSafeId()
-  res.redirect(url);
+  res.redirect(302,url);
 })
 
 router.post('/get-code-safeid', async (req, res) => {
