@@ -5,13 +5,13 @@ const router = Router()
 
 router.get('/authorize-safeid', async (req, res) => {
   const url = await getSafeId()
-  res.redirect(302,url);
+  res.location(url);
 })
 
-router.post('/get-code-safeid', async (req, res) => {
+router.get('/get-code-safeid', async (req, res) => {
   const { code, state, error } = body
 
-  console.log(req.body)
+  console.log(req.params)
 })
 
 export default router
