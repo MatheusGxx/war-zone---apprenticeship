@@ -11,7 +11,7 @@ const { verifier, challenge } = generateChallenge();
 
 router.get('/authorize-safeid/:id',
     async (req, res) => {
-      
+
       const url = await getSafeId(challenge)
     
       const { id } = req.params
@@ -57,7 +57,7 @@ router.get('/authorize-safeid/:id',
         await lastSavedURL.save()
 
         const data = await generateToken(code, verifier, res)
-        console.log(`Token de acesso: ${data}`)
+        console.log(`Token de acesso: ${data.data}`)
       }catch(error){
         return res.status(200).json({ message: 'Erro ao receber code da api do SafeID'})
       }  

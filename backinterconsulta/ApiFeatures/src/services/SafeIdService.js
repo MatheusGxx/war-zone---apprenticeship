@@ -49,7 +49,7 @@ export const generateToken = async(code, verifier, res) => {
       code_verifier: verifier,
       grant_type: 'authorization_code'
     })
-    return request.data; //Retorna uma série de informações, inclusive o token.
+    return request; //Retorna uma série de informações, inclusive o token.
   
     /* exemplo de retorno
     access_token 	string 	Valor do token de acesso <- Esse é o que a gente quer
