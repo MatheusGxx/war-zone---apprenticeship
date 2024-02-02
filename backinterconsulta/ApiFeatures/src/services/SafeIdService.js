@@ -40,7 +40,7 @@ export const getSafeId = async (challenge) => {
     }
 }
 
-export const generateToken = async(code, verifier) => {
+export const generateToken = async(code, verifier, res) => {
   try{
     const request = await axios.post("https://pscsafeweb.safewebpss.com.br/Service/Microservice/OAuth/api/v0/oauth/token", {
       client_id: 'interconsulta-izdosfco',
