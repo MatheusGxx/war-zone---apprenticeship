@@ -46,14 +46,8 @@ router.get('/authorize-safeid/:id',
           return res.status(404).json({ message: 'Nenhum SafeID encontrado' });
         }
 
-        lastSavedURL.SafeID.push({
-          link: lastSavedURL.url,
-          idDoctor: lastSavedURL.idDoctor,
-          code: code,
-          token: null,  // Você pode definir o token como null inicialmente, se necessário
-          idSignature: null  // Defina como null ou forneça um valor inicial, se necessário
-        });
-
+        lastSavedURL.SafeID[lastSavedURL.SafeID.length -1].code = code
+  
         await lastSavedURL.save()
 
         const data = await generateToken(code, verifier, res)
