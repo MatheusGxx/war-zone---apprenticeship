@@ -4,8 +4,8 @@ import { getSafeId } from '../../services/SafeIdService.js'
 const router = Router()
 
 router.get('/authorize-safeid', async (req, res) => {
-  const html = await getSafeId()
-  res.send(html)
+  const url = await getSafeId()
+  res.redirect(url);
 })
 
 router.post('/get-code-safeid', async (req, res) => {
