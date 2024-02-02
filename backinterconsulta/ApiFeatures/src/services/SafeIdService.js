@@ -19,19 +19,23 @@ const generateChallenge = () => {
 }
 
 export const getSafeId = async () => {
-  const { challenge } = generateChallenge()
-  const response = await axios.get(
-    'https://pscsafeweb.safewebpss.com.br/Service/Microservice/OAuth/api/v0/oauth/authorize',
-    {
-      params: {
-        response_type: 'code',
-        client_id: 'interconsulta-izdosfco',
-        redirect_uri: 'https://interconsulta.org/api/get-code-safeid',
-        code_challenge: challenge,
-        code_challenge_method: 'S256'
-      }
+    try{
+        const { challenge } = generateChallenge()
+        const response = await axios.get(
+            'https://pscsafeweb.safewebpss.com.br/Service/Microservice/OAuth/api/v0/oauth/authorize',
+            {
+            params: {
+                response_type: 'code',
+                client_id: 'interconsulta-izdosfco',
+                redirect_uri: 'https://interconsulta.org/api/get-code-safeid',
+                code_challenge: challenge,
+                code_challenge_method: 'S256'
+            }
+            }
+        )
+        return response.data
+    }catch(e){
+     return res.status(500).json({ message: 'Erro ai pegar o HTML do safeID'})
     }
-  )
-  return response.data
 }
 
