@@ -42,28 +42,26 @@ export const getSafeId = async (challenge) => {
 
 export const generateToken = async(code, verifier) => {
   try{
-
+    const request = await axios.post("https://pscsafeweb.safewebpss.com.br/Service/Microservice/OAuth/api/v0/oauth/token", {
+      client_id: 'interconsulta-izdosfco',
+      client_secret: 'KEZFmcHRimCSSg2oE1nEdikWYRWplIONW7fM1RsGiqKZgBSxWyesP7K5dkPNSw8HxJdm5axsHUTtXmLxMgQ09bUhMQZcNTTjvmwQ1gLC3mPp0qCPhoGleQXXtQc6Kh2I',
+      code: code,
+      code_verifier: verifier,
+      grant_type: 'authorization_code'
+    })
+    return request.data; //Retorna uma série de informações, inclusive o token.
+  
+    /* exemplo de retorno
+    access_token 	string 	Valor do token de acesso <- Esse é o que a gente quer
+    token_type 	string 	Valor fixo Bearer
+    expires_in 	int 	Valor inteiro com validade do token em segundos. O limite para pessoas físicas é de 7 dias. Para pessoa jurídica é de 30 dias.
+    scope 	string 	Deve ser informado se o escopo retornado for diferente do solicitado pela aplicação
+    authorized_identification_type 	string 	Deverá conter CPF ou CNPJ
+    authorized_identification 	string 	Valor correspondente ao CPF ou CNPJ associado ao titular do certificado
+    */
   }catch(error){
     return res.status(500).json({ message: 'Erro ao gerar Token do safeID'})
   }
-  //!!! client_secret exposto, cuidado !!!
-    const request = await axios.post("https://pscsafeweb.safewebpss.com.br/Service/Microservice/OAuth/api/v0/oauth/token", {
-    client_id: 'interconsulta-izdosfco',
-    client_secret: 'KEZFmcHRimCSSg2oE1nEdikWYRWplIONW7fM1RsGiqKZgBSxWyesP7K5dkPNSw8HxJdm5axsHUTtXmLxMgQ09bUhMQZcNTTjvmwQ1gLC3mPp0qCPhoGleQXXtQc6Kh2I',
-    code: code,
-    code_verifier: verifier,
-    grant_type: 'authorization_code'
-  })
-  return request.data; //Retorna uma série de informações, inclusive o token.
-
-  /* exemplo de retorno
-  access_token 	string 	Valor do token de acesso <- Esse é o que a gente quer
-  token_type 	string 	Valor fixo Bearer
-  expires_in 	int 	Valor inteiro com validade do token em segundos. O limite para pessoas físicas é de 7 dias. Para pessoa jurídica é de 30 dias.
-  scope 	string 	Deve ser informado se o escopo retornado for diferente do solicitado pela aplicação
-  authorized_identification_type 	string 	Deverá conter CPF ou CNPJ
-  authorized_identification 	string 	Valor correspondente ao CPF ou CNPJ associado ao titular do certificado
-  */
 }
 
 export const signatureStart = async (token, pdfDocument) => {
@@ -78,7 +76,7 @@ export const signatureStart = async (token, pdfDocument) => {
     });
    return response.data.id;
   } catch (error) {
-    console.error(error);
+    return res.status(200).json({ message: 'Erro ao Iniciar Assinatura'})
   }
 }
 
@@ -94,7 +92,7 @@ export const applyStamp = async (token, signatureId) => {
     });
     return response.data.id;
   } catch (error) {
-    console.error(error);
+    return res.status(200).json({ message: 'Erro ao Assinar com certificado Digital'})
   }
 }
 
@@ -134,6 +132,6 @@ export const signatureFinish = async(token, signatureId) => {
     });
     return response.data; //Retorna o documento assinado, em base64
   } catch (error) {
-    console.error(error);
+    return res.status(200).json({ message: 'Erro ao Finalizar Assinatura'})
   }
 }
