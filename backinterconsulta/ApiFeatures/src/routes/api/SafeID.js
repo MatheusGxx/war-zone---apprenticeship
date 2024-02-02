@@ -3,16 +3,17 @@ import { getSafeId } from '../../services/SafeIdService.js'
 
 const router = Router()
 
-router.get('/authorize-safeid', async (req, res) => {
-  const url = await getSafeId()
-  console.log(url);
-  res.json({ url });
+router.get('/authorize-safeid',
+    async (req, res) => {
+      const url = await getSafeId()
+      console.log(url);
+      res.json({ url });
 })
 
-router.get('/get-code-safeid', async (req, res) => {
-  const { code, state, error } = req.params
-
-  console.log(req.params)
-})
+router.get('/get-code-safeid'), 
+   async (req, res) => {
+    const { code, state, error } = req.query
+    console.log(code)
+}
 
 export default router
