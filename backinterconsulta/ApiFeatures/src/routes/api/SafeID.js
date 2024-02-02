@@ -7,7 +7,7 @@ router.get('/authorize-safeid',
     async (req, res) => {
       const url = await getSafeId()
       console.log(url);
-      res.json({ url });
+      return res.json({ url })
 })
 
 router.get('/get-code-safeid'), 
