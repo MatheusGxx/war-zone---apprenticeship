@@ -190,6 +190,7 @@ const RegisterMédico = new mongoose.Schema({
       link: String,
       code: String,
       token: String,
+      idSignature: String,
     }],
   }]
 })

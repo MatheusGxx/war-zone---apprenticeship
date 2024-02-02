@@ -66,7 +66,7 @@ export const generateToken = async(code, verifier) => {
   */
 }
 
-const signatureStart = async (token, pdfDocument) => {
+export const signatureStart = async (token, pdfDocument) => {
   try {
     const base64Content = Buffer.from(pdfDocument).toString('base64');
     const response = await axios.post('https://pscsafeweb.safewebpss.com.br/Service/Microservice/OAuth/api/v0/oauth/pades-signature/start', {
@@ -82,7 +82,7 @@ const signatureStart = async (token, pdfDocument) => {
   }
 }
 
-const applyStamp = async (token, signatureId) => {
+export const applyStamp = async (token, signatureId) => {
   try {
     const response = await axios.post(`https://pscsafeweb.safewebpss.com.br/Service/Microservice/OAuth/api/v0/oauth/pades-signature/apply`, {
       id: signatureId,
@@ -123,7 +123,7 @@ const applyStamp = async (token, signatureId) => {
 }
 */
 
-const signatureFinish = async(token, signatureId) => {
+export const signatureFinish = async(token, signatureId) => {
   try {
     const response = await axios.post(`https://pscsafeweb.safewebpss.com.br/Service/Microservice/OAuth/api/v0/oauth/pades-signature/finish`, {
       id: signatureId
