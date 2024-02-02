@@ -1,13 +1,27 @@
 import { Router } from 'express'
-import { getSafeId } from '../../services/SafeIdService.js'
+import { generateChallenge, getSafeId } from '../../services/SafeIdService.js'
+import { models } from '../../../MongoDB/Schemas/Schemas.js'
 
 const router = Router()
+const { verifier, challenge } = generateChallenge(); //Temporario
 
-router.get('/authorize-safeid',
+router.get('/authorize-safeid/:id',
     async (req, res) => {
-      const url = await getSafeId()
-      console.log(url);
-      return res.json({ url })
+      const url = await getSafeId(challenge) //TODO: coletar o challenge e o verifier do banco de dados
+      console.log(url)
+
+      const { id } = req.params
+
+      const savedUrl = await models.ModelRegisterMédico.findByIdAndUpdate(
+        id,
+        {
+          $set: { 'SafeID.0.authAPI.0.link': url }, 
+        },
+        { new: true } 
+      )
+      console.log(savedUrl)
+     
+      return res.json({ url });
 })
 
 router.get('/get-code-safeid', 
@@ -15,5 +29,7 @@ router.get('/get-code-safeid',
     const { code, state, error } = req.query
     console.log(code)
 })
+
+router.post('/')
 
 export default router

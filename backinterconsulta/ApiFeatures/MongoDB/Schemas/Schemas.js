@@ -185,6 +185,13 @@ const RegisterMédico = new mongoose.Schema({
     NomePaciente: String,
   }],
   mediaAvaliacoes : Number,
+  SafeID:[{
+    authAPI: [{
+      link: String,
+      code: String,
+      token: String,
+    }],
+  }]
 })
 
 const RegisterPaciente = new mongoose.Schema({
@@ -319,6 +326,7 @@ const ListDoencasAndSintomasDoctor = new mongoose.Schema({
   }]
 })
 
+
 const ModelRegisterMédico = mongoose.model('registerMédico', RegisterMédico)
 const ModelRegisterPaciente = mongoose.model('registerPaciente', RegisterPaciente)
 const ModelRegisterUnidadeSaude = mongoose.model('RegisterUnidadeSaude', RegisterUnidadeSaude)
@@ -330,5 +338,6 @@ export const models = {
   ModelRegisterPaciente,
   ModelRegisterUnidadeSaude,
   ModelCasosClinicos,
-  List
+  List,
+  SafeID,
 };
