@@ -10,7 +10,7 @@ router.get('/authorize-safeid', async (req, res) => {
 })
 
 router.get('/get-code-safeid', async (req, res) => {
-  const { code, state, error } = body
+  const { code, state, error } = req.params
 
   console.log(req.params)
 })
