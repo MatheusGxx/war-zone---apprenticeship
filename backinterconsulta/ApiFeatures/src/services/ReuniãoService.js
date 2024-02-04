@@ -252,7 +252,7 @@ export const SavedConsultaMedico = async (body, res) => {
       if (updateStateConsultaMedico) {
         res.status(200).json({ message: 'Atualização de Consulta Atendida do médico concluída com sucesso' })
        //Production
-       axios.post('http://back-a:8081/api/automatic-whatsapp', {
+       /*axios.post('http://back-a:8081/api/automatic-whatsapp', {
         route: '/resumo-casos-clinicos',
         Diagnostico: Diagnostico,
         Tratamento: Tratamento,
@@ -266,9 +266,9 @@ export const SavedConsultaMedico = async (body, res) => {
         EstadoPaciente: EstadoPaciente,
         Solicitacao: Solicitacao,
         result: result
-       })
+       })*/
       //Development
-        /*axios.post('http://localhost:8081/api/automatic-whatsapp', {
+        axios.post('http://localhost:8081/api/automatic-whatsapp', {
           route: '/resumo-casos-clinicos',
           Diagnostico: Diagnostico,
           Tratamento: Tratamento,
@@ -282,7 +282,7 @@ export const SavedConsultaMedico = async (body, res) => {
           EstadoPaciente: EstadoPaciente,
           Solicitacao: Solicitacao,
           result: result
-         })*/
+         })
         
       } else {  
         return res.status(200).json({ message: 'Erro ao atualizar a Consulta Atendida do Médico' });

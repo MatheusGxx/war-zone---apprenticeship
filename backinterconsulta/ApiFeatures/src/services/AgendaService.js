@@ -102,9 +102,9 @@ export const SavedConsultaPacienteParticular = async (body, res) => {
     }
     
     //Production
-     axios.post('http://back-a:8081/api/automatic-whatsapp', body)
+    // axios.post('http://back-a:8081/api/automatic-whatsapp', body)
     //Development
-    //axios.post('http://localhost:8081/api/automatic-whatsapp', body)
+    axios.post('http://localhost:8081/api/automatic-whatsapp', body)
 
    }catch(e){
     throw new Error(e)
@@ -486,9 +486,9 @@ export const UpdateConsulta = async (body, res) => {
         }
         
         //Production
-        axios.post('http://back-a:8081/api/automatic-whatsapp', body)
+        //axios.post('http://back-a:8081/api/automatic-whatsapp', body)
         //Development
-        //axios.post('http://localhost:8081/api/automatic-whatsapp', body)
+        axios.post('http://localhost:8081/api/automatic-whatsapp', body)
       } else {
         res.status(500).json({ message: 'Erro ao fazer Atualização' });
       }
@@ -621,9 +621,9 @@ export const DeleteCasoClinico = async (body, res) => {
         }
         
         //Production
-        axios.post('http://back-a:8081/api/automatic-whatsapp', body)
+        //axios.post('http://back-a:8081/api/automatic-whatsapp', body)
        //Development
-       //axios.post('http://localhost:8081/api/automatic-whatsapp', body)
+       axios.post('http://localhost:8081/api/automatic-whatsapp', body)
       }
      }
   }catch(error){
@@ -695,9 +695,9 @@ export const DeleteCasoClinicoPacienteParticular = async (body, res) => {
          }
    
       //Production
-      axios.post('http://back-a:8081/api/automatic-whatsapp', body)
+      //axios.post('http://back-a:8081/api/automatic-whatsapp', body)
       //Development
-      //axios.post('http://localhost:8081/api/automatic-whatsapp', body)
+      axios.post('http://localhost:8081/api/automatic-whatsapp', body)
 
     } else {
       res.status(404).json({ message: 'Erro ao excluir consulta' });

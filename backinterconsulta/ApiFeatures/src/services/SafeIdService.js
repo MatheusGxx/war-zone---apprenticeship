@@ -2,6 +2,7 @@ import axios from 'axios'
 //RFC 7636 PKCE
 //Muito código aqui em cima, tem que mudar isso aqui depois.
 import { randomBytes, createHash } from 'crypto'
+import fs from 'fs'
 
 export const generateChallenge = () => {
   const verifier = randomBytes(32)
@@ -20,13 +21,12 @@ export const generateChallenge = () => {
 
 export const getSafeId = async (challenge) => {
     try{
-      // const { verifier, challenge } = generateChallenge();
       const baseUrl = 'https://pscsafeweb.safewebpss.com.br/Service/Microservice/OAuth/api/v0/oauth/authorize';
       const params = new URLSearchParams();
       
       params.append('response_type', 'code');
       params.append('client_id', 'interconsulta-izdosfco');
-      params.append('redirect_uri', 'https://interconsulta.org/api/get-code-safeid');
+      params.append('redirect_uri', 'https://4431-2804-7f0-9381-aa2f-8d35-e647-1b47-f64a.ngrok-free.app/api/get-code-safeid');
       params.append('code_challenge', challenge);
       params.append('code_challenge_method', 'S256');
       params.append('lifetime', '604800');  // Adjust the value if needed
@@ -47,9 +47,10 @@ export const generateToken = async(code, verifier, res) => {
       client_secret: 'KEZFmcHRimCSSg2oE1nEdikWYRWplIONW7fM1RsGiqKZgBSxWyesP7K5dkPNSw8HxJdm5axsHUTtXmLxMgQ09bUhMQZcNTTjvmwQ1gLC3mPp0qCPhoGleQXXtQc6Kh2I',
       code: code,
       code_verifier: verifier,
-      grant_type: 'authorization_code'
+      grant_type: 'authorization_code',
+      redirect_uri: 'https://4431-2804-7f0-9381-aa2f-8d35-e647-1b47-f64a.ngrok-free.app/api/get-code-safeid'
     })
-    return request; //Retorna uma série de informações, inclusive o token.
+    return request.data
   
     /* exemplo de retorno
     access_token 	string 	Valor do token de acesso <- Esse é o que a gente quer
@@ -66,15 +67,20 @@ export const generateToken = async(code, verifier, res) => {
 
 export const signatureStart = async (token, pdfDocument) => {
   try {
-    const base64Content = Buffer.from(pdfDocument).toString('base64');
+    const pdfBuffer = fs.readFileSync(pdfDocument)
+
+    const base64Content = Buffer.from(pdfBuffer).toString('base64')
     const response = await axios.post('https://pscsafeweb.safewebpss.com.br/Service/Microservice/OAuth/api/v0/oauth/pades-signature/start', {
-      content: base64Content
+      file:{
+        content: base64Content
+      },
     }, {
       headers: {
         Authorization: `Bearer ${token}`
       }
-    });
-   return response.data.id;
+    })
+    
+   return response.data.id
   } catch (error) {
     return res.status(200).json({ message: 'Erro ao Iniciar Assinatura'})
   }
@@ -82,55 +88,54 @@ export const signatureStart = async (token, pdfDocument) => {
 
 export const applyStamp = async (token, signatureId) => {
   try {
-    const response = await axios.post(`https://pscsafeweb.safewebpss.com.br/Service/Microservice/OAuth/api/v0/oauth/pades-signature/apply`, {
-      id: signatureId,
-      alias: '00000000000' //TODO: posteriormente mudar isso para um valor dinâmico
-    }, {
+    const response = await axios.post(`https://pscsafeweb.safewebpss.com.br/Service/Microservice/OAuth/api/v0/oauth/pades-signature/apply`,{
+      "Id": signatureId,
+      "signature_policy": 1,
+      "alias": "00000000000",
+      "annotations": [
+        {
+          "x": 336.261064,
+          "y": 28.005527,
+          "width": 155.23876,
+          "height": 77.61938,
+          "page": 2,
+        },
+        {
+          "x": 200.261064,
+          "y": 100.005527,
+          "width": 200.23876,
+          "height": 100.61938,
+          "page": 2
+        }
+      ]
+    },
+    {
       headers: {
         Authorization: `Bearer ${token}`
       }
-    });
-    return response.data.id;
+    })
+    
+    console.log(response.data)
+
+    return response.data
   } catch (error) {
     return res.status(200).json({ message: 'Erro ao Assinar com certificado Digital'})
   }
 }
 
-/* exemplo de entrada
-{
-  "Id": "21a1940b61c4490499636e15f3f5c7c0",
-  "signature_policy": 1,
-  "alias": "00000000000",
-  "annotations": [
-    {
-      "x": 336.261064,
-      "y": 28.005527,
-      "width": 155.23876,
-      "height": 77.61938,
-      "page": 1,
-      "image": "base64 image content"
-    },
-    {
-      "x": 200.261064,
-      "y": 100.005527,
-      "width": 200.23876,
-      "height": 100.61938,
-      "page": 2
-    }
-  ]
-}
-*/
+export const signatureFinish = async (token, signatureId) => {
 
-export const signatureFinish = async(token, signatureId) => {
   try {
-    const response = await axios.post(`https://pscsafeweb.safewebpss.com.br/Service/Microservice/OAuth/api/v0/oauth/pades-signature/finish`, {
-      id: signatureId
-    }, {
+    const response = await axios.get(`https://pscsafeweb.safewebpss.com.br/Service/Microservice/OAuth/api/v0/oauth/pades-signature/finish?documentId=${signatureId}`,
+    {
       headers: {
+        "Content-Length": "0",
         Authorization: `Bearer ${token}`
       }
-    });
-    return response.data; //Retorna o documento assinado, em base64
+    })
+
+    return response.data.content 
+
   } catch (error) {
     return res.status(200).json({ message: 'Erro ao Finalizar Assinatura'})
   }

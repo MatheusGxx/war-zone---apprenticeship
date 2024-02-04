@@ -10,8 +10,6 @@ WORKDIR /app
 
 COPY backinterconsulta/ApiAutomacoes .
 
-RUN npm install
-
 RUN npm install --ignore-scripts=false --verbose sharp
 
 EXPOSE 8081

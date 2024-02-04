@@ -1,7 +1,9 @@
 'use client'
 import { useState, useEffect } from "react"
 import { FormControl, InputLabel, Select, MenuItem, Snackbar, Alert } from "@mui/material"
-import { AccordionReuniaoMédico } from '../partials/AccordionReuniao.js'
+import { AccordionReuniaoMédico } from "../partials/AccordionReuniao.jsx"
+import { AccordionReuniaoMédico2 } from '../partials/AccordionReuniao2.jsx'
+import { AccordionReuniaoMédico3 } from "../partials/AccordionReuniao3.jsx"   
 import { useMutation } from '@tanstack/react-query'
 import axios from 'axios'
 import secureLocalStorage from 'react-secure-storage'
@@ -11,6 +13,13 @@ import { PopUpEndReunião } from '../partials/popUpEndReuniao.js'
 import { useRouter } from 'next/navigation'
 import { UseReuniaoAcabando } from "../context/context.js"
 import { config } from '../config.js'
+import { TextField } from '@mui/material'
+
+import Box from '@mui/material/Box'
+import Tab from '@mui/material/Tab'
+import TabContext from '@mui/lab/TabContext'
+import TabList from '@mui/lab/TabList'
+import TabPanel from '@mui/lab/TabPanel'
 
 const ReuniaoMédico = () =>{
 
@@ -27,6 +36,8 @@ const ReuniaoMédico = () =>{
   const [Recomendacoes, setRecomendacoes] = useState('')
   const [startConsulta, SetStartConsulta] = useState('')
   const [nameInitialPatient, setNameInitialPatient] = useState('')
+  const [ficha, setFicha] = useState('')
+  const [atestado, setAtestado] = useState('')
 
   const[open, setOpen] = useState('')
   const[nomePaciente, setNomePaciente ] = useState('')
@@ -38,6 +49,8 @@ const ReuniaoMédico = () =>{
     vertical: 'top',
     horizontal: 'center'
   })
+
+  const [value, setValue] = useState('1');
 
   const { vertical, horizontal } = position
 
@@ -226,6 +239,10 @@ const ReuniaoMédico = () =>{
     setSnackbarOpen(true)
   }
 
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
+
   return(
     <>
   
@@ -240,28 +257,49 @@ const ReuniaoMédico = () =>{
           ))}
 
                   <div className='w-full flex justify-center items-center'>
-                    <div className="flex flex-col w-11/12 justify-center">
+                   
+                  <Box sx={{ width: '100%', typography: 'body1' }}>
+                    <TabContext value={value}>
+                      <Box sx={{ borderBottom: 1, borderColor: 'divider' }} className="flex justify-center">
+                        <TabList onChange={handleChange} aria-label="lab API tabs example">
+                          <Tab label="Ficha do Paciente" value="1" />
+                          <Tab label="Documentos" value="2" />
+                          <Tab label="Açoes" value="3" />
+                        </TabList>
+                      </Box>
+                      <TabPanel value="1" >
                         <AccordionReuniaoMédico
+                        setFicha={setFicha}
+                        ficha={ficha}
                         setDiagnóstico={setDiagnóstico}
                         Diagnóstico={Diagnóstico}
                         setTratamento={setTratamento}
                         Tratamento={Tratamento}
-                        setMedicaçao={setMedicaçao}
-                        Medicaçao={Medicaçao}
                         setFerramenta={setFerramenta}
                         FerramentaTerapeutica={FerramentaTerapeutica}
                         setProgresso={setProgresso}
                         Progresso={Progresso}
-                        setSolicitaçaoMedicamentos={setSolicitaçaoMedicamentos}
-                        SolicitaçaoMedicamentos={SolicitaçaoMedicamentos}
-                        setSolicitaçaoMateriais={setSolicitaçaoMateriais}
-                        SolicitaçaoMateriais={SolicitaçaoMateriais}
+                        />
+                      </TabPanel>
+                      <TabPanel value="2">
+                        <AccordionReuniaoMédico2
+                        setMedicaçao={setMedicaçao}
+                        Medicaçao={Medicaçao}
+                        setAtestado={setAtestado}
+                        atestado={atestado}
                         setSolicitarExames={setSolicitarExames}
                         SolicitarExames={SolicitarExames}
-                        setRecomendacoes={setRecomendacoes}
-                        Recomendacoes={Recomendacoes}
+                     
                         />
-                        </div>
+                      </TabPanel>
+                      <TabPanel value="3">
+                      <AccordionReuniaoMédico3
+                      set
+                      />
+                      </TabPanel>
+                    </TabContext>
+                  </Box>
+
                   </div>
             
                         <div className="flex gap-5 justify-center items-center">

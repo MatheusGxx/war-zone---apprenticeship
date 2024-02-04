@@ -116,9 +116,9 @@ export const Register = async (body, res) =>{
         } 
         
         //Production
-        axios.post('http://back-a:8081/api/automatic-whatsapp', idMédico)
+        //axios.post('http://back-a:8081/api/automatic-whatsapp', idMédico)
         //Development
-        //axios.post('http://localhost:8081/api/automatic-whatsapp', idMédico)
+        axios.post('http://localhost:8081/api/automatic-whatsapp', idMédico)
       }
       break;
 
@@ -146,9 +146,9 @@ export const Register = async (body, res) =>{
        }
        
        //Production
-       axios.post('http://back-a:8081/api/automatic-whatsapp', idPaciente)
+       //axios.post('http://back-a:8081/api/automatic-whatsapp', idPaciente)
        //Development
-       //axios.post('http://localhost:8081/api/automatic-whatsapp', idPaciente)
+       axios.post('http://localhost:8081/api/automatic-whatsapp', idPaciente)
 
       }
       break;
@@ -176,9 +176,9 @@ export const Register = async (body, res) =>{
         }
         
         //Production
-        axios.post('http://back-a:8081/api/automatic-whatsapp', idUnidade)
+        //axios.post('http://back-a:8081/api/automatic-whatsapp', idUnidade)
         //Development
-        //axios.post('http://localhost:8081/api/automatic-whatsapp', idUnidade)
+        axios.post('http://localhost:8081/api/automatic-whatsapp', idUnidade)
       }
       break;
 
@@ -373,9 +373,9 @@ export const RegisterEnd = async (body, params, file, res) =>{
           }
           
           //Production
-          axios.post('http://back-a:8081/api/automatic-whatsapp', dataMedico)
+          //axios.post('http://back-a:8081/api/automatic-whatsapp', dataMedico)
           //Development
-          //axios.post('http://localhost:8081/api/automatic-whatsapp', dataMedico)
+          axios.post('http://localhost:8081/api/automatic-whatsapp', dataMedico)
         
           }catch(err){
             console.log(err)
@@ -462,9 +462,9 @@ export const RegisterEnd = async (body, params, file, res) =>{
             }
  
             //Production
-             axios.post('http://back-a:8081/api/automatic-whatsapp', dataPaciente)
+             //axios.post('http://back-a:8081/api/automatic-whatsapp', dataPaciente)
             //Development
-            //axios.post('http://localhost:8081/api/automatic-whatsapp', dataPaciente)
+            axios.post('http://localhost:8081/api/automatic-whatsapp', dataPaciente)
         }catch(error){
           throw new Error(error)
         }
@@ -514,9 +514,9 @@ export const RegisterEnd = async (body, params, file, res) =>{
         }
         
         //Production
-         axios.post('http://back-a:8081/api/automatic-whatsapp', dataUnidade)
+         //axios.post('http://back-a:8081/api/automatic-whatsapp', dataUnidade)
         //Development
-        //axios.post('http://localhost:8081/api/automatic-whatsapp', dataUnidade)
+        axios.post('http://localhost:8081/api/automatic-whatsapp', dataUnidade)
 
         }catch(err){
           console.log(err)

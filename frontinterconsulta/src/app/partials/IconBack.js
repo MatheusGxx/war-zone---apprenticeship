@@ -1,5 +1,5 @@
 'use client'
-import KeyboardBackspaceSharpIcon from '@mui/icons-material/KeyboardBackspaceSharp';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useRouter } from 'next/navigation';
 
 const IconBack = () => {
@@ -11,7 +11,7 @@ const IconBack = () => {
 
   return (
     <>
-        <KeyboardBackspaceSharpIcon
+        <ArrowBackIcon 
           className="cursor-pointer "
           sx={{ color: 'blue' }}
           onClick={() => HandleBackRouter()}

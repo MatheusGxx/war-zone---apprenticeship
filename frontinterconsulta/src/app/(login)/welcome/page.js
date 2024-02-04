@@ -11,7 +11,7 @@ const Welcome = () => {
   const Router = useRouter()
 
   const HandleClick = async (route) =>{
-       await Router.push(`/welcome/${route}`)
+      await Router.push(`/welcome/${route}`)
   }
   return(
     <>

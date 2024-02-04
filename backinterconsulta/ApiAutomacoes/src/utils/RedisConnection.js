@@ -1,6 +1,6 @@
 export default {
     redis:{
-       host: 'redis',
+       host: 'localhost',
        port: 6379
     }
 }

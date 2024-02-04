@@ -324,8 +324,10 @@ const SafeIDSchema = new mongoose.Schema({
     link: String,
     idDoctor: String,
     code: String,
-    token: String,
+    acessToken: String,
+    expires_in: Number,
     idSignature: String,
+    PDFAssinado: String,
 }]
 })
 
