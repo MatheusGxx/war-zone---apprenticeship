@@ -56,6 +56,7 @@ router.post('/obrigado/:id',  uploadPhotos.single("file") ,async (req, res ) => 
          AreadeAtuacao: req.body.AreadeAtuacao,
          DataNascimento: req.body.DataNascimento,
          CRM: req.body.CRM,
+         UFCRM: req.body.UFCRM,
          InstituicaoResidencia: req.body.InstituicaoResidencia,
          RQE: req.body.RQE,
          Certificacao: req.body.Certificacao,

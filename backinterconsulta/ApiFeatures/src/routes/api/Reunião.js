@@ -13,6 +13,13 @@ import
     ConclusionConsultaDeleteHorario,
     getConsultaParticularDoctor,
     getHorariosProximos,
+    getDataDoctor,
+    SavedReceitaSimples,
+    getReceitaSimples,
+    DeleteReceitaSimples,
+    SavedReceitaControlada,
+    getReceitaControlada,
+    DeleteReceitaControlada,
    }
  from "../../services/ReuniãoService.js"
 
@@ -181,6 +188,66 @@ router.post('/get-horarios-proximos',
         getHorariosProximos(body, res)
         console.log(req.body)
        }
+)
+
+router.post('/get-data-doctor-room',
+      async(req, res) => {
+        const body ={
+          id: req.body.id
+        }
+        getDataDoctor(body,res)
+        console.log(req.body)
+      }
+)
+
+router.post('/saved-receita-simples', 
+     async(req, res) => {
+      const { id, receitaSimples } = req.body
+      SavedReceitaSimples(id, receitaSimples, res)
+      console.log(req.body)
+     }
+)
+
+router.get('/get-receita-simples/:id', 
+      async(req, res) =>{
+        const { id } = req.params
+        getReceitaSimples(id,res)
+        console.log(req.params)
+      }
+)
+
+router.delete('/delete-receita-simples/:idConsulta/:idReceitaS',
+      async(req,res) =>{
+        const { idConsulta, idReceitaS } = req.params
+        
+        DeleteReceitaSimples(idConsulta,idReceitaS, res)
+        console.log(req.params)
+      }
+)
+
+router.post('/saved-receita-controlada', 
+     async(req, res) => {
+      const { id, receitaControlada } = req.body
+      SavedReceitaControlada(id, receitaControlada, res)
+      console.log(req.body)
+     }
+)
+
+router.get('/get-receita-controlada/:id', 
+      async(req, res) =>{
+        const { id } = req.params
+        getReceitaControlada(id,res)
+        console.log(req.params)
+      }
+)
+
+router.delete('/delete-receita-controlada/:idConsulta/:idReceitaC',
+      async(req,res) =>{
+        const { idConsulta, idReceitaC } = req.params
+        
+        DeleteReceitaControlada(idConsulta,idReceitaC, res)
+        console.log(req.params)
+      }
 )
 
 export default router

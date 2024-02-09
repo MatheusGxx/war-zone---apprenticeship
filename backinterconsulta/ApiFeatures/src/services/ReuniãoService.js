@@ -471,3 +471,194 @@ export const getHorariosProximos = async (body,res) => {
     console.log(error)
   }
 }
+
+
+export const getDataDoctor = async (body, res) => {
+    const { id } = body
+
+    try{ 
+       const getDoctor = await models.ModelRegisterMédico.findById(id)
+        
+       if(!getDoctor){
+        return res.status(500).json({ message: 'Médico nao existe no banco de dados do Interconsulta'})
+       }
+       
+       res.status(200).json({ getDoctor })
+    }catch(error){
+      return res.status(500).json({ message: 'Erro ao pegar insformaçoes do Médico'}) 
+    }
+}
+
+
+export const SavedReceitaSimples = async (id, receitaSimples, res) => {
+
+  try {
+    const insertReceitaSimples = await models.ModelRegisterMédico.findOneAndUpdate(
+      { 'ConsultasSolicitadasPacientes._id': id },
+      {
+        $push: {
+          'ConsultasSolicitadasPacientes.$.ReceitasSimples': { ReceitaSimplesSolicitada: receitaSimples }
+        }
+      },
+      { new: true }
+    );
+     
+    if (!insertReceitaSimples) {
+      return res.status(404).json({ message: "Consulta nao encontrada" });
+    }
+
+    return res.status(200).json({ message: 'Receita Simples salva com sucesso'});
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Erro ao salvar receita simples." })
+  }
+};
+
+export const getReceitaSimples = async (id, res) => {
+
+  const getReceitaSimples = await models.ModelRegisterMédico.findOne({ 'ConsultasSolicitadasPacientes._id': id })
+
+  if(!getReceitaSimples){
+    return res.status(400).json({ message: "Consulta nao existe"})
+  }
+
+  const receitasSimples = getReceitaSimples.ConsultasSolicitadasPacientes.find(consulta => consulta._id.equals(id)).ReceitasSimples
+
+  return res.status(200).json({ receitas: receitasSimples })
+  
+}
+
+export const DeleteReceitaSimples = async(idConsulta,idReceitaS, res) => {
+     try{
+      const deleteReceitaSimples = await models.ModelRegisterMédico.findOneAndUpdate(
+        { 'ConsultasSolicitadasPacientes._id': idConsulta},
+        {
+          $pull: {
+            'ConsultasSolicitadasPacientes.$.ReceitasSimples': { _id: idReceitaS }
+          }
+        },
+         { new: true }
+        )
+
+        if(!deleteReceitaSimples){
+          return res.status(400).json({ message: 'Nao foi possivel encontrar essa Receita Simples para exclui-la'})
+        }
+
+
+      return res.status(200).json({ message: 'Receita Simples Excluida'})
+        
+     }catch(error){
+      return res.status(500).json({ message: 'Erro ao excluir Receita Simples'})
+     }
+}
+
+export const SavedReceitaControlada = async(id, receitaControlada, res) => {
+  try {
+    const insertReceitaControlada = await models.ModelRegisterMédico.findOneAndUpdate(
+      { 'ConsultasSolicitadasPacientes._id': id },
+      {
+        $push: {
+          'ConsultasSolicitadasPacientes.$.ReceitasControlada': { ReceitaControladaSolicitada: receitaControlada }
+        }
+      },
+      { new: true }
+    );
+      
+    if (!insertReceitaControlada) {
+      return res.status(404).json({ message: "Consulta nao encontrada" });
+    }
+
+    return res.status(200).json({ message: 'Receita Controlada salva com sucesso!'});
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Erro ao salvar receita Controlada." })
+  }
+}
+
+
+export const getReceitaControlada = async (id) => {
+  const getReceitaControlada = await models.ModelRegisterMédico.findOne({ 'ConsultasSolicitadasPacientes._id': id })
+
+  if(!getReceitaControlada){
+    return res.status(400).json({ message: 'Consulta nao existe!'})
+  }
+  
+  const receitasControladas = getReceitaControlada.ConsultasSolicitadasPacientes.find(consulta => consulta._id.equals(id)).ReceitasControlada
+
+  res.status(200).json({ receitasControladas: receitasControladas })
+}
+
+export const DeleteReceitaControlada = async(idConsulta, idReceitaC, res) => {
+  try{
+    const deleteReceitaControlada = await models.ModelRegisterMédico.findOneAndUpdate(
+      { 'ConsultasSolicitadasPacientes._id': idConsulta},
+      {
+        $pull: {
+          'ConsultasSolicitadasPacientes.$.ReceitasControlada': { _id: idReceitaC }
+        }
+      },
+       { new: true }
+      )
+
+      if(!deleteReceitaControlada){
+        return res.status(400).json({ message: 'Nao foi possivel encontrar essa Receita Controlada para exclui-la'})
+      }
+
+      return res.status(200).json({ message: 'Receita Controlada Excluida'})
+      
+   }catch(error){
+    return res.status(500).json({ message: 'Erro ao excluir Receita Controlada'})
+   }
+}
+
+export const SaveExamesSolicitadosDoctor = async (id, exame, res) => {
+  try {
+    const insertExame = await models.ModelRegisterMédico.findOneAndUpdate(
+      { 'ConsultasSolicitadasPacientes._id': id },
+      {
+        $push: {
+          'ConsultasSolicitadasPacientes.$.ExameSolicitado': { Exame: exame }
+        }
+      },
+      { new: true }
+    );
+    
+    const documentoDepois = await models.ModelRegisterMédico.findOne({ 'ConsultasSolicitadasPacientes._id': id });
+    
+    // Comparar para encontrar o array de 'ReceitaSimples' atualizado
+    const exames = documentoDepois.ConsultasSolicitadasPacientes.find(consulta => consulta._id.equals(id)).ExameSolicitado
+    
+    if (!insertExame) {
+      return res.status(404).json({ message: "Exame nao encontrado" });
+    }
+
+    return res.status(200).json({ exames: exames });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Erro ao salvar Exame" })
+  }
+}
+
+
+export const DeleteExamesSolicitadosDoctor = async (idConsulta, idExame, res) => {
+  try{
+    const deleteExames = await models.ModelRegisterMédico.findOneAndUpdate(
+      { 'ConsultasSolicitadasPacientes._id': idConsulta },
+      {
+        $pull: {
+          'ConsultasSolicitadasPacientes.$.ExameSolicitado': { _id: idExame }
+        }
+      },
+       { new: true }
+      )
+
+      if(!deleteExames){
+        return res.status(400).json({ message: 'Nao foi possivel encontrar esse Exame para exclui-lo'})
+      }
+
+     return res.status(200).json({ message: 'Exame Excluido'})
+      
+   }catch(error){
+    return res.status(500).json({ message: 'Erro ao excluir Exame'})
+   }
+}

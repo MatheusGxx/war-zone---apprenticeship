@@ -11,10 +11,8 @@ export default function RootLayout({ children }) {
     <html lang="pt-br">
       <body className="background overflow-y-hidden">
         <QueryClientProvider client={queryClient}>
-        <div className="min-h-screen justify-center items-center">
           <NavReunião/>
-          {children}
-        </div>  
+          {children} 
         </QueryClientProvider>
       </body>
     </html>

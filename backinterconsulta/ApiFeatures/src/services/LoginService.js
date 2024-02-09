@@ -11,7 +11,7 @@ import { models } from "../../MongoDB/Schemas/Schemas.js"
 import { Criptografia } from "../utils/Functions/Criptografia.js"
 import axios from 'axios'
 import slugfy from 'slugify'
-import { ConvertingIdadee } from "../utils/Functions/Converting.js"
+import { ConvertingIdadee, Medicamentos } from "../utils/Functions/Converting.js"
 
 const secretKey = crypto.randomBytes(32).toString('hex')
 
@@ -202,7 +202,8 @@ export const RegisterEnd = async (body, params, file, res) =>{
     PosGraduacao, 
     EspecialidadeMedica, 
     AreadeAtuacao, 
-    CRM, 
+    CRM,
+    UFCRM,
     InstituicaoResidencia, 
     DataNascimento, 
     RQE, 
@@ -253,7 +254,7 @@ export const RegisterEnd = async (body, params, file, res) =>{
    const { id } = params
    
   /*try{
-  const dataMedico = { NomeConhecido, TituloEspecialista, FormacaoEspecialista,  AnoGraduacao, PosGraduacao, EspecialidadeMedica, AreadeAtuacao, CRM,  InstituicaoResidencia, DataNascimento, RQE, Certificacao, PrecoConsulta, ResumoProfissional,  FerramentasTerapeuticas, Slug, NomeTitular, NumeroConta, NumeroAgencia, Banco, ChavePix,  CPNJMedico, RazaoSocialEmpresa,NomeFantasia,  EnderecoMedico, Bairro,Cidade, Estado, CEPMedico, EmailContador,
+  const dataMedico = { NomeConhecido, TituloEspecialista, FormacaoEspecialista, AnoGraduacao, PosGraduacao, EspecialidadeMedica, AreadeAtuacao, CRM, UFCRM, InstituicaoResidencia, DataNascimento, RQE, Certificacao, PrecoConsulta, ResumoProfissional,  FerramentasTerapeuticas, Slug, NomeTitular, NumeroConta, NumeroAgencia, Banco, ChavePix,  CPNJMedico, RazaoSocialEmpresa,NomeFantasia,  EnderecoMedico, Bairro,Cidade, Estado, CEPMedico, EmailContador,
   TelefoneContador,}
 
   const dataPaciente = { Genero, Data, Doenca, TipoSanguineo, EstadoCivil, Profissao, CPF, CEP,  EnderecoPaciente, CidadePaciente, EstadoPaciente, Pais, CartaoSUS, NomeAcompanhante, TelefoneAcompanhante, EmailAcompanhante, }
@@ -320,6 +321,7 @@ export const RegisterEnd = async (body, params, file, res) =>{
           Médico.AreadeAtuacao = AreadeAtuacao
           Médico.EspecialidadeMedica = EspecialidadeMedica
           Médico.CRM = CRM
+          Médico.UFCRM =  UFCRM
           Médico.InstituicaoResidencia = InstituicaoResidencia
           Médico.DataNascimento = DataNascimento 
           Médico.Idade = ConvertingIdadee(DataNascimento)

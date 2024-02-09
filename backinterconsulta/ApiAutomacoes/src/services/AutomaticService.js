@@ -276,7 +276,7 @@ export const AutomaticWhatsapp = async (body, res) => {
 
         await WhatsappQueue.add('Whatsapp Fila', {
           numero:`${NumeroPacienteRejeitouConsulta}`,
-          mensagem:`${NomeMedicoRejeitouConsulta} Informa: Ola ${NomePacienteRejeitouConsulta}, infelizmente tive que cancelar a nossa consulta\nda Data de: ${DataRejeitouConsulta} que começa das ${InicioRejeitouConsulta} a ${FimRejeitouConsulta}\nmas nao desanime voce pode marcar outra consulta comigo em outro horario agora mesmo! entre no link abaixo e agende de novo como agora mesmo!\nwww.interconsulta.org/especialistas-disponiveis`
+          mensagem:`${NomeMedicoRejeitouConsulta} Informa: Ola ${NomePacienteRejeitouConsulta}, infelizmente tive que cancelar a nossa consulta\nda Data de: ${DataRejeitouConsulta} que começa das ${InicioRejeitouConsulta} a ${FimRejeitouConsulta}\nmas nao desanime voce pode marcar outra consulta comigo em outro horario agora mesmo! entre no link abaixo e agende de novo comigo agora mesmo!\nwww.interconsulta.org/especialistas-disponiveis`
         })
 
         await EmailQueue.add('Email Fila',

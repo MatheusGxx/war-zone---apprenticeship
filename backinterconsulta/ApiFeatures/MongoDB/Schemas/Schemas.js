@@ -85,6 +85,7 @@ const RegisterMédico = new mongoose.Schema({
   EspecialidadeMedica: String,
   AreadeAtuacao: String,
   CRM: String,
+  UFCRM: String,
   RQE: String,
   Certificacao: String,
   ResumoProfissional: String,
@@ -157,9 +158,28 @@ const RegisterMédico = new mongoose.Schema({
       Link: String,
       expiration: Date,
     }],
+    ReceitasSimples:[{
+      ReceitaSimplesSolicitada: String,
+    }],
+    ReceitasControlada:[{
+      ReceitaControladaSolicitada: String,
+    }],
+    ExameSolicitado: [{
+      Exame: String,
+    }], 
+    Documentos:[{
+      Exames:[{
+        ExamesDocumentos: Buffer
+      }],
+      Atestado: Buffer,
+      Laudo: Buffer,
+      Receitas:[{
+        ReceitaSimples: Buffer,
+        ReceitaControlada: Buffer,
+      }]
+    }],
     OkMedico: [String],
     OkPaciente: [String],
-    PDF: Buffer,
   }],
   ConsultasUnidadedeSaude: [{
     Data: String,

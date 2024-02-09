@@ -31,6 +31,7 @@ const FormularioMédico = () => {
   const [especialidade, setEspecialidade] = useState('')
   const [atuacao, setAtuacao] = useState('')
   const [crm, setCRM] = useState('')
+  const [ufCRM, setUFCRM] = useState('')
   const [rqe, setRQE] = useState('')
   const [certificacao, setCertificacao] = useState('')
   const [resumo, setResumo] = useState('')
@@ -107,6 +108,7 @@ const FormularioMédico = () => {
     formData.append("EspecialidadeMedica", especialidade)
     formData.append("AreadeAtuacao", atuacao);
     formData.append("CRM", crm)
+    formData.append("UFCRM", ufCRM)
     formData.append('InstituicaoResidencia', instituicaoResidencia)
     formData.append("DataNascimento", dataNascimento)
     formData.append("RQE", rqe);
@@ -228,6 +230,8 @@ const FormularioMédico = () => {
                     anograduacao={anograduacao}
                     setCRM={setCRM}
                     crm={crm}
+                    setUFCRM={setUFCRM}
+                    ufCRM={ufCRM}
                     setInstituicaoResidencia={setInstituicaoResidencia}
                     instituicaoResidencia={instituicaoResidencia}
                     setRQE={setRQE}

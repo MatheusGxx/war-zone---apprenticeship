@@ -13,7 +13,9 @@ import { PopUpEndReunião } from '../partials/popUpEndReuniao.js'
 import { useRouter } from 'next/navigation'
 import { UseReuniaoAcabando } from "../context/context.js"
 import { config } from '../config.js'
-import { TextField } from '@mui/material'
+import { Documents } from "../partials/Documents.jsx"
+import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline'
+import ModeEditIcon from '@mui/icons-material/ModeEdit';
 
 import Box from '@mui/material/Box'
 import Tab from '@mui/material/Tab'
@@ -27,21 +29,24 @@ const ReuniaoMédico = () =>{
   const [solicitaçao, setSolicitaçao] = useState('')
   const [Diagnóstico, setDiagnóstico] = useState('')
   const [Tratamento, setTratamento] = useState('')
-  const [Medicaçao, setMedicaçao] = useState('')
+  const [receitaSimples, setReceitaSimples]  = useState('')
+  const [receitaControlada, setReceitaControlada] = useState('')
   const [FerramentaTerapeutica, setFerramenta] = useState('')
   const [Progresso, setProgresso] = useState('')
   const [SolicitaçaoMedicamentos, setSolicitaçaoMedicamentos] = useState('')
   const [SolicitaçaoMateriais, setSolicitaçaoMateriais] = useState('')
-  const [SolicitarExames, setSolicitarExames] = useState('')
+  const [SolicitarExames, setSolicitarExames] = useState([])
   const [Recomendacoes, setRecomendacoes] = useState('')
   const [startConsulta, SetStartConsulta] = useState('')
   const [nameInitialPatient, setNameInitialPatient] = useState('')
   const [ficha, setFicha] = useState('')
-  const [atestado, setAtestado] = useState('')
+  const [diasAfastamento, setDiasAfastamento] = useState(null)
+  const [cid, setCID] = useState('')
+
 
   const[open, setOpen] = useState('')
   const[nomePaciente, setNomePaciente ] = useState('')
-  const[nomeMedico, setNomeMedico] = useState('')
+  const[nomeMedico, setNomeMedico] = useState('') 
 
   const[snackbarOpen, setSnackbarOpen] = useState(false)
   const[snackbarMessage, setSnackbarMessage] = useState("")
@@ -59,13 +64,24 @@ const ReuniaoMédico = () =>{
 
   const [historico, setHistorico] = useState(false)
   const [CPF, setCPF] = useState(null)
+  const [generateDocuments, setGenerateDocuments] = useState(false)
 
+
+  ///////////////// ----- Documento Solicitaçao de Exames --------- /////////////////
+
+  const [nomeDoctor, setNomeDoctor] = useState(null)
+  const [crmDoctor, setCmrDoctor] = useState(null)
+  const [ufDoctor, setUfDoctor] = useState(null)
+  const [estadoDoctor, setEstadoDoctor] = useState(null)
+  const [bairroDoctor, setBairroDoctor] = useState(null)
+  const [cidadeDoctor, setCidadeDoctor] = useState(null)
+  const [enderecoDoctor, setEnderecoDoctor] = useState(null)
   const { reuniaoAcabando } = UseReuniaoAcabando()
   const Router = useRouter()
 
   useEffect(() => {
 
-  },[startConsulta, nameInitialPatient])
+  },[startConsulta, nameInitialPatient, receitaSimples, receitaControlada, diasAfastamento, SolicitarExames])
 
   const VerifyEndRoomMutation = useMutation( async (valueBody) =>{
     const request = await axios.post(`${config.apiBaseUrl}/api/verify-conclusion-room`, valueBody)
@@ -121,16 +137,37 @@ const ReuniaoMédico = () =>{
       return request.data
     } catch (error) {
       console.error('Error fetching data:', error);
-      throw error;
+      throw error
     }
-  });
+  })
 
+  const getDataMedico = useMutation(async(valueBody) =>{
+    try{
+      const request = await axios.post(`${config.apiBaseUrl}/api/get-data-doctor-room`, valueBody)
+      setNomeDoctor(request.data.getDoctor.NomeEspecialista)
+      setCmrDoctor(request.data.getDoctor.CRM)
+      setUfDoctor(request.data.getDoctor.UFCRM)
+      setEstadoDoctor(request.data.getDoctor.Estado)
+      setBairroDoctor(request.data.getDoctor.Bairro)
+      setCidadeDoctor(request.data.getDoctor.Cidade)
+      setEnderecoDoctor(request.data.getDoctor.EnderecoMedico)
+      setCPFDoctor(request.data.getDoctor.CPF)
+      return request.data.getDoctor
+    }catch(error){
+      console.log(error)
+    }
+ })
+  
   useEffect(() => {
     const body = {
       IdentificadorConsulta: IdentificadorConsulta
     }
     getPacientes.mutateAsync(body)
-  }, []) 
+  }, [])
+
+  useEffect(() => {
+     getDataMedico.mutateAsync({ id: id })
+  },[])
 
   useEffect(() => {
     if (reuniaoAcabando) {
@@ -241,7 +278,12 @@ const ReuniaoMédico = () =>{
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
-  };
+  }
+
+  const HandleGenerateDocuments = () => {
+    setGenerateDocuments(true)
+  }
+
 
   return(
     <>
@@ -283,26 +325,68 @@ const ReuniaoMédico = () =>{
                       </TabPanel>
                       <TabPanel value="2">
                         <AccordionReuniaoMédico2
-                        setMedicaçao={setMedicaçao}
-                        Medicaçao={Medicaçao}
-                        setAtestado={setAtestado}
-                        atestado={atestado}
+                        setReceitaSimples={setReceitaSimples}
+                        receitaSimples={receitaSimples}
+                        setReceitaControlada={setReceitaControlada}
+                        receitaControlada={receitaControlada}
+                        setDiasAfastamento={setDiasAfastamento}
+                        diasAfastamento={diasAfastamento}
+                        setCID={setCID}
+                        cid={cid}
                         setSolicitarExames={setSolicitarExames}
                         SolicitarExames={SolicitarExames}
-                     
+                        IdentificadorConsulta={IdentificadorConsulta}
                         />
                       </TabPanel>
                       <TabPanel value="3">
                       <AccordionReuniaoMédico3
-                      set
+                      setSolicitaçaoMedicamentos={setSolicitaçaoMedicamentos}
+                      SolicitaçaoMedicamentos={SolicitaçaoMedicamentos}
+                      setSolicitaçaoMateriais={setSolicitaçaoMateriais}
+                      SolicitaçaoMateriais={SolicitaçaoMateriais}
+                      setRecomendacoes={setRecomendacoes}
+                      Recomendacoes={Recomendacoes}
                       />
                       </TabPanel>
                     </TabContext>
                   </Box>
-
                   </div>
-            
-                        <div className="flex gap-5 justify-center items-center">
+
+                  <div className="flex justify-center gap-5 cursor-pointer" onClick={HandleGenerateDocuments}>
+                  <DownloadForOfflineIcon color="primary" fontSize="large"/>        
+                  <div className="flex justify-center items-center">
+                  <h1 className="font-bold text-blue-900 text-lg"> Gerar Documentos </h1>
+                  </div>
+                  </div>
+
+                   {generateDocuments ?
+                    Medicaçao && diasAfastamento && SolicitarExames ?
+                    <div className="flex justify-center items-center gap-5">
+                      <button> Receita Simples </button>
+                      <button> Atestado </button>
+                      <button> Exames </button>
+                    </div>
+                    :
+                    Medicaçao && diasAfastamento  ?
+                      <div className="flex justify-center items-center gap-5 w-full">
+                      <button> Receita Simples </button>
+                      <button> Atestado </button>
+                      </div>
+                    : Medicaçao ? 
+                    <div className="flex justify-center items-center w-full">
+                      <div className="w-1/2 flex border-blue-500 border-2 rounded-full gap-5 justify-center items-center ">
+                      <ModeEditIcon color="primary" className="cursor-pointer"/>
+                      <button className="font-bold text-blue-900"> Receita Simples </button>
+                      </div> 
+                    </div>
+                    :
+                    <div className="flex justify-center items-center">
+                      <p className="font-bold text-blue-950"> Nenhum documento foi preenchido</p>
+                    </div>
+                    : null
+                    }  
+
+                    <div className="flex gap-5 justify-center items-center">
                         <FormControl
                           className="w-64 sm:w-44 border-b border-blue-600"
                           style={{ borderBottom: '1px solid blue' }}
@@ -322,26 +406,6 @@ const ReuniaoMédico = () =>{
                             <MenuItem value="Aguardando Exame">Aguardando Exame</MenuItem>
                           </Select>
                         </FormControl>
-                          <FormControl
-                            className="w-64 sm:w-44 border-b border-blue-600"
-                            style={{ borderBottom: '1px solid blue' }}
-                          >
-                            <InputLabel>Tipo de Solicitaçao</InputLabel>
-                            <Select
-                              labelId="demo-simple-select-label"
-                              id="demo-simple-select"
-                              value={solicitaçao}
-                              label="Tipo de Solicitaçao"
-                              onChange={(e) => setSolicitaçao(e.target.value)}
-                              variant="standard"
-                            >
-                              <MenuItem value="Laudo Médico">Laudo Médico</MenuItem>
-                              <MenuItem value="Consulta">Consulta</MenuItem>
-                              <MenuItem value="Retorno">Retorno</MenuItem>
-                              <MenuItem value="Doaçao de Sangue">Doaçao de Sangue</MenuItem>
-                              <MenuItem value="Renovaçao de Receita">Renovação de Receita</MenuItem>
-                            </Select>
-                          </FormControl>
                         </div>
             
                       <div className="flex gap-5 w-full justify-center">
@@ -358,23 +422,33 @@ const ReuniaoMédico = () =>{
                             <p className="sm:text-sm text-center"> Historico </p>
                           </button>
                       </div>
-           </div>
+                 </div>
 
               
 
-        {historico &&
-          <CasosClinicoReuniao
-           onClose={() => setHistorico(false)}
-           CPF={CPF}
-          />
-        }
+      {historico &&
+        <CasosClinicoReuniao
+        onClose={() => setHistorico(false)}
+        CPF={CPF}
+        />
+      }
       {open && 
       <PopUpEndReunião
       PersonaNaoclicou={nomeMedico ? nomeMedico : nomePaciente ? nomePaciente : null}
       onClose={() => setOpen(false)}
       />
       }
-       </div>
+
+      {generateDocuments &&
+       <Documents
+       onClose={() => setGenerateDocuments(false)}
+       Medicaçao={Medicaçao}
+       diasAfastamento={diasAfastamento}
+       SolicitarExames={SolicitarExames}
+       />
+      }
+      
+      </div>
     </>
     
 

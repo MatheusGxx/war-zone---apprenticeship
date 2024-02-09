@@ -24,6 +24,7 @@ export const VerifyDataMédico = z.object({
   EspecialidadeMedica: z.string(),
   AreadeAtuacao: z.string(),
   CRM: z.string(),
+  UFCRM: z.string(),
   InstituicaoResidencia: z.string(),
   DataNascimento: z.string(),
   RQE: z.string(),

@@ -40,7 +40,8 @@ import {
                  value={ficha}
                  className = "w-full"
                  required
-                 multiline={4}
+                 multiline
+                 rows={5}
                  />
               </AccordionDetails>
             </Accordion>

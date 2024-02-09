@@ -37,6 +37,8 @@ import {
                onChange={(e) => setRecomendacoes(e.target.value)}
                value={Recomendacoes}
                className = "w-full"
+               multiline
+               rows={5}
                required
              />
             </AccordionDetails>
@@ -61,7 +63,9 @@ import {
                 onChange={(e) => setSolicitaçaoMedicamentos(e.target.value)}
                 value={SolicitaçaoMedicamentos}
                 className = "w-full"
-                 required
+                required
+                multiline
+                rows={5}
             />
             </AccordionDetails>
           </Accordion>
@@ -87,6 +91,8 @@ import {
                value={SolicitaçaoMateriais}
                className = "w-full"
                required
+               multiline
+               rows={5}
                   />
             </AccordionDetails>
           </Accordion>

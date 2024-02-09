@@ -263,7 +263,7 @@ export const getAgendamentos = async  (params, res) => {
           res.status(404).json({ message: 'Paciente nao cadastrado no Interconsulta'})
          }
          break
-      case  !!await models.ModelRegisterUnidadeSaude.findOne({ _id: id }):
+      case !!await models.ModelRegisterUnidadeSaude.findOne({ _id: id }):
 
          const getUnidade = await models.ModelRegisterUnidadeSaude.findOne({ _id: id })
 
@@ -292,7 +292,7 @@ export const getAgendamentos = async  (params, res) => {
    }
 
    }catch(e){
-    throw new Error('Erro no Switch case de pegar as Consultas Cadastradas das 3 Personas')
+    return res.status(500).json({message: 'Erro no Switch case de pegar as Consultas Cadastradas das 3 Personas' })
    }
 }
 

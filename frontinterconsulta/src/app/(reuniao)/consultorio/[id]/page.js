@@ -69,7 +69,7 @@ function Room({ params }) {
       )}
       {isSuccess && (
         <>
-          <div className="flex w-full justify-center">
+          <div className="flex w-full min-h-[80vh]">
             <div className="w-6/12 flex justify-center flex-col">
             {scriptLoaded &&
             <div
@@ -92,7 +92,7 @@ function Room({ params }) {
 
       {isError && (
         <>
-          <div className='min-h-[80vh] flex justify-center items-center gap-5 flex-col'>
+          <div className='min-h-[92vh] flex justify-center items-center gap-5 flex-col'>
             <div className='flex gap-5'>
               <Image src={IconNull} width={50} height={50} alt="Icon Null" />
               <h1 className='text-2xl text-red-600 font-bold'> Ops Infelizmente o Link dessa Reunião Expirou =/</h1>

@@ -16,6 +16,8 @@ export const RegisterFourDoctor = (
     anograduacao,
     setCRM,
     crm,
+    setUFCRM,
+    ufCRM,
     setInstituicaoResidencia,
     instituicaoResidencia,
     setRQE,
@@ -42,7 +44,10 @@ export const RegisterFourDoctor = (
       }
       if (crm === '') {
         camposVazios.push('CRM');
-      }    
+      } 
+      if(ufCRM === ''){
+        camposVazios.push('UF do CRM')
+      }
       if (camposVazios.length > 0) {
         const camposFaltantes = camposVazios.join(', ');
         setSnackbarMessage(`Ops Doutor, você não preencheu o(s) campo(s): ${camposFaltantes}.`);
@@ -111,6 +116,17 @@ export const RegisterFourDoctor = (
                   required
                   onChange={(e) => setCRM(e.target.value)}
                   value={crm}/>
+
+               <TextField
+                   variant="standard"
+                   label="UF do CRM"
+                   InputProps={{
+                    sx: { borderBottom: "1px solid blue" }, // Define a cor da linha inferior
+                  }}
+                  type="text"
+                  required
+                  onChange={(e) => setUFCRM(e.target.value)}
+                  value={ufCRM}/>
 
               <TextField
                    variant="standard"
