@@ -27,6 +27,7 @@ export const SavedConsultaPacienteParticular = async (body, res) => {
      idHorario,
      TempoConsulta,
      Resumo,
+     DocumentosSolicitadosPaciente
    } = body;
  
    const Consulta = {
@@ -43,6 +44,7 @@ export const SavedConsultaPacienteParticular = async (body, res) => {
      FotoPaciente: '',
      idHorario: idHorario,
      TempoConsulta: TempoConsulta,
+     DocumentosSolicitadosPaciente,
    };
  
    try{

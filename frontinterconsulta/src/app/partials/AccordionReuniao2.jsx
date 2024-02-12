@@ -57,6 +57,7 @@ export const AccordionReuniaoMédico2 = ({
   const HandleAddConsultaSimples = async () => {
     try{
       await SaveReceitaSimples.mutateAsync({id: IdentificadorConsulta, receitaSimples: receitaSimples})
+      setReceitaSimples('')
     }catch(error){
       console.log(error)
     }
@@ -122,6 +123,7 @@ export const AccordionReuniaoMédico2 = ({
   const HandleAddConsultaControlada = async () => {
     try{
       await SavedReceitaControlada.mutateAsync({id: IdentificadorConsulta, receitaControlada: receitaControlada})
+      setReceitaControlada('')
     }catch(error){
       console.log(error)
     }
@@ -160,9 +162,76 @@ export const AccordionReuniaoMédico2 = ({
   }
 
   const queryKeyC = ['ReceitaControlada', keySavedReceitaControlada];
-  const { data: receitasControladas, isFetching: isFetchingC, isError: isErrorC, isSuccess: isSucessC } = useQuery(
+  const { data: receitasControladas, isFetching: isFetchingC, isError: isErrorC, isSuccess: isSuccessC } = useQuery(
     queryKeyC,
     () => getReceitaControlada(keySavedReceitaControlada)
+  )
+
+
+  ///////////////////////////////// Exames //////////////////////////////////////////////
+
+  const [keyexames, setkeyExames] = useState('')
+  
+  const SavedExame = useMutation(async (valueBody) => { 
+    try{
+      const response = await axios.post(`${config.apiBaseUrl}/api/saved-exame`, valueBody)
+      return response.data
+    }catch(error){
+      console.log(error)
+    }
+  },
+  {
+    onSettled: () => {
+      queryClient.invalidateQueries('Exames');
+    },
+  }
+  )
+
+  const HandleAddExames = async () => {
+    try{
+      await SavedExame.mutateAsync({id: IdentificadorConsulta, exame: SolicitarExames })
+      setSolicitarExames('')
+    }catch(error){
+      console.log(error)
+    }
+  }
+
+  const DeleteExames = useMutation(async (idExame) =>{
+    try{
+      const request = await axios.delete(`${config.apiBaseUrl}/api/delete-exame/${IdentificadorConsulta}/${idExame}`)  
+      return request.data
+    }catch(error){
+      console.log(error)
+    }
+  },
+  {
+    onSettled: () => {
+      queryClient.invalidateQueries('Exames');
+    },
+  }
+  )
+
+  const HandleDeleteExames = async (idExame) => {
+    try{
+      await DeleteExames.mutateAsync(idExame)
+    }catch(error){
+      console.log(error)
+    }
+  }
+
+  const getExames = async () => {
+    try{
+      const response = await axios.get(`${config.apiBaseUrl}/api/get-exame/${IdentificadorConsulta}`)
+      return response.data.exames
+    }catch(error){
+      console.log(error)
+    }
+  }
+
+  const queryKeyE = ['Exames', keyexames]
+  const { data: exames, isFetching: isFetchingE, isError: isErrorE, isSuccess: isSuccessE } = useQuery(
+    queryKeyE,
+    () => getExames(keyexames)
   )
 
     return(
@@ -228,8 +297,29 @@ export const AccordionReuniaoMédico2 = ({
           </AccordionSummary>
     
         <AccordionDetails>
-          <div className="flex justify-center items-center">
-          <TextField
+          <div className="flex justify-center items-center flex-col gap-3">
+
+          {isSuccessC && receitasControladas && receitasControladas.map((receitasC, index) => (
+            <div key={index} className="flex  gap-3 w-full">
+               <TextField
+             label="Prescrição - Controlada"
+             variant="standard"
+             InputProps={{
+                sx: { borderBottom: "1px solid blue" },
+             }}
+              value={receitasC.ReceitaControladaSolicitada}
+              className = "w-full"
+              multiline
+              required
+             />
+             <div className="flex justify-center items-end">
+             <DeleteIcon color="primary" className="cursor-pointer" onClick={() => HandleDeleteConsultaControlada(receitasC._id)}/>
+             </div> 
+            </div>
+          ))}
+
+            <div className="flex justify-center items-center w-full">
+            <TextField
              label="Prescrição - Receita Controlada"
              variant="standard"
              InputProps={{
@@ -243,7 +333,8 @@ export const AccordionReuniaoMédico2 = ({
               required
              />
 
-          <AddIcon color="primary" className="cursor-pointer" />
+          <AddIcon color="primary" className="cursor-pointer" onClick={HandleAddConsultaControlada}/>
+          </div>
           </div>
           </AccordionDetails>
         </Accordion>
@@ -296,21 +387,43 @@ export const AccordionReuniaoMédico2 = ({
 
         <AccordionDetails>
           
-            <div className='flex justify-center items-center w-full'>
-              <TextField
-                label="Solicitar Exames"
+          <div className='flex justify-center items-center w-full flex-col gap-3'>
+              
+          {isSuccessE && exames && exames.map((examesE, index) => (
+            <div key={index} className="flex  gap-3 w-full">
+               <TextField
+                label="Solicitaçao de Exames"
                 variant="standard"
                 InputProps={{
-                  sx: { borderBottom: "1px solid blue" },
+                    sx: { borderBottom: "1px solid blue" },
                 }}
-                onChange={(e) => setSolicitarExames(e.target.value)}
-                value=""
-                className="w-full"
-                multiline={4}
-                required
-              />
+                  value={examesE.Exame}
+                  className = "w-full"
+                  multiline
+                  required
+               />
+             <div className="flex justify-center items-end">
+             <DeleteIcon color="primary" className="cursor-pointer" onClick={() => HandleDeleteExames(examesE._id)}/>
+             </div> 
+            </div>
+          ))}
 
-              <AddIcon color="primary" className="cursor-pointer"/>
+           <div className='flex justify-center items-center w-full'>
+             <TextField
+               label="Solicitar Exames"
+               variant="standard"
+               InputProps={{
+                sx: { borderBottom: "1px solid blue" },
+               }}
+               onChange={(e) => setSolicitarExames(e.target.value)}
+               value={SolicitarExames}
+               className="w-full"
+               multiline={4}
+               required
+           />
+
+              <AddIcon color="primary" className="cursor-pointer" onClick={HandleAddExames}/>
+              </div>  
             </div>
         </AccordionDetails>
       </Accordion>

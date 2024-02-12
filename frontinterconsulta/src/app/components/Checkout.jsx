@@ -14,6 +14,9 @@ import secureLocalStorage from 'react-secure-storage'
 import copyToClipboard from 'clipboard-copy'
 import { config } from '../config.js'
 import Logo from '../public/logo.png'
+import { DocumentsSelectPaciente } from '../partials/DocumentosSelect'
+import { Checkbox } from '@mui/material'
+import DocumentScannerIcon from '@mui/icons-material/DocumentScanner';
 
 export const Checkout = ({ 
     FotoMedico,
@@ -26,6 +29,8 @@ export const Checkout = ({
     setPagamento,
     formasPagamento,
     idMedico,
+    setDocumentos,
+    documentos,
      }) => {
 
     
@@ -123,59 +128,51 @@ export const Checkout = ({
     setSnackbarOpen(true)
   }
 
+  const ValueCheckBoxDocumentos = (event, value) =>{
+    if(event.target.checked){
+      setDocumentos((prev) => [...prev, value])
+    }else{
+      setDocumentos((prev) => prev.filter((Ferramenta) => Ferramenta !== value))
+    }
+  }
+
     return(
         <>
-          <div className="flex justify-center items-center flex-col gap-4">
-            {FotoMedico ? 
-              <Image src={`${config.apiBaseUrl}/${FotoMedico}`}
-                alt="Foto do Médico" 
-                width={200}
-                height={200}
-                className="rounded-xl"
-             />
-             : 
-             <Image src={Logo}
-              alt="Foto do Médico" 
-              width={200}
-              height={200}
-              className="rounded-xl"
-             />
-            }
-             <Rating 
-             value={avaliacoes}
-             readOnly={readOnlyMode} 
-             name="simple-controlled"
-             />
+       <h1 className='font-bold text-blue-500 text-center text-lg'> {NamePaciente} Escolha qual documento voce precisa!</h1>
 
-            <div className="flex flex-col gap-5">
-            
-            <div className="flex gap-5">
-              
-            <ArrowForwardIcon color="primary"/>
-            <h1> Recupere-se sem limitações: elimine {Doenca}! 
-              
-            </h1>
-            </div>
+          <div className='flex gap-3 justify-center items-center mt-10 mb-5'>
+          {DocumentsSelectPaciente.map((item, index) => (
+              <>
+                <div className="flex">
+                  <Checkbox key={index} {...item} onChange={(event) => ValueCheckBoxDocumentos(event, item)}/>
+                    <div className="flex justify-center items-center">
+                      <h1> {item}</h1>
+                    </div>
+                </div>
+              </>
+              ))}
+          </div>
+          
 
-            <div className="flex gap-5">
-            <ArrowForwardIcon color="primary"/>
-              Diga adeus à {Doenca}, viva plenamente!
-            </div>
+          <div className="mt-5 mb-5 flex flex-col gap-3">
+          {documentos.length > 1 ?
+              documentos.map((data, index) => (
+                <div key={index} className="flex gap-3">
+                  <DocumentScannerIcon color="primary"/>
+                  <h1> Documentos Escolhidos: {data}</h1>
+                </div>
+              ))
+              : 
+              documentos.map((data, index) => (
+                  <div key={index} className="flex gap-3">
+                      <DocumentScannerIcon color="primary"/>
+                      <h1> Documento Escolhido: {data}</h1>
+                  </div>
+              ))
+          }
+          </div>
 
-            <div className="flex gap-5">
-            <ArrowForwardIcon color="primary"/>
-              Liberte-se das restrições: vença a {Doenca}
-            </div>
-
-            </div>
-
-            <h1 className="text-center text-blue-500 font-bold"> 
-              {NamePaciente} nao perca mais tempo com {Doenca}, eliminea agora com  {NomeMedico}
-             </h1>
-
-           </div>
-
-            <TextField
+          <TextField
               variant="standard"
               label="Valor da Consulta"
               InputProps={{

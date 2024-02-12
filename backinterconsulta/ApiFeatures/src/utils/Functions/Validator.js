@@ -1,15 +1,12 @@
-import { parse, isWithinInterval, addMinutes, isAfter, differenceInMinutes} from 'date-fns'
+import { parse, isWithinInterval, addMinutes, isAfter, differenceInMinutes } from 'date-fns'
 
 
 export const ValidatorDateAndTime = (DateQuery, TimeStart, TimeEnd) => { // Verifica se a Data da consulta ta dentro da data da consulta
   const DateStart = parse(`${DateQuery} ${TimeStart}`, 'dd/MM/yyyy HH:mm', new Date());
   const DateEnd = parse(`${DateQuery} ${TimeEnd}`, 'dd/MM/yyyy HH:mm', new Date());
-  console.log(`Data Inicio: ${DateStart}`)
-  console.log(`Data Fim: ${DateEnd}`)
 
   const DateNow = new Date()
-  console.log(DateNow)
-
+  
   // Cria um intervalo que representa o período exato da consulta
   const ConsultationInterval = {
     start: DateStart,

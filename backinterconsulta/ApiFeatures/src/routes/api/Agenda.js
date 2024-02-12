@@ -38,6 +38,7 @@ router.post('/agendamento-paciente-particular',
       idHorario: req.body.idHorario,
       TempoConsulta: req.body.TempoConsulta,
       Resumo: req.body.Resumo,
+      DocumentosSolicitadosPaciente: req.body.DocumentosSolicitadosPaciente
     }
     console.log(req.body)
 

@@ -70,6 +70,7 @@ router.post('/obrigado/:id',  uploadPhotos.single("file") ,async (req, res ) => 
          Banco: req.body.Banco,
          ChavePix: req.body.ChavePix,
          CPNJMedico: req.body.CPNJMedico,
+         CPFMedico: req.body.CPFMedico,
          RazaoSocialEmpresa: req.body.RazaoSocialEmpresa,
          NomeFantasia: req.body.NomeFantasia,
          EnderecoMedico: req.body.EnderecoMedico,

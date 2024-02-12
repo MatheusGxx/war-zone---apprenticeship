@@ -3,6 +3,7 @@ import Image from "next/image"
 import Logo from '../public/logo.png'
 import secureLocalStorage from 'react-secure-storage'
 import Link from 'next/link'
+import { useMutation } from '@tanstack/react-query'
 
 const ObrigadoMédico = () =>{
 
@@ -12,6 +13,8 @@ const ObrigadoMédico = () =>{
   const HandleClickDoctor = async () => {
     secureLocalStorage.removeItem('EndMedico')
   }
+
+
   return(
     <>
      <div className='flex justify-center gap-52 pt-11'>

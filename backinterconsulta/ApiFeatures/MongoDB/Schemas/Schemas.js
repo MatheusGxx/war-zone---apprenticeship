@@ -106,6 +106,7 @@ const RegisterMédico = new mongoose.Schema({
   Banco: String,
   ChavePix: String,
   CPNJMedico: String,
+  CPFMedico: String,
   RazaoSocialEmpresa: String,
   NomeFantasia: String,
   EnderecoMedico: String,
@@ -154,28 +155,34 @@ const RegisterMédico = new mongoose.Schema({
     Resumo: String,
     idHorario: String,
     TempoConsulta: Number,
+    DocumentosSolicitadosPaciente:[String],
     LinkConsulta: [{
       Link: String,
       expiration: Date,
     }],
     ReceitasSimples:[{
+      TypeDocument: String,
       ReceitaSimplesSolicitada: String,
     }],
     ReceitasControlada:[{
+      TypeDocument: String,
       ReceitaControladaSolicitada: String,
     }],
     ExameSolicitado: [{
+      TypeDocument: String,
       Exame: String,
-    }], 
+    }],
     Documentos:[{
       Exames:[{
         ExamesDocumentos: Buffer
       }],
       Atestado: Buffer,
       Laudo: Buffer,
-      Receitas:[{
-        ReceitaSimples: Buffer,
-        ReceitaControlada: Buffer,
+      ReceitasSimples:[{
+        ReceitaSimplesPDF: Buffer,
+      }],
+      ReceitaControlada:[{
+        ReceitaControladaPDF: Buffer,
       }]
     }],
     OkMedico: [String],
@@ -244,6 +251,7 @@ const RegisterPaciente = new mongoose.Schema({
     Resumo: String,
     idHorario: String,
     TempoConsulta: Number,
+    DocumentosSolicitadosPaciente:[String],
     LinkConsulta: [{
       Link: String,
       expiration: Date,

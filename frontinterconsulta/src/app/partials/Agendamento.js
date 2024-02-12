@@ -68,6 +68,7 @@ const AgendamentoConsulta = ({
   const [selectOneDate, setSelectOneDate] = useState(false)
   const [notIntervals, setNotIntervals] = useState(null)
   const [tempoConsulta, setTempoConsulta] = useState(null)
+  const [documentos, setDocumentos] = useState([])
 
   const CadastroFinalSucess = secureLocalStorage.getItem('CadastroEndSucess')
 
@@ -197,6 +198,7 @@ useEffect(() => {
     idHorario: idHorario,
     TempoConsulta: tempoConsulta,
     Resumo: resumo,
+    DocumentosSolicitadosPaciente: documentos,
    }
 
     try{
@@ -436,6 +438,8 @@ useEffect(() => {
             setPagamento={setPagamento}
             formasPagamento={formasPagamento}
             idMedico={idMedico}
+            setDocumentos={setDocumentos}
+            documentos={documentos}
             />
            :
           null

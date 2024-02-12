@@ -47,6 +47,7 @@ const FormularioMédico = () => {
   const [banco, setBanco] = useState('')
   const [pix, setPix] = useState('')
   const [cnpjMedico, setCPNJMedico] = useState('')
+  const [cpfMedico, setCPFMedico] = useState('')
   const [razaoSocialEmpresa, setRazaoSocialEmpresa] = useState('')
   const [nomeFantasia, setNomeFantasia] = useState('')
   const [enderecoMedico, setEnderecoMedico] = useState('')
@@ -266,6 +267,8 @@ const FormularioMédico = () => {
                     <RegisterSixDoctor
                     setCPNJMedico={setCPNJMedico}
                     cnpjMedico={cnpjMedico}
+                    setCPFMedico={setCPFMedico}
+                    cpfMedico={cpfMedico}
                     setRazaoSocialEmpresa={setRazaoSocialEmpresa}
                     razaoSocialEmpresa={razaoSocialEmpresa}
                     setNomeFantasia={setNomeFantasia}

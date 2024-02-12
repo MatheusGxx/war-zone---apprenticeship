@@ -20,6 +20,11 @@ import
     SavedReceitaControlada,
     getReceitaControlada,
     DeleteReceitaControlada,
+    SaveExamesSolicitadosDoctor,
+    getExames,
+    DeleteExamesSolicitadosDoctor,
+    editExames,
+    VerifyDocuments 
    }
  from "../../services/ReuniãoService.js"
 
@@ -250,4 +255,48 @@ router.delete('/delete-receita-controlada/:idConsulta/:idReceitaC',
       }
 )
 
+router.post('/saved-exame', 
+     async(req, res) => {
+      const { id, exame } = req.body
+      SaveExamesSolicitadosDoctor(id, exame, res)
+      console.log(req.body)
+     }
+)
+
+router.get('/get-exame/:id', 
+      async(req, res) =>{
+        const { id } = req.params
+        getExames(id,res)
+        console.log(req.params)
+      }
+)
+
+router.put('/edit-exame/:idExame/:newExame',
+       async(req,res) => {
+        const { idExame, newExame } = req.params
+
+        editExames(idExame, newExame, res)
+        console.log(req.params)
+       }
+)
+
+router.delete('/delete-exame/:idConsulta/:idExame',
+      async(req,res) =>{
+        const { idConsulta, idExame } = req.params
+        
+        DeleteExamesSolicitadosDoctor(idConsulta,idExame, res)
+        console.log(req.params)
+      }
+)
+
+
+router.post('/verify-documents',
+      async(req, res) => {
+        const { id } = req.body
+
+        VerifyDocuments(id,res)
+        
+        console.log(req.body)
+      }
+)
 export default router

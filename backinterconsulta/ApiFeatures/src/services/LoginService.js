@@ -218,6 +218,7 @@ export const RegisterEnd = async (body, params, file, res) =>{
     Banco,
     ChavePix,
     CPNJMedico,
+    CPFMedico,
     RazaoSocialEmpresa,
     NomeFantasia,
     EnderecoMedico,
@@ -254,7 +255,7 @@ export const RegisterEnd = async (body, params, file, res) =>{
    const { id } = params
    
   /*try{
-  const dataMedico = { NomeConhecido, TituloEspecialista, FormacaoEspecialista, AnoGraduacao, PosGraduacao, EspecialidadeMedica, AreadeAtuacao, CRM, UFCRM, InstituicaoResidencia, DataNascimento, RQE, Certificacao, PrecoConsulta, ResumoProfissional,  FerramentasTerapeuticas, Slug, NomeTitular, NumeroConta, NumeroAgencia, Banco, ChavePix,  CPNJMedico, RazaoSocialEmpresa,NomeFantasia,  EnderecoMedico, Bairro,Cidade, Estado, CEPMedico, EmailContador,
+  const dataMedico = { NomeConhecido, TituloEspecialista, FormacaoEspecialista, AnoGraduacao, PosGraduacao, EspecialidadeMedica, AreadeAtuacao, CRM, UFCRM, InstituicaoResidencia, DataNascimento, RQE, Certificacao, PrecoConsulta, ResumoProfissional,  FerramentasTerapeuticas, Slug, NomeTitular, NumeroConta, NumeroAgencia, Banco, ChavePix,  CPNJMedico, CPFMedico, RazaoSocialEmpresa,NomeFantasia,  EnderecoMedico, Bairro,Cidade, Estado, CEPMedico, EmailContador,
   TelefoneContador,}
 
   const dataPaciente = { Genero, Data, Doenca, TipoSanguineo, EstadoCivil, Profissao, CPF, CEP,  EnderecoPaciente, CidadePaciente, EstadoPaciente, Pais, CartaoSUS, NomeAcompanhante, TelefoneAcompanhante, EmailAcompanhante, }
@@ -337,6 +338,7 @@ export const RegisterEnd = async (body, params, file, res) =>{
           Médico.Banco = Banco
           Médico.ChavePix = ChavePix
           Médico.CPNJMedico = CPNJMedico,
+          Médico.CPFMedico = CPFMedico
           Médico.RazaoSocialEmpresa = RazaoSocialEmpresa,
           Médico.NomeFantasia = NomeFantasia
           Médico.EnderecoMedico = EnderecoMedico,

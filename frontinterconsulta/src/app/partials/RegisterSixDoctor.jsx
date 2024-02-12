@@ -10,6 +10,8 @@ export const RegisterSixDoctor = (
   {
   setCPNJMedico,
   cnpjMedico,
+  setCPFMedico,
+  cpfMedico,
   setRazaoSocialEmpresa,
   razaoSocialEmpresa,
   setNomeFantasia,
@@ -40,6 +42,9 @@ export const RegisterSixDoctor = (
     
       if (cnpjMedico === '') {
         camposVazios.push('CPNJ');
+      }
+      if(cpfMedico === ''){
+        camposVazios.push('CPF')
       }
       if (razaoSocialEmpresa === '') {
         camposVazios.push('Razão Social');
@@ -112,6 +117,19 @@ export const RegisterSixDoctor = (
             onChange={(e) => setCPNJMedico(e.target.value)}
             value={cnpjMedico}
           />
+
+          <TextField
+           variant="standard"
+           label="CPF"
+            InputProps={{
+              sx: { borderBottom: "1px solid blue" }, // Define a cor da linha inferior
+            }}
+            type="text"
+            required
+            onChange={(e) => setCPFMedico(e.target.value)}
+            value={cpfMedico}
+          />
+
 
          <TextField
             variant="standard"

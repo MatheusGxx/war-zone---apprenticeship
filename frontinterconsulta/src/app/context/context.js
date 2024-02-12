@@ -72,4 +72,29 @@ export const UseReuniaoAcabando = () =>{
   return context
 }
 
-////////////////////// ------Context  Start Consulta ----- //////////////////
+////////////////////// ------Context Atestado ----- //////////////////
+
+
+const AtestadoMedico = createContext()
+
+
+export const AtestadoProvider = ({ children }) => {
+  const [atestado, setAtestado] = useState(false)
+
+  return(
+     <AtestadoMedico.Provider value={{atestado, setAtestado}}>
+        {children}
+     </AtestadoMedico.Provider>
+  )
+}
+
+
+export const useAtestado = () => {
+  const context = useContext(AtestadoMedico)
+
+  if(!context){
+    throw new Error('useAtestado deve ser usado dentro de um AtestadoProvider')
+  }
+
+  return context
+}

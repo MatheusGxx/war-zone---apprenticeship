@@ -39,6 +39,7 @@ export const VerifyDataMédico = z.object({
   Banco: z.string(),
   ChavePix: z.string(),
   CPNJMedico: z.string(),
+  CPFMedico: z.string(),
   RazaoSocialEmpresa: z.string(),
   NomeFantasia: z.string(),
   EnderecoMedico: z.string(),

@@ -3,7 +3,6 @@ import { models } from '../../MongoDB/Schemas/Schemas.js'
 import { getHistoricoPaciente } from "../utils/Functions/getHistoricoPaciente.js"
 import axios from 'axios'
 
-
 export const CreatingDoctorLaudo = async (body, res) => {
   const { idMedico, IdentificadorConsultaPaciente, Diagnostico, TratamentoPrescrito, MedicacaoPrescrita, FerramentaTerapeutica, ProgressoPaciente, RecomendacoesFuturas } = body
 
@@ -489,15 +488,16 @@ export const getDataDoctor = async (body, res) => {
     }
 }
 
-
 export const SavedReceitaSimples = async (id, receitaSimples, res) => {
-
   try {
     const insertReceitaSimples = await models.ModelRegisterMédico.findOneAndUpdate(
       { 'ConsultasSolicitadasPacientes._id': id },
       {
         $push: {
-          'ConsultasSolicitadasPacientes.$.ReceitasSimples': { ReceitaSimplesSolicitada: receitaSimples }
+          'ConsultasSolicitadasPacientes.$.ReceitasSimples': { 
+            ReceitaSimplesSolicitada: receitaSimples,
+            TypeDocument: 'Receita' 
+          }
         }
       },
       { new: true }
@@ -510,9 +510,10 @@ export const SavedReceitaSimples = async (id, receitaSimples, res) => {
     return res.status(200).json({ message: 'Receita Simples salva com sucesso'});
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: "Erro ao salvar receita simples." })
+    return res.status(500).json({ message: "Erro ao salvar receita simples." });
   }
-};
+}
+
 
 export const getReceitaSimples = async (id, res) => {
 
@@ -558,7 +559,10 @@ export const SavedReceitaControlada = async(id, receitaControlada, res) => {
       { 'ConsultasSolicitadasPacientes._id': id },
       {
         $push: {
-          'ConsultasSolicitadasPacientes.$.ReceitasControlada': { ReceitaControladaSolicitada: receitaControlada }
+          'ConsultasSolicitadasPacientes.$.ReceitasControlada': {
+             ReceitaControladaSolicitada: receitaControlada,
+             TypeDocument: 'Receita'  
+          }
         }
       },
       { new: true }
@@ -576,7 +580,7 @@ export const SavedReceitaControlada = async(id, receitaControlada, res) => {
 }
 
 
-export const getReceitaControlada = async (id) => {
+export const getReceitaControlada = async (id, res) => {
   const getReceitaControlada = await models.ModelRegisterMédico.findOne({ 'ConsultasSolicitadasPacientes._id': id })
 
   if(!getReceitaControlada){
@@ -617,25 +621,60 @@ export const SaveExamesSolicitadosDoctor = async (id, exame, res) => {
       { 'ConsultasSolicitadasPacientes._id': id },
       {
         $push: {
-          'ConsultasSolicitadasPacientes.$.ExameSolicitado': { Exame: exame }
+          'ConsultasSolicitadasPacientes.$.ExameSolicitado': { 
+            Exame: exame,
+            TypeDocument: 'Exame'  
+           }
         }
       },
       { new: true }
-    );
-    
-    const documentoDepois = await models.ModelRegisterMédico.findOne({ 'ConsultasSolicitadasPacientes._id': id });
-    
-    // Comparar para encontrar o array de 'ReceitaSimples' atualizado
-    const exames = documentoDepois.ConsultasSolicitadasPacientes.find(consulta => consulta._id.equals(id)).ExameSolicitado
+    )
     
     if (!insertExame) {
       return res.status(404).json({ message: "Exame nao encontrado" });
     }
 
-    return res.status(200).json({ exames: exames });
+    return res.status(200).json({ message: 'Exato Salvo com sucesso' });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Erro ao salvar Exame" })
+  }
+}
+
+
+export const getExames = async (id, res) => {
+  try{
+    const getExames = await models.ModelRegisterMédico.findOne({ 'ConsultasSolicitadasPacientes._id': id });
+
+    const exames = getExames.ConsultasSolicitadasPacientes.find(consulta => consulta._id.equals(id)).ExameSolicitado
+    return res.status(200).json({ exames: exames })
+  }catch(error){
+    return res.status(500).json({ message: 'Erro ao pegar Exames'})
+  }
+}
+
+
+export const editExames = async (idExame, newExame, res) => {
+  try{
+    const EditExames = await models.ModelRegisterMédico.findOneAndUpdate(
+      { 
+       'ConsultasSolicitadasPacientes.$.ExameSolicitado': { _id: idExame }
+      },
+      {
+        $set: {
+          'ConsultasSolicitadasPacientes.$.ExameSolicitado': { Exame: newExame }
+        }
+      },
+      { new: true }
+    )
+
+    if(!EditExames){
+      return res.status(400).json({ message: 'A consulta nao existe'})
+    }
+
+    res.status(200).json({ message: 'Exame atualizado com sucesso'})
+  }catch(error){
+    return res.status(500).json({ message: 'Erro ao Editar Exame'})
   }
 }
 
@@ -661,4 +700,41 @@ export const DeleteExamesSolicitadosDoctor = async (idConsulta, idExame, res) =>
    }catch(error){
     return res.status(500).json({ message: 'Erro ao excluir Exame'})
    }
+}
+
+
+export const VerifyDocuments = async (id, res) => {
+  try {
+    const getConsulta = await models.ModelRegisterMédico.findOne(
+      { 'ConsultasSolicitadasPacientes._id': id },
+      { 'ConsultasSolicitadasPacientes.$': 1 }
+    );
+
+    if (!getConsulta) {
+      return res.status(400).json({ message: 'Consulta não existe' });
+    }
+
+    res.status(200).json({ consulta: getConsulta.ConsultasSolicitadasPacientes });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Erro ao buscar consulta' });
+  }
+}
+
+
+export const ValidatorDocuments = async (id, res) => {
+  try{
+    const Consulta = await models.ModelRegisterMédico.findOne({ 'ConsultasSolicitadasPacientes._id': id })
+
+    if(!Consulta){
+      return res.status(400).json({ message: 'Consulta nao existe!'})
+    }
+    
+    const receitasSimples = Consulta.ConsultasSolicitadasPacientes.find(consulta => consulta._id.equals(id)).ReceitasSimples.TypeDocument
+    const receitasControladas = Consulta.ConsultasSolicitadasPacientes.find(consulta => consulta._id.equals(id)).ReceitasControlada.TypeDocument
+    const exames = Consulta.ConsultasSolicitadasPacientes.find(consulta => consulta._id.equals(id)).ExameSolicitado.TypeDocument
+
+  }catch(error){
+    return res.status(500).json({ message: 'Erro ao Validar documentos'})
+  }
 }

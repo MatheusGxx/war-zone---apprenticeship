@@ -15,7 +15,7 @@ import { UseReuniaoAcabando } from "../context/context.js"
 import { config } from '../config.js'
 import { Documents } from "../partials/Documents.jsx"
 import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline'
-import ModeEditIcon from '@mui/icons-material/ModeEdit';
+import { useAtestado } from '../context/context.js'
 
 import Box from '@mui/material/Box'
 import Tab from '@mui/material/Tab'
@@ -42,6 +42,7 @@ const ReuniaoMédico = () =>{
   const [ficha, setFicha] = useState('')
   const [diasAfastamento, setDiasAfastamento] = useState(null)
   const [cid, setCID] = useState('')
+  const { setAtestado } = useAtestado()
 
 
   const[open, setOpen] = useState('')
@@ -67,7 +68,7 @@ const ReuniaoMédico = () =>{
   const [generateDocuments, setGenerateDocuments] = useState(false)
 
 
-  ///////////////// ----- Documento Solicitaçao de Exames --------- /////////////////
+  ///////////////// ----- Documentos --------- /////////////////
 
   const [nomeDoctor, setNomeDoctor] = useState(null)
   const [crmDoctor, setCmrDoctor] = useState(null)
@@ -76,10 +77,18 @@ const ReuniaoMédico = () =>{
   const [bairroDoctor, setBairroDoctor] = useState(null)
   const [cidadeDoctor, setCidadeDoctor] = useState(null)
   const [enderecoDoctor, setEnderecoDoctor] = useState(null)
+  const [cidadePaciente, setCidadePaciente] = useState(null)
+  const [estadoPaciente, setEstadoPaciente] = useState(null)
+  const [cpfDoctor, setCPFDoctor] = useState(null)
+  const [enderecoPaciente, setEnderecoPaciente] = useState(null)
   const { reuniaoAcabando } = UseReuniaoAcabando()
   const Router = useRouter()
 
   useEffect(() => {
+
+    if(diasAfastamento !== null){
+      setAtestado(true)
+    }
 
   },[startConsulta, nameInitialPatient, receitaSimples, receitaControlada, diasAfastamento, SolicitarExames])
 
@@ -134,6 +143,12 @@ const ReuniaoMédico = () =>{
       setNameInitialPatient(NomeOriginalPatient)
       const CPFPaciente = request.data.getConsulta.map((data) => data.CPF)
       setCPF(CPFPaciente)
+      const CidadePaciente = request.data.getConsulta.map((data) => data.CidadePaciente)
+      setCidadePaciente(CidadePaciente)
+      const EstadoPaciente = request.data.getConsulta.map((data) => data.EstadoPaciente)
+      setEstadoPaciente(EstadoPaciente)
+      const EnderecoPaciente = request.data.getConsulta.map((data) => data.EnderecoPaciente)
+      setEnderecoPaciente(EnderecoPaciente)
       return request.data
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -151,7 +166,7 @@ const ReuniaoMédico = () =>{
       setBairroDoctor(request.data.getDoctor.Bairro)
       setCidadeDoctor(request.data.getDoctor.Cidade)
       setEnderecoDoctor(request.data.getDoctor.EnderecoMedico)
-      setCPFDoctor(request.data.getDoctor.CPF)
+      setCPFDoctor(request.data.getDoctor.CPFMedico)
       return request.data.getDoctor
     }catch(error){
       console.log(error)
@@ -355,36 +370,9 @@ const ReuniaoMédico = () =>{
                   <div className="flex justify-center gap-5 cursor-pointer" onClick={HandleGenerateDocuments}>
                   <DownloadForOfflineIcon color="primary" fontSize="large"/>        
                   <div className="flex justify-center items-center">
-                  <h1 className="font-bold text-blue-900 text-lg"> Gerar Documentos </h1>
+                  <h1 className="font-bold text-blue-900 text-lg"> Visualizar Documentos </h1>
                   </div>
                   </div>
-
-                   {generateDocuments ?
-                    Medicaçao && diasAfastamento && SolicitarExames ?
-                    <div className="flex justify-center items-center gap-5">
-                      <button> Receita Simples </button>
-                      <button> Atestado </button>
-                      <button> Exames </button>
-                    </div>
-                    :
-                    Medicaçao && diasAfastamento  ?
-                      <div className="flex justify-center items-center gap-5 w-full">
-                      <button> Receita Simples </button>
-                      <button> Atestado </button>
-                      </div>
-                    : Medicaçao ? 
-                    <div className="flex justify-center items-center w-full">
-                      <div className="w-1/2 flex border-blue-500 border-2 rounded-full gap-5 justify-center items-center ">
-                      <ModeEditIcon color="primary" className="cursor-pointer"/>
-                      <button className="font-bold text-blue-900"> Receita Simples </button>
-                      </div> 
-                    </div>
-                    :
-                    <div className="flex justify-center items-center">
-                      <p className="font-bold text-blue-950"> Nenhum documento foi preenchido</p>
-                    </div>
-                    : null
-                    }  
 
                     <div className="flex gap-5 justify-center items-center">
                         <FormControl
@@ -442,9 +430,25 @@ const ReuniaoMédico = () =>{
       {generateDocuments &&
        <Documents
        onClose={() => setGenerateDocuments(false)}
-       Medicaçao={Medicaçao}
+       ReceitaSimpleS={receitaSimples}
+       ReceitaControlada={receitaControlada}
        diasAfastamento={diasAfastamento}
        SolicitarExames={SolicitarExames}
+       nomePaciente={nameInitialPatient}
+       nomeMedico={nomeDoctor}
+       CRMMedico={crmDoctor}
+       UFMedico={ufDoctor}
+       EstadoMedico={estadoDoctor}
+       BairroMedico={bairroDoctor}
+       CidadeMedico={cidadeDoctor}
+       CPFPaciente={CPF}
+       EnderecoMedico={enderecoDoctor}
+       CID={cid}
+       CidadePaciente={cidadePaciente}
+       EstadoPaciente={estadoPaciente}
+       CPFMedico={cpfDoctor}
+       EnderecoPaciente={enderecoPaciente}
+       IdentificadorConsulta={IdentificadorConsulta}
        />
       }
       
