@@ -23,7 +23,7 @@ export const ReceitaSimples = ({
         </div>
         <div className='flex gap-3 justify-start'>
             <h1> <span className="font-bold text-blue-900"> Nome: </span> {NomePaciente} </h1>
-            <h1> <span className="font-bold text-blue-900">CPF:</span>{CPFPaciente}</h1>
+            <h1> <span className="font-bold text-blue-900">CPF: </span>{CPFPaciente}</h1>
         </div>
 
         <div className="flex justify-start mt-10 mb-10">

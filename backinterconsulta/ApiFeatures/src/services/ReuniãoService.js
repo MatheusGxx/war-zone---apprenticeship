@@ -615,6 +615,72 @@ export const DeleteReceitaControlada = async(idConsulta, idReceitaC, res) => {
    }
 }
 
+export const SaveAtestado = async (id, diasAfastamento, CID, res) => {
+  try{
+    const insertAtestado = await models.ModelRegisterMédico.findOneAndUpdate(
+      { 'ConsultasSolicitadasPacientes._id': id },
+      {
+        $push: {
+          'ConsultasSolicitadasPacientes.$.Atestado': {
+             DiasDeAtestado: diasAfastamento,
+             CID: CID,
+             TypeDocument: 'Atestado'  
+          }
+        }
+      },
+      { new: true }
+    )
+      
+    if (!insertAtestado) {
+      return res.status(404).json({ message: "Atestado não encontrado" });
+    }
+
+    return res.status(200).json({ message: 'Atestado salvo com sucesso!'});
+  }catch(error){
+    return res.status(500).json({ message: 'Erro ao Salvar Atestado' })
+  }
+}
+
+export const getAtestado = async (id) => {
+  try{
+    const getAtestado = await models.ModelRegisterMédico.findOne({ 'ConsultasSolicitadasPacientes._id': id })
+
+    if(!getAtestado){
+      return res.status(400).json({ message: 'Atestado não existe!'})
+    }
+    
+    const Atestado = getAtestado.ConsultasSolicitadasPacientes.find(consulta => consulta._id.equals(id)).Atestado
+
+    res.status(200).json({ Atestado: Atestado })
+
+  }catch(error){
+   return res.status(500).json({ message: 'Erro ao pegar Atestado' })
+  }
+}
+
+export const DeleteAtestado = async (idConsulta, idAtestado, res) => {
+   try{
+    const DeleteAtestado = await models.ModelRegisterMédico.findOneAndUpdate(
+      { 'ConsultasSolicitadasPacientes._id': idConsulta},
+      {
+        $pull: {
+          'ConsultasSolicitadasPacientes.$.ReceitasControlada': { _id: idAtestado }
+        }
+      },
+       { new: true }
+      )
+
+      if(!DeleteAtestado){
+        return res.status(400).json({ message: 'Nao foi possivel encontrar Atestado para Exclui - lo'})
+      }
+
+      return res.status(200).json({ message: 'Atestado Excluido'})
+   }catch(error){
+    return res.status(500).json({ message: 'Erro ao Excluir o Atestado '})
+   }
+}
+
+
 export const SaveExamesSolicitadosDoctor = async (id, exame, res) => {
   try {
     const insertExame = await models.ModelRegisterMédico.findOneAndUpdate(

@@ -45,7 +45,7 @@ export const ReceitaControladA = ({
             </div>
         </div>
 
-        <div className='flex flex-col gap-3 container p-3'>
+        <div className='flex flex-col gap-3 container '>
         <h1 className='flex justify-center items-center font-bold text-lg text-blue-900'> Receituário Controle Especial </h1>
             <h1> Data: {date} </h1>
             <h1>1a. via Farmacia</h1>
@@ -55,10 +55,10 @@ export const ReceitaControladA = ({
         </div>
 
         <div className="flex justify-start items-start flex-col ml-3 mt-3 gap-2">
-           <h1 className='font-bold'> {NomePaciente} </h1>
-           <h1> <span className='font-bold'> CPF: </span>{CPFPaciente} </h1>
-           <h1> <span className="font-bold"> Endereço: </span>{EnderecoPaciente} </h1>
-      
+           <h1 className='font-bold text-blue-900'> {NomePaciente} </h1>
+           <h1> <span className='font-bold text-blue-900'> CPF: </span>{CPFPaciente} </h1>
+           <h1> <span className="font-bold text-blue-900"> Endereço: </span>{EnderecoPaciente} </h1>
+       
            <TextField
              label=""
              variant="outlined"

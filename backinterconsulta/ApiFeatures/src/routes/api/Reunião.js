@@ -20,11 +20,15 @@ import
     SavedReceitaControlada,
     getReceitaControlada,
     DeleteReceitaControlada,
+    SaveAtestado,
+    getAtestado,
+    DeleteAtestado,
     SaveExamesSolicitadosDoctor,
     getExames,
     DeleteExamesSolicitadosDoctor,
     editExames,
-    VerifyDocuments 
+    VerifyDocuments,
+    ValidatorDocuments, 
    }
  from "../../services/ReuniãoService.js"
 
@@ -248,9 +252,32 @@ router.get('/get-receita-controlada/:id',
 
 router.delete('/delete-receita-controlada/:idConsulta/:idReceitaC',
       async(req,res) =>{
-        const { idConsulta, idReceitaC } = req.params
-        
+        const { idConsulta, idReceitaC } = req.params  
         DeleteReceitaControlada(idConsulta,idReceitaC, res)
+        console.log(req.params)
+      }
+)
+
+router.post('/saved-atestado', 
+     async(req, res) => {
+      const { id, diasAfastamento, CID } = req.body
+      SaveAtestado(id, diasAfastamento, CID, res)
+      console.log(req.body)
+     }
+)
+
+router.get('/get-atestado/:id', 
+      async(req, res) => {
+        const { id } = req.params
+        getAtestado(id,res)
+        console.log(req.params)
+      }
+)
+
+router.delete('/delete-atestado/:idConsulta/:idAtestado',
+      async(req,res) =>{
+        const { idConsulta, idAtestado } = req.params
+        DeleteAtestado(idConsulta, idAtestado, res)
         console.log(req.params)
       }
 )
@@ -297,6 +324,16 @@ router.post('/verify-documents',
         VerifyDocuments(id,res)
         
         console.log(req.body)
+      }
+)
+
+router.post('/validator-documents',
+      async(req, res) => {
+
+      const { id } = req.body
+      
+      ValidatorDocuments(id,res)
+      console.log(req.body)
       }
 )
 export default router

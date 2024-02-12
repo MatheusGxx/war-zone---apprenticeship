@@ -39,9 +39,7 @@ export const Documents = ({
 
     const [open, setOpen] = useState(false)
     const [date, setDateNow] = useState(null)
-    console.log(date)
     const [hora, setHoraAtual] = useState(null)
-    console.log(hora)
     const [selectedDocumentIndex, setSelectedDocumentIndex] = useState(0)
     const { atestado } = useAtestado()
 
@@ -51,29 +49,11 @@ export const Documents = ({
         setOpen(true)
     }, [atestado, documents])
 
-    useEffect(() => {
-        const DateNow = new Date();
-
-        const Dia = DateNow.getDate();
-        const Mes = DateNow.getMonth() + 1;
-        const Ano = DateNow.getFullYear();
-
-        const DataAtual = `${Dia}/${Mes}/${Ano}`;
-        setDateNow(DataAtual);
-
-        const Horas = DateNow.getHours();
-        const Minutos = DateNow.getMinutes();
-        const Segundos = DateNow.getSeconds();
-
-        const HoraAtual = `${Horas}:${Minutos}:${Segundos}`;
-        setHoraAtual(HoraAtual);
-    },[date, hora])
 
     const getDocuments = useMutation(async (valueBody) => { 
         try {
           const response = await axios.post(`${config.apiBaseUrl}/api/verify-documents`, valueBody);
           const consulta = response.data.consulta;
-          console.log(consulta)
       
           const exames = consulta[0].ExameSolicitado
           if(exames.length > 0){
@@ -154,7 +134,25 @@ export const Documents = ({
 
    
     useEffect(() => {
-        getDocuments.mutate({ id: IdentificadorConsulta})
+
+      const DateNow = new Date();
+
+      const Dia = DateNow.getDate();
+      const Mes = DateNow.getMonth() + 1;
+      const Ano = DateNow.getFullYear();
+
+      const DataAtual = `${Dia}/${Mes}/${Ano}`;
+      setDateNow(DataAtual);
+
+      const Horas = DateNow.getHours();
+      const Minutos = DateNow.getMinutes();
+      const Segundos = DateNow.getSeconds();
+
+      const HoraAtual = `${Horas}:${Minutos}:${Segundos}`;
+      setHoraAtual(HoraAtual);
+
+      getDocuments.mutate({ id: IdentificadorConsulta})
+      console.log(date, hora)
     },[date, hora])
 
     const handleClose = () => {

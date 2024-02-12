@@ -322,25 +322,25 @@ function PopUpMedicoHoras({ onClose }) {
                 onChange={handleDataChange}
                 value={data}
               />
-           <FormControl 
-             className="w-full sm:w-44 border-b border-blue-600" 
-             style={{ borderBottom: '1px solid blue' }}>
-            <InputLabel>Tempo da Consulta</InputLabel>
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              value={tempoConsulta}
-              label="Intervalos"
-              onChange={(e) => setTempoConsulta(e.target.value)}
-              variant="standard"
-            >
-              {TempoConsulta.map((data, key) => (
-                <MenuItem key={key} value={data}>
-                  {data}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+            <FormControl 
+              className="w-full sm:w-44 border-b border-blue-600" 
+              style={{ borderBottom: '1px solid blue' }}>
+              <InputLabel>Tempo da Consulta</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={tempoConsulta}
+                label="Intervalos"
+                onChange={(e) => setTempoConsulta(e.target.value)}
+                variant="standard"
+              >
+                {TempoConsulta.map((data, key) => (
+                  <MenuItem key={key} value={data}>
+                    {data}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
               <Autocomplete
                 value={inicio === '' ? null : inicio}
                 onChange={(event, newValue) => {

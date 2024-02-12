@@ -260,12 +260,14 @@ export const AccordionReuniaoMédico2 = ({
               multiline
               required
              />
-             <div className="flex justify-center items-end">
+
+             <div className="flex justify-center items-end">              
              <DeleteIcon color="primary" className="cursor-pointer" onClick={() => HandleDeleteConsultaSimples(receitasS._id)}/>
              </div> 
+
             </div>
           ))}
-          <div className="flex justify-center items-center w-full">
+          <div className="flex gap-3 w-full">
           <TextField
              label="Prescrição - Receita Simples"
              variant="standard"
@@ -274,13 +276,18 @@ export const AccordionReuniaoMédico2 = ({
              }}
               onChange={(e) => setReceitaSimples(e.target.value)}
               value={receitaSimples}
-              className = "w-full"
+              className = "w-10/12"
               multiline
               rows={3}
               required
              />
-
-          <AddIcon color="primary" className="cursor-pointer" onClick={HandleAddConsultaSimples} />
+              
+              <div className='flex justify-center items-end' onClick={HandleAddConsultaSimples}>
+              <button className='flex gap-3 border-blue-500 border-2 p-2 rounded-xl'>
+              <p> Salvar </p> 
+              <AddIcon color="primary" className="cursor-pointer" />
+             </button>
+              </div>
           </div>
           </div>
           </AccordionDetails>
@@ -318,7 +325,7 @@ export const AccordionReuniaoMédico2 = ({
             </div>
           ))}
 
-            <div className="flex justify-center items-center w-full">
+            <div className="flex gap-3 w-full">
             <TextField
              label="Prescrição - Receita Controlada"
              variant="standard"
@@ -333,7 +340,14 @@ export const AccordionReuniaoMédico2 = ({
               required
              />
 
-          <AddIcon color="primary" className="cursor-pointer" onClick={HandleAddConsultaControlada}/>
+             
+             <div className="flex justify-center items-end"  onClick={HandleAddConsultaControlada}>
+              <button className="flex gap-3 border-blue-500 border-2 p-2 rounded-xl">
+                <p> Salvar </p>
+               <AddIcon color="primary" className="cursor-pointer"/>
+              </button>
+            </div>
+
           </div>
           </div>
           </AccordionDetails>
@@ -408,7 +422,7 @@ export const AccordionReuniaoMédico2 = ({
             </div>
           ))}
 
-           <div className='flex justify-center items-center w-full'>
+           <div className='flex gap-3 w-full'>
              <TextField
                label="Solicitar Exames"
                variant="standard"
@@ -421,8 +435,15 @@ export const AccordionReuniaoMédico2 = ({
                multiline={4}
                required
            />
+              
 
-              <AddIcon color="primary" className="cursor-pointer" onClick={HandleAddExames}/>
+              <div onClick={HandleAddExames} className="flex justify-center items-end">
+                <button className="flex gap-3 border-blue-500 border-2 p-2 rounded-xl">
+                  <p> Salvar </p>
+                <AddIcon color="primary" className="cursor-pointer"/>
+                </button>
+              </div>
+
               </div>  
             </div>
         </AccordionDetails>

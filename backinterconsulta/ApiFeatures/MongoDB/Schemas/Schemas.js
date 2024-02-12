@@ -168,6 +168,11 @@ const RegisterMédico = new mongoose.Schema({
       TypeDocument: String,
       ReceitaControladaSolicitada: String,
     }],
+    Atestado:[{
+      TypeDocument: String,
+      DiasDeAtestado: String,
+      CID: String,
+    }],
     ExameSolicitado: [{
       TypeDocument: String,
       Exame: String,
