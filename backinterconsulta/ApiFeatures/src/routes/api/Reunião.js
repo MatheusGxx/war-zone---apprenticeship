@@ -259,7 +259,7 @@ router.delete('/delete-receita-controlada/:idConsulta/:idReceitaC',
 )
 
 router.post('/saved-atestado', 
-     async(req, res) => {
+    async(req, res) => {
       const { id, diasAfastamento, CID } = req.body
       SaveAtestado(id, diasAfastamento, CID, res)
       console.log(req.body)

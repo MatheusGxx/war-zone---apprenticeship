@@ -10,6 +10,7 @@ import { useSearchParams, useRouter, usePathname} from 'next/navigation'
 import secureLocalStorage from 'react-secure-storage'
 import { ComponenteAudio } from "./ComponentAudio";
 import { config } from '../config.js'
+import { ComponenteAudio } from "./ComponentAudio"
 
 const FormularioPaciente = () => {
   const [open, setOpen] = useState(false);
@@ -37,7 +38,7 @@ const FormularioPaciente = () => {
     const response = await axios.post(`${config.apiBaseUrl}/api/obrigado/${id}`, valueRequest)
     return response.data
   },{
-    onSuccess:(data) =>{
+    onSuccess:(data) => {
       const { token, NomePaciente, PacienteDoenca } = data 
       secureLocalStorage.setItem('token', token)
       secureLocalStorage.setItem('id', id)

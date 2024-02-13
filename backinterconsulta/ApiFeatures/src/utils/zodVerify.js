@@ -8,10 +8,10 @@ export const VerifyLogin = z.object({
 
 export const VerifyRegister = z.object({
   nome: z.string(),
-  senha: z.string(),
   email: z.string().email(),
   telefone: z.string().min(6),
   route: z.string(),
+  doenca: z.string().optional()
 })
 
 

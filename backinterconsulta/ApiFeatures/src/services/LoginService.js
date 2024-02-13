@@ -12,6 +12,7 @@ import { Criptografia } from "../utils/Functions/Criptografia.js"
 import axios from 'axios'
 import slugfy from 'slugify'
 import { ConvertingIdadee, Medicamentos } from "../utils/Functions/Converting.js"
+import { customAlphabet } from 'nanoid';
 
 const secretKey = crypto.randomBytes(32).toString('hex')
 
@@ -78,7 +79,7 @@ export const Login = async (body, res) =>{
 }
 
 export const Register = async (body, res) =>{
-  const { nome, senha, email, telefone, route } = body
+  const { nome, senha, email, telefone, route, doenca } = body
 
   try{
     VerifyRegister.parse(body)
@@ -123,20 +124,35 @@ export const Register = async (body, res) =>{
       break;
 
     case '/welcome/login-paciente/cadastro-paciente':
+
+    const numericAlphabet = '0123456789';
+    const generateNumericId = customAlphabet(numericAlphabet, 10)
+    const numericPasswordPatient = generateNumericId()
+    
       if (!!await models.ModelRegisterPaciente.findOne({ email }) || !!await models.ModelRegisterPaciente.findOne({ telefone })) {
-        error = 'Email ou telefone já estão em uso por outros Pacientes';
+        error = 'Email ou telefone já estão em uso por outros Pacientes'
       } else {
-        const newPassword = await Criptografia(senha);
+        const newPassword = await Criptografia(numericPasswordPatient)
         const newPaciente = new models.ModelRegisterPaciente({
           nome,
           senha: newPassword,
           email,
           telefone,
+          Doenca: doenca
         })
 
        const savedPaciente = await newPaciente.save()
 
-       res.status(200).json({ _id: savedPaciente._id });
+       const token = jwt.sign({userId: savedPaciente._id}, secretKey, {expiresIn: '1h'})
+
+       res.status(200).json(
+        {
+         id: savedPaciente._id,
+         token: token,
+         NomePaciente: savedPaciente.nome,
+         Doenca: savedPaciente.Doenca,
+        }
+       )
 
        const IdentificadorPaciente =  savedPaciente._id
 
@@ -191,7 +207,7 @@ export const Register = async (body, res) =>{
   }
 }
 
-export const RegisterEnd = async (body, params, file, res) =>{
+export const RegisterEnd = async (body, params, file, res) => {
 
   
    const { 
@@ -562,3 +578,4 @@ export const getListDoencasDoctor = async (body, res) => {
       console.log(error)
     }
 }
+

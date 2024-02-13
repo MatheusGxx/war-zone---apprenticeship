@@ -10,7 +10,7 @@ const LoginPaciente = () => {
   return(
     <>
       <Suspense fallback={Loading}>
-      <Login ImagemLateral={ImagemLateralPaciente} title="Ola Paciente" MessageButton="Seja Atendido agora!" secondRoute="/login-paciente" treeRoute="/cadastro-paciente" plataform="/especialistas-disponiveis" apelido="Paciente"/>
+        <Login ImagemLateral={ImagemLateralPaciente} title="Ola Paciente" MessageButton="Seja Atendido agora!" secondRoute="/login-paciente" treeRoute="/cadastro-paciente" plataform="/especialistas-disponiveis" apelido="Paciente"/>
       </Suspense>
     </>
   )

@@ -14,6 +14,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { EndRegisterPatient } from "../partials/PopUpEndCadastroPaciente"
 import { useEndRegister } from '../context/context.js'
 import { config } from '../config.js'
+import { ComponenteAudio } from "../partials/ComponentAudio"
 
 const ContentPaciente = () => {
   const[selectedDoenca, setSelectedDoenca] = useState('')
@@ -51,6 +52,8 @@ const ContentPaciente = () => {
   const id = idLocal || ''
 
   const RegisterSucessPatient = secureLocalStorage.getItem('RegisterSucessPatient')
+
+  const InitialContant = secureLocalStorage.getItem('InitialContact')
 
   const VerifyDataPatient = useMutation(
     async (valueRequest) => {
@@ -385,6 +388,12 @@ const ContentPaciente = () => {
         onClose={() => setLogged(false)}
       />
       </>
+      }
+
+      {InitialContant && 
+       <ComponenteAudio
+         
+       />
       }
       <div className="flex items-end justify-end pr-3 pb-4">
         <Image src={Logo} width={30} height={30} alt="Logo Interconsulta" className="animate-spin-slow"/>

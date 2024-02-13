@@ -624,7 +624,7 @@ export const SaveAtestado = async (id, diasAfastamento, CID, res) => {
           'ConsultasSolicitadasPacientes.$.Atestado': {
              DiasDeAtestado: diasAfastamento,
              CID: CID,
-             TypeDocument: 'Atestado'  
+             TypeDocument: 'Atestado'
           }
         }
       },
@@ -632,16 +632,16 @@ export const SaveAtestado = async (id, diasAfastamento, CID, res) => {
     )
       
     if (!insertAtestado) {
-      return res.status(404).json({ message: "Atestado não encontrado" });
+      return res.status(404).json({ message: "Atestado não encontrado" })
     }
-
+             
     return res.status(200).json({ message: 'Atestado salvo com sucesso!'});
   }catch(error){
     return res.status(500).json({ message: 'Erro ao Salvar Atestado' })
   }
 }
 
-export const getAtestado = async (id) => {
+export const getAtestado = async (id, res) => {
   try{
     const getAtestado = await models.ModelRegisterMédico.findOne({ 'ConsultasSolicitadasPacientes._id': id })
 

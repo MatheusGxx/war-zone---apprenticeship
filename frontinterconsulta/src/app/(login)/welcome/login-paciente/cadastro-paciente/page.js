@@ -1,10 +1,12 @@
 'use client'
-import Cadastro from '../../../../components/Cadastro.js'
+
+import CadastroPacienteLead from '@/app/components/CadastroPaciente.jsx'
+import ImagemLateral from '../../../../public/ImageLogin.png'
 
 const CadastroPaciente = () => {
   return(
     <>
-    <Cadastro title="Cadastre-se para ser Atendido!"  OneRoute="/login-paciente" SecondRoute="/cadastro-paciente" TreeRoute="/obrigado-paciente" apelido="Paciente" mensagem="Voce esta muito perto de ser Atendido por um dos médicos do Interconsulta"/>
+    <CadastroPacienteLead title="Headline" subtitle="SubHeadline" ImagemLateral={ImagemLateral} apelido="Paciente" mensagem="Voce esta muito perto de ser Atendido por um dos médicos do Interconsulta"/>
     </>
   )
 }

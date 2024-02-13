@@ -32,6 +32,7 @@ router.post('/register', async (req, res ) => {
       email: req.body.email,
       telefone: req.body.telefone,
       route: req.body.route,
+      doenca: req.body.doenca
      }
 
      const response = res

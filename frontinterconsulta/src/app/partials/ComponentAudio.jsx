@@ -1,7 +1,7 @@
 'use client'
 import { useState, useRef, useEffect } from 'react'
-import React from 'react';
-import { TextField, CircularProgress } from '@mui/material';
+import React from 'react'
+import { TextField, CircularProgress,  Dialog, DialogContent } from '@mui/material'
 import KeyboardVoiceIcon from '@mui/icons-material/KeyboardVoice';
 import GraphicEqIcon from '@mui/icons-material/GraphicEq';
 import SendIcon from '@mui/icons-material/Send';
@@ -12,22 +12,22 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
 import axios from 'axios'
 import { useMutation } from '@tanstack/react-query'
 import secureLocalStorage from 'react-secure-storage'
+import Logo from '../public/logo.png'
+import Logo2 from '../public/Logo2.png'
+import Image from 'next/image'
 
 export const ComponenteAudio = ({
-  doenca,
   NomePaciente,
-  setResumoIA,
-  resumoIA,
-  fraseDoença,
-  CreateRequestMutation,
-  HandleClickEnd,
 }) => {
 
   const mediaRecorder = useRef(null)
+  const [open, setOpen] = useState(false)
+  const [fraseDoença, setFraseDoença] = useState(null)
   const [gravando, setGravando] = useState(false)
   const [audioRecordings, setAudioRecordings] = useState([])
   const [sucessAudio, setIsSucessAudio] = useState(false)
   const [resumo, setResumo] = useState('')
+  const [resumoIA, setResumoIA] = useState(false)
   
   const propsComponenteAudio = useSpring({
     opacity: 1,
@@ -38,11 +38,33 @@ export const ComponenteAudio = ({
     opacity: resumoIA ? 1 : 0,
     from: { opacity: 0 },
     config: config.default,
-  });
+  })
+
+  useEffect(()  => {
+    setOpen(true)
+  },[])
+
+
+  const Doenca = secureLocalStorage.getItem('Doenca')
+
+  const ResumoDoença = useMutation(async () => {
+    try {
+      const response = await axios.post(`${config2.apiBaseUrl}/api/get-doenca?doenca=${Doenca}`)
+      console.log(response.data)
+      setFraseDoença(response.data)
+    } catch (error) {
+      console.error('Erro na solicitação:', error)
+    }
+  })
 
   useEffect(() => {
+    ResumoDoença.mutateAsync()
+  },[])
 
-  },[resumoIA, fraseDoença])
+  useEffect(() => {
+  
+  },[resumoIA,fraseDoença])
+
 
   const TranslationAudioToText = useMutation(formData => {
     return axios.post(`${config2.apiBaseUrl}/api/audio-to-text-translation`, formData);
@@ -112,9 +134,36 @@ export const ComponenteAudio = ({
     secureLocalStorage.setItem('Sintoma', resumo)
   }
 
+  const HandleClickEnd = () => {
+    setOpen(false) 
+  } 
+
   return (
     <>
-    {!resumoIA && (
+    <Dialog 
+    open={open}
+    PaperProps={{
+      style: {
+        maxWidth: '600px', 
+        width: '100%',
+        height: '70%'
+      },
+    }}
+    >
+
+  <div className='flex flex-col justify-center items-center'>
+        <div className='pt-6'>
+          <Image
+            src={Logo2}
+            alt='Segundo Logo Interconsulta'
+            width={200}
+            height={100}
+          />
+        </div>
+    </div>
+      <DialogContent sx={{ display: 'flex', justifyContent: 'center', justifyItems: 'center'}}>
+        <div className='flex justify-center items-center'>
+        {!resumoIA && (
       <animated.div style={propsComponenteAudio}>
         <div className='w-full flex justify-center items-center'>
           <TextField
@@ -136,7 +185,7 @@ export const ComponenteAudio = ({
                 ) : TranslationAudioToText.isSuccess ? null : (
                   <p className='sm:whitespace-pre-wrap'>
                     {`Conte quais são os Sintomas que`} <br />
-                    {`${doenca} estão te causando`}
+                    {`${Doenca} estão te causando`}
                   </p>
                 )}
               </>
@@ -180,7 +229,7 @@ export const ComponenteAudio = ({
         </div>
 
         <div className='flex justify-center items-center gap-5 animate-pulse cursor-pointer mt-3' onClick={HandleNextResumoIA}>
-          <h1 className='text-blue-500 font-bold'> Receber detalhes sobre o seu caso de {doenca} </h1>
+          <h1 className='text-blue-500 font-bold'> Receber detalhes sobre o seu caso de {Doenca} </h1>
           <ArrowForwardIosIcon color="primary"/>
         </div>
       </animated.div>
@@ -195,15 +244,27 @@ export const ComponenteAudio = ({
 
        <div className='flex justify-center items-center mt-3'>
         <button onClick={() => HandleClickEnd()} className="w-72 h-12 rounded-full bg-red-600 text-white font-light">
-        {CreateRequestMutation.isLoading ? <CircularProgress size={24}/> 
-           :
-         `Resolver ${doenca}`
-        }
+         Resolver {Doenca}
         </button> 
        </div>
    </animated.div>
     </>
    )}
+        </div>
+   
+      </DialogContent>
+
+      <div className="flex justify-end p-4">
+            <Image
+              src={Logo}
+              alt="Logo Interconsulta"
+              height={40}
+              width={40}
+              className='animate-spin-slow'
+            />
+          </div>
+    </Dialog>
+   
   </>
   )
 }

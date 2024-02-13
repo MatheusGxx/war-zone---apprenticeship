@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Logo from '../public/logo.png';
 import Logo2 from '../public/Logo2.png';
 import Image from 'next/image';
@@ -8,52 +8,75 @@ import IconBack from '../partials/IconBack.js';
 import { useRouter, usePathname } from 'next/navigation';
 import { useMutation } from '@tanstack/react-query'
 import { config } from '../config.js'
+import { Autocomplete } from '@mui/material'
 import axios from 'axios'
+import secureLocalStorage from 'react-secure-storage'
 
-const Cadastro = ({ title, OneRoute, SecondRoute, TreeRoute, apelido, mensagem}) => {
+
+const CadastroPacienteLead = ({ title,subtitle, ImagemLateral, apelido, mensagem}) => {
   const [snackbarOpen, setSnackbarOpen] = useState(false)
   const [snackbarMessage, setSnackbarMessage] = useState('')
 
   const [name, setName] = useState('')
-  const [senha, setSenha] = useState('')
   const [email, setEmail] = useState('')
   const [number, setNumber] = useState('55')
+  const [sintomasandDoencas, setSintomasAndDoencas] = useState(null)
+  const [doenca, setDoenca] = useState(null)
 
   const Router = useRouter()
 
   const route = usePathname()
 
+  const getSintomasAndDoencas = useMutation(
+    async (valueRequest) => {
+      const response = await axios.post(`${config.apiBaseUrl}/api/get-sintomas-doencas`, valueRequest)
+      setSintomasAndDoencas(response.data.arr)
+      return response.data
+    }
+  )
+
+  useEffect(() => {
+    getSintomasAndDoencas.mutateAsync()
+  }, [])
+
 
   const CreateRequestMutation = useMutation(
     async (valueRequest) => {
-      const response = await axios.post(`${config.apiBaseUrl}/api/register`, valueRequest);
-      return response.data._id
+      const response = await axios.post(`${config.apiBaseUrl}/api/register`, valueRequest)
+      console.log(response.data)
+      return response.data
     },
     {
-      onSuccess: (id) => {  
-        Router.push(`/welcome/${OneRoute}/${SecondRoute}/${TreeRoute}?id=${id}&name=${name}`)
+      onSuccess: (data)  => {  
+        const { id, token, NomePaciente, Doenca } = data 
+        secureLocalStorage.setItem('token', token)
+        secureLocalStorage.setItem('id', id)
+        secureLocalStorage.setItem('NomePaciente', NomePaciente)
+        secureLocalStorage.setItem('Doenca', Doenca)
+
+        Router.push(`/especialistas-disponiveis`)
       },
     }
   )
   
-
   const HandleClick = async () => {
     try {
-        await CreateRequestMutation.mutateAsync({
+       await CreateRequestMutation.mutateAsync({
         nome: name,
-        senha: senha,
         email: email,
         telefone: number,
+        doenca: doenca,
         route: route,
-      });
+      })
+      secureLocalStorage.setItem('InitialContact', 'true')
     } catch (error) {
       setSnackbarMessage(`${apelido}, Email ou Telefone ja estao em uso por favor escolha outro telefone ou email`);
-      handleSnackBarOpen();
+      handleSnackBarOpen()
     }
   }
 
   const HandleClickEnd = async () => {
-    if (name === '' || senha === '' || email === '' || number === '') {
+    if (name === '' || email === '' || number === '') {
       setSnackbarMessage(`Por favor ${apelido} preencha todos os dados de Cadastro`);
       handleSnackBarOpen();
     } else {
@@ -79,16 +102,17 @@ const Cadastro = ({ title, OneRoute, SecondRoute, TreeRoute, apelido, mensagem})
 
   return (
     <>
-      <div className="container">
-        <div className="pl-10 relative top-10">
-          <IconBack />
-        </div>
-        <section className="flex flex-col gap-8 justify-center items-center sm:gap-5 lg:gap-6 -mt-4">
+     
+     <div className='flex'>
+  
+        <div className='w-1/2 sm:w-full md:w-full lg:w-full'>
+        <section className="flex flex-col gap-10 justify-center items-center sm:gap-5 lg:gap-6 mt-16">
           <div className="justify-center items-center">
-            <Image src={Logo} alt="Logo Interconsulta" height={150} width={150} className="animate-spin-slow" />
+            <Image src={Logo2} alt="Logo Interconsulta" height={250} width={250}  />
           </div>
 
-          <h1 className="text-blue-600 text-3xl sm: text-center sm:text-2xl">{title}</h1>
+          <h1 className="text-blue-600 text-3xl sm:text-center sm:text-2xl"> {title} </h1>
+          <h1 className='text-blue-600 text-2xl sm:text-center sm:text-xl'> {subtitle}</h1>
 
           <TextField
             label="Nome Completo"
@@ -100,17 +124,7 @@ const Cadastro = ({ title, OneRoute, SecondRoute, TreeRoute, apelido, mensagem})
             required
           />
 
-          <TextField
-            label="Sua melhor Senha"
-            variant="standard"
-            sx={{ width: '300px' }}
-            type="password"
-            value={senha}
-            onChange={(e) => setSenha(e.target.value)}
-            required
-          />
-
-          <TextField
+        <TextField
             label="Seu e-mail de uso"
             variant="standard"
             sx={{ width: '300px' }}
@@ -132,16 +146,33 @@ const Cadastro = ({ title, OneRoute, SecondRoute, TreeRoute, apelido, mensagem})
             required
           />
 
-      <button className={'w-72 h-12 rounded-full text-white font-light bg-indigo-950 '}
-      onClick={() => HandleClickEnd()}>
+          <Autocomplete
+             value={doenca === '' ? null : doenca}
+             onChange={(event, newValue) => {
+              if (newValue !== null) {
+                  setDoenca(newValue);
+                 }
+              }}
+             options={sintomasandDoencas}
+             noOptionsText="Sem resultados"
+             renderInput={(params) => <TextField {...params} label="Doença" variant="standard" 
+             sx={{ width: '300px' }}
+            />
+            }
+             />
 
-      {CreateRequestMutation.isLoading ? <CircularProgress size={24}/> : 'Cadastre - se'}
+        <button className={'w-72 h-12 rounded-full text-white font-light bg-indigo-950 '}
+        onClick={() => HandleClickEnd()}>
 
-      </button>
-            
-      {CreateRequestMutation.isSuccess &&  <Stack spacing={2} sx={{ maxWidth: 600}}>
-         <SnackbarContent message={`${mensagem}`} sx={{backgroundColor: 'blue'}}/>
-      </Stack>}
+        {CreateRequestMutation.isLoading ? <CircularProgress size={24}/> : 'Cadastre - se'}
+
+        </button>
+              
+        {CreateRequestMutation.isSuccess &&  
+        <Stack spacing={2} sx={{ maxWidth: 600}}>
+          <SnackbarContent message={`${mensagem}`} sx={{backgroundColor: 'blue'}}/>
+        </Stack>
+      }
 
           <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
             <Alert onClose={handleSnackbarClose} severity="error">
@@ -149,11 +180,23 @@ const Cadastro = ({ title, OneRoute, SecondRoute, TreeRoute, apelido, mensagem})
             </Alert>
           </Snackbar>
 
-          <Image src={Logo2} alt="Logo 2 Interconsulta" height={200} width={220} />
         </section>
-      </div>
+        </div>
+
+        <section className="w-1/2 sm:hidden md:hidden lg:hidden">
+              <Image
+                src={ImagemLateral}
+                alt="Imagem Login"
+      
+      />
+        </section>
+     </div>
+
     </>
   );
 };
 
-export default Cadastro;
+export default CadastroPacienteLead
+
+
+

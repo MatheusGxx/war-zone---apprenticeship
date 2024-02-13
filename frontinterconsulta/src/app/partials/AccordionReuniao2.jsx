@@ -168,6 +168,73 @@ export const AccordionReuniaoMédico2 = ({
   )
 
 
+  ////////////////////////////////// Atestado ////////////////////////////////////////////
+
+  const [keyAtestado, setKeyAtestado] = useState('')
+
+  const SavedAtestado  = useMutation(async (valueBody) => { 
+    try{
+      const response = await axios.post(`${config.apiBaseUrl}/api/saved-atestado`, valueBody)
+      return response.data
+    }catch(error){
+      console.log(error)
+    }
+  },
+  {
+    onSettled: () => {
+      queryClient.invalidateQueries('Atestado')
+    },
+   }
+  )
+
+  const HandleAddAtestado = async () => {
+    try{
+      await SavedAtestado.mutateAsync({ id: IdentificadorConsulta,  diasAfastamento:  diasAfastamento, CID: cid })
+    }catch(error){
+      console.log(error)
+    }
+  }
+
+  const DeleteAtestado = useMutation( async (idAtestado) => { 
+    try{
+      const request = await axios.delete(`${config.apiBaseUrl}/api/delete-atestado/${IdentificadorConsulta}/${idAtestado}`)  
+      return request.data
+    }catch(error){
+      console.log(error)
+    }
+  },
+  {
+    onSettled: () => {
+      queryClient.invalidateQueries('Atestado');
+    },
+  }
+)
+
+  const HandleDeleteAtestado = async (idAtestado) => {
+    try{
+      await DeleteReceitaControlada.mutateAsync(idAtestado)
+    }catch(error){
+      console.log(error)
+    }
+  }
+
+  const getAtestado = async () => {
+    try{
+      const response = await axios.get(`${config.apiBaseUrl}/api/get-atestado/${IdentificadorConsulta}`)
+      return response.data.Atestado
+    }catch(error){
+      console.log(error)
+    }
+  }
+
+  const queryKeyA = ['Atestado', keyAtestado]
+  const { data: Atestado, isFetching: isFetchingA, isError: isErrorA, isSuccess: isSuccessA } = useQuery(
+    queryKeyA,
+    () => getAtestado(keyAtestado)
+  )
+
+
+
   ///////////////////////////////// Exames //////////////////////////////////////////////
 
   const [keyexames, setkeyExames] = useState('')

@@ -79,9 +79,9 @@ export const AgendamentoComponente = ({
 const IniciarGravacao = async () => {
   try {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    mediaRecorder.current = new MediaRecorder(stream);
+    mediaRecorder.current = new MediaRecorder(stream)
 
-    let currentChunks = [];
+    let currentChunks = []
 
     mediaRecorder.current.ondataavailable = (e) => {
       if (e.data.size > 0) {
