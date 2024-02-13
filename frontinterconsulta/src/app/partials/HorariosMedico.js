@@ -373,7 +373,7 @@ function HorariosMedicos({ onClose }) {
 
           <div className="flex justify-center items-center mt-5">
             <button className="w-72 h-12 rounded-full bg-indigo-950 text-white mt-3" onClick={handleCloseButton}>
-                Salvar Horarios
+                Fechar
             </button>
           </div>
 

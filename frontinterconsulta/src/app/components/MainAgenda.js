@@ -5,6 +5,7 @@ import EventAvailableIcon from '@mui/icons-material/EventAvailable'
 import EventBusyIcon from '@mui/icons-material/EventBusy';
 import EventNoteIcon from '@mui/icons-material/EventNote';
 import DateRangeIcon from '@mui/icons-material/DateRange';
+import GroupsIcon from '@mui/icons-material/Groups';
 import IconAgenda from '../public/Agenda.png'
 import Logo from '../public/logo.png'
 /////////////////////////////////////////////////////////////
@@ -75,8 +76,6 @@ export const MainAgenda = () => {
   const[setidLink, setIdLink] = useState('')
 
   const [checkedIndex, setCheckedIndex] = useState(null)
-  const [confirmed, setConfirmed] = useState('')
-  const [consultasConfirmadas, setConsultasConfirmadas] = useState('')
 
   const idLocal = secureLocalStorage.getItem('id')
   const id = idLocal || ''
@@ -131,12 +130,12 @@ export const MainAgenda = () => {
         return response.data; 
       } catch (error) {
         console.error('Error during delete mutation Paciente Particular:', error);
-        throw error;
+        throw error
       }
     },
     {
       onSettled: () => {
-        queryClient.invalidateQueries('Consultas');
+        queryClient.invalidateQueries('Consultas')
       },
     }
   )
@@ -179,21 +178,6 @@ export const MainAgenda = () => {
   const { data, isFetching, isError, isSuccess } = useQuery(
     queryKey,
     () => RequestGetConsultas(keyConsulta),
-  )
-
-  const RequestGetConsultasConfirmadas = async (id) =>{
-    const response = await axios.get(`${config.apiBaseUrl}/api/get-consultas-links-doctor/${id}`)
-    return response.data.consultasConfirmadasComLinkPreenchido
-  }
-
-  
-  const queryKey2 = ['ConsultasConfirmadas', confirmed];
-  const { data: consultasConfirmadasComLinkPreenchido, isFetching: isFethingC, isError: isErrorC, isSuccess: isSucessC } = useQuery(
-    queryKey2,
-    () => RequestGetConsultasConfirmadas(id),
-    {
-      enabled: !!NomeMedico, // Habilita ou desabilita a consulta com base em NomeMedico
-    }
   )
 
   const HandleConfirmaçao = (NomeMedico, CPFPaciente, idCasoPaciente, Status, Data, Inicio, Fim) => {
@@ -518,50 +502,7 @@ const HandleConsulta = async (id) => {
              <div className='sm:flex sm:justify-center sm:items-center md:flex md:justify-center md:items-center'>
                <h2 className='font-bold text-blue-900 text-2xl sm:whitespace-nowrap md:whitespace-nowrap lg:whitespace-nowrap'> Sua Agenda Médica </h2>
              </div>
-             </div>
-
-             {isSucessC &&
-             <>
-             <div className='w-full flex justify-center items-center'>
-             <FormControl className="w-full sm:w-full border-b border-blue-600" style={{ borderBottom: '1px solid blue' }}>
-              <InputLabel>Link Consultas Confirmadas</InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                value={consultasConfirmadas}
-                label="Link Consulta Confirmadas"
-                onChange={(e) => setConsultasConfirmadas(e.target.value)}
-                variant="standard"
-              >
-                {consultasConfirmadasComLinkPreenchido.map((consultas, key) => (
-                  <MenuItem key={key} value={consultas._id}>
-                   <div className="flex justify-center items-center gap-5 w-full">
-                     {consultas.FotoPaciente ?
-                       <Image src={`${config.apiBaseUrl}/${consultas.FotoPaciente}`} alt="Foto do Médico" width={50} height={50} className="rounded-full" />
-                       : 
-                       <Image src={Logo} alt="Logo Interconsulta" width={50} height={50} className="rounded-full" />
-                     }
-                     <h1 className="font-bold text-blue-900"> Paciente: {consultas.Solicitante} </h1>
-                     <h1 className='font-bold text-blue-900'> Data: {consultas.Data}</h1>
-                     <h1 className='font-bold text-blue-900'> Inicio: {consultas.Inicio}</h1>
-                     <h1 className='font-bold text-blue-900'> Fim: {consultas.Fim}</h1>
-                     <div 
-                     className="flex justify-end items-center gap-5 w-full cursor-pointer"
-                     onClick={() => HandleConsulta(consultas._id)}
-                     disabled={GenerateLink.isLoading}
-                     >
-                      <h1 className="font-bold text-blue-500"> Ir para a consulta </h1>
-                     <StartIcon color="primary" fontSize='medium'/>
-                     </div>
-                   </div>
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-             </div>
-             </>
-              }
-     
+             </div>  
              {
              (disablednotArrObject || disableArrayObject) && casoClinicoClicked.length > 0 && (
                <>
@@ -677,7 +618,7 @@ const HandleConsulta = async (id) => {
                       <th className="border-b bg-white text-black py-2 px-4 font-normal">
                       <div className='flex items-center justify-center'>
                         <div className="bg-blue-500 rounded-full h-3 w-3 inline-block mr-2"></div>
-                        Laudo
+                        Consulta
                        </div>
                      </th>
                     :
@@ -842,11 +783,16 @@ const HandleConsulta = async (id) => {
                 </td>}
 
 
-                {row.Status.includes('Atendida') ?
+                {row.Status.includes('Confirmada') ?
                   <td className='border-b py-2 px-4 text-center cursor-pointer'>
                   <div className="flex justify-center items-center">
-                    <PictureAsPdfIcon color="primary" 
-                    onClick={() => handleLaudo(row._id)}/>
+              
+                  <GroupsIcon 
+                  color="primary"
+                  onClick={() => HandleConsulta(row._id)}
+                  disabled={GenerateLink.isLoading}
+                  />
+                  
                   </div>
                   </td>
                 : 

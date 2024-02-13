@@ -3,7 +3,7 @@
 
 # Configuraçoes necessarias para rodar em ambiente de desenvolvimento:
 
-     # Exclua o .env do front para acessar a api de feature na porta 8080 em localhost e nao em interconsulta.org
+     # Excluir do .env do frontend: 'NEXT_PUBLIC_API_BASE_URL=https://interconsulta.org', e deixar o .env vazio para acessar a porta 8080 do localhost da sua maquina.
 
      # Trocar a String de connection do MongoDB 
       de 

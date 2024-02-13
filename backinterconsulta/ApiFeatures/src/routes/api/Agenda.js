@@ -11,7 +11,6 @@ import {
   DeleteCasoClinicoPacienteParticular,
   getLaudo,
   getDataMedico,
-  GetSchemaLinksDoctor,
   getPhotoPatient,
   TraduçaoAudioParaTexto,
   PaymentDoctor
@@ -196,17 +195,6 @@ router.post('/get-data-doctor',
 )
 
 
-router.get('/get-consultas-links-doctor/:id',
-           async(req, res) => {
-            const params = {
-              id: req.params.id
-            }
-           GetSchemaLinksDoctor(params,res)
-           console.log(`ID Doctor for get consultas Confirmadas: ${req.params.id}`)
-           }
-)
-
-
 router.post('/foto-paciente',
        async(req, res) => {
 
@@ -243,5 +231,7 @@ router.post('/payment',
       
       PaymentDoctor(body, res)
       console.log(req.body)
-   })
+   }
+)
+
 export default router

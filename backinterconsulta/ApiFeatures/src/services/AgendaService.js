@@ -104,9 +104,9 @@ export const SavedConsultaPacienteParticular = async (body, res) => {
     }
     
     //Production
-    // axios.post('http://back-a:8081/api/automatic-whatsapp', body)
+     axios.post('http://back-a:8081/api/automatic-whatsapp', body)
     //Development
-    axios.post('http://localhost:8081/api/automatic-whatsapp', body)
+    //axios.post('http://localhost:8081/api/automatic-whatsapp', body)
 
    }catch(e){
     throw new Error(e)
@@ -488,9 +488,9 @@ export const UpdateConsulta = async (body, res) => {
         }
         
         //Production
-        //axios.post('http://back-a:8081/api/automatic-whatsapp', body)
+        axios.post('http://back-a:8081/api/automatic-whatsapp', body)
         //Development
-        axios.post('http://localhost:8081/api/automatic-whatsapp', body)
+        //axios.post('http://localhost:8081/api/automatic-whatsapp', body)
       } else {
         res.status(500).json({ message: 'Erro ao fazer Atualização' });
       }
@@ -623,9 +623,9 @@ export const DeleteCasoClinico = async (body, res) => {
         }
         
         //Production
-        //axios.post('http://back-a:8081/api/automatic-whatsapp', body)
+        axios.post('http://back-a:8081/api/automatic-whatsapp', body)
        //Development
-       axios.post('http://localhost:8081/api/automatic-whatsapp', body)
+       //axios.post('http://localhost:8081/api/automatic-whatsapp', body)
       }
      }
   }catch(error){
@@ -697,9 +697,9 @@ export const DeleteCasoClinicoPacienteParticular = async (body, res) => {
          }
    
       //Production
-      //axios.post('http://back-a:8081/api/automatic-whatsapp', body)
+      axios.post('http://back-a:8081/api/automatic-whatsapp', body)
       //Development
-      axios.post('http://localhost:8081/api/automatic-whatsapp', body)
+      //axios.post('http://localhost:8081/api/automatic-whatsapp', body)
 
     } else {
       res.status(404).json({ message: 'Erro ao excluir consulta' });
@@ -847,29 +847,6 @@ export const getDataMedico = async (body, res) =>{
     console.log(error)
   }
 } 
-
-export const GetSchemaLinksDoctor = async (params, res) => {
-  const { id } = params;
-
-  try {
-    const getMedico = await models.ModelRegisterMédico.findOne({ _id: id })
-
-    if(getMedico){
-     const ConsultasMedico = getMedico.ConsultasSolicitadasPacientes
-
-     const consultasConfirmadasComLinkPreenchido = ConsultasMedico.filter((consulta) => consulta.Status.includes('Confirmada'))
- 
-      return res.status(200).json({ consultasConfirmadasComLinkPreenchido }); // Retornando a propriedade correta
-    } else {
-      return res.status(404).json({ error: 'Médico não encontrado' }); // Adicionando uma resposta adequada
-    }
-
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-}
-
 
 export const getPhotoPatient = async (body, res) =>{
   const { id } = body

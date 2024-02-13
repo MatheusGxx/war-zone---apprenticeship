@@ -378,7 +378,7 @@ function PopUpMedicoHoras({ onClose }) {
 
           </DialogContent>  
            <button onClick={handleClose} className="w-72 h-12 rounded-full bg-indigo-950 text-white mt-3">
-            Cadastrar Horários.
+            Fechar
           </button>
         </div>
         <div className="flex justify-end p-4">
