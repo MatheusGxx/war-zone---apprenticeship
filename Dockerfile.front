@@ -8,6 +8,9 @@ COPY frontinterconsulta/ .
 
 RUN apt-get update && \
     apt-get install -y git && \ 
+    rm -rf node_modules && \
+    rm -rf .next && \
+    npm cache clean --force \
     npm install
 
 RUN npm install sharp
