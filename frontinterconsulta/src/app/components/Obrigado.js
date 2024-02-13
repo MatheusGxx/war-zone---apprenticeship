@@ -3,8 +3,7 @@ import SecondLogo from '../public/Logo2.png'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import FormularioMédico from '../partials/FormularioMédico.js'
-import FormularioUnidade from '../partials/FormularioUnidade'
-import FormularioPaciente from '../partials/FormularioPaciente'
+import FormularioUnidade from '../partials/FormularioUnidade.js'
 import { config } from '../config.js'
 
 
@@ -13,8 +12,6 @@ const Obrigado = ({ImagemLateral, title, copy}) =>{
   const pathname = usePathname()
 
   const RotaMédico = pathname === `/welcome/login-medico/cadastro-medico/obrigado-medico`;
-
-  const RotaPaciente = pathname === '/welcome/login-paciente/cadastro-paciente/obrigado-paciente'
 
   const RotaUnidade = pathname ===  '/welcome/login-unidade/cadastro-unidade/obrigado-unidade'
 
@@ -38,7 +35,6 @@ const Obrigado = ({ImagemLateral, title, copy}) =>{
 
             {RotaMédico && <FormularioMédico />}
             {RotaUnidade && <FormularioUnidade/>}
-            {RotaPaciente && <FormularioPaciente/>}
             
               <Image
               src={SecondLogo}
