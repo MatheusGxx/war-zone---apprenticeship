@@ -10,7 +10,7 @@ import { useSearchParams, useRouter, usePathname} from 'next/navigation'
 import secureLocalStorage from 'react-secure-storage'
 import { ComponenteAudio } from "./ComponentAudio";
 import { config } from '../config.js'
-import { ComponenteAudio } from "./ComponentAudio"
+import { ComponenteAudio } from "./ComponentAudio.js"
 
 const FormularioPaciente = () => {
   const [open, setOpen] = useState(false);
