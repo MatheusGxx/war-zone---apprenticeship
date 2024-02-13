@@ -111,6 +111,15 @@ const CadastroPacienteLead = ({ title,subtitle, ImagemLateral, apelido, mensagem
             <Image src={Logo2} alt="Logo Interconsulta" height={250} width={250}  />
           </div>
 
+          <Image
+                src={ImagemLateral}
+                alt="Imagem Login"
+                className='hidden sm:block md:block lg:block rounded-full'
+                height={60}
+                width={60}
+      
+          />
+
           <h1 className="text-blue-600 text-3xl sm:text-center sm:text-2xl"> {title} </h1>
           <h1 className='text-blue-600 text-2xl sm:text-center sm:text-xl'> {subtitle}</h1>
 
@@ -168,12 +177,6 @@ const CadastroPacienteLead = ({ title,subtitle, ImagemLateral, apelido, mensagem
 
         </button>
               
-        {CreateRequestMutation.isSuccess &&  
-        <Stack spacing={2} sx={{ maxWidth: 600}}>
-          <SnackbarContent message={`${mensagem}`} sx={{backgroundColor: 'blue'}}/>
-        </Stack>
-      }
-
           <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
             <Alert onClose={handleSnackbarClose} severity="error">
               {snackbarMessage}

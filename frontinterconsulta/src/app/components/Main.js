@@ -24,7 +24,7 @@ const Main = ({title, subTitle, Component}) => {
            lg:flex lg:justify-center lg:items-center
            xl:flex xl:justify-center xl:items-center
            '>
-          <ButtonBlood/>
+   
           </div>
          </div>
 

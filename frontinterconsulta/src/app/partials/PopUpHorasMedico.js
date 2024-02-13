@@ -17,8 +17,8 @@ import { TempoConsulta } from './TempoConsulta'
 import { config } from '../config.js'
 
 function PopUpMedicoHoras({ onClose }) {
-  const [open, setOpen] = useState(false);
-  const [data, setData] = useState('');
+  const [open, setOpen] = useState(false)
+  const [data, setData] = useState('')
   const [inicio, setInicio] = useState('')
   const [fim, setFim] = useState('')
   const [historicoo, setHistoricoo] = useState('')

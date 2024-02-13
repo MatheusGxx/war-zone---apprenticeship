@@ -1,7 +1,7 @@
 'use client'
 import { useState, useRef, useEffect } from 'react'
 import React from 'react'
-import { TextField, CircularProgress,  Dialog, DialogContent } from '@mui/material'
+import { TextField, CircularProgress,  Dialog, DialogContent, DialogTitle } from '@mui/material'
 import KeyboardVoiceIcon from '@mui/icons-material/KeyboardVoice';
 import GraphicEqIcon from '@mui/icons-material/GraphicEq';
 import SendIcon from '@mui/icons-material/Send';
@@ -16,9 +16,7 @@ import Logo from '../public/logo.png'
 import Logo2 from '../public/Logo2.png'
 import Image from 'next/image'
 
-export const ComponenteAudio = ({
-  NomePaciente,
-}) => {
+export const ComponenteAudio = () => {
 
   const mediaRecorder = useRef(null)
   const [open, setOpen] = useState(false)
@@ -44,13 +42,12 @@ export const ComponenteAudio = ({
     setOpen(true)
   },[])
 
-
   const Doenca = secureLocalStorage.getItem('Doenca')
+  const NomePaciente = secureLocalStorage.getItem('NomePaciente')
 
   const ResumoDoença = useMutation(async () => {
     try {
       const response = await axios.post(`${config2.apiBaseUrl}/api/get-doenca?doenca=${Doenca}`)
-      console.log(response.data)
       setFraseDoença(response.data)
     } catch (error) {
       console.error('Erro na solicitação:', error)
@@ -117,7 +114,7 @@ export const ComponenteAudio = ({
     };
   
     setGravando(true);
-    mediaRecorder.current.start();
+    mediaRecorder.current.start()
   } catch (error) {
     console.error('Erro ao iniciar a gravação de áudio:', error);
   }
@@ -135,6 +132,7 @@ export const ComponenteAudio = ({
   }
 
   const HandleClickEnd = () => {
+    secureLocalStorage.removeItem('InitialContact')
     setOpen(false) 
   } 
 
@@ -146,22 +144,29 @@ export const ComponenteAudio = ({
       style: {
         maxWidth: '600px', 
         width: '100%',
-        height: '70%'
+      
       },
     }}
     >
 
   <div className='flex flex-col justify-center items-center'>
-        <div className='pt-6'>
+        <div className='pt-6 flex justify-center items-center flex-col'>
           <Image
             src={Logo2}
             alt='Segundo Logo Interconsulta'
             width={200}
             height={100}
           />
+          
+          <DialogTitle>
+          <h1 className='text-blue-500 text-center text-xl'> {NomePaciente} queremos te escutar! </h1>
+          <h2 className='text-center text-blue-500 text-xl'> Subheadline </h2>
+          </DialogTitle>
+       
         </div>
-    </div>
+  
       <DialogContent sx={{ display: 'flex', justifyContent: 'center', justifyItems: 'center'}}>
+
         <div className='flex justify-center items-center'>
         {!resumoIA && (
       <animated.div style={propsComponenteAudio}>
@@ -253,6 +258,8 @@ export const ComponenteAudio = ({
         </div>
    
       </DialogContent>
+
+      </div>
 
       <div className="flex justify-end p-4">
             <Image

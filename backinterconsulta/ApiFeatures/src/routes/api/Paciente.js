@@ -12,6 +12,7 @@ import {
   UpdateOnlineDoctor,
   GetDataSintomasAndDoenca,
   VerifyDataPatient,
+  ValidatorPatientConsulta
 } from '../../services/PacienteService.js'
 
 router.post('/get-doenca', async( req, res) => {
@@ -122,4 +123,13 @@ router.post('/verify-data-patient',
        }
 )
 
+
+router.post('/validator-patient',
+      async(req, res) => {
+        const { id } = req.body
+        
+        ValidatorPatientConsulta(id,res)
+        console.log(req.body)
+      }
+)
 export default router

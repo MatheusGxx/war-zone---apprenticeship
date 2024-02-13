@@ -325,3 +325,18 @@ export const VerifyDataPatient = async (body, res) => {
       console.log(error)
     }
 }
+
+export const ValidatorPatientConsulta = async (id, res) => {
+  try{
+    const getPatient = await models.ModelRegisterPaciente.findById(id)
+    const ConsultasSolicitadas = getPatient.ConsultasSolicitadasPacientes
+
+    if(!getPatient){
+       return res.status(400).json({ message: 'Paciente nao existe no Interconsulta'})
+    }
+
+    res.status(200).json({ ConsultasSolicitadas: ConsultasSolicitadas})
+  }catch(error){
+    return res.status(500).json({ message: 'Erro ao Validar ao verificar se paciente ja solicitou uma consulta.'})
+  }
+}
