@@ -1,9 +1,21 @@
+'use client'
+import { useEffect } from 'react'
 import Image from 'next/image'
 import Logo from '../public/logo.png'
 import Link from 'next/link'
-
-
+import secureLocalStorage from 'react-secure-storage'
+import { useRouter } from 'next/navigation'
 const Home = () => {
+  
+  const RedirectNavigation = useRouter()
+  const Paciente = secureLocalStorage.getItem('NomePaciente')
+
+  useEffect(() => {
+     if(Paciente){
+       RedirectNavigation.push('/especialistas-disponiveis')
+     }    
+  },[])
+  
   return (
     <>
     <div className='min-h-screen flex flex-col justify-center items-center gap-5 w-full'>
