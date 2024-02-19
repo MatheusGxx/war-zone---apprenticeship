@@ -57,7 +57,7 @@ export const RegisterFivePatient = ({
             cropper.destroy()
           };
         }
-      }, [Foto]);
+      }, [Foto])
     return(
         <>
         <h1 className="text-blue-500 text-center"> Foto do Paciente:</h1>

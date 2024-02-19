@@ -1,10 +1,11 @@
-import { CreatingPDF } from "../utils/Functions/CreatingPDF.js"
+import { CreateLaudo } from "../utils/Functions/CreatingDocumentsPDF.js"
 import { models } from '../../MongoDB/Schemas/Schemas.js' 
 import { getHistoricoPaciente } from "../utils/Functions/getHistoricoPaciente.js"
 import axios from 'axios'
 
 export const CreatingDoctorLaudo = async (body, res) => {
-  const { idMedico, IdentificadorConsultaPaciente, Diagnostico, TratamentoPrescrito, MedicacaoPrescrita, FerramentaTerapeutica, ProgressoPaciente, RecomendacoesFuturas } = body
+  
+  const { idMedico, IdentificadorConsultaPaciente } = body
 
   try {
   const catchingPatientbyIdentifier = await models.ModelRegisterPaciente.find(
@@ -12,6 +13,12 @@ export const CreatingDoctorLaudo = async (body, res) => {
     'ConsultasSolicitadasPacientes._id': IdentificadorConsultaPaciente
     },
   )
+  const ultimosHistoricos = catchingPatientbyIdentifier.map(data => {
+    const ultimoHistorico = data.Historico[data.Historico.length - 1]
+    return ultimoHistorico
+  })
+
+  console.log(ultimosHistoricos)
   
   const ObjectDate = new Date()
 
@@ -48,27 +55,27 @@ export const CreatingDoctorLaudo = async (body, res) => {
   
   Diagnóstico:
   
-  ${Diagnostico}
+  ${ultimosHistoricos.map((data) => data.Diagnostico)}
   
   Tratamento Prescrito:
   
-  ${TratamentoPrescrito}:
+  ${ultimosHistoricos.map((data) => data.Tratamento)}
   
   Medicação prescrita:
 
-  ${MedicacaoPrescrita}
+  ${ultimosHistoricos.map((data) => data.FichaPaciente)}
   
   Ferramenta Terapêutica Prescrita:
   
-  ${FerramentaTerapeutica}
+  ${ultimosHistoricos.map((data) => data.FerramentasTerapeuticas)}
   
   Progresso do Paciente:
   
-  ${ProgressoPaciente}
+  ${ultimosHistoricos.map((data) => data.Progresso)}
   
   Recomendações Futuras:
 
-  ${RecomendacoesFuturas}
+  ${ultimosHistoricos.map((data) => data.RecomendacoesFuturas)}
   
   Atenciosamente, ${getDataDoctor.NomeEspecialista}.
   `;
@@ -198,7 +205,7 @@ export const VerifyClickEndReuniao = async (body, res) => {
 }
 
 export const SavedConsultaMedico = async (body, res) => {
-  const { id, IdentificadorConsulta, Diagnostico, Tratamento, Medicacao, FerramentasTerapeuticas, Progresso, SolicitacaoMedicamentos, SolicitacaoMateriais, SolicitacaoExames, RecomendacoesFuturas,   EstadoPaciente, Solicitacao, CRMMedicoAtendeu, DataInsercao } = body;
+  const { id, IdentificadorConsulta, FichaPaciente, Diagnostico, Tratamento, FerramentasTerapeuticas, Progresso, SolicitacaoMateriais, SolicitacaoExames, RecomendacoesFuturas, EstadoPaciente, Solicitacao, CRMMedicoAtendeu, DataInsercao } = body;
 
   try {
     const getMedico = await models.ModelRegisterMédico.findById(id)
@@ -225,14 +232,13 @@ export const SavedConsultaMedico = async (body, res) => {
          {
            $push: {
              Historico: {
+               FichaPaciente,
                Diagnostico,
                Tratamento,
-               Medicacao,
                FerramentasTerapeuticas,
                Progresso,
-               SolicitacaoMedicamentos,
                SolicitacaoMateriais,
-               SolicitacaoExames,
+               SolicitacaoExames: Array.isArray(SolicitacaoExames) ? SolicitacaoExames : [],
                RecomendacoesFuturas,
                EstadoPaciente,
                Solicitacao,
@@ -251,37 +257,33 @@ export const SavedConsultaMedico = async (body, res) => {
       if (updateStateConsultaMedico) {
         res.status(200).json({ message: 'Atualização de Consulta Atendida do médico concluída com sucesso' })
        //Production
-       axios.post('http://back-a:8081/api/automatic-whatsapp', {
+       /*axios.post('http://back-a:8081/api/automatic-whatsapp', {
         route: '/resumo-casos-clinicos',
+        FichaPaciente: FichaPaciente,
         Diagnostico: Diagnostico,
         Tratamento: Tratamento,
-        Medicacao: Medicacao,
         FerramentasTerapeuticas: FerramentasTerapeuticas,
         Progresso: Progresso,
-        SolicitacaoMedicamentos: SolicitacaoMedicamentos,
         SolicitacaoMateriais: SolicitacaoMateriais,
         SolicitacaoExames: SolicitacaoExames,
         RecomendacoesFuturas: RecomendacoesFuturas,
         EstadoPaciente: EstadoPaciente,
-        Solicitacao: Solicitacao,
         result: result
-       })
+       })*/
       //Development
-        /*axios.post('http://localhost:8081/api/automatic-whatsapp', {
+        axios.post('http://localhost:8081/api/automatic-whatsapp', {
           route: '/resumo-casos-clinicos',
+          FichaPaciente: FichaPaciente,
           Diagnostico: Diagnostico,
           Tratamento: Tratamento,
-          Medicacao: Medicacao,
           FerramentasTerapeuticas: FerramentasTerapeuticas,
           Progresso: Progresso,
-          SolicitacaoMedicamentos: SolicitacaoMedicamentos,
           SolicitacaoMateriais: SolicitacaoMateriais,
           SolicitacaoExames: SolicitacaoExames,
           RecomendacoesFuturas: RecomendacoesFuturas,
           EstadoPaciente: EstadoPaciente,
-          Solicitacao: Solicitacao,
           result: result
-         })*/
+         })
         
       } else {  
         return res.status(200).json({ message: 'Erro ao atualizar a Consulta Atendida do Médico' });
@@ -664,7 +666,7 @@ export const DeleteAtestado = async (idConsulta, idAtestado, res) => {
       { 'ConsultasSolicitadasPacientes._id': idConsulta},
       {
         $pull: {
-          'ConsultasSolicitadasPacientes.$.ReceitasControlada': { _id: idAtestado }
+          'ConsultasSolicitadasPacientes.$.Atestado': { _id: idAtestado }
         }
       },
        { new: true }
@@ -790,17 +792,104 @@ export const VerifyDocuments = async (id, res) => {
 
 export const ValidatorDocuments = async (id, res) => {
   try{
-    const Consulta = await models.ModelRegisterMédico.findOne({ 'ConsultasSolicitadasPacientes._id': id })
+    const Consulta = await models.ModelRegisterMédico.findOne(
+      { 'ConsultasSolicitadasPacientes._id': id },
+      { 'ConsultasSolicitadasPacientes.$': 1 }
+    );
 
     if(!Consulta){
       return res.status(400).json({ message: 'Consulta nao existe!'})
     }
-    
-    const receitasSimples = Consulta.ConsultasSolicitadasPacientes.find(consulta => consulta._id.equals(id)).ReceitasSimples.TypeDocument
-    const receitasControladas = Consulta.ConsultasSolicitadasPacientes.find(consulta => consulta._id.equals(id)).ReceitasControlada.TypeDocument
-    const exames = Consulta.ConsultasSolicitadasPacientes.find(consulta => consulta._id.equals(id)).ExameSolicitado.TypeDocument
 
+    const getDocumentsPatient = Consulta.ConsultasSolicitadasPacientes.map((data) => data.DocumentosSolicitadosPaciente).flat()
+    
+    const receitasSimples = Consulta.ConsultasSolicitadasPacientes.map((data) => data.ReceitasSimples.map((data) => data.TypeDocument))
+    const receitasControladas = Consulta.ConsultasSolicitadasPacientes.map((data) => data.ReceitasControlada.map((data) => data.TypeDocument))
+    const Atestado = Consulta.ConsultasSolicitadasPacientes.map((data) => data.Atestado.map((data) => data.TypeDocument))
+    const exames = Consulta.ConsultasSolicitadasPacientes.map((data) => data.ExameSolicitado.map((data) => data.TypeDocument))
+
+    const TottalyDocumentsDoctor = receitasSimples.concat(receitasControladas, Atestado, exames).flat()
+
+    const VerifyPreenchimentoDocumentsDoctor = getDocumentsPatient.every(item => TottalyDocumentsDoctor.includes(item) )
+
+    if(VerifyPreenchimentoDocumentsDoctor === true){
+      return res.status(200).json({ VerifyPreenchimentoDocumentsDoctor })
+    }else{
+    //Documentos Faltando
+      const TottalyDocumentsDoctor2 = new Set(TottalyDocumentsDoctor)
+      const getDocumentsPatientFlat2 = new Set(getDocumentsPatient)
+
+      const missingDocuments = [...getDocumentsPatientFlat2].filter(item => !TottalyDocumentsDoctor2.has(item))
+      return res.status(200).json({ missingDocuments })
+    }
+    
   }catch(error){
     return res.status(500).json({ message: 'Erro ao Validar documentos'})
+  }
+}
+
+
+export const AtualizedDocuments = async (receitaSimples, receitaControlada, atestado, exame, IdentificadorConsulta, res) => {
+  try {
+    if (receitaSimples !== null) {
+
+     await models.ModelRegisterMédico.findOneAndUpdate(
+         {
+          'ConsultasSolicitadasPacientes._id': IdentificadorConsulta
+         },
+         {
+           $set:{
+            'ConsultasSolicitadasPacientes.$.ReceitasSimples': receitaSimples,
+           },
+         },
+         { new: true }
+        )
+    }
+  
+    if (receitaControlada !== null) {
+        await models.ModelRegisterMédico.findOneAndUpdate(
+          {
+            'ConsultasSolicitadasPacientes._id': IdentificadorConsulta
+          },
+          {
+            $set:{
+              'ConsultasSolicitadasPacientes.$.ReceitasControlada': receitaControlada,
+            },
+          },
+          { new: true }
+      )
+    }
+
+    if (atestado !== null) {
+      await models.ModelRegisterMédico.findOneAndUpdate(
+        {
+          'ConsultasSolicitadasPacientes._id': IdentificadorConsulta
+        },
+        {
+          $set:{
+            'ConsultasSolicitadasPacientes.$.Atestado': atestado,
+          },
+        },
+        { new: true }
+    )
+    }
+
+    if (exame !== null) {
+      await models.ModelRegisterMédico.findOneAndUpdate(
+        {
+          'ConsultasSolicitadasPacientes._id': IdentificadorConsulta
+        },
+        {
+          $set:{
+            'ConsultasSolicitadasPacientes.$.ExameSolicitado': exame,
+          },
+        },
+        { new: true }
+      )
+    }
+
+    return res.status(200).json({ message: 'Documentos Atualizados e salvos com sucesso!'})
+  } catch (error) {
+    return res.status(500).json({ message: 'Error internal Server' });
   }
 }

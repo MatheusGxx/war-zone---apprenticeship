@@ -104,9 +104,9 @@ export const SavedConsultaPacienteParticular = async (body, res) => {
     }
     
     //Production
-     axios.post('http://back-a:8081/api/automatic-whatsapp', body)
+     //axios.post('http://back-a:8081/api/automatic-whatsapp', body)
     //Development
-    //axios.post('http://localhost:8081/api/automatic-whatsapp', body)
+    axios.post('http://localhost:8081/api/automatic-whatsapp', body)
 
    }catch(e){
     throw new Error(e)
@@ -488,9 +488,9 @@ export const UpdateConsulta = async (body, res) => {
         }
         
         //Production
-        axios.post('http://back-a:8081/api/automatic-whatsapp', body)
+        //axios.post('http://back-a:8081/api/automatic-whatsapp', body)
         //Development
-        //axios.post('http://localhost:8081/api/automatic-whatsapp', body)
+        axios.post('http://localhost:8081/api/automatic-whatsapp', body)
       } else {
         res.status(500).json({ message: 'Erro ao fazer Atualização' });
       }
@@ -623,9 +623,9 @@ export const DeleteCasoClinico = async (body, res) => {
         }
         
         //Production
-        axios.post('http://back-a:8081/api/automatic-whatsapp', body)
+        //axios.post('http://back-a:8081/api/automatic-whatsapp', body)
        //Development
-       //axios.post('http://localhost:8081/api/automatic-whatsapp', body)
+       axios.post('http://localhost:8081/api/automatic-whatsapp', body)
       }
      }
   }catch(error){
@@ -697,9 +697,9 @@ export const DeleteCasoClinicoPacienteParticular = async (body, res) => {
          }
    
       //Production
-      axios.post('http://back-a:8081/api/automatic-whatsapp', body)
+      //axios.post('http://back-a:8081/api/automatic-whatsapp', body)
       //Development
-      //axios.post('http://localhost:8081/api/automatic-whatsapp', body)
+      axios.post('http://localhost:8081/api/automatic-whatsapp', body)
 
     } else {
       res.status(404).json({ message: 'Erro ao excluir consulta' });
@@ -860,7 +860,7 @@ export const getPhotoPatient = async (body, res) =>{
     const FotoPaciente = getPaciente.Foto
     return res.status(200).json({ FotoPaciente })
   }catch(error){
-    console.log(error)
+     return res.status(500).json({ message: 'Error Internal Server in get Photo Patient'})
   }
 }
 
@@ -880,6 +880,24 @@ export const TraduçaoAudioParaTexto = async (audioPath, res) => {
     return res.status(500).json({ success: false, error: 'Error during audio translation.' });
   }
 }
+
+export const getPatientsAtendidosDoctor = async(id, res) => {
+   
+  try{
+    const getDoctor = await models.ModelRegisterMédico.findById(id)
+    const consultasAtendidas = getDoctor.ConsultasSolicitadasPacientes.filter((data) => data.Status.includes('Atendida'))
+
+    if(!getDoctor){
+      return res.status(400).json({ message: 'Consulta nao Encontrada'})
+    }
+
+    res.status(200).json({consultasAtendidas: consultasAtendidas })
+  }catch(error){
+    return res.status(500).json({ message: 'Erro ao pegar todas as Consultas Atendidas do Médico'})
+  }
+
+}
+
 
 
 export const PaymentDoctor = async (body, res) => {

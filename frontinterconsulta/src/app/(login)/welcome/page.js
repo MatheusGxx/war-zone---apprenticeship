@@ -42,7 +42,8 @@ const Welcome = () => {
             <button  onClick={() => HandleClick('/login-medico')}  className='w-72 h-12 rounded-full bg-blue-500 text-white font-bold'> Médico </button>
 
             <button  onClick={() => HandleClick('/login-unidade')}  className='w-72 h-12 rounded-full bg-indigo-950 text-white font-bold'> Unidade de Saude </button>
-
+            
+            <button  onClick={() => HandleClick('/login-paciente')}  className='w-72 h-12 rounded-full bg-red-500 text-white font-bold'> Paciente </button>
             <div className='my-12 flex justify-center'>
               <Image
               src={SecondLogo}

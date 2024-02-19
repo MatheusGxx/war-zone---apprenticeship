@@ -302,11 +302,16 @@ export const VerifyDataPatient = async (body, res) => {
     const { id } = body
 
     try{
-    const getDataPatient = await models.ModelRegisterPaciente.findById(id)
 
-    if(!getDataPatient){
-      return res.status(200).json({ message: 'Paciente Nao esta cadastrado no Interconsulta'})
-    }
+      if(id === ''){
+        return res.status(400).json({ message: 'Paciente nao esta logado'})
+      }
+
+      const getDataPatient = await models.ModelRegisterPaciente.findById(id)
+
+      if(!getDataPatient){
+        return res.status(200).json({ message: 'Paciente Nao esta cadastrado no Interconsulta'})
+      }
 
     const CPFPatient = getDataPatient.CPF
     const Data = getDataPatient.Data

@@ -17,13 +17,15 @@ import { NotLogged } from '../partials/NotLoggedPopUp'
 import secureLocalStorage from 'react-secure-storage'
 import { usePathname, useRouter } from 'next/navigation'
 
-import { useQuery } from "@tanstack/react-query"
+import { useQuery, useMutation } from "@tanstack/react-query"
 import axios from 'axios'
 import StarIcon from '@mui/icons-material/Star'
 import { AvaliacoesCarousel } from '../partials/CarrouselAvaliations'
 import { Link } from 'react-scroll'
 import Tempo from '../public/Tempo (2).png'
 import Custo from '../public/Custo (1).png'
+import { EndRegisterPatient } from '../partials/PopUpEndCadastroPaciente.jsx'
+import { useEndRegister } from '../context/context.js'
 
 
 export const ComponentLandingPageDoctor = ({ params }) => { 
@@ -40,6 +42,9 @@ export const ComponentLandingPageDoctor = ({ params }) => {
   const [quantidadeAvaliacoess, setQuantidadeAvaliacoes] = useState(null)
   const [doencaAtendidas, setDoencaAtendida] = useState([])
   const [ferramentasTerapeuticas, setFerramentasTerapeuticas] = useState(null)
+  const [endRegister, setEndRegister] = useState(false)
+  const [isValid, setIsValid] = useState(null)
+  const { registerEndOk } = useEndRegister()
 
   useEffect(() =>{
     const Token = secureLocalStorage.getItem('token')
@@ -54,6 +59,30 @@ export const ComponentLandingPageDoctor = ({ params }) => {
   const idLocal = typeof window !== 'undefined' ? secureLocalStorage.getItem('id') : false
   
   const id = idLocal || ''
+
+  const RegisterSucessPatient = secureLocalStorage.getItem('RegisterSucessPatient')
+
+  const VerifyDataPatient = useMutation(
+    async (valueRequest) => {
+      try {
+        const response = await axios.post(`${config.apiBaseUrl}/api/verify-data-patient`, valueRequest)
+        setIsValid(response.data.valid)
+        return response.data.valid
+      } catch (error) {
+        console.error('Error in VerifyDataPatient:', error);
+      }
+    }
+  )
+
+  useEffect(() => {
+    const UpdateDataPatient = async () => {
+      if (!RegisterSucessPatient) {
+        await VerifyDataPatient.mutateAsync({ id: id });
+      }
+    };
+  
+    UpdateDataPatient();
+  }, [RegisterSucessPatient])
 
   const RequestEspecialista = async () => {
     const response = await axios.get(`${config.apiBaseUrl}/api/get-especialista/${params}`)
@@ -104,12 +133,19 @@ export const ComponentLandingPageDoctor = ({ params }) => {
   const NomePaciente = secureLocalStorage.getItem('NomePaciente')
 
   const OpenDialog = () => {
-    if(token !== null){
-      setAgendamentoDialogOpen(!agendamentoDialogOpen)
-    }else{
+
+    if(token !== null){  // Se tiver Logado
+      if(isValid === false){
+       setEndRegister(true)
+      }else if(RegisterSucessPatient){
+        setAgendamentoDialogOpen(!agendamentoDialogOpen)
+      }
+    }else{  // Se nao tiver Logado 
       setNotLogged(!notLogged)
     }
+    
   }
+
   return(
     <>
     <div className="min-h-screen" id='Navegaçao1'>
@@ -568,12 +604,36 @@ export const ComponentLandingPageDoctor = ({ params }) => {
        onClose={() => setAgendamentoDialogOpen(false)}
       />
  }
+
+  {endRegister &&
+        <>
+        <EndRegisterPatient
+        />
+        </>
+  }
  {notLogged &&
   <NotLogged
    messageOne="Atençao!!!!"
    messageTwo="Voce nao esta Logado, por favor para agendar consultas faça login agora mesmo clicando no botao abaixo!" 
    />
    }
+
+  {registerEndOk && 
+      <>
+      <AgendamentoConsulta
+         EspecialidadeMedica={ModelEspecialista ? ModelEspecialista.EspecialidadeMedica : ''} 
+         titleButon={ModelEspecialista ? `Agendar com ${ModelEspecialista.NomeEspecialista}` : 'Agendar consulta'}
+         DoencaAutoComplete={ModelPaciente ? ModelPaciente.Doenca : ''}
+         NomeMedico={ModelEspecialista ? ModelEspecialista.NomeEspecialista : ''}
+         Horarios={ModelEspecialista.Horarios}
+         idMedico={idMedico}
+         ValorConsulta={ModelEspecialista ? ModelEspecialista.PrecoConsulta : ''}
+         FotoMedico={ModelEspecialista ? ModelEspecialista.Foto : ''}
+         avaliacoes={ModelEspecialista ? ModelEspecialista.mediaAvaliacoes : ''}
+         onClose={() => setAgendamentoDialogOpen(false)}
+      />
+      </>
+      }
    </>
   )
 }

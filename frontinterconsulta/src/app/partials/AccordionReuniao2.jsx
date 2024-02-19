@@ -26,7 +26,11 @@ export const AccordionReuniaoMédico2 = ({
   cid,
   setSolicitarExames,
   SolicitarExames,
-  IdentificadorConsulta
+  IdentificadorConsulta,
+  setSnackbarMessage,
+  handleSnackBarOpen,
+  NomeMedico,
+  NomePaciente
 }) =>{
 
   useEffect(() => {
@@ -188,8 +192,8 @@ export const AccordionReuniaoMédico2 = ({
   )
 
   const HandleAddAtestado = async () => {
-    try{
-      await SavedAtestado.mutateAsync({ id: IdentificadorConsulta,  diasAfastamento:  diasAfastamento, CID: cid })
+    try{  
+      await SavedAtestado.mutateAsync({ id: IdentificadorConsulta,  diasAfastamento: diasAfastamento, CID: cid })
     }catch(error){
       console.log(error)
     }
@@ -212,7 +216,7 @@ export const AccordionReuniaoMédico2 = ({
 
   const HandleDeleteAtestado = async (idAtestado) => {
     try{
-      await DeleteReceitaControlada.mutateAsync(idAtestado)
+      await DeleteAtestado.mutateAsync(idAtestado)
     }catch(error){
       console.log(error)
     }
@@ -429,31 +433,77 @@ export const AccordionReuniaoMédico2 = ({
             <h1> Atestado </h1>
           </AccordionSummary>
     
-        <AccordionDetails className='flex gap-5'>
-          <TextField
-             label="Dias de Afastamento:"
-             variant="standard"
-             InputProps={{
-                 sx: { borderBottom: "1px solid blue" },
-              }}
-             onChange={(e) => setDiasAfastamento(e.target.value)}
-             value={diasAfastamento}
-             className = "w-full"
-             required
-             type='number'
+        <AccordionDetails>
+
+          <div className='flex flex-col gap-3'>
+          {isSuccessA && Atestado && Atestado.map((data, index) => (
+
+              <div key={index} className="flex gap-3 w-full">
+                <TextField
+                  label="Dias de Atestado"
+                  variant="standard"
+                  InputProps={{
+                      sx: { borderBottom: "1px solid blue" },
+                  }}
+                    value={data.DiasDeAtestado}
+                    className = "w-full"
+                    multiline
+                    required
                 />
 
-         <TextField
-             label="CID da Doença:"
-             variant="standard"
-             InputProps={{
-                 sx: { borderBottom: "1px solid blue" },
-              }}
-             onChange={(e) => setCID(e.target.value)}
-             value={cid}
-             className = "w-full"
-             required
+                <TextField
+                  label="CID"
+                  variant="standard"
+                  InputProps={{
+                      sx: { borderBottom: "1px solid blue" },
+                  }}
+                    value={data.CID}
+                    className = "w-full"
+                    multiline
+                    required
                 />
+              <div className="flex justify-center items-end">
+              <DeleteIcon color="primary" className="cursor-pointer" onClick={() => HandleDeleteAtestado(data._id)}/>
+              </div> 
+              </div>
+              ))}
+
+              <div className='flex gap-3 w-full'>
+              <TextField
+              label="Dias de Afastamento:"
+              variant="standard"
+              InputProps={{
+                  sx: { borderBottom: "1px solid blue" },
+                }}
+              onChange={(e) => setDiasAfastamento(e.target.value)}
+              value={diasAfastamento}
+              className = "w-full"
+              required
+              type='number'
+                  />
+
+              <TextField
+              label="CID da Doença:"
+              variant="standard"
+              InputProps={{
+                  sx: { borderBottom: "1px solid blue" },
+                }}
+              onChange={(e) => setCID(e.target.value)}
+              value={cid}
+              className = "w-full"
+              required
+              />
+
+              <div onClick={HandleAddAtestado} className="flex justify-center items-end">
+                  <button className="flex gap-3 border-blue-500 border-2 p-2 rounded-xl">
+                    <p> Salvar </p>
+                  <AddIcon color="primary" className="cursor-pointer"/>
+                  </button>
+                </div>
+              </div>
+          </div>
+
+       
           </AccordionDetails>
         </Accordion>
 

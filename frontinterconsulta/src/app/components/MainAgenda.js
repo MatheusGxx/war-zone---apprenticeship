@@ -33,9 +33,16 @@ import { PopUpAviso } from '../partials/popUpAviso'
 ///////////////////////////////////////////////////////////
 import { NotDateConsulta } from '../partials/NotConsulta'
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf'
-import { FormControl, InputLabel, Select, MenuItem } from "@mui/material"
 import { saveAs } from 'file-saver'
 import { config } from '../config.js'
+
+import Box from '@mui/material/Box'
+import Tab from '@mui/material/Tab'
+import TabContext from '@mui/lab/TabContext'
+import TabList from '@mui/lab/TabList'
+import TabPanel from '@mui/lab/TabPanel'
+
+import { PatientsDoctor } from './PatientsDoctor'
 
 export const MainAgenda = () => {
 
@@ -74,6 +81,7 @@ export const MainAgenda = () => {
   const[fimPacienteParticular, setFimPacienteParticular] = useState('')
 
   const[setidLink, setIdLink] = useState('')
+  const [value, setValue] = useState('1');
 
   const [checkedIndex, setCheckedIndex] = useState(null)
 
@@ -374,6 +382,10 @@ export const MainAgenda = () => {
       }
 }
 
+    const handleChange = (event, newValue) => {
+      setValue(newValue);
+    }
+
 const HandleConsulta = async (id) => {
   try {
 
@@ -524,8 +536,17 @@ const HandleConsulta = async (id) => {
                </>
              )
            }
-
-             <div className="bg-blue-50 p-2 min-h-[200px] rounded-lg w-full  overflow-x-auto">
+        
+            <Box sx={{ width: '100%', typography: 'body1' }}>
+            <TabContext value={value}>
+              <Box sx={{ borderBottom: 1, borderColor: 'divider' }} className="flex justify-center">
+                <TabList onChange={handleChange} aria-label="Tab-list">
+                  <Tab label="Agenda Médica" value="1" />
+                  <Tab label="Seus Pacientes" value="2" />
+                </TabList>
+              </Box>
+              <TabPanel value="1" >
+              <div className="bg-blue-50 p-2 min-h-[200px] rounded-lg w-full  overflow-x-auto">
                <table className="min-w-full shadow-2xl">
                  <thead className='w-full'>
                    <tr>
@@ -584,7 +605,7 @@ const HandleConsulta = async (id) => {
                      <th className="border-b bg-white text-black py-2 px-4 font-normal">
                       <div className='flex items-center justify-center'>
                         <div className="bg-blue-500 rounded-full h-3 w-3 inline-block mr-2"></div>
-                        {NomePacienteLocal ? 'Status': 'Historico'}
+                        {NomePacienteLocal ? 'Status': <p className='whitespace-nowrap'> Linha da vida </p>}
                       </div>
                       </th>
                       {NomeMedico ? 
@@ -625,6 +646,7 @@ const HandleConsulta = async (id) => {
                     null}
                    </tr>
                  </thead>
+    
                  <tbody className='bg-white'>
                  {data && data.Consultas ? (
                    data.Consultas.map((row, index) => (
@@ -871,6 +893,19 @@ const HandleConsulta = async (id) => {
                  </tbody>
                </table>
              </div>
+          
+              </TabPanel>
+              {NomeMedico ?
+              <TabPanel value="2">
+                <PatientsDoctor/>
+              </TabPanel> 
+              : 
+              null
+              }
+            </TabContext>
+         </Box> 
+          
+             
              </div>
      
            </div> :

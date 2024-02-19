@@ -83,7 +83,7 @@ export const EndRegisterPatient = () => {
     formData.append('EstadoPaciente', estado)
     formData.append('Pais', pais)
 
-    formData.append("route", Router)
+    formData.append("route", "/landing-page")
     formData.append("file", foto)
     
     try{

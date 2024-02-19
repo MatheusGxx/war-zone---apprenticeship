@@ -292,11 +292,7 @@ export const CasosClinico = ({
          </>  
          }
         </>
-        }
-
-     
-
-      
+        } 
 
       </Dialog>
     </>

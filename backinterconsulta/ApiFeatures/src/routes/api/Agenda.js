@@ -13,6 +13,7 @@ import {
   getDataMedico,
   getPhotoPatient,
   TraduçaoAudioParaTexto,
+  getPatientsAtendidosDoctor,
   PaymentDoctor
 } from '../../services/AgendaService.js'
 
@@ -217,6 +218,14 @@ router.post('/audio-to-text-translation', uploadAudios.single('audio'),
         TraduçaoAudioParaTexto(pathAudio, res)
         
         console.log(req.file)
+       }
+)
+
+router.post('/get-patients-atendidos',
+       async(req, res) => {
+        const { id } = req.body
+        getPatientsAtendidosDoctor(id, res)
+        console.log(req.body)
        }
 )
 

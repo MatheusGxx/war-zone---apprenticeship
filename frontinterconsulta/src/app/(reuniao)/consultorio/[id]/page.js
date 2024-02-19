@@ -30,23 +30,35 @@ function Room({ params }) {
   };
 
   const key = ['Validator', validator];
-  const { data, isFetching, isError, isSuccess } = useQuery(key, () => getValidatorLink(validator))
+  const { data, isFetching, isError, isSuccess } = useQuery(key, () => getValidatorLink(validator),{
+    retry: 0, 
+  })
 
   useEffect(() => {
-    if(isSuccess){
-      
+    if (isSuccess) {
       const loadJitsiScript = async () => {
         const script = document.createElement('script');
         script.src =
           'https://8x8.vc/vpaas-magic-cookie-21c1473964e545b582ea460f6a9d0a94/external_api.js';
-        document.body.appendChild(script);
+        document.body.appendChild(script)
   
         script.onload = () => {
           if (window.JitsiMeetExternalAPI) {
             const api = new window.JitsiMeetExternalAPI("8x8.vc", {
-              roomName: "vpaas-magic-cookie-21c1473964e545b582ea460f6a9d0a94/Consultório Médico",
+              roomName: `vpaas-magic-cookie-21c1473964e545b582ea460f6a9d0a94/Consultório ${Médico}`,
               parentNode: document.querySelector('#jaas-container'),
-            });
+              configOverwrite: {
+                toolbarButtons: [
+                  'microphone', 'camera', 'desktop'
+                ],
+              },
+              lang: 'pt-BR',
+              userInfo: {
+                displayName: `${Médico}`
+              }
+            })
+
+          
           } else {
             console.error('JitsiMeetExternalAPI not available');
           }

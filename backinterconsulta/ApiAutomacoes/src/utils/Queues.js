@@ -37,30 +37,24 @@ const workerResumo = new Worker('Resumo', async job => {
         const {
          Diagnostico,
          Tratamento,
-         Medicacao,
          FerramentasTerapeuticas,
          Progresso,
-         SolicitacaoMedicamentos,
          SolicitacaoMateriais,
          SolicitacaoExames,
          RecomendacoesFuturas,
          EstadoPaciente,
-         Solicitacao,
          result
         } = job.data
 
         ResumoCasoClinico(
         Diagnostico, 
         Tratamento, 
-        Medicacao, 
         FerramentasTerapeuticas,
         Progresso,
-        SolicitacaoMedicamentos,
         SolicitacaoMateriais,
         SolicitacaoExames,
         RecomendacoesFuturas,
         EstadoPaciente,
-        Solicitacao,
         result
         )
     

@@ -1,6 +1,6 @@
 'use client'
 import { useState, useEffect } from "react"
-import { FormControl, InputLabel, Select, MenuItem, Snackbar, Alert } from "@mui/material"
+import { FormControl, InputLabel, Select, MenuItem, Snackbar, Alert, CircularProgress } from "@mui/material"
 import { AccordionReuniaoMédico } from "../partials/AccordionReuniao.jsx"
 import { AccordionReuniaoMédico2 } from '../partials/AccordionReuniao2.jsx'
 import { AccordionReuniaoMédico3 } from "../partials/AccordionReuniao3.jsx"   
@@ -15,7 +15,7 @@ import { UseReuniaoAcabando } from "../context/context.js"
 import { config } from '../config.js'
 import { Documents } from "../partials/Documents.jsx"
 import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline'
-import { useAtestado } from '../context/context.js'
+
 
 import Box from '@mui/material/Box'
 import Tab from '@mui/material/Tab'
@@ -42,8 +42,6 @@ const ReuniaoMédico = () =>{
   const [ficha, setFicha] = useState('')
   const [diasAfastamento, setDiasAfastamento] = useState(null)
   const [cid, setCID] = useState('')
-  const { setAtestado } = useAtestado()
-
 
   const[open, setOpen] = useState('')
   const[nomePaciente, setNomePaciente ] = useState('')
@@ -60,6 +58,8 @@ const ReuniaoMédico = () =>{
 
   const { vertical, horizontal } = position
 
+  const [date, setDateNow] = useState(null)
+  const [hora, setHoraAtual] = useState(null)
   const [currentPatientIndex, setCurrentPatientIndex] = useState(0)
   const [totalPatients, setTotalPatients] = useState(0);
 
@@ -81,57 +81,61 @@ const ReuniaoMédico = () =>{
   const [estadoPaciente, setEstadoPaciente] = useState(null)
   const [cpfDoctor, setCPFDoctor] = useState(null)
   const [enderecoPaciente, setEnderecoPaciente] = useState(null)
+  const [visualizedDocuments, setVisualizedDocuments] = useState(false)
   const { reuniaoAcabando } = UseReuniaoAcabando()
   const Router = useRouter()
 
+  const CRMMédico = secureLocalStorage.getItem('CRMMedico')
+  
   useEffect(() => {
 
-    if(diasAfastamento !== null){
-      setAtestado(true)
-    }
+  },[startConsulta, nameInitialPatient, receitaSimples, receitaControlada, diasAfastamento, SolicitarExames ])
 
-  },[startConsulta, nameInitialPatient, receitaSimples, receitaControlada, diasAfastamento, SolicitarExames])
+  useEffect(() => {
+
+    const DateNow = new Date();
+
+    const Dia = DateNow.getDate();
+    const Mes = DateNow.getMonth() + 1;
+    const Ano = DateNow.getFullYear();
+
+    const DataAtual = `${Dia}/${Mes}/${Ano}`;
+    setDateNow(DataAtual);
+
+    const Horas = DateNow.getHours();
+    const Minutos = DateNow.getMinutes();
+    const Segundos = DateNow.getSeconds();
+
+    const HoraAtual = `${Horas}:${Minutos}:${Segundos}`;
+    setHoraAtual(HoraAtual)
+
+  },[date, hora])
 
   const VerifyEndRoomMutation = useMutation( async (valueBody) =>{
     const request = await axios.post(`${config.apiBaseUrl}/api/verify-conclusion-room`, valueBody)
     return request.data.Consulta
   })
-
-  const SavedConsulta = useMutation(async(valueBody) =>{
-     const request = await axios.post(`${config.apiBaseUrl}/api/conclusion-room-medico`, valueBody)
-     return request.data
-  })
- 
-  const RequestCreatingDoctorLaudo = useMutation(async (valueRequest) => {
-    const response = await axios.post(`${config.apiBaseUrl}/api/create-laudo-medico`, valueRequest, {
-      responseType: 'blob',
- })
-    return response.data
-  }, {
-    onSuccess: (data) => {
-      const blob = new Blob([data], { type: 'application/pdf' });
-      saveAs(blob, 'laudo.pdf');
-    },
-    onError: (error) => {
-      console.error(error);
-      setSnackbarMessage('Erro ao gerar o Laudo Médico');
-      handleSnackBarOpen();
-    }
-  })
-
-  const ConclusionConsultaDeleteHorario = useMutation(async(valueBody) =>{
-    const request = await axios.post(`${config.apiBaseUrl}/api/conclusion-consulta-delete-horario`, valueBody)
-    return request.data
- })
   
-
   const idLocal = secureLocalStorage.getItem('id');
   const id = idLocal || ''
 
   const IdentificadorLocalConsulta = secureLocalStorage.getItem('ConsultaPacienteParticular')
   const IdentificadorConsulta = IdentificadorLocalConsulta || ''
   const NomeMedico = secureLocalStorage.getItem('NomeMedico')
-  const CRMMédico = secureLocalStorage.getItem('CRMMedico')
+
+  const SavedConsulta = useMutation(async(valueBody) =>{
+    const request = await axios.post(`${config.apiBaseUrl}/api/conclusion-room-medico`, valueBody)
+    return request.data
+  },{
+    onSuccess: () => {
+      setVisualizedDocuments(true)
+    }
+  })
+  
+  const ConclusionConsultaDeleteHorario = useMutation(async(valueBody) =>{
+    const request = await axios.post(`${config.apiBaseUrl}/api/conclusion-consulta-delete-horario`, valueBody)
+    return request.data
+  })
   
   const getPacientes = useMutation(async (valueBody) => {
     try {
@@ -184,6 +188,19 @@ const ReuniaoMédico = () =>{
      getDataMedico.mutateAsync({ id: id })
   },[])
 
+  const ValidatorDocumentsDoctor = useMutation(async (valueBody) => {
+    try{
+      const response = await axios.post(`${config.apiBaseUrl}/api/validator-documents`, valueBody)
+      return response.data
+    }catch(error){
+      throw new Error('Erro ao Validar documentos do Médico')
+    }
+  })
+
+  useEffect(() => {
+
+  },[snackbarMessage, snackbarOpen])
+
   useEffect(() => {
     if (reuniaoAcabando) {
       setSnackbarMessage(`Atenção ${NomeMedico}! Faltam menos de 5 minutos para a consulta acabar!`);
@@ -192,7 +209,15 @@ const ReuniaoMédico = () =>{
   }, [reuniaoAcabando, NomeMedico]);
   
   const ButtonHandleClick = async () => {
-     if(estado === '' || solicitaçao === '' || Diagnóstico === '' || Tratamento === '' || Medicaçao === '' || FerramentaTerapeutica === '' || Progresso === '' || Recomendacoes === ''){
+     if(
+      ficha === ""
+      ||
+      estado === ''
+      ||
+      Diagnóstico === ''
+      || 
+      Tratamento === '' 
+      ){
       setSnackbarMessage(`${NomeMedico} por favor preencha todos os dados solicitados abaixo para poder finalizar a consulta`)
       handleSnackBarOpen()
      }else{
@@ -203,15 +228,46 @@ const ReuniaoMédico = () =>{
   }
 
   const HandleClickButtonFinal = async () => {
-    const body1 = {
-      IdentificadorConsulta: IdentificadorConsulta,
+                   
+     const dataValidator = await ValidatorDocumentsDoctor.mutateAsync({ id: IdentificadorConsulta })
+     const FaltandoDocumento = dataValidator.missingDocuments
+
+     if(FaltandoDocumento){
+      setSnackbarMessage(`${NomeMedico} os seguintes documentos: ${FaltandoDocumento},  Solicitados pelo Paciente ${nameInitialPatient} estão faltando`),
+      handleSnackBarOpen()
+     }else{
+
+     const body2 ={
+       id: id,
+       IdentificadorConsulta: IdentificadorConsulta,
+       FichaPaciente: ficha,
+       Diagnostico: Diagnóstico,
+       Tratamento: Tratamento,
+       FerramentasTerapeuticas: FerramentaTerapeutica,
+       Progresso: Progresso,
+       SolicitacaoMateriais: SolicitaçaoMateriais,
+       SolicitacaoExames: SolicitarExames,
+       RecomendacoesFuturas: Recomendacoes,
+       EstadoPaciente: estado,
+       CRMMedicoAtendeu: CRMMédico,
+       DataInsercao: date
+     }
+
+      await SavedConsulta.mutateAsync(body2)
+
+      await ConclusionConsultaDeleteHorario.mutateAsync({ idConsultaParticular: IdentificadorConsulta })
+      
+     }
+           
+    /*const body1 = {
+      IdentificadorConsulta: IdentificadorConsulta, 
       id: id
     };
     const data = await VerifyEndRoomMutation.mutateAsync(body1);
   
-    const OkMedico = data.ConsultasSolicitadasPacientes.flatMap((data) => data.OkMedico);
- 
-    const OkPaciente = data.ConsultasSolicitadasPacientes.flatMap((data) => data.OkPaciente);
+    const OkMedico = data.ConsultasSolicitadasPacientes.flatMap((data) => data.OkMedico)
+
+    const OkPaciente = data.ConsultasSolicitadasPacientes.flatMap((data) => data.OkPaciente)
   
     if (OkMedico.length === 0) {     
       setOpen(true);
@@ -221,62 +277,9 @@ const ReuniaoMédico = () =>{
       setNomePaciente(data.ConsultasSolicitadasPacientes.map((data) => data.Solicitante));
     } else {
       
-      const dataAtual = new Date()
+    }*/
 
-      const anoAtual = dataAtual.getFullYear();
-      const mesAtual = dataAtual.getMonth() + 1
-      const diaAtual = dataAtual.getDate();
-
-      const body2 ={
-        id: id,
-        IdentificadorConsulta: IdentificadorConsulta,
-        Diagnostico: Diagnóstico,
-        Tratamento: Tratamento,
-        Medicacao: Medicaçao,
-        FerramentasTerapeuticas: FerramentaTerapeutica,
-        Progresso: Progresso,
-        SolicitacaoMedicamentos: SolicitaçaoMedicamentos,
-        SolicitacaoMateriais: SolicitaçaoMateriais,
-        SolicitacaoExames: SolicitarExames,
-        RecomendacoesFuturas: Recomendacoes,
-        EstadoPaciente: estado,
-        Solicitacao: solicitaçao,
-        CRMMedicoAtendeu: CRMMédico,
-        DataInsercao: `${diaAtual}/${mesAtual}/${anoAtual}`
-      }
-       await SavedConsulta.mutateAsync(body2)
-  
-      const body3 = {
-        idMedico: id,
-        IdentificadorConsultaPaciente: IdentificadorConsulta,
-        Diagnostico: Diagnóstico,
-        TratamentoPrescrito: Tratamento,
-        MedicacaoPrescrita: SolicitaçaoMedicamentos,
-        FerramentaTerapeutica: FerramentaTerapeutica,
-        ProgressoPaciente: Progresso,
-        RecomendacoesFuturas: Recomendacoes,
-      }
-      try{
-        RequestCreatingDoctorLaudo.mutateAsync(body3)
-        secureLocalStorage.setItem('EndMedico',IdentificadorConsulta)
-        ConclusionConsultaDeleteHorario.mutateAsync({ idConsultaParticular: IdentificadorLocalConsulta})
-        secureLocalStorage.removeItem('ConsultaPacienteParticular')
-        setEstado('')
-        setSolicitaçao('')
-        setDiagnóstico('')
-        setTratamento('')
-        setMedicaçao('')
-        setFerramenta('')
-        setProgresso('')
-        setSolicitaçaoMedicamentos('')
-        setSolicitaçaoMateriais('')
-        setSolicitarExames('')
-        setRecomendacoes('')
-        Router.push('/obrigado')
-      }catch(error){
-        console.log(error)
-      }  
-    }
+     
   }
 
   const HandleHistorico = async () => { 
@@ -295,11 +298,6 @@ const ReuniaoMédico = () =>{
     setValue(newValue);
   }
 
-  const HandleGenerateDocuments = () => {
-    setGenerateDocuments(true)
-  }
-
-
   return(
     <>
   
@@ -307,9 +305,14 @@ const ReuniaoMédico = () =>{
     <div className="w-6/12 flex flex-col justify-center">
          <div className="flex flex-col gap-5">
          {getPacientes.data?.getConsulta?.map((data, index) => (
-            <div key={index} className={`flex flex-col gap-5 ${index === currentPatientIndex ? '' : 'hidden'} justify-center items-center mt-[-1rem]`}>
-              <h1 className='text-center font-bold text-xl text-blue-900'>{`Pacientes: ${currentPatientIndex + 1}/${totalPatients}`}</h1>
-              <h2 className='text-center font-bold text-xl text-blue-900'>{`Paciente Atual: ${data.nome}`}</h2>
+            <div key={index} className={`flex flex-col gap-5 justify-center items-center mt-[-1rem]`}>
+              <h2 className='text-center font-bold text-xl text-blue-900'>{`Paciente Atual: ${data.nome}`}</h2>  
+              <button className="w-1/3  h-10 bg-blue-900 rounded-full font-bold text-white sm:w-11/12 sm:h-8 md:w-3/4 lg:w-3/4 xl:w-3/4 cursor-pointer"
+                          onClick={() =>
+                            HandleHistorico()
+                           }>
+                            <p className="sm:text-sm text-center"> Historico </p>
+             </button>
             </div>
           ))}
 
@@ -351,6 +354,10 @@ const ReuniaoMédico = () =>{
                         setSolicitarExames={setSolicitarExames}
                         SolicitarExames={SolicitarExames}
                         IdentificadorConsulta={IdentificadorConsulta}
+                        setSnackbarMessage={setSnackbarMessage}
+                        handleSnackBarOpen={() => handleSnackBarOpen()}
+                        NomeMedico={nomeDoctor}
+                        NomePaciente={nameInitialPatient}
                         />
                       </TabPanel>
                       <TabPanel value="3">
@@ -367,12 +374,7 @@ const ReuniaoMédico = () =>{
                   </Box>
                   </div>
 
-                  <div className="flex justify-center gap-5 cursor-pointer" onClick={HandleGenerateDocuments}>
-                  <DownloadForOfflineIcon color="primary" fontSize="large"/>        
-                  <div className="flex justify-center items-center">
-                  <h1 className="font-bold text-blue-900 text-lg"> Visualizar Documentos </h1>
-                  </div>
-                  </div>
+                 
 
                     <div className="flex gap-5 justify-center items-center">
                         <FormControl
@@ -398,28 +400,23 @@ const ReuniaoMédico = () =>{
             
                       <div className="flex gap-5 w-full justify-center">
                           <button className="w-1/3  h-10 bg-blue-900 rounded-full font-bold text-white sm:w-11/12 sm:h-8 md:w-3/4 lg:w-3/4 xl:w-3/4 cursor-pointer"
-                          onClick={ButtonHandleClick}       
-                      >
-                            <p className="sm:text-sm text-center"> Finalizar Interconsulta </p>
-                          </button>
-            
-                          <button className="w-1/3  h-10 bg-blue-900 rounded-full font-bold text-white sm:w-11/12 sm:h-8 md:w-3/4 lg:w-3/4 xl:w-3/4 cursor-pointer"
-                         onClick={() =>
-                          HandleHistorico()
-                          }>
-                            <p className="sm:text-sm text-center"> Historico </p>
+                          onClick={ButtonHandleClick}
+                          disabled={SavedConsulta.isLoading && ConclusionConsultaDeleteHorario.isLoading}    
+                           >
+                            {SavedConsulta.isLoading && ConclusionConsultaDeleteHorario.isLoading ?
+                             <CircularProgress color="primary" size={30}/> :
+                             <p className="sm:text-sm text-center"> Finalizar Interconsulta </p> }
                           </button>
                       </div>
                  </div>
-
-              
-
+        
       {historico &&
         <CasosClinicoReuniao
         onClose={() => setHistorico(false)}
         CPF={CPF}
         />
       }
+
       {open && 
       <PopUpEndReunião
       PersonaNaoclicou={nomeMedico ? nomeMedico : nomePaciente ? nomePaciente : null}
@@ -427,28 +424,30 @@ const ReuniaoMédico = () =>{
       />
       }
 
-      {generateDocuments &&
+      {visualizedDocuments &&
        <Documents
-       onClose={() => setGenerateDocuments(false)}
-       ReceitaSimpleS={receitaSimples}
-       ReceitaControlada={receitaControlada}
-       diasAfastamento={diasAfastamento}
-       SolicitarExames={SolicitarExames}
-       nomePaciente={nameInitialPatient}
-       nomeMedico={nomeDoctor}
-       CRMMedico={crmDoctor}
-       UFMedico={ufDoctor}
-       EstadoMedico={estadoDoctor}
-       BairroMedico={bairroDoctor}
-       CidadeMedico={cidadeDoctor}
-       CPFPaciente={CPF}
-       EnderecoMedico={enderecoDoctor}
-       CID={cid}
-       CidadePaciente={cidadePaciente}
-       EstadoPaciente={estadoPaciente}
-       CPFMedico={cpfDoctor}
-       EnderecoPaciente={enderecoPaciente}
-       IdentificadorConsulta={IdentificadorConsulta}
+        onClose={() => setVisualizedDocuments(false)}
+        ReceitaSimpleS={receitaSimples}
+        ReceitaControlada={receitaControlada}
+        diasAfastamento={diasAfastamento}
+        SolicitarExames={SolicitarExames}
+        nomePaciente={nameInitialPatient}
+        nomeMedico={nomeDoctor}
+        CRMMedico={crmDoctor}
+        UFMedico={ufDoctor}
+        EstadoMedico={estadoDoctor}
+        BairroMedico={bairroDoctor}
+        CidadeMedico={cidadeDoctor}
+        CPFPaciente={CPF}
+        EnderecoMedico={enderecoDoctor}
+        CID={cid}
+        CidadePaciente={cidadePaciente}
+        EstadoPaciente={estadoPaciente}
+        CPFMedico={cpfDoctor}
+        EnderecoPaciente={enderecoPaciente}
+        IdentificadorConsulta={IdentificadorConsulta}
+        date={date}
+        hora={hora}
        />
       }
       

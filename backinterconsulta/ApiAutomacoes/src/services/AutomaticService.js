@@ -44,17 +44,15 @@ export const AutomaticWhatsapp = async (body, res) => {
      DataExclusaoPaciente,
      InicioExlusaoPaciente,
      FimExclusaoPaciente,
+     FichaPaciente,
      Diagnostico,
      Tratamento,
-     Medicacao,
      FerramentasTerapeuticas,
      Progresso,
-     SolicitacaoMedicamentos,
      SolicitacaoMateriais,
      SolicitacaoExames,
      RecomendacoesFuturas,
      EstadoPaciente,
-     Solicitacao,
      result,
      route 
   } = body
@@ -306,17 +304,15 @@ export const AutomaticWhatsapp = async (body, res) => {
 
        case '/resumo-casos-clinicos':
          await ResumoQueue.add('Resumo', {
+          FichaPaciente,
           Diagnostico,
           Tratamento,
-          Medicacao,
           FerramentasTerapeuticas,
           Progresso,
-          SolicitacaoMedicamentos,
           SolicitacaoMateriais,
           SolicitacaoExames,
           RecomendacoesFuturas,
           EstadoPaciente,
-          Solicitacao,
           result
          })
         break

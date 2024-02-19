@@ -1,8 +1,14 @@
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ArrowBackIosNewRoundedIcon from '@mui/icons-material/ArrowBackIosNewRounded';
-import { useState, useEffect } from 'react'; 
-import { Dialog, DialogContent, DialogActions } from '@mui/material'
-import { SolicitaçaoExames } from '../components/SolicitaçaoExames'
+import React, { forwardRef, useState, useEffect } from 'react';
+import { 
+  Dialog,
+  AppBar, 
+  Toolbar, 
+  Slide,
+} from '@mui/material'
+
+import { SolicitaçaoExames }  from '../components/SolicitaçaoExames'
 import { AtestadoDoctor } from '../components/Atestado'
 import { ReceitaSimples } from '../components/ReceitaSimples'
 import { ReceitaControladA } from '../components/ReceitaControlada';
@@ -12,15 +18,17 @@ import Logo2 from '../public/Logo2.png'
 import { useMutation } from '@tanstack/react-query'
 import { config  } from '../config';
 import axios from 'axios'
-import { useAtestado } from '../context/context.js'
-import SentimentVeryDissatisfiedIcon from '@mui/icons-material/SentimentVeryDissatisfied';
+import SentimentVeryDissatisfiedIcon from '@mui/icons-material/SentimentVeryDissatisfied'
+import CloseIcon from '@mui/icons-material/Close'
+import { useReceitaSimples } from '../context/context'
+import { useReceitaControlada } from '../context/context'
+import { useAtestado } from '../context/context'
+import { useExame } from '../context/context'
+import { GenerateDocuments } from './GenerateDocumentsDialog'
  
 export const Documents = ({ 
     onClose, 
-    ReceitaSimpleS,
-    ReceitaControlada, 
     diasAfastamento, 
-    SolicitarExames,
     ///////////////
     nomePaciente,
     nomeMedico,
@@ -35,19 +43,32 @@ export const Documents = ({
     CPFMedico,
     EnderecoPaciente,
     IdentificadorConsulta,
+    date,
+    hora
+    
     }) => {
 
     const [open, setOpen] = useState(false)
-    const [date, setDateNow] = useState(null)
-    const [hora, setHoraAtual] = useState(null)
     const [selectedDocumentIndex, setSelectedDocumentIndex] = useState(0)
-    const { atestado } = useAtestado()
+    const [warningDoctor, setWarningDoctor] = useState(false)
 
     const [documents, setDocuments] = useState([])
 
+   
+    const Transition = forwardRef(function Transition(props, ref) {
+      return <Slide direction="left" ref={ref} {...props} />;
+    })
+
     useEffect(() => {
-        setOpen(true)
-    }, [atestado, documents])
+      handleClickOpen()
+    }, [])
+
+  
+    useEffect(() => {
+
+    },[warningDoctor, documents])
+
+    const handleClickOpen = () => setOpen(true);
 
 
     const getDocuments = useMutation(async (valueBody) => { 
@@ -64,11 +85,9 @@ export const Documents = ({
                 nomePaciente={nomePaciente}
                 nomeMedico={nomeMedico}
                 CRMMedico={CRMMedico}
-                UFMedico={UFMedico}
-                EstadoMedico={EstadoMedico}
-                BairroMedico={BairroMedico}
-                CidadeMedico={CidadeMedico}
+                EnderecoMedico={EnderecoMedico}
                 IdentificadorConsulta={IdentificadorConsulta}
+                exames={exames}
               />
             ]);
           }
@@ -86,6 +105,7 @@ export const Documents = ({
                 UF={UFMedico}
                 date={date}
                 HoraAtual={hora}
+                receitaS={receitaSimples}
               />
             ]);
           }
@@ -104,12 +124,13 @@ export const Documents = ({
                 EnderecoPaciente={EnderecoPaciente}
                 CPFPaciente={CPFPaciente}
                 date={date}
+                receitaC={receitaControlada}
               />
             ]);
           }
-          const Atestado = atestado
+          const Atestado = consulta[0].Atestado
 
-          if(Atestado === true){
+          if(Atestado.length > 0){
             setDocuments(prevDocuments => [
               ...prevDocuments,
               <AtestadoDoctor
@@ -121,7 +142,8 @@ export const Documents = ({
                 CID={CID}
                 Localidade={EnderecoMedico}
                 date={date}
-
+                atestado={Atestado}
+          
               />
             ]);
           }
@@ -134,26 +156,8 @@ export const Documents = ({
 
    
     useEffect(() => {
-
-      const DateNow = new Date();
-
-      const Dia = DateNow.getDate();
-      const Mes = DateNow.getMonth() + 1;
-      const Ano = DateNow.getFullYear();
-
-      const DataAtual = `${Dia}/${Mes}/${Ano}`;
-      setDateNow(DataAtual);
-
-      const Horas = DateNow.getHours();
-      const Minutos = DateNow.getMinutes();
-      const Segundos = DateNow.getSeconds();
-
-      const HoraAtual = `${Horas}:${Minutos}:${Segundos}`;
-      setHoraAtual(HoraAtual);
-
       getDocuments.mutate({ id: IdentificadorConsulta})
-      console.log(date, hora)
-    },[date, hora])
+    },[])
 
     const handleClose = () => {
         setOpen(false)
@@ -166,71 +170,69 @@ export const Documents = ({
 
     const handlePreviousDocument = () => {
         setSelectedDocumentIndex((prevIndex) => (prevIndex - 1 + documents.length) % documents.length)
-    };
+    }
+
+    const HandleVerifyDoctorDocument = () => {
+      setWarningDoctor(true)
+    }
 
     return (
         <Dialog 
-            open={open} 
-            PaperProps={{
-                style: {
-                    maxWidth: '1250px', 
-                    width: '100%',
-                    height: '100%',
-                    maxHeight: '1000px'
-                },
-            }}
-            onClose={handleClose}
+        fullScreen
+        open={open}
+        onClose={handleClose}
+        TransitionComponent={Transition}
         >
-            <div className='flex flex-col justify-center items-center'>
-                <div className='pt-6'>
-                    <Image
-                        src={Logo2}
-                        alt='Segundo Logo Interconsulta'
-                        width={200}
-                        height={100}
-                    />
-                </div>
-            </div>
+            <AppBar sx={{ position: 'relative', backgroundColor: 'white' }}>
+            <Toolbar>
+              <CloseIcon
+                edge="start"
+                color="primary"
+                onClick={handleClose}
+                aria-label="close"
+                className="cursor-pointer"
+              />
+               <div className='flex justify-center items-center flex-grow gap-3'>
+                <Image src={Logo} width={50} height={50} alt="Logo Interconsulta" className='animate-spin-slow'/>
+              </div>
+            </Toolbar>
+          </AppBar>
+              
+              <div className="flex justify-center items-center mt-10">
+              <ArrowBackIosNewRoundedIcon 
+                 color="primary" 
+                 className='cursor-pointer' 
+                 onClick={handlePreviousDocument}
+               />
+               <button className='p-2 bg-blue-700 rounded-full w-1/2' onClick={HandleVerifyDoctorDocument}>
+               <p className='text-white font-bold'> Gerar Documentos!  </p> 
+               </button>
+                <ArrowForwardIosIcon 
+                  color="primary" 
+                  className="cursor-pointer" 
+                  onClick={handleNextDocument}
+               />
+              </div>
 
-            <DialogContent style={{ display: 'flex', justifyContent: 'center', alignItems: 'center'}} className='container'>
-               
+              {warningDoctor && 
+               <GenerateDocuments
+               onClose={() => setWarningDoctor(false)}
+               nomePaciente={nomePaciente}
+               />
+              }
+
+                  <div className='flex justify-center items-center w-full mb-10'>
                   {documents.length > 0 ? 
                        documents[selectedDocumentIndex] :
                        <>
-                       <div className='flex justify-center items-center gap-3'>
+                       <div className='flex justify-center items-center gap-3 min-h-[70vh] sm:flex sm:flex-col'>
                         <h1 className="font-bold text-blue-500 text-center text-2xl"> {nomeMedico} Voce nao preencheu nenhum Documento </h1>
                         <SentimentVeryDissatisfiedIcon color="primary" fontSize='large'/>
                        </div>
                        </>
                     }
-               
-            </DialogContent>
+                  </div>
 
-            <DialogActions sx={{ display: 'flex', justifyContent: 'center', justifyItems: 'center', width: '100%'}}>
-            <ArrowBackIosNewRoundedIcon 
-                        color="primary" 
-                        className='cursor-pointer' 
-                        onClick={handlePreviousDocument}
-            />
-                <button className='p-2 bg-blue-700 rounded-full w-1/2'>
-                    <p className='text-white font-bold'> Gerar Documentos!  </p> 
-                </button>
-                <ArrowForwardIosIcon 
-                        color="primary" 
-                        className="cursor-pointer" 
-                        onClick={handleNextDocument}
-              />
-            </DialogActions>
-
-            <div className="flex justify-end p-4">
-                <Image
-                    src={Logo}
-                    alt="Logo Interconsulta"
-                    height={40}
-                    width={40}
-                    className='animate-spin-slow'
-                />
-            </div>
         </Dialog>
     );
 };

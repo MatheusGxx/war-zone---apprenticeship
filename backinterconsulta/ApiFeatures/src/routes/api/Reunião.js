@@ -29,22 +29,20 @@ import
     editExames,
     VerifyDocuments,
     ValidatorDocuments, 
+    AtualizedDocuments,
    }
  from "../../services/ReuniãoService.js"
 
+ import { CreateReceitaSimples, CreateReceitaControlada, CreateAtestado, CreateExame } from "../../utils/Functions/CreatingDocumentsPDF.js"
+ 
+
 const router = Router()
 
-router.post('/create-laudo-medico', 
+router.post('/create-documents-doctor', 
     async (req,res) =>{
         const body = {
           idMedico: req.body.idMedico,
-          IdentificadorConsultaPaciente: req.body.IdentificadorConsultaPaciente,
-          Diagnostico: req.body.Diagnostico,
-          TratamentoPrescrito: req.body.TratamentoPrescrito,
-          MedicacaoPrescrita: req.body.MedicacaoPrescrita,
-          FerramentaTerapeutica: req.body.FerramentaTerapeutica,
-          ProgressoPaciente: req.body.ProgressoPaciente,
-          RecomendacoesFuturas: req.body.RecomendacoesFuturas,
+          IdentificadorConsultaPaciente: req.body.IdentificadorConsultaPaciente
         }
         const response = res
         
@@ -95,17 +93,15 @@ router.post('/conclusion-room-medico',
         const body = {
           id: req.body.id,
           IdentificadorConsulta: req.body.IdentificadorConsulta,
+          FichaPaciente: req.body.FichaPaciente,
           Diagnostico: req.body.Diagnostico,
           Tratamento: req.body.Tratamento,
-          Medicacao: req.body.Medicacao,
           FerramentasTerapeuticas: req.body.FerramentaTerapeutica,
           Progresso: req.body.Progresso,
-          SolicitacaoMedicamentos: req.body.SolicitacaoMedicamentos,
           SolicitacaoMateriais: req.body.SolicitacaoMateriais,
           SolicitacaoExames: req.body.SolicitacaoExames,
           RecomendacoesFuturas: req.body.RecomendacoesFuturas,
           EstadoPaciente: req.body.EstadoPaciente,
-          Solicitacao: req.body.Solicitacao,
           CRMMedicoAtendeu: req.body.CRMMedicoAtendeu,
           DataInsercao: req.body.DataInsercao
         }
@@ -332,8 +328,48 @@ router.post('/validator-documents',
 
       const { id } = req.body
       
-      ValidatorDocuments(id,res)
+      ValidatorDocuments(id, res)
       console.log(req.body)
       }
+)
+
+router.post('/atualized-documents',
+       async(req, res) => {
+         const { receitaSimples, receitaControlada, atestado, IdentificadorConsulta, exame } = req.body
+
+         AtualizedDocuments(receitaSimples, receitaControlada, atestado, exame, IdentificadorConsulta, res)
+         console.log(req.body)
+       }
+)
+
+
+router.post('/create-pdf-testing', 
+       async(req, res) => {
+
+        const DateNow = new Date()
+
+        const Dia = DateNow.getDate()
+        const mes = DateNow.getMonth() + 1
+        const Ano = DateNow.getFullYear()
+
+                   
+        const DataAtual = `${Dia}/${mes}/${Ano}`
+            
+        const Horas = DateNow.getHours()
+        const Minutos = DateNow.getMinutes()
+        const Segundos = DateNow.getSeconds()
+
+        const HoraAtually = `${Horas}:${Minutos}:${Segundos}`
+
+        //CreateReceitaSimples()
+        //CreateReceitaControlada('Dr Matheus', '3429', 'Rua Georgina', 'Osasco', 'SP', DataAtual)
+        //CreateAtestado('Dr Lucas', '25423', 'Matheus Galtaroça', '52885473860', '10', '32', 'Osasco', DataAtual)
+        CreateExame()
+
+
+        res.status(200).json({ message: 'Documentos Gerado com sucesso!'})
+
+        console.log(req.body)
+       }
 )
 export default router

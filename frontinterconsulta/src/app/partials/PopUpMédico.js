@@ -18,7 +18,7 @@ function PopUpMédico() {
 
   return (
     <>
-    <Dialog open={open} onClose={handleClose} className='p-10'>
+    <Dialog open={open} onClose={handleClose}>
       <div className='flex flex-col justify-center items-center'>
         <div className='pt-6'>
           <Image

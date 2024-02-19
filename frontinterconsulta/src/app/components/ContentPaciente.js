@@ -11,7 +11,7 @@ import AgendamentoConsulta from "../partials/Agendamento";
 import secureLocalStorage from 'react-secure-storage'
 import Rating from '@mui/material/Rating'
 import { useQuery, useQueryClient } from "@tanstack/react-query"
-import { EndRegisterPatient } from "../partials/PopUpEndCadastroPaciente"
+import { EndRegisterPatient  } from "../partials/PopUpEndCadastroPaciente"
 import { useEndRegister } from '../context/context.js'
 import { config } from '../config.js'
 import { ComponenteAudio } from "../partials/ComponentAudio"
@@ -378,7 +378,7 @@ const ContentPaciente = () => {
         EspecialidadeMedica={especialidade}
         titleButon={nameProfissional ? `Agendar com ${nameProfissional}` : 'Agendar consulta'}
         DoencaAutoComplete={selectedDoenca}
-        SlugRoute={ medicoSlug }
+        SlugRoute={medicoSlug}
         Horarios={Horarios}
         idMedico={idMedico}
         NomeMedico={nameProfissional ? nameProfissional : ''}
