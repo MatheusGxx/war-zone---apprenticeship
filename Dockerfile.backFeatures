@@ -1,46 +1,28 @@
 FROM node:latest
 
-# Defina a variável de ambiente para evitar o download do Chrome pelo Puppeteer
-ENV PUPPETEER_DOWNLOAD_HOST=https://storage.googleapis.com
 ENV PUPPETEER_SKIP_DOWNLOAD=true
 
 WORKDIR /app
 
-# Configuração de fuso horário
 RUN ln -sf /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime
 
-# Instalação de dependências do sistema
 RUN apt-get update && \
     apt-get install -y build-essential git libvips && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Copia os arquivos do aplicativo
 COPY backinterconsulta/ApiFeatures .
 
-# Remova a pasta node_modules/bcrypt se necessário
 RUN rm -rf node_modules/bcrypt
 
-# Atualize o npm globalmente
 RUN npm install -g npm
 
-# Limpe o cache do npm
 RUN npm cache clean --force
 
-# Adicione um dummy file para invalidar o cache
-ADD https://some-random-site.com/ /app/dummy
-
-# Instale o pacote "sharp" separadamente
-RUN npm install sharp
-
-# Instale o pacote bcrypt
 RUN npm install bcrypt
 
-# Instalação de dependências do projeto
 RUN npm install
 
-# Exponha a porta 8080
 EXPOSE 8080
 
-# Comando de execução do aplicativo
 CMD ["npm", "run", "dev"]
