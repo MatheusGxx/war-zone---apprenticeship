@@ -10,11 +10,18 @@ import {
 
 import axios from 'axios'
 
+import { fileURLToPath } from 'url'
+import { dirname, join } from 'path'
+
 export const  CreatingDocumentsDoctor = async (body, res) => {
   
   const { idMedico, IdentificadorConsultaPaciente } = body
 
   try {
+
+    
+  const currentFilePath = fileURLToPath(import.meta.url)
+  const currentDir = dirname(currentFilePath)
 
   const catchingPatientbyIdentifier = await models.ModelRegisterPaciente.find(
     {
@@ -38,6 +45,7 @@ export const  CreatingDocumentsDoctor = async (body, res) => {
 
 
   const FilesToDownload = []
+  const FilePathComplete = []
 
   const FileLaudo = await CreateLaudo(
     DataAtual,
@@ -71,6 +79,8 @@ export const  CreatingDocumentsDoctor = async (body, res) => {
   )
 
   FilesToDownload.push(`/documents/${FileLaudo}`)
+  const LaudoCompletePath = join(currentDir, '../../..', 'pdfs', `${FileLaudo}`)
+  FilePathComplete.push(LaudoCompletePath)
 
   await models.ModelRegisterMédico.findOneAndUpdate(
     {
@@ -106,8 +116,11 @@ export const  CreatingDocumentsDoctor = async (body, res) => {
   });
   
   const ResultCreateReceitaSimples =  await Promise.all(CreatedReceitaSimples)
+
   ResultCreateReceitaSimples.map(data => {
     FilesToDownload.push(`/documents/${data}`)
+    const ReceitaSimplesCompletePath = join(currentDir, '../../..', 'pdfs', `${data}`)
+    FilePathComplete.push(ReceitaSimplesCompletePath)
   })
   
 
@@ -152,6 +165,8 @@ export const  CreatingDocumentsDoctor = async (body, res) => {
 
   ResultCreateReceitaControlada.map(data => {
     FilesToDownload.push(`/documents/${data}`)
+    const FileReceitaControladaComplete = join(currentDir, '../../..', 'pdfs', `${data}`)
+    FilePathComplete.push(FileReceitaControladaComplete)
   })
 
    await models.ModelRegisterMédico.findOneAndUpdate(
@@ -193,6 +208,9 @@ export const  CreatingDocumentsDoctor = async (body, res) => {
 
     ResultCreatedAtestado.map(data => {
       FilesToDownload.push(`/documents/${data}`)
+      const FileAtestadoComplete = join(currentDir, '../../..', 'pdfs', `${data}`)
+      FilePathComplete.push(FileAtestadoComplete)
+      
     })
 
       await models.ModelRegisterMédico.findOneAndUpdate(
@@ -232,6 +250,8 @@ export const  CreatingDocumentsDoctor = async (body, res) => {
 
   ResultCreateExame.map(data => {
     FilesToDownload.push(`/documents/${data}`)
+    const FileExameComplete = join(currentDir, '../../..', 'pdfs', `${data}`)
+    FilePathComplete.push(FileExameComplete)
   })
 
   await models.ModelRegisterMédico.findOneAndUpdate(
@@ -251,6 +271,7 @@ export const  CreatingDocumentsDoctor = async (body, res) => {
   }
 
   const OneArrFiles = FilesToDownload.flat()
+  const OneArrFilesCompletes = FilePathComplete.flat()
 
     res.status(200).json({ files: OneArrFiles })
   } catch (e) {

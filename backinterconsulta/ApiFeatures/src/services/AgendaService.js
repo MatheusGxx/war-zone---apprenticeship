@@ -109,7 +109,7 @@ export const SavedConsultaPacienteParticular = async (body, res) => {
     //axios.post('http://localhost:8081/api/automatic-whatsapp', body)
 
    }catch(e){
-    throw new Error(e)
+     return res.status(500).json({ message: 'Error internal in Server'})
    }
  }
 
@@ -193,8 +193,7 @@ export const SavedConsultaPacienteParticular = async (body, res) => {
   
       res.status(200).json({ message: 'Consultas Agendadas com Sucesso' });
     } catch (error) {
-      res.status(500).json({ message: 'Erro ao Agendar Consultas da Unidade de Saude' })
-      throw new Error(error)
+      return res.status(500).json({ message: 'Erro ao Agendar Consultas da Unidade de Saude' })
     }
     
  }
@@ -313,7 +312,7 @@ export const GetPaciente = async (params, res) => {
       return res.status(404).json({ message: 'Paciente Particular nao tem essa consulta'})
     }
   }catch(e){
-    throw new Error(e)
+    return res.status(500).json({ message: 'Error internal in Server'})
   }
 }
 
@@ -629,7 +628,7 @@ export const DeleteCasoClinico = async (body, res) => {
       }
      }
   }catch(error){
-    console.log(error)
+    return res.status(500).json({ message: 'Error internal in Server'})
   }
 }
 
@@ -765,7 +764,7 @@ export const GenerateLink = async (body, res) =>{
       }
     }
   }catch(error){
-    throw new Error('Error in TryCatch Generatelink', error)
+    return res.status(500).json({ message: 'Error internal in Server of Generate Link meeting'})
   }
  
 }
@@ -825,7 +824,7 @@ export const getLaudo = async (body, res) => {
         .json({ message: 'Médico não cadastrado no banco de dados do interconsulta' });
     }
   }catch(error){
-    console.log(error)
+    return res.status(500).json({ message: 'Error internal in Server'})
   }
 }
 
@@ -844,7 +843,7 @@ export const getDataMedico = async (body, res) =>{
   
     res.status(200).json({ FotoMédico })
   }catch(error){
-    console.log(error)
+    return res.status(500).json({ message: 'Error internal in Server'})
   }
 } 
 
@@ -939,6 +938,6 @@ export const PaymentDoctor = async (body, res) => {
     }
   
   }catch(error){
-    console.log(error)
+    return res.status(500).json({ message: 'Error internal in Server'})
   }
 }
