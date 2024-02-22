@@ -17,7 +17,7 @@ RUN npm install -g npm
 
 RUN npm cache clean --force
 
-RUN npm install --ignore-scripts=false --verbose sharp
+RUN npm install sharp
 
 RUN npm install bcrypt
 
