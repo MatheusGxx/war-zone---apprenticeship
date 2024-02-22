@@ -1,8 +1,5 @@
 FROM node:latest
 
-# Defina a variável de ambiente para evitar o download do Chrome pelo Puppeteer
-ENV PUPPETEER_SKIP_DOWNLOAD=true
-
 WORKDIR /app
 
 # Configuração de fuso horário
