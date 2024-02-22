@@ -1,7 +1,6 @@
 'use client'
 import { useState, useEffect } from "react"
 import { NotLogged } from "../partials/NotLoggedPopUp"
-import { useHistorico } from '../context/context.js'
 import { useMutation } from "@tanstack/react-query"
 import axios from 'axios'
 import Image from 'next/image'
@@ -10,7 +9,9 @@ import iconNull from '../public/IconNull.png'
 import { CasosClinico } from "../partials/popUpCasoClinico"
 import { useRouter } from "next/navigation"
 
+import { useHorariosDoctor } from "../context/context"
 import PopUpMedicoHoras from "../partials/PopUpHorasMedico"
+
 import secureLocalStorage from 'react-secure-storage'
 import { config } from '../config.js'
 
@@ -18,8 +19,8 @@ const ContentMédico = () => {
 
   const [notLogged, setNotLogged] = useState(false)
   const [notHorarios, setNotHorarios] = useState(false)
-  const [selectedCasosClinicos, setSelectedCasosClinicos] = useState([]);
-  const { historico } = useHistorico()
+  const [selectedCasosClinicos, setSelectedCasosClinicos] = useState([])
+  const { horariosDoctor } = useHorariosDoctor()
   const Navigation = useRouter()
 
   const idLocal = typeof window !== 'undefined' ? secureLocalStorage.getItem('id') : false
@@ -36,7 +37,7 @@ const ContentMédico = () => {
     }else{
       CreateRequestMutation.mutateAsync()
     }
-  }, [historico.length])
+  }, [])
 
 
   const CreateRequestMutation = useMutation(async () => {
@@ -114,6 +115,8 @@ const ContentMédico = () => {
         <div className="flex justify-end mt-5 mr-3 mb-5">
           <Image src={Logo} width={40} height={40} alt="Logo Interconsulta" className="animate-spin-slow"/>
         </div>
+
+        {horariosDoctor && <PopUpMedicoHoras/>}
 
     </>
   );

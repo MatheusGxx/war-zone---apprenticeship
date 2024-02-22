@@ -6,11 +6,13 @@ export const Atestado = (
     doc, 
     NomeMedico, 
     CRMMedico,
+    UFMedico,
     NomePaciente, 
     CPFPaciente, 
     diasAfastamento,
     CID, 
     CidadeMedico, 
+    EndereçoMedico,
     DataAtual) => {
 
     const currentFilePath = fileURLToPath(import.meta.url)
@@ -27,7 +29,7 @@ export const Atestado = (
     doc.fontSize(12)
 
 
-    doc.text(`Eu ${NomeMedico}, CRM: ${CRMMedico}, Atesto para os devidos fins que o(a) paciente ${NomePaciente}, portador(a) do CPF: ${CPFPaciente}, necessita de afastamento de suas atividades laborais pelo periodo de ${diasAfastamento} dias, a contar desta data, por motivo de saúde`, { continue: true })
+    doc.text(`Eu ${NomeMedico}, CRM: ${UFMedico}-${CRMMedico}, Atesto para os devidos fins que o(a) paciente ${NomePaciente}, portador(a) do CPF: ${CPFPaciente}, necessita de afastamento de suas atividades laborais pelo periodo de ${diasAfastamento} dias, a contar desta data, por motivo de saúde`, { continue: true })
     doc.moveDown()
     doc.moveDown()
 
@@ -39,9 +41,14 @@ export const Atestado = (
     doc.moveDown()
     doc.moveDown()
 
-    doc.text(`${NomeMedico}`)
-    doc.moveDown(0.5)
-    doc.text(`${CRMMedico}`)
+    const xDataDoctor = 50
+    const yDataDoctor = doc.page.height - 200
+
+    doc.text(`${NomeMedico}`, xDataDoctor, yDataDoctor)
+    doc.moveDown(0.2)
+    doc.text(`CRM: ${UFMedico}-${CRMMedico}`)
+    doc.moveDown(0.2)
+    doc.text(`${EndereçoMedico}`)
 
 
     const x = 250;

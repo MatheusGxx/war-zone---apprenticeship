@@ -40,9 +40,12 @@ const workerResumo = new Worker('Resumo', async job => {
          FerramentasTerapeuticas,
          Progresso,
          SolicitacaoMateriais,
-         SolicitacaoExames,
          RecomendacoesFuturas,
          EstadoPaciente,
+         ReceitaSimples,
+         ReceitaControlada,
+         Atestado,
+         Exame,
          result
         } = job.data
 
@@ -52,9 +55,12 @@ const workerResumo = new Worker('Resumo', async job => {
         FerramentasTerapeuticas,
         Progresso,
         SolicitacaoMateriais,
-        SolicitacaoExames,
         RecomendacoesFuturas,
         EstadoPaciente,
+        ReceitaSimples,
+        ReceitaControlada,
+        Atestado,
+        Exame,
         result
         )
     

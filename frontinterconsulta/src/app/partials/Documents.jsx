@@ -8,7 +8,7 @@ import {
   Slide,
 } from '@mui/material'
 
-import { SolicitaçaoExames }  from '../components/SolicitaçaoExames'
+import { DocumentsEscolhidos }  from '../components/DocumentsEscolhidos'
 import { AtestadoDoctor } from '../components/Atestado'
 import { ReceitaSimples } from '../components/ReceitaSimples'
 import { ReceitaControladA } from '../components/ReceitaControlada';
@@ -20,10 +20,6 @@ import { config  } from '../config';
 import axios from 'axios'
 import SentimentVeryDissatisfiedIcon from '@mui/icons-material/SentimentVeryDissatisfied'
 import CloseIcon from '@mui/icons-material/Close'
-import { useReceitaSimples } from '../context/context'
-import { useReceitaControlada } from '../context/context'
-import { useAtestado } from '../context/context'
-import { useExame } from '../context/context'
 import { GenerateDocuments } from './GenerateDocumentsDialog'
  
 export const Documents = ({ 
@@ -54,7 +50,6 @@ export const Documents = ({
 
     const [documents, setDocuments] = useState([])
 
-   
     const Transition = forwardRef(function Transition(props, ref) {
       return <Slide direction="left" ref={ref} {...props} />;
     })
@@ -68,85 +63,38 @@ export const Documents = ({
 
     },[warningDoctor, documents])
 
-    const handleClickOpen = () => setOpen(true);
-
-
+    const handleClickOpen = () => setOpen(true)
+     
     const getDocuments = useMutation(async (valueBody) => { 
         try {
           const response = await axios.post(`${config.apiBaseUrl}/api/verify-documents`, valueBody);
           const consulta = response.data.consulta;
       
           const exames = consulta[0].ExameSolicitado
-          if(exames.length > 0){
+          const receitaSimples = consulta[0].ReceitasSimples
+          const receitaControlada = consulta[0].ReceitasControlada
+          const Atestado = consulta[0].Atestado
+          
             setDocuments(prevDocuments => [
               ...prevDocuments,
-              <SolicitaçaoExames
+              <DocumentsEscolhidos 
                 date={date}
                 nomePaciente={nomePaciente}
                 nomeMedico={nomeMedico}
                 CRMMedico={CRMMedico}
                 EnderecoMedico={EnderecoMedico}
-                IdentificadorConsulta={IdentificadorConsulta}
-                exames={exames}
-              />
-            ]);
-          }
-          const receitaSimples = consulta[0].ReceitasSimples
-
-          if(receitaSimples.length > 0){
-            setDocuments(prevDocuments => [
-              ...prevDocuments,
-              <ReceitaSimples
-                NomePaciente={nomePaciente}
-                CPFPaciente={CPFPaciente}
-                Endereço={EnderecoMedico}
-                NomeMedico={nomeMedico}
-                CRM={CRMMedico}
                 UF={UFMedico}
-                date={date}
                 HoraAtual={hora}
-                receitaS={receitaSimples}
-              />
-            ]);
-          }
-          const receitaControlada = consulta[0].ReceitasControlada
-
-          if(receitaControlada.length > 0){
-            setDocuments(prevDocuments => [
-              ...prevDocuments,
-              <ReceitaControladA
-                Endereço={EnderecoMedico}
-                NomeMedico={nomeMedico}
-                CRM={CRMMedico}
-                UF={UFMedico}
+                CPFPaciente={CPFPaciente}
                 CidadeMedico={CidadeMedico}
-                NomePaciente={nomePaciente}
                 EnderecoPaciente={EnderecoPaciente}
-                CPFPaciente={CPFPaciente}
-                date={date}
+                exames={exames}
+                receitaS={receitaSimples}
                 receitaC={receitaControlada}
-              />
-            ]);
-          }
-          const Atestado = consulta[0].Atestado
-
-          if(Atestado.length > 0){
-            setDocuments(prevDocuments => [
-              ...prevDocuments,
-              <AtestadoDoctor
-                NomeMedico={nomeMedico}
-                CRMMedico={CRMMedico}
-                NomePaciente={nomePaciente} 
-                CPFPaciente={CPFPaciente}
-                DiasAfastamento={diasAfastamento} 
-                CID={CID}
-                Localidade={EnderecoMedico}
-                date={date}
                 atestado={Atestado}
-          
               />
             ]);
-          }
+          
       
           return consulta;
         } catch(error) {
@@ -164,14 +112,6 @@ export const Documents = ({
         onClose()
     };
 
-    const handleNextDocument = () => {
-        setSelectedDocumentIndex((prevIndex) => (prevIndex + 1) % documents.length);
-    };
-
-    const handlePreviousDocument = () => {
-        setSelectedDocumentIndex((prevIndex) => (prevIndex - 1 + documents.length) % documents.length)
-    }
-
     const HandleVerifyDoctorDocument = () => {
       setWarningDoctor(true)
     }
@@ -185,36 +125,13 @@ export const Documents = ({
         >
             <AppBar sx={{ position: 'relative', backgroundColor: 'white' }}>
             <Toolbar>
-              <CloseIcon
-                edge="start"
-                color="primary"
-                onClick={handleClose}
-                aria-label="close"
-                className="cursor-pointer"
-              />
                <div className='flex justify-center items-center flex-grow gap-3'>
                 <Image src={Logo} width={50} height={50} alt="Logo Interconsulta" className='animate-spin-slow'/>
               </div>
             </Toolbar>
           </AppBar>
               
-              <div className="flex justify-center items-center mt-10">
-              <ArrowBackIosNewRoundedIcon 
-                 color="primary" 
-                 className='cursor-pointer' 
-                 onClick={handlePreviousDocument}
-               />
-               <button className='p-2 bg-blue-700 rounded-full w-1/2' onClick={HandleVerifyDoctorDocument}>
-               <p className='text-white font-bold'> Gerar Documentos!  </p> 
-               </button>
-                <ArrowForwardIosIcon 
-                  color="primary" 
-                  className="cursor-pointer" 
-                  onClick={handleNextDocument}
-               />
-              </div>
-
-              {warningDoctor && 
+            {warningDoctor && 
                <GenerateDocuments
                onClose={() => setWarningDoctor(false)}
                nomePaciente={nomePaciente}
@@ -223,7 +140,8 @@ export const Documents = ({
 
                   <div className='flex justify-center items-center w-full mb-10'>
                   {documents.length > 0 ? 
-                       documents[selectedDocumentIndex] :
+                       documents[selectedDocumentIndex] 
+                       :
                        <>
                        <div className='flex justify-center items-center gap-3 min-h-[70vh] sm:flex sm:flex-col'>
                         <h1 className="font-bold text-blue-500 text-center text-2xl"> {nomeMedico} Voce nao preencheu nenhum Documento </h1>
@@ -232,6 +150,16 @@ export const Documents = ({
                        </>
                     }
                   </div>
+
+                  {documents.length > 0 ?
+                     <div className="flex justify-center items-center mb-10">
+                     <button className='p-2 bg-blue-700 rounded-full w-1/2' onClick={HandleVerifyDoctorDocument}>
+                     <p className='text-white font-bold'> Gerar Documentos!  </p> 
+                     </button>
+                     </div>
+                    :
+                    null
+                  }
 
         </Dialog>
     );

@@ -25,7 +25,7 @@ import { PopUpUnidade } from './AgendaUnidade.js'
 import { CasosClinico } from '../partials/popUpCasoClinico'
 import { Checkbox } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
-import StartIcon from '@mui/icons-material/Start';
+import StartIcon from '@mui/icons-material/Start'
 import FingerprintIcon from '@mui/icons-material/Fingerprint'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -35,6 +35,11 @@ import { NotDateConsulta } from '../partials/NotConsulta'
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf'
 import { saveAs } from 'file-saver'
 import { config } from '../config.js'
+
+import { useHorariosDoctor } from '../context/context'
+import PopUpMedicoHoras from '../partials/PopUpHorasMedico'
+import { useBlood } from "../context/context.js"
+import { PopUpBlood } from "../partials/PopUpBlood"
 
 import Box from '@mui/material/Box'
 import Tab from '@mui/material/Tab'
@@ -80,8 +85,11 @@ export const MainAgenda = () => {
   const[inicioPacienteParticular, setInicioPacienteParticular] = useState('')
   const[fimPacienteParticular, setFimPacienteParticular] = useState('')
 
+  const { horariosDoctor } = useHorariosDoctor()
+  const { blood } = useBlood()
+
   const[setidLink, setIdLink] = useState('')
-  const [value, setValue] = useState('1');
+  const [value, setValue] = useState('1')
 
   const [checkedIndex, setCheckedIndex] = useState(null)
 
@@ -93,6 +101,7 @@ export const MainAgenda = () => {
   const Router = useRouter()
 
   const queryClient = useQueryClient()
+
 
   useEffect(() => {
     
@@ -184,7 +193,7 @@ export const MainAgenda = () => {
 
   const queryKey = ['Consultas', keyConsulta];
   const { data, isFetching, isError, isSuccess } = useQuery(
-    queryKey,
+    queryKey, 
     () => RequestGetConsultas(keyConsulta),
   )
 
@@ -928,9 +937,16 @@ const HandleConsulta = async (id) => {
         </>
       } 
        </div>
-     
        </> 
        }
+ 
+       {horariosDoctor && 
+          <PopUpMedicoHoras/>
+       }
+
+      {blood &&
+        <PopUpBlood/>
+      }
    
     </>
   )

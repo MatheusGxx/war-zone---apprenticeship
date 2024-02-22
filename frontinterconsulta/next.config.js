@@ -21,6 +21,12 @@ module.exports = {
         pathname: '/icons-doencas/**', 
       },
       {
+        protocol: 'http', 
+        hostname: 'localhost',
+        port: '8080', 
+        pathname: '/documents/**', 
+      },
+      {
         protocol: 'https',
         hostname: 'interconsulta.org',
         port: '',
@@ -37,6 +43,12 @@ module.exports = {
         hostname: 'interconsulta.org',
         port: '',
         pathname: '/icons-doencas/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'interconsulta.org',
+        port: '',
+        pathname: '/documents/**',
       }
     ],
   },

@@ -156,6 +156,12 @@ const RegisterMédico = new mongoose.Schema({
     idHorario: String,
     TempoConsulta: Number,
     DocumentosSolicitadosPaciente:[String],
+    FichaPaciente: String,
+    Diagnostico: String,
+    Tratamento: String,
+    FerramentasTerapeuticas: String,
+    Progresso: String,
+    RecomendacoesFuturas: String,
     LinkConsulta: [{
       Link: String,
       expiration: Date,
@@ -177,19 +183,11 @@ const RegisterMédico = new mongoose.Schema({
       TypeDocument: String,
       Exame: String,
     }],
-    Documentos:[{
-      Exames:[{
-        ExamesDocumentos: Buffer
-      }],
-      Atestado: Buffer,
-      Laudo: Buffer,
-      ReceitasSimples:[{
-        ReceitaSimplesPDF: Buffer,
-      }],
-      ReceitaControlada:[{
-        ReceitaControladaPDF: Buffer,
-      }]
-    }],
+    LaudoDocumento: [String],
+    ReceitaSimplesDocumento: [String],
+    ReceitaControladaDocumento: [String],
+    AtestadosDocumento: [String],
+    ExamesDocumento: [String],
     OkMedico: [String],
     OkPaciente: [String],
   }],
@@ -271,7 +269,23 @@ const RegisterPaciente = new mongoose.Schema({
     FerramentasTerapeuticas: String,
     Progresso: String,
     SolicitacaoMateriais: String,
-    SolicitacaoExames: Array,
+    ReceitasSimples:[{
+      TypeDocument: String,
+      ReceitaSimplesSolicitada: String,
+    }],
+    ReceitasControlada:[{
+      TypeDocument: String,
+      ReceitaControladaSolicitada: String,
+    }],
+    Atestado:[{
+      TypeDocument: String,
+      DiasDeAtestado: String,
+      CID: String,
+    }],
+    ExameSolicitado: [{
+      TypeDocument: String,
+      Exame: String,
+    }],
     RecomendacoesFuturas: String,
     EstadoPaciente: String,
     CRMMedicoAtendeu:  String,

@@ -24,6 +24,7 @@ app.use(cors());
 app.use('/uploads', express.static('uploads'));
 app.use('/icons', express.static('icons'))
 app.use('/icons-doencas', express.static('icons-doencas'))
+app.use('/documents', express.static('pdfs'))
 app.use(routes)
 
 const PortServer =  8080

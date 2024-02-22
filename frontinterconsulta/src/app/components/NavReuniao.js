@@ -63,18 +63,8 @@ const NavReunião = () => {
 
   return(
     <>
-    <nav className='container flex justify-between p-3 border-b border-blue-500 border-l border-r rounded-b-lg '>
-
-      <div className='pl-2'>
-          <Image
-          src={Logo2}
-          alt="Logo2"
-          height={30}
-          width={220}
-          className=''
-          />
-      </div>
-
+    <nav className='container flex justify-end items-center
+    gap-3 border-b border-blue-500 border-l border-r rounded-b-lg p-3'>
 
    {startConsulta &&
        <>
@@ -101,14 +91,11 @@ const NavReunião = () => {
      {!startConsulta && NomeMédico &&
       <>
       
-      <div className="pt-2 cursor-pointer" onClick={HandleConsulta}> 
-      <h1> Iniciar Consulta</h1>
-      </div>
       </>
      }
 
-      <div className='pt-2'>
-          <div  className='mt-[-10px] cursor-pointer flex justify-center gap-8 mr-5' >
+      <div className='pt-2 flex'>
+          <div  className='mt-[-10px] cursor-pointer flex gap-8 mr-5' >
               <Avatar 
               style={{ width: 40, height: 40 }} 
               src={`${config.apiBaseUrl}/${FotoMedico ? FotoMedico : FotoPaciente ? FotoPaciente : FotoUnidade ? FotoUnidade : null}`}/>

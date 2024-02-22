@@ -15,7 +15,7 @@ import { UseReuniaoAcabando } from "../context/context.js"
 import { config } from '../config.js'
 import { Documents } from "../partials/Documents.jsx"
 import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline'
-
+import { PopUpWarningDoctor } from "../partials/PopUpWarning.jsx"
 
 import Box from '@mui/material/Box'
 import Tab from '@mui/material/Tab'
@@ -61,7 +61,8 @@ const ReuniaoMédico = () =>{
   const [date, setDateNow] = useState(null)
   const [hora, setHoraAtual] = useState(null)
   const [currentPatientIndex, setCurrentPatientIndex] = useState(0)
-  const [totalPatients, setTotalPatients] = useState(0);
+  const [totalPatients, setTotalPatients] = useState(0)
+  const [endConsulta, setEndConsulta] = useState(false)
 
   const [historico, setHistorico] = useState(false)
   const [CPF, setCPF] = useState(null)
@@ -123,20 +124,6 @@ const ReuniaoMédico = () =>{
   const IdentificadorConsulta = IdentificadorLocalConsulta || ''
   const NomeMedico = secureLocalStorage.getItem('NomeMedico')
 
-  const SavedConsulta = useMutation(async(valueBody) =>{
-    const request = await axios.post(`${config.apiBaseUrl}/api/conclusion-room-medico`, valueBody)
-    return request.data
-  },{
-    onSuccess: () => {
-      setVisualizedDocuments(true)
-    }
-  })
-  
-  const ConclusionConsultaDeleteHorario = useMutation(async(valueBody) =>{
-    const request = await axios.post(`${config.apiBaseUrl}/api/conclusion-consulta-delete-horario`, valueBody)
-    return request.data
-  })
-  
   const getPacientes = useMutation(async (valueBody) => {
     try {
       const request = await axios.post(`${config.apiBaseUrl}/api/get-consulta`, valueBody);
@@ -209,16 +196,25 @@ const ReuniaoMédico = () =>{
   }, [reuniaoAcabando, NomeMedico]);
   
   const ButtonHandleClick = async () => {
-     if(
-      ficha === ""
-      ||
-      estado === ''
-      ||
-      Diagnóstico === ''
-      || 
-      Tratamento === '' 
-      ){
-      setSnackbarMessage(`${NomeMedico} por favor preencha todos os dados solicitados abaixo para poder finalizar a consulta`)
+
+    let camposVazios = [];
+    
+    if (ficha === '') {
+      camposVazios.push('Ficha do Paciente')
+    }
+    if (estado === '') {
+      camposVazios.push('Estado do caso clinico')
+    }
+    if (Diagnóstico === '') {
+      camposVazios.push('Diagnóstico');
+    }
+    if(Tratamento === ''){
+      camposVazios.push('Tratamento')
+    }
+
+     if(camposVazios.length > 0){
+      const camposFaltantes = camposVazios.join(', ')
+      setSnackbarMessage(`${NomeMedico}, tem campos obrigatórios faltando serem preenchidos, segue os campos que voce nao preencheu: ${camposFaltantes}`)
       handleSnackBarOpen()
      }else{
         HandleClickButtonFinal()
@@ -236,27 +232,7 @@ const ReuniaoMédico = () =>{
       setSnackbarMessage(`${NomeMedico} os seguintes documentos: ${FaltandoDocumento},  Solicitados pelo Paciente ${nameInitialPatient} estão faltando`),
       handleSnackBarOpen()
      }else{
-
-     const body2 ={
-       id: id,
-       IdentificadorConsulta: IdentificadorConsulta,
-       FichaPaciente: ficha,
-       Diagnostico: Diagnóstico,
-       Tratamento: Tratamento,
-       FerramentasTerapeuticas: FerramentaTerapeutica,
-       Progresso: Progresso,
-       SolicitacaoMateriais: SolicitaçaoMateriais,
-       SolicitacaoExames: SolicitarExames,
-       RecomendacoesFuturas: Recomendacoes,
-       EstadoPaciente: estado,
-       CRMMedicoAtendeu: CRMMédico,
-       DataInsercao: date
-     }
-
-      await SavedConsulta.mutateAsync(body2)
-
-      await ConclusionConsultaDeleteHorario.mutateAsync({ idConsultaParticular: IdentificadorConsulta })
-      
+      setEndConsulta(true)  
      }
            
     /*const body1 = {
@@ -302,7 +278,7 @@ const ReuniaoMédico = () =>{
     <>
   
     <>
-    <div className="w-6/12 flex flex-col justify-center">
+    <div className="w-1/2 flex flex-col justify-center overflow-y-auto">
          <div className="flex flex-col gap-5">
          {getPacientes.data?.getConsulta?.map((data, index) => (
             <div key={index} className={`flex flex-col gap-5 justify-center items-center mt-[-1rem]`}>
@@ -315,66 +291,62 @@ const ReuniaoMédico = () =>{
              </button>
             </div>
           ))}
-
-                  <div className='w-full flex justify-center items-center'>
-                   
-                  <Box sx={{ width: '100%', typography: 'body1' }}>
-                    <TabContext value={value}>
-                      <Box sx={{ borderBottom: 1, borderColor: 'divider' }} className="flex justify-center">
-                        <TabList onChange={handleChange} aria-label="lab API tabs example">
-                          <Tab label="Ficha do Paciente" value="1" />
-                          <Tab label="Documentos" value="2" />
-                          <Tab label="Açoes" value="3" />
-                        </TabList>
-                      </Box>
-                      <TabPanel value="1" >
-                        <AccordionReuniaoMédico
-                        setFicha={setFicha}
-                        ficha={ficha}
-                        setDiagnóstico={setDiagnóstico}
-                        Diagnóstico={Diagnóstico}
-                        setTratamento={setTratamento}
-                        Tratamento={Tratamento}
-                        setFerramenta={setFerramenta}
-                        FerramentaTerapeutica={FerramentaTerapeutica}
-                        setProgresso={setProgresso}
-                        Progresso={Progresso}
-                        />
-                      </TabPanel>
-                      <TabPanel value="2">
-                        <AccordionReuniaoMédico2
-                        setReceitaSimples={setReceitaSimples}
-                        receitaSimples={receitaSimples}
-                        setReceitaControlada={setReceitaControlada}
-                        receitaControlada={receitaControlada}
-                        setDiasAfastamento={setDiasAfastamento}
-                        diasAfastamento={diasAfastamento}
-                        setCID={setCID}
-                        cid={cid}
-                        setSolicitarExames={setSolicitarExames}
-                        SolicitarExames={SolicitarExames}
-                        IdentificadorConsulta={IdentificadorConsulta}
-                        setSnackbarMessage={setSnackbarMessage}
-                        handleSnackBarOpen={() => handleSnackBarOpen()}
-                        NomeMedico={nomeDoctor}
-                        NomePaciente={nameInitialPatient}
-                        />
-                      </TabPanel>
-                      <TabPanel value="3">
-                      <AccordionReuniaoMédico3
+            <div className='w-full flex justify-center items-center'>
+              <Box sx={{ width: '100%', typography: 'body1' }}>
+                <TabContext value={value}>
+                  <Box sx={{ borderBottom: 1, borderColor: 'divider' }} className="flex justify-center">
+                    <TabList onChange={handleChange} aria-label="lab API tabs example">
+                      <Tab label="Ficha do Paciente" value="1" />
+                      <Tab label="Documentos" value="2" />
+                      <Tab label="Açoes" value="3" />
+                    </TabList>
+                  </Box>
+                  <TabPanel value="1" >
+                    <AccordionReuniaoMédico
+                      setFicha={setFicha}
+                      ficha={ficha}
+                      setDiagnóstico={setDiagnóstico}
+                      Diagnóstico={Diagnóstico}
+                      setTratamento={setTratamento}
+                      Tratamento={Tratamento}
+                      setFerramenta={setFerramenta}
+                      FerramentaTerapeutica={FerramentaTerapeutica}
+                      setProgresso={setProgresso}
+                      Progresso={Progresso}
+                    />
+                  </TabPanel>
+                  <TabPanel value="2">
+                    <AccordionReuniaoMédico2
+                      setReceitaSimples={setReceitaSimples}
+                      receitaSimples={receitaSimples}
+                      setReceitaControlada={setReceitaControlada}
+                      receitaControlada={receitaControlada}
+                      setDiasAfastamento={setDiasAfastamento}
+                      diasAfastamento={diasAfastamento}
+                      setCID={setCID}
+                      cid={cid}
+                      setSolicitarExames={setSolicitarExames}
+                      SolicitarExames={SolicitarExames}
+                      IdentificadorConsulta={IdentificadorConsulta}
+                      setSnackbarMessage={setSnackbarMessage}
+                      handleSnackBarOpen={() => handleSnackBarOpen()}
+                      NomeMedico={nomeDoctor}
+                      NomePaciente={nameInitialPatient}
+                    />
+                  </TabPanel>
+                  <TabPanel value="3">
+                    <AccordionReuniaoMédico3
                       setSolicitaçaoMedicamentos={setSolicitaçaoMedicamentos}
                       SolicitaçaoMedicamentos={SolicitaçaoMedicamentos}
                       setSolicitaçaoMateriais={setSolicitaçaoMateriais}
                       SolicitaçaoMateriais={SolicitaçaoMateriais}
                       setRecomendacoes={setRecomendacoes}
                       Recomendacoes={Recomendacoes}
-                      />
-                      </TabPanel>
-                    </TabContext>
-                  </Box>
-                  </div>
-
-                 
+                    />
+                  </TabPanel>
+                </TabContext>
+              </Box>
+            </div>
 
                     <div className="flex gap-5 justify-center items-center">
                         <FormControl
@@ -400,12 +372,9 @@ const ReuniaoMédico = () =>{
             
                       <div className="flex gap-5 w-full justify-center">
                           <button className="w-1/3  h-10 bg-blue-900 rounded-full font-bold text-white sm:w-11/12 sm:h-8 md:w-3/4 lg:w-3/4 xl:w-3/4 cursor-pointer"
-                          onClick={ButtonHandleClick}
-                          disabled={SavedConsulta.isLoading && ConclusionConsultaDeleteHorario.isLoading}    
-                           >
-                            {SavedConsulta.isLoading && ConclusionConsultaDeleteHorario.isLoading ?
-                             <CircularProgress color="primary" size={30}/> :
-                             <p className="sm:text-sm text-center"> Finalizar Interconsulta </p> }
+                          onClick={ButtonHandleClick}   
+                           >  
+                             <p className="sm:text-sm text-center"> Finalizar Interconsulta </p> 
                           </button>
                       </div>
                  </div>
@@ -424,9 +393,17 @@ const ReuniaoMédico = () =>{
       />
       }
 
-      {visualizedDocuments &&
-       <Documents
-        onClose={() => setVisualizedDocuments(false)}
+      {endConsulta && 
+      <PopUpWarningDoctor 
+        onClose={() => setEndConsulta(false)}
+        ficha={ficha}
+        Diagnóstico={Diagnóstico}
+        Tratamento={Tratamento}
+        FerramentaTerapeutica={FerramentaTerapeutica}
+        Progresso={Progresso}
+        SolicitaçaoMateriais={SolicitaçaoMateriais}
+        Recomendacoes={Recomendacoes}
+        estado={estado}
         ReceitaSimpleS={receitaSimples}
         ReceitaControlada={receitaControlada}
         diasAfastamento={diasAfastamento}
@@ -448,7 +425,7 @@ const ReuniaoMédico = () =>{
         IdentificadorConsulta={IdentificadorConsulta}
         date={date}
         hora={hora}
-       />
+        />
       }
       
       </div>

@@ -1,28 +1,5 @@
 import { createContext, useContext, useState } from 'react'
 
-/////////////////////// ----------- Context Data Horary Doctor ------------ /////////////
-const HistoricoContext = createContext()
-
-export const HistoricoProvider = ({ children }) =>{
-  const [historico, setHistorico ] = useState([])
-
-  return(
-    <HistoricoContext.Provider value={{ historico, setHistorico }}>
-      {children}
-    </HistoricoContext.Provider>
-  )
-}
-
-export const useHistorico =  () => {
-   const context = useContext(HistoricoContext)
-
-   if(!context){
-    throw new Error("useHistorico deve ser usado dentro um HistoricoProvider")
-   }
-
-   return context
-}
-
 /////////////// ---------- EndRegisterStateOk -----------///////////
 
 const EndRegister = createContext()
@@ -75,23 +52,23 @@ export const useBlood = () => {
 
 ////////////////// ----------------- Horarios Provider ----------------------- ///////////////
 
-const Historico = createContext()
+const Horarios = createContext()
 
-export const ProviderHistoricoDoctor = ({children}) => {
-   const[historico, setHistorico] = useState(false)
-   
+export const ProviderHorariosDoctor = ({children}) => {
+   const[horariosDoctor, setHorariosDoctor] = useState(false)
+
    return(
-    <Historico.Provider value={{ historico, setHistorico}}>
+    <Horarios.Provider value={{ horariosDoctor, setHorariosDoctor}}>
        {children}
-    </Historico.Provider>
+    </Horarios.Provider>
    )
 }
 
-export const useHistoricoDoctor = () => {
-  const context = useContext(Historico)
+export const useHorariosDoctor = () => {
+  const context = useContext(Horarios)
 
   if(!context){
-     throw new Error('useHistoricoProvider deve ser usado dentro de um ProviderHistoricoDoctor')
+     throw new Error('useHorariosDoctor deve ser usado dentro de um ProviderHorariosDoctor')
   }
 
   return context

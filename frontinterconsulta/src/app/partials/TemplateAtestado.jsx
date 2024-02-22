@@ -17,7 +17,7 @@ export const TemplateAtestado = ({
 }) => {
     return(
         <>
-         <div className="w-1/2 border-blue-500 border-4 rounded-lg p-6">
+         <div className="border-blue-500 border-4 rounded-lg p-6">
              <div className='flex justify-center items-center gap-5 mb-10'>
                 <h1 className="font-bold text-blue-900 text-2xl"> Atestado {index + 1} </h1>
                 <HealingIcon color="primary"/>

@@ -14,20 +14,17 @@ import Image from 'next/image';
 import LogoIconVermelho from '../public/LogoIconVermelho.png'
 import BloodtypeIcon from '@mui/icons-material/Bloodtype'
 import BolsaDeSangue from '../public/BolsaDeSangue.png'
-import { usePathname } from 'next/navigation';
-
+import { usePathname } from 'next/navigation'
 import { useMutation } from '@tanstack/react-query'
 import secureLocalStorage from 'react-secure-storage'
 import axios from 'axios'
 import { config } from '../config.js'
-
+import { useBlood } from '../context/context'
 const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="left" ref={ref} {...props} />;
 });
 
-export const PopUpBlood = ({
-  onClose
-}) => {
+export const PopUpBlood = () => {
 
   const[open, setOpen] = useState(false)
   const[quantidade, setQuantidade] = useState('')
@@ -41,6 +38,8 @@ export const PopUpBlood = ({
     horizontal: 'center'
   })
   const[notification, setNotification] = useState(false)
+
+  const { setBlood } = useBlood()
 
   const { vertical, horizontal } = position
 
@@ -66,7 +65,7 @@ export const PopUpBlood = ({
 
   const handleClickClose = () => {
     setOpen(false)
-    onClose()
+    setBlood(false)
   }
 
   const handleSnackbarClose = () => {
@@ -114,7 +113,6 @@ export const PopUpBlood = ({
       <Dialog
         fullScreen
         open={open}
-        onClose={handleClickClose}
         TransitionComponent={Transition}
       >
         <AppBar sx={{ position: 'relative', backgroundColor: 'white' }}>

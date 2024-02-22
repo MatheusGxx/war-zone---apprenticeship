@@ -81,12 +81,13 @@ function Room({ params }) {
       )}
       {isSuccess && (
         <>
-          <div className="flex w-full min-h-[80vh]">
-            <div className="w-6/12 flex justify-center flex-col">
+          <div className="flex w-full h-screen">
+            <div className="w-1/2 flex justify-center flex-col relative">
             {scriptLoaded &&
             <div
             id="jaas-container"
-            className="min-h-[93vh] w-full flex items-center justify-center"
+            className="min-h-[93vh] w-1/2 flex items-center justify-center top-0 left-0 h-full"
+            style={{ position: 'fixed' }}
             ></div>
             }
             </div>

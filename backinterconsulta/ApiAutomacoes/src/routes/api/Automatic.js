@@ -53,9 +53,12 @@ router.post('/automatic-whatsapp', async (req, res) => {
     FerramentasTerapeuticas: req.body.FerramentasTerapeuticas,
     Progresso: req.body.Progresso,
     SolicitacaoMateriais: req.body.SolicitacaoMateriais,
-    SolicitacaoExames: req.body.SolicitacaoExames,
     RecomendacoesFuturas: req.body.RecomendacoesFuturas,
     EstadoPaciente: req.body.EstadoPaciente,
+    ReceitaSimples: req.body.ReceitaSimples,
+    ReceitaControlada: req.body.ReceitaControlada,
+    Atestado: req.body.Atestado,
+    Exame:  req.body.Exame,
     result: req.body.result,
     route: req.body.route
   }

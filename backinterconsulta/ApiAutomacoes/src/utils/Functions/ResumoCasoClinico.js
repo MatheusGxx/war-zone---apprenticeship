@@ -7,9 +7,12 @@ export const ResumoCasoClinico = async (
   FerramentasTerapeuticas,
   Progresso,
   SolicitacaoMateriais,
-  SolicitacaoExames,
   RecomendacoesFuturas,
   EstadoPaciente,
+  ReceitaSimples,
+  ReceitaControlada,
+  Atestado,
+  Exame,
   result,
 ) => {
 
@@ -23,6 +26,10 @@ export const ResumoCasoClinico = async (
     Solicitação Exames: ${SolicitacaoExames},
     Recomendações Futuras: ${RecomendacoesFuturas},
     Estado do Paciente: ${EstadoPaciente},
+    Receitas Simples Solicitadas: ${ReceitaSimples}
+    Receita Controlada Solicitadas : ${ReceitaControlada}
+    Atestados Solicitados: ${Atestado}
+    Exames: ${Exame}
   `);
 
   const ResumoCasoClinico = FraseCasoClinico.content

@@ -50,19 +50,19 @@ export const TemplateComponenteExame = ({
 
        
          <div className="flex justify-center items-center gap-3 w-full">
+
             <TextField
-                  label="Exame"
-                  variant="outlined"
-                  InputProps={{
-                     sx: { border: "1px solid blue" },
-                  }}
-                  name="Exame"
-                  value={data}
-                  onChange={(e) => handleChangeExame(e.target.value)}
-                  className="w-full"
-                  multiline
-                  rows={2}
-                  required
+               variant="outlined"
+               InputProps={{
+                  sx: { border: "1px solid blue" },
+               }}
+               name="Exame"
+               value={data}
+               onChange={(e) => handleChangeExame(e.target.value)}
+               className="w-full"
+               multiline
+               rows={2}
+               required
                   />
                   
             </div>

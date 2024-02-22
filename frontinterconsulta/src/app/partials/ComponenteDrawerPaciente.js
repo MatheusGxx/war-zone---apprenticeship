@@ -11,13 +11,26 @@ import ExitToAppIcon from '@mui/icons-material/ExitToApp'
 import EventAvailableIcon from '@mui/icons-material/EventAvailable'
 import secureLocalStorage from 'react-secure-storage'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle'
+import BloodtypeIcon from '@mui/icons-material/Bloodtype';
 import { config } from '../config.js'
+import { useBlood } from '../context/context.js'
 
 export const ComponentDrawerPaciente = ({ Navigation, Loggout, Image }) =>{ 
 
  const NomePaciente = typeof window !== 'undefined' ? secureLocalStorage.getItem('NomePaciente') : false
 
  const nome = NomePaciente|| ''
+
+ const { setBlood } = useBlood()
+
+ const HandleBlood = () => {
+  if(!NomePaciente){
+    alert('Voce nao esta Logado')
+   }else{
+    setBlood(true)
+   }
+ }
+
 
  return(
   <>
@@ -45,6 +58,15 @@ export const ComponentDrawerPaciente = ({ Navigation, Loggout, Image }) =>{
               </div>
             </div>
           </ListItemButton>
+
+          <List>
+          <ListItemButton onClick={HandleBlood}>
+            <ListItemIcon>
+              <BloodtypeIcon color="primary"/>
+            </ListItemIcon>
+            <ListItemText> Encontrar Doador </ListItemText>
+          </ListItemButton>
+        </List>
 
           <ListItemButton onClick={() => Navigation('/agenda')}>
             <ListItemIcon>

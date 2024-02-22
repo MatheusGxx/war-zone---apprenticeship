@@ -104,9 +104,9 @@ export const SavedConsultaPacienteParticular = async (body, res) => {
     }
     
     //Production
-     //axios.post('http://back-a:8081/api/automatic-whatsapp', body)
+     axios.post('http://back-a:8081/api/automatic-whatsapp', body)
     //Development
-    axios.post('http://localhost:8081/api/automatic-whatsapp', body)
+    //axios.post('http://localhost:8081/api/automatic-whatsapp', body)
 
    }catch(e){
     throw new Error(e)
@@ -488,9 +488,9 @@ export const UpdateConsulta = async (body, res) => {
         }
         
         //Production
-        //axios.post('http://back-a:8081/api/automatic-whatsapp', body)
+        axios.post('http://back-a:8081/api/automatic-whatsapp', body)
         //Development
-        axios.post('http://localhost:8081/api/automatic-whatsapp', body)
+        //axios.post('http://localhost:8081/api/automatic-whatsapp', body)
       } else {
         res.status(500).json({ message: 'Erro ao fazer Atualização' });
       }
@@ -623,9 +623,9 @@ export const DeleteCasoClinico = async (body, res) => {
         }
         
         //Production
-        //axios.post('http://back-a:8081/api/automatic-whatsapp', body)
+        axios.post('http://back-a:8081/api/automatic-whatsapp', body)
        //Development
-       axios.post('http://localhost:8081/api/automatic-whatsapp', body)
+       //axios.post('http://localhost:8081/api/automatic-whatsapp', body)
       }
      }
   }catch(error){
@@ -697,9 +697,9 @@ export const DeleteCasoClinicoPacienteParticular = async (body, res) => {
          }
    
       //Production
-      //axios.post('http://back-a:8081/api/automatic-whatsapp', body)
+      axios.post('http://back-a:8081/api/automatic-whatsapp', body)
       //Development
-      axios.post('http://localhost:8081/api/automatic-whatsapp', body)
+      //axios.post('http://localhost:8081/api/automatic-whatsapp', body)
 
     } else {
       res.status(404).json({ message: 'Erro ao excluir consulta' });
@@ -790,7 +790,7 @@ export const ValidatorURL = async(params, res) => {
       res.status(404).json({ valid: false })
     }
   }catch(e){
-    throw new Error('Error in Validador Link Sala de Reuniao', e)
+    return res.status(500).json({ message: 'Link da sala de Reunião Expirada'})
   }
 }
 

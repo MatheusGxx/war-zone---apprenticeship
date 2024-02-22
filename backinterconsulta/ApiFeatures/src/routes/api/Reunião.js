@@ -1,7 +1,7 @@
 import { Router } from "express";
 import 
   { 
-    CreatingDoctorLaudo,
+    CreatingDocumentsDoctor,
     getConsulta,
     getHistoricoPacientee,
     VerifyClickEndReuniao,
@@ -33,7 +33,13 @@ import
    }
  from "../../services/ReuniãoService.js"
 
- import { CreateReceitaSimples, CreateReceitaControlada, CreateAtestado, CreateExame } from "../../utils/Functions/CreatingDocumentsPDF.js"
+ import {  
+  CreateLaudo, 
+  CreateReceitaSimples, 
+  CreateReceitaControlada, 
+  CreateAtestado, 
+  CreateExame
+ } from "../../utils/Functions/CreatingDocumentsPDF.js"
  
 
 const router = Router()
@@ -47,7 +53,7 @@ router.post('/create-documents-doctor',
         const response = res
         
         console.log(req.body)
-        CreatingDoctorLaudo(body, response)
+        CreatingDocumentsDoctor(body, response)
   }
 )
 
@@ -99,7 +105,6 @@ router.post('/conclusion-room-medico',
           FerramentasTerapeuticas: req.body.FerramentaTerapeutica,
           Progresso: req.body.Progresso,
           SolicitacaoMateriais: req.body.SolicitacaoMateriais,
-          SolicitacaoExames: req.body.SolicitacaoExames,
           RecomendacoesFuturas: req.body.RecomendacoesFuturas,
           EstadoPaciente: req.body.EstadoPaciente,
           CRMMedicoAtendeu: req.body.CRMMedicoAtendeu,
@@ -342,34 +347,4 @@ router.post('/atualized-documents',
        }
 )
 
-
-router.post('/create-pdf-testing', 
-       async(req, res) => {
-
-        const DateNow = new Date()
-
-        const Dia = DateNow.getDate()
-        const mes = DateNow.getMonth() + 1
-        const Ano = DateNow.getFullYear()
-
-                   
-        const DataAtual = `${Dia}/${mes}/${Ano}`
-            
-        const Horas = DateNow.getHours()
-        const Minutos = DateNow.getMinutes()
-        const Segundos = DateNow.getSeconds()
-
-        const HoraAtually = `${Horas}:${Minutos}:${Segundos}`
-
-        //CreateReceitaSimples()
-        //CreateReceitaControlada('Dr Matheus', '3429', 'Rua Georgina', 'Osasco', 'SP', DataAtual)
-        //CreateAtestado('Dr Lucas', '25423', 'Matheus Galtaroça', '52885473860', '10', '32', 'Osasco', DataAtual)
-        CreateExame()
-
-
-        res.status(200).json({ message: 'Documentos Gerado com sucesso!'})
-
-        console.log(req.body)
-       }
-)
 export default router

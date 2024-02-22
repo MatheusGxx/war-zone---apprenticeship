@@ -50,9 +50,12 @@ export const AutomaticWhatsapp = async (body, res) => {
      FerramentasTerapeuticas,
      Progresso,
      SolicitacaoMateriais,
-     SolicitacaoExames,
      RecomendacoesFuturas,
      EstadoPaciente,
+     ReceitaSimples,
+     ReceitaControlada,
+     Atestado,
+     Exame,
      result,
      route 
   } = body
@@ -310,9 +313,12 @@ export const AutomaticWhatsapp = async (body, res) => {
           FerramentasTerapeuticas,
           Progresso,
           SolicitacaoMateriais,
-          SolicitacaoExames,
           RecomendacoesFuturas,
           EstadoPaciente,
+          ReceitaSimples,
+          ReceitaControlada,
+          Atestado,
+          Exame,
           result
          })
         break

@@ -4,7 +4,7 @@ import Header from '../components/Header.js'
 import Nav from '../components/Nav.js'
 import Footer from '../components/Footer.js'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { HistoricoProvider, RegisterEndProvider } from '../context/context'
+import { RegisterEndProvider, ProviderHorariosDoctor, BloodProvider, } from '../context/context'
 import { useEffect } from 'react'
 import secureLocalStorage from 'react-secure-storage'
 const queryClient = new QueryClient()
@@ -51,8 +51,10 @@ export default function RootLayout({ children }) {
   return (
     <html lang="pt-br">
       <body className="background">
-        <HistoricoProvider>
+       
           <RegisterEndProvider>
+          <ProviderHorariosDoctor>
+              <BloodProvider>
               <QueryClientProvider client={queryClient}>
                 <div className="min-h-screen flex flex-col">
                   <Header/>
@@ -61,8 +63,10 @@ export default function RootLayout({ children }) {
                   <Footer/>
                 </div>
               </QueryClientProvider>
+              </BloodProvider>
+            </ProviderHorariosDoctor>
           </RegisterEndProvider>
-        </HistoricoProvider>
+
       </body>
     </html>
   )

@@ -82,6 +82,8 @@ export const DrawerComponent = ({ open, Close, Navigation}) =>{
          <ListItemButton onClick={() => Navigation('/agenda')}>
                 <ListItemText> Agenda </ListItemText>
          </ListItemButton>
+
+         <ListItemButton> Horarios </ListItemButton>
       </List>
         }
         

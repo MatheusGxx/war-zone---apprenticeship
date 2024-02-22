@@ -8,13 +8,13 @@ import Logo2 from '../public/Logo2.png'
 import { Horarios } from './HorariosDisponiveis'
 import { useMutation } from '@tanstack/react-query'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { useHistorico } from '../context/context'
 import axios from 'axios'
 import { format, addHours, parse, isWithinInterval } from 'date-fns';
 import secureLocalStorage from 'react-secure-storage'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 import { TempoConsulta } from './TempoConsulta'
 import { config } from '../config.js'
+import { useHorariosDoctor } from '../context/context'
 
 function PopUpMedicoHoras({ onClose }) {
   const [open, setOpen] = useState(false)
@@ -23,12 +23,12 @@ function PopUpMedicoHoras({ onClose }) {
   const [fim, setFim] = useState('')
   const [historicoo, setHistoricoo] = useState('')
   const [idHorario, setidHorario] = useState('')
-  const { historico, setHistorico } = useHistorico()
   const [snackbarOpen, setSnackbarOpen] = useState(false)
   const [snackbarMessage, setSnackbarMessage] = useState("")
   const [interval, setIntervaal] = useState('')
   const [mensagem, setMensagem] = useState('')
   const [tempoConsulta, setTempoConsulta] = useState('')
+  const { setHorariosDoctor } = useHorariosDoctor()
 
   const HoraInicio =  parse(`${data} ${inicio}`,  'dd/MM/yyyy HH:mm', new Date())
   const HoraFim = parse(`${data} ${fim}`,  'dd/MM/yyyy HH:mm', new Date())
@@ -103,7 +103,6 @@ function PopUpMedicoHoras({ onClose }) {
 
   const RequestGetHistorico = async () => {
     const response = await axios.get(`${config.apiBaseUrl}/api/get-horarios/${VerifyID}`);
-    setHistorico(response.data.QueryHistorico)
     return response.data.QueryHistorico
   };
 
@@ -156,10 +155,8 @@ function PopUpMedicoHoras({ onClose }) {
   
 
   const handleClose = async () => {
-    if (onClose) {
-      onClose();
-    }
     setOpen(false)
+    setHorariosDoctor(false)
   }
   const handleDataChange = (e) => {
     const value = e.target.value.replace(/[^0-9]/g, '');

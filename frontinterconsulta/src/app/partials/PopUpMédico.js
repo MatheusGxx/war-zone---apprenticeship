@@ -34,7 +34,7 @@ function PopUpMédico() {
              <p className="font-bold">Observaçao: se o especialista nao fizer o que foi pedido acima, o mesmo nao sera remunerado</p>
           </DialogContent>
           <button onClick={() => handleClose()} className="w-11/12 h-12 rounded-full bg-red-600 text-white font-bold">
-               <p className="whitespace-nowrap">Eu entendo e vou preecher todos os dados</p>
+               <p className="whitespace-nowrap">Eu entendo e irei preencher os dados.</p>
             </button>
         </div>
        <div className="flex justify-end p-4">

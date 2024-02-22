@@ -1,7 +1,6 @@
-import { ButtonMedico } from "../partials/ButtonMedico";
 
 const MainMedico = ({title, subTitle, Component}) => {
-
+   
   return (
     <>
     <main className="flex-1 bg-blue-100 p-8 flex items-center flex-col gap-8 lg:flex justify-center lg:items-center lg:p-4">
@@ -18,7 +17,6 @@ const MainMedico = ({title, subTitle, Component}) => {
          xl:flex xl:flex-col xl:justify-center xl:items-center
         ">
           <h2 className="text-2xl text-blue-700 font-bold sm:text-base whitespace-wrap lg:text-xl md:text-center xl:text-center">{subTitle}</h2>
-          <ButtonMedico/>
         </div>
           <div className="border-b-2 border-red-500  w-1/3 pt-3 sm:hidden md:hidden lg:hidden xl:hidden">
           </div>
@@ -28,7 +26,7 @@ const MainMedico = ({title, subTitle, Component}) => {
       <div className='bg-white min-h-[300px] w-3/4 sm:w-full md:w-full lg:w-full rounded-lg flex flex-col gap-4'>
         <Component />
       </div>
-
+      
      </main>
     </>
   );

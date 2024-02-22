@@ -1,25 +1,33 @@
-import { CreateLaudo } from "../utils/Functions/CreatingDocumentsPDF.js"
 import { models } from '../../MongoDB/Schemas/Schemas.js' 
 import { getHistoricoPaciente } from "../utils/Functions/getHistoricoPaciente.js"
+import { 
+   CreateLaudo,
+   CreateReceitaSimples, 
+   CreateReceitaControlada, 
+   CreateExame, 
+   CreateAtestado
+   } from "../utils/Functions/CreatingDocumentsPDF.js"
+
 import axios from 'axios'
 
-export const CreatingDoctorLaudo = async (body, res) => {
+export const  CreatingDocumentsDoctor = async (body, res) => {
   
   const { idMedico, IdentificadorConsultaPaciente } = body
 
   try {
+
   const catchingPatientbyIdentifier = await models.ModelRegisterPaciente.find(
     {
     'ConsultasSolicitadasPacientes._id': IdentificadorConsultaPaciente
     },
   )
-  const ultimosHistoricos = catchingPatientbyIdentifier.map(data => {
-    const ultimoHistorico = data.Historico[data.Historico.length - 1]
-    return ultimoHistorico
-  })
 
-  console.log(ultimosHistoricos)
-  
+  const getDataDoctor = await models.ModelRegisterMédico.findOne(
+    { 'ConsultasSolicitadasPacientes._id': IdentificadorConsultaPaciente },
+  )
+
+  const UltimaConsulta = getDataDoctor.ConsultasSolicitadasPacientes[getDataDoctor.ConsultasSolicitadasPacientes.length -1]
+
   const ObjectDate = new Date()
 
   const Dia = ObjectDate.getDate()
@@ -28,77 +36,223 @@ export const CreatingDoctorLaudo = async (body, res) => {
 
   const DataAtual = `${Dia}/${Mes}/${Ano}`
 
-  const getDataDoctor = await models.ModelRegisterMédico.findOne({_id: idMedico})
 
-  const Laudo = `
-  Data: ${DataAtual}
-  
-  Eu, ${getDataDoctor.NomeEspecialista}, ${getDataDoctor.EspecialidadeMedica}, inscrito no CRM:${getDataDoctor.CRM}/RQE: ${getDataDoctor.RQE}, sendo responsável pelo acompanhamento médico do(a) paciente ${catchingPatientbyIdentifier.map((data) => data.nome).join(',')}, venho por meio deste relatório, com base em exames clínicos e diagnósticos realizados, fornecer informações detalhadas sobre o estado de saúde do paciente e o tratamento prescrito.
-  
-  Identificação do Paciente:
-  
-  Prontuário: ${catchingPatientbyIdentifier.map((data) => data._id).join(', ')}
-  Nome: ${catchingPatientbyIdentifier.map((data) => data.nome).join(', ')}
-  Data de Nascimento: ${catchingPatientbyIdentifier.map((data) => data.Data).join(', ')}
+  const FilesToDownload = []
 
-  Sexo: ${catchingPatientbyIdentifier.map((data) => data.Genero).join(', ')}
-  CPF: ${catchingPatientbyIdentifier.map((data) => data.CPF).join(', ')}
-  Estado Civil: ${catchingPatientbyIdentifier.map((data) => data.EstadoCivil).join(', ')}
-  Profissão: ${catchingPatientbyIdentifier.map((data) => data.Profissao).join(', ')}
-  Estado: ${catchingPatientbyIdentifier.map((data) => data.Estado).join(', ')} 
-  Cidade: ${catchingPatientbyIdentifier.map((data) => data.Cidade).join(', ')}
-  Bairro: ${catchingPatientbyIdentifier.map((data) => data.Bairro).join(', ')}
-  Rua:  ${catchingPatientbyIdentifier.map((data) => data.Rua).join(', ')}
-  
-  Contato: ${catchingPatientbyIdentifier.map((data) => data.telefone).join(', ')}
-  
-  
-  Diagnóstico:
-  
-  ${ultimosHistoricos.map((data) => data.Diagnostico)}
-  
-  Tratamento Prescrito:
-  
-  ${ultimosHistoricos.map((data) => data.Tratamento)}
-  
-  Medicação prescrita:
+  const FileLaudo = await CreateLaudo(
+    DataAtual,
+    `${getDataDoctor.NomeEspecialista}`, // NomeMedico
+    `${getDataDoctor.EspecialidadeMedica}`, // EspecialidadeMedico
+    `${getDataDoctor.UFCRM}`, //UF CRM Medico
+    `${getDataDoctor.CRM}`, // CRM Medico
+    `${getDataDoctor.RQE}`,  // RQE Medico
+    `${catchingPatientbyIdentifier.map((data) => data.nome)}`, // Nome Paciente
+    `${catchingPatientbyIdentifier.map((data) => data._id)}`, // id Paciente (Prontuario)
+    `${catchingPatientbyIdentifier.map((data) => data.Data)}`, // Data de Nascimento Paciente
+    `${catchingPatientbyIdentifier.map((data) => data.Genero)}`, // Genero Paciente
+    `${catchingPatientbyIdentifier.map((data) => data.CPF)}`, // CPF Paciente
+    `${catchingPatientbyIdentifier.map((data) => data.EstadoCivil)}`, // Estado Civil Paciente
+    `${catchingPatientbyIdentifier.map((data) => data.Profissao)}`, // Profissão Paciente
+    `${catchingPatientbyIdentifier.map((data) => data.EstadoPaciente)}`, // Estado Paciente
+    `${catchingPatientbyIdentifier.map((data) => data.CidadePaciente)}`, // Cidade Paciente
+    `${catchingPatientbyIdentifier.map((data) => data.EnderecoPaciente)}`,  // Bairro Paciente faltando
+    `${catchingPatientbyIdentifier.map((data) => data.CEP)}`,  // Rua  Paciente faltando
+    `${catchingPatientbyIdentifier.map((data) => data.telefone)}`,  // Bairro Paciente faltando
+    `${UltimaConsulta.Diagnostico}`, // Diagnóstico 
+    `${UltimaConsulta.Tratamento}`, //Tratamento
+    `${UltimaConsulta.ReceitasSimples.map(
+      data => data.ReceitaSimplesSolicitada) && UltimaConsulta.ReceitasControlada.map(
+        data => data.ReceitaControladaSolicitada)}`, // Medicação
+    `${UltimaConsulta.FerramentasTerapeuticas}`,// Ferramenta Terapeutica
+    `${UltimaConsulta.Progresso}`, // Progresso
+    `${UltimaConsulta.RecomendacoesFuturas}`, // Recomendaçoes Futuras
+    `${getDataDoctor.EnderecoMedico}`,
+    `${catchingPatientbyIdentifier.map((data) => data._id)}`
+  )
 
-  ${ultimosHistoricos.map((data) => data.FichaPaciente)}
-  
-  Ferramenta Terapêutica Prescrita:
-  
-  ${ultimosHistoricos.map((data) => data.FerramentasTerapeuticas)}
-  
-  Progresso do Paciente:
-  
-  ${ultimosHistoricos.map((data) => data.Progresso)}
-  
-  Recomendações Futuras:
+  FilesToDownload.push(`/documents/${FileLaudo}`)
 
-  ${ultimosHistoricos.map((data) => data.RecomendacoesFuturas)}
+  await models.ModelRegisterMédico.findOneAndUpdate(
+    {
+      _id: idMedico,
+      'ConsultasSolicitadasPacientes._id': IdentificadorConsultaPaciente
+    },
+    {
+      $push: {
+        'ConsultasSolicitadasPacientes.$.LaudoDocumento':  FileLaudo
+      }
+    },
+    {
+      new: true
+    }
+  )
   
-  Atenciosamente, ${getDataDoctor.NomeEspecialista}.
-  `;
+  if(UltimaConsulta.ReceitasSimples.length > 0){
 
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', 'attachment; filename=laudo.pdf');
+    const CreatedReceitaSimples = UltimaConsulta.ReceitasSimples.map(async (data, index) => {
+      const FileReceitaSimples = await CreateReceitaSimples(
+          `${catchingPatientbyIdentifier.map((data) => data.nome)}`,
+          `${catchingPatientbyIdentifier.map((data) => data.CPF)}`,
+          `${data.ReceitaSimplesSolicitada}`,
+          `${getDataDoctor.NomeEspecialista}`,
+          `${getDataDoctor.UFCRM}`,
+          `${getDataDoctor.CRM}`,
+          `${getDataDoctor.EnderecoMedico}`,
+          index,
+          DataAtual,
+      );
+  
+      return FileReceitaSimples;
+  });
+  
+  const ResultCreateReceitaSimples =  await Promise.all(CreatedReceitaSimples)
+  ResultCreateReceitaSimples.map(data => {
+    FilesToDownload.push(`/documents/${data}`)
+  })
+  
 
-    const pdfBuffer = await CreatingPDF(Laudo)
+  await models.ModelRegisterMédico.findOneAndUpdate(
+    {
+      _id: idMedico,
+      'ConsultasSolicitadasPacientes._id': IdentificadorConsultaPaciente
+    },
+    {
+      $push: {
+        'ConsultasSolicitadasPacientes.$.ReceitaSimplesDocumento':  ResultCreateReceitaSimples 
+      }
+    },
+    {
+      new: true
+    }
+  )
+  }
+  
+  if(UltimaConsulta.ReceitasControlada.length > 0){
+      
+    const CreatedReceitaControlada = UltimaConsulta.ReceitasControlada.map(async (data, index) => {
+      const FileReceitaControlada = await CreateReceitaControlada(
+        `${getDataDoctor.NomeEspecialista}`, 
+        `${getDataDoctor.CRM}`,
+        `${getDataDoctor.EnderecoMedico}`, 
+        `${getDataDoctor.Cidade}`, 
+        `${getDataDoctor.Estado}`,
+        `${getDataDoctor.UFCRM}`, 
+         DataAtual,
+        `${catchingPatientbyIdentifier.map(data => data.nome)}`, 
+        `${catchingPatientbyIdentifier.map(data => data.CPF)}`,
+        `${catchingPatientbyIdentifier.map(data => data.EnderecoPaciente)}`,
+         data.ReceitaControladaSolicitada,
+         index,
+        )
+  
+      return FileReceitaControlada
+  });
+  
+  const ResultCreateReceitaControlada = await Promise.all(CreatedReceitaControlada)
+
+  ResultCreateReceitaControlada.map(data => {
+    FilesToDownload.push(`/documents/${data}`)
+  })
+
+   await models.ModelRegisterMédico.findOneAndUpdate(
+       {
+         _id: idMedico,
+         'ConsultasSolicitadasPacientes._id': IdentificadorConsultaPaciente
+        },
+        {
+          $push: {
+            'ConsultasSolicitadasPacientes.$.ReceitaControladaDocumento': ResultCreateReceitaControlada
+          }
+        },
+        {
+          new: true
+        }
+      ) 
+  }
+
+  if(UltimaConsulta.Atestado.length > 0){
+      const CreatedAtestado = UltimaConsulta.Atestado.map(async (data, index) => {
+        const FileAtestado = await CreateAtestado(
+          `${getDataDoctor.NomeEspecialista}`, 
+          `${getDataDoctor.CRM}`, 
+          `${getDataDoctor.UFCRM}`, 
+          `${catchingPatientbyIdentifier.map((data) => data.nome)}`, 
+          `${catchingPatientbyIdentifier.map((data) => data.CPF)}`, 
+           data.DiasDeAtestado,
+           data.CID,
+          `${getDataDoctor.Cidade}`,
+          `${getDataDoctor.EnderecoMedico}`,
+           DataAtual,
+           index,
+          )
+    
+        return FileAtestado
+    });
+    
+    const ResultCreatedAtestado = await Promise.all(CreatedAtestado)
+
+    ResultCreatedAtestado.map(data => {
+      FilesToDownload.push(`/documents/${data}`)
+    })
 
       await models.ModelRegisterMédico.findOneAndUpdate(
-      {
-        _id: idMedico,
-        'ConsultasSolicitadasPacientes._id': IdentificadorConsultaPaciente,
-      },
-      {
-        $set: {
-          'ConsultasSolicitadasPacientes.$.PDF': pdfBuffer,
+        {
+          _id: idMedico,
+          'ConsultasSolicitadasPacientes._id': IdentificadorConsultaPaciente
         },
-      },
-      { new: true }
-    )
+        {
+          $push: {
+            'ConsultasSolicitadasPacientes.$.AtestadosDocumento': ResultCreatedAtestado
+          }
+        },
+        {
+          new: true
+        }
+      ) 
+  }
+  
+  if(UltimaConsulta.ExameSolicitado.length > 0){
 
-    res.status(200).send(pdfBuffer);
+     const CreatedExame = UltimaConsulta.ExameSolicitado.map(async (data, index) => {
+      const FileExame =  await CreateExame(
+        `${catchingPatientbyIdentifier.map((data) => data.nome)}`,
+         data.Exame,  
+        `${getDataDoctor.NomeEspecialista}`, 
+        `${getDataDoctor.CRM}`, 
+        `${getDataDoctor.UFCRM}`, 
+        `${getDataDoctor.EnderecoMedico}`,
+         index,
+         DataAtual,
+       )
+  
+      return FileExame
+  });
+  
+  const ResultCreateExame = await Promise.all(CreatedExame)
+
+  ResultCreateExame.map(data => {
+    FilesToDownload.push(`/documents/${data}`)
+  })
+
+  await models.ModelRegisterMédico.findOneAndUpdate(
+     {
+        _id: idMedico,
+        'ConsultasSolicitadasPacientes._id': IdentificadorConsultaPaciente
+      },
+      {
+        $push: {
+          'ConsultasSolicitadasPacientes.$.ExamesDocumento': ResultCreateExame
+        }
+      },
+      {
+        new: true
+      }
+  ) 
+  }
+
+  const OneArrFiles = FilesToDownload.flat()
+
+    res.status(200).json({ files: OneArrFiles })
   } catch (e) {
     console.error(e)
     res.status(500).json({ message: 'Erro ao criar Laudo Médico' })
@@ -205,20 +359,38 @@ export const VerifyClickEndReuniao = async (body, res) => {
 }
 
 export const SavedConsultaMedico = async (body, res) => {
-  const { id, IdentificadorConsulta, FichaPaciente, Diagnostico, Tratamento, FerramentasTerapeuticas, Progresso, SolicitacaoMateriais, SolicitacaoExames, RecomendacoesFuturas, EstadoPaciente, Solicitacao, CRMMedicoAtendeu, DataInsercao } = body;
+  const { id, IdentificadorConsulta, FichaPaciente, Diagnostico, Tratamento, FerramentasTerapeuticas, Progresso, SolicitacaoMateriais, RecomendacoesFuturas, EstadoPaciente, Solicitacao, CRMMedicoAtendeu, DataInsercao } = body;
 
   try {
-    const getMedico = await models.ModelRegisterMédico.findById(id)
 
-    const AreaAtuacao = getMedico.AreadeAtuacao
-    const Especialidade = getMedico.EspecialidadeMedica
-    if (getMedico) {
+    const dataDoctor = await models.ModelRegisterMédico.findById(id)
+
+
+    const QueryConsultaMedico = await models.ModelRegisterMédico.findOne(
+      { 'ConsultasSolicitadasPacientes._id': IdentificadorConsulta },
+      { 'ConsultasSolicitadasPacientes.$': 1 } 
+    )
+    
+    const ReceitasSimples = QueryConsultaMedico.ConsultasSolicitadasPacientes[0].ReceitasSimples
+    const ReceitasControlada = QueryConsultaMedico.ConsultasSolicitadasPacientes[0].ReceitasControlada;
+    const Atestado = QueryConsultaMedico.ConsultasSolicitadasPacientes[0].Atestado
+    const ExameSolicitado = QueryConsultaMedico.ConsultasSolicitadasPacientes[0].ExameSolicitado
+
+    const AreaAtuacao = dataDoctor.AreadeAtuacao
+    const Especialidade = dataDoctor.EspecialidadeMedica
+
+    if (QueryConsultaMedico) {
 
       const updateStateConsultaMedico = await models.ModelRegisterMédico.findByIdAndUpdate(
         id, 
         {
           $set: {
-            'ConsultasSolicitadasPacientes.$[element].Status': `Atendida por ${getMedico.NomeEspecialista}`,
+            'ConsultasSolicitadasPacientes.$[element].Status': `Atendida por ${dataDoctor.NomeEspecialista}`,
+            'ConsultasSolicitadasPacientes.$[element].Diagnostico': Diagnostico,
+            'ConsultasSolicitadasPacientes.$[element].Tratamento': Tratamento,
+            'ConsultasSolicitadasPacientes.$[element].FerramentasTerapeuticas': FerramentasTerapeuticas,
+            'ConsultasSolicitadasPacientes.$[element].Progresso': Progresso,
+            'ConsultasSolicitadasPacientes.$[element].RecomendacoesFuturas': RecomendacoesFuturas,
           },
         },
         {
@@ -238,7 +410,10 @@ export const SavedConsultaMedico = async (body, res) => {
                FerramentasTerapeuticas,
                Progresso,
                SolicitacaoMateriais,
-               SolicitacaoExames: Array.isArray(SolicitacaoExames) ? SolicitacaoExames : [],
+               ReceitasSimples: ReceitasSimples,
+               ReceitasControlada: ReceitasControlada,
+               Atestado: Atestado,
+               ExameSolicitado: ExameSolicitado,
                RecomendacoesFuturas,
                EstadoPaciente,
                Solicitacao,
@@ -253,25 +428,27 @@ export const SavedConsultaMedico = async (body, res) => {
            new: true,
          }
        )
-       
+
       if (updateStateConsultaMedico) {
-        res.status(200).json({ message: 'Atualização de Consulta Atendida do médico concluída com sucesso' })
+        res.status(200).json({ message: 'Atualização da Consulta feita com Sucesso' })
        //Production
-       /*axios.post('http://back-a:8081/api/automatic-whatsapp', {
-        route: '/resumo-casos-clinicos',
-        FichaPaciente: FichaPaciente,
-        Diagnostico: Diagnostico,
-        Tratamento: Tratamento,
-        FerramentasTerapeuticas: FerramentasTerapeuticas,
-        Progresso: Progresso,
-        SolicitacaoMateriais: SolicitacaoMateriais,
-        SolicitacaoExames: SolicitacaoExames,
-        RecomendacoesFuturas: RecomendacoesFuturas,
-        EstadoPaciente: EstadoPaciente,
-        result: result
-       })*/
+       axios.post('http://back-a:8081/api/automatic-whatsapp', {
+          FichaPaciente: FichaPaciente,
+          Diagnostico: Diagnostico,
+          Tratamento: Tratamento,
+          FerramentasTerapeuticas: FerramentasTerapeuticas,
+          Progresso: Progresso,
+          SolicitacaoMateriais: SolicitacaoMateriais,
+          RecomendacoesFuturas: RecomendacoesFuturas,
+          EstadoPaciente: EstadoPaciente,
+          ReceitaSimples: ReceitasSimples,
+          ReceitaControlada: ReceitasControlada,
+          Atestado: Atestado,
+          Exame: ExameSolicitado,
+          result: result
+       }).then(response => response).catch(err => err)
       //Development
-        axios.post('http://localhost:8081/api/automatic-whatsapp', {
+        /*axios.post('http://localhost:8081/api/automatic-whatsapp', {
           route: '/resumo-casos-clinicos',
           FichaPaciente: FichaPaciente,
           Diagnostico: Diagnostico,
@@ -279,11 +456,14 @@ export const SavedConsultaMedico = async (body, res) => {
           FerramentasTerapeuticas: FerramentasTerapeuticas,
           Progresso: Progresso,
           SolicitacaoMateriais: SolicitacaoMateriais,
-          SolicitacaoExames: SolicitacaoExames,
           RecomendacoesFuturas: RecomendacoesFuturas,
           EstadoPaciente: EstadoPaciente,
+          ReceitaSimples: ReceitasSimples,
+          ReceitaControlada: ReceitasControlada,
+          Atestado: Atestado,
+          Exame: ExameSolicitado,
           result: result
-         })
+         })*/
         
       } else {  
         return res.status(200).json({ message: 'Erro ao atualizar a Consulta Atendida do Médico' });
@@ -829,7 +1009,7 @@ export const ValidatorDocuments = async (id, res) => {
 }
 
 
-export const AtualizedDocuments = async (receitaSimples, receitaControlada, atestado, exame, IdentificadorConsulta, res) => {
+export const AtualizedDocuments = async (receitaSimples, receitaControlada, atestado, exame, IdentificadorConsulta,res) => {
   try {
     if (receitaSimples !== null) {
 
@@ -844,7 +1024,8 @@ export const AtualizedDocuments = async (receitaSimples, receitaControlada, ates
          },
          { new: true }
         )
-    }
+
+    }        
   
     if (receitaControlada !== null) {
         await models.ModelRegisterMédico.findOneAndUpdate(
@@ -858,6 +1039,7 @@ export const AtualizedDocuments = async (receitaSimples, receitaControlada, ates
           },
           { new: true }
       )
+
     }
 
     if (atestado !== null) {
@@ -871,7 +1053,8 @@ export const AtualizedDocuments = async (receitaSimples, receitaControlada, ates
           },
         },
         { new: true }
-    )
+      )
+
     }
 
     if (exame !== null) {
@@ -886,6 +1069,7 @@ export const AtualizedDocuments = async (receitaSimples, receitaControlada, ates
         },
         { new: true }
       )
+      
     }
 
     return res.status(200).json({ message: 'Documentos Atualizados e salvos com sucesso!'})

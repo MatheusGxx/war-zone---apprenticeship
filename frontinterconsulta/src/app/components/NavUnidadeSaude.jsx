@@ -13,15 +13,17 @@ export const NavUnidadeSaude = ({
    HandleNavigationDrawer,
 }) => {
   const FotoUnidade = secureLocalStorage.getItem('FotoUnidade')
+  const NomeUnidade = secureLocalStorage.getItem('NomeUnidade')
   const FotoPaciente = secureLocalStorage.getItem('FotoPaciente')
   const idUnidade = secureLocalStorage.getItem('id')
 
     return(
         <>
+           
             <Link href="/unidade-especialista" className='sm:hidden md:hidden lg:hidden'>
               <p className='text-blue-800 sm:text-sm whitespace-nowrap font-bold'> Inter Gestão </p>
             </Link> 
-
+             
             <Link href="/especialistas-disponiveis" className='sm:hidden md:hidden lg:hidden'>
              <p className='text-blue-800 sm:text-sm whitespace-nowrap font-bold'> Especialistas Disponiveis</p>
             </Link> 

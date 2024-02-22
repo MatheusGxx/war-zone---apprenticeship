@@ -15,6 +15,8 @@ import { EndRegisterPatient  } from "../partials/PopUpEndCadastroPaciente"
 import { useEndRegister } from '../context/context.js'
 import { config } from '../config.js'
 import { ComponenteAudio } from "../partials/ComponentAudio"
+import { useBlood } from "../context/context.js"
+import { PopUpBlood } from "../partials/PopUpBlood"
 
 const ContentPaciente = () => {
   const[selectedDoenca, setSelectedDoenca] = useState('')
@@ -35,6 +37,7 @@ const ContentPaciente = () => {
   const[avaliacoesDoctor, setAvaliacoesDoctor] = useState(null)
   const[endRegister, setEndRegister] = useState(false)
   const[isValid, setIsValid] = useState(null)
+  const { blood } = useBlood()
 
   const queryClient = useQueryClient()
   const { registerEndOk } = useEndRegister()
@@ -394,6 +397,9 @@ const ContentPaciente = () => {
        <ComponenteAudio
          
        />
+      }
+      {blood &&
+        <PopUpBlood/>
       }
       <div className="flex items-end justify-end pr-3 pb-4">
         <Image src={Logo} width={30} height={30} alt="Logo Interconsulta" className="animate-spin-slow"/>

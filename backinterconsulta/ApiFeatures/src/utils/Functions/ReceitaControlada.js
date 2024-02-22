@@ -1,7 +1,7 @@
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path'
 
-export const ReceitaControlada = (doc, NomeMedico, CRM, EndereçoMedico, CidadeMedico, UF, DataAtual) => {
+export const ReceitaControlada = (doc, NomeMedico, CRM, EndereçoMedico, CidadeMedico, EstadoMedico, UF, DataAtual, nomePaciente, CPFPaciente, EnderecoPaciente, ReceitaControladaD) => {
   
     const currentFilePath = fileURLToPath(import.meta.url)
     const currentDir = dirname(currentFilePath)
@@ -31,13 +31,13 @@ export const ReceitaControlada = (doc, NomeMedico, CRM, EndereçoMedico, CidadeM
     doc.moveDown();
     doc.font('Helvetica').text(`Nome: ${NomeMedico}`);
     doc.moveDown(0.3);
-    doc.text(`CRM: ${CRM}`);
+    doc.text(`CRM: ${UF}-${CRM}`);
     doc.moveDown(0.3);
     doc.text(`Endereço: ${EndereçoMedico}`);
     doc.moveDown(0.3);
-    doc.text(`Cidade e UF: ${CidadeMedico} - ${UF}`);
+    doc.text(`Cidade e UF: ${CidadeMedico} - ${EstadoMedico}`);
   
-    doc.moveDown();
+    doc.moveDown()
   
     const XReceituarioReceituarioEspecial = 330;
     const YReceituarioEspecial = doc.page.height - 700
@@ -63,6 +63,18 @@ export const ReceitaControlada = (doc, NomeMedico, CRM, EndereçoMedico, CidadeM
       .stroke();
   
     doc.moveDown();
+
+    
+    const XD = 40;
+    const YD = doc.page.height - 500
+
+    doc.text(`Nome do Paciente: ${nomePaciente}`, XD, YD)
+    doc.moveDown()
+    doc.text(`CPF do Paciente: ${CPFPaciente}`)
+    doc.moveDown()
+    doc.text(`Endereço do Paciente: ${EnderecoPaciente}`)
+    doc.moveDown()
+    doc.text(`${ReceitaControladaD}`)
   
     const XComprador = 40;
     const YComprador = doc.page.height - 200;
@@ -93,8 +105,8 @@ export const ReceitaControlada = (doc, NomeMedico, CRM, EndereçoMedico, CidadeM
   
     doc.font('Helvetica-Bold').text('Identificação do Fornecedor', XFornecedor, YFornecedor);
     doc.moveDown();
-    doc.font('Helvetica').text('Data:');
-    doc.text('Assinatura do Farmacêutico:');
+    doc.font('Helvetica').text('Data:')
+    doc.text('Assinatura do Farmacêutico:')
   
     const x = 250;
     const y = doc.page.height - 50;

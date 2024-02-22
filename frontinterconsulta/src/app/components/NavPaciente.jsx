@@ -14,16 +14,21 @@ export const NavPaciente = ({
 
   const FotoPaciente = secureLocalStorage.getItem('FotoPaciente')
   const FotoUnidade = secureLocalStorage.getItem('FotoUnidade')
+  const NomeUnidade = secureLocalStorage.getItem('NomeUnidade')
   const idPaciente = secureLocalStorage.getItem('id')
     return(
       <>
         <Link href="/especialistas-disponiveis" className='sm:hidden md:hidden lg:hidden'>
-             <p className='text-blue-800 sm:text-sm whitespace-nowrap font-bold'> Especialistas Disponiveis</p>
-          </Link> 
+          <p className='text-blue-800 sm:text-sm whitespace-nowrap font-bold'> Especialistas Disponiveis</p>
+       </Link> 
 
-          <Link href="/unidade-especialista" className='sm:hidden md:hidden lg:hidden'>
-              <p className='text-blue-800 sm:text-sm whitespace-nowrap font-bold'> Inter Gestão </p>
-            </Link> 
+       {NomeUnidade ? 
+          <Link href="/especialistas-disponiveis" className='sm:hidden md:hidden lg:hidden'>
+          <p className='text-blue-800 sm:text-sm whitespace-nowrap font-bold'> Intergestão</p>
+          </Link> 
+       : null
+       }
+
             {FotoPaciente ? 
                <div 
                 className='mt-[-5px] relative cursor-pointer'
