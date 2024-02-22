@@ -1,5 +1,9 @@
 FROM node:latest
 
+# Defina a variável de ambiente para evitar o download do Chrome pelo Puppeteer
+ENV PUPPETEER_DOWNLOAD_HOST=https://storage.googleapis.com
+ENV PUPPETEER_SKIP_DOWNLOAD=true
+
 WORKDIR /app
 
 # Configuração de fuso horário
@@ -22,6 +26,9 @@ RUN npm install -g npm
 
 # Limpe o cache do npm
 RUN npm cache clean --force
+
+# Adicione um dummy file para invalidar o cache
+ADD https://some-random-site.com/ /app/dummy
 
 # Instale o pacote "sharp" separadamente
 RUN npm install sharp
