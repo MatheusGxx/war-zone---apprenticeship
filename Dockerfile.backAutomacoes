@@ -10,8 +10,7 @@ WORKDIR /app
 
 COPY backinterconsulta/ApiAutomacoes .
 
-# Install npm dependencies
-RUN npm install --ignore-scripts=false --verbose sharp 
+RUN npm install 
 
 # Expose port
 EXPOSE 8081
