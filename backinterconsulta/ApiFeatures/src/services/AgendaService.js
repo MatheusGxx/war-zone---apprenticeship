@@ -155,12 +155,12 @@ export const SavedConsultaPacienteParticular = async (body, res) => {
     
           for (const intervalo of intervalosAtendimentos) {
             if (casosDistribuidos < QuantidadeCasosClinicos) {
-              let novaConsulta = { ...ConsultaUnidadedeSaude };
-              const intervaloParts = intervalo.split(" - ");
+              let novaConsulta = { ...ConsultaUnidadedeSaude }
+              const intervaloParts = intervalo.split(" - ")
     
-              novaConsulta.Inicio = intervaloParts[0];
-              novaConsulta.Fim = intervaloParts[1];
-              novaConsulta.Data = horario.data;
+              novaConsulta.Inicio = intervaloParts[0]
+              novaConsulta.Fim = intervaloParts[1]
+              novaConsulta.Data = horario.data
     
               novaConsulta.Casos = Casos[casosDistribuidos];
     
@@ -187,11 +187,11 @@ export const SavedConsultaPacienteParticular = async (body, res) => {
         newConsulta.Casos = casosClinicos;
         newConsulta.Status = Status;
         UnidadeSaude.ConsultasUnidadedeSaude.push(newConsulta);
-      });
+      })
   
-      await UnidadeSaude.save();
+      await UnidadeSaude.save()
   
-      res.status(200).json({ message: 'Consultas Agendadas com Sucesso' });
+      res.status(200).json({ message: 'Consultas Agendadas com Sucesso' })
     } catch (error) {
       return res.status(500).json({ message: 'Erro ao Agendar Consultas da Unidade de Saude' })
     }
@@ -698,7 +698,7 @@ export const DeleteCasoClinicoPacienteParticular = async (body, res) => {
       //Production
       axios.post('http://back-a:8081/api/automatic-whatsapp', body)
       //Development
-      //axios.post('http://localhost:8081/api/automatic-whatsapp', body)
+     //axios.post('http://localhost:8081/api/automatic-whatsapp', body)
 
     } else {
       res.status(404).json({ message: 'Erro ao excluir consulta' });

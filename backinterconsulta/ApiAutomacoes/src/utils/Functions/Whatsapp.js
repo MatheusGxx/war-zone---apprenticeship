@@ -1,6 +1,13 @@
 import venom from 'venom-bot'
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path'
+import { promisify } from 'util'
+import { readFileSync, writeFileSync } from 'fs'
+import fs from 'fs'
 
-let client;
+const readFileAsync = promisify(fs.readFile)
+
+let client
 
 export const CreateInstance = async () => {
   try {
@@ -64,8 +71,47 @@ export const BulkMassage = async (Numeros, Message, res) => {
   }
 }
 
+export const SendDocumentsWhatsapp = async (numeroPaciente, filesPath, MensagemPaciente) => {
+  try {
+    const currentFilePath = fileURLToPath(import.meta.url)
+    const currentDir = dirname(currentFilePath)
+
+    const path = join(currentDir, '../../..', 'node_modules/venom-bot/dist/lib/wapi', 'wapi.js')
+    let toFix = readFileSync(path);
+    toFix = toFix.toString().replace(
+      `return await n.processAttachments("0.4.613"===Debug.VERSION?t:t.map((e=>({file:e}))),e,1),n}`,
+      `return await n.processAttachments("0.4.613"===Debug.VERSION?t:t.map((e=>({file:e}))),e,e),n}`
+    )
 
 
+    writeFileSync(path, toFix)
+
+    const ApiFeaturesPath = join(currentDir, '../../../..', 'ApiFeatures')
+
+    const gifPath = join(ApiFeaturesPath, 'icons-doencas', 'Bursite.gif')
+
+    const Files = filesPath.map((data) => {
+      const getPaths = join(ApiFeaturesPath, data)
+      return getPaths 
+    })
+
+   await client.sendImageAsStickerGif(`${numeroPaciente}@c.us`, gifPath) 
+/
+   await client.sendText(`${numeroPaciente}@c.us`, MensagemPaciente)
+  
+   const promises = Files.map(async (data, index) => {
+     const sendDocuments = await client.sendFile(`${numeroPaciente}@c.us`, data, `${data.split('\\').pop()}`, `Documento: ${index + 1}`)
+     console.log(`Documento Enviado para o Paciente do Numero: ${numeroPaciente}`)
+     return sendDocuments;
+   })
+   
+   await Promise.all(promises)
+   
+   console.log(`Todos os documentos foram enviados para o paciente do número: ${numeroPaciente}`)
+  } catch(error) {
+   console.error('Erro ao enviar documentos:', error);
+  }
+}
 /*export const SecretariaIA = async (client) => {
   const chatHistories = {};
 
@@ -145,3 +191,6 @@ export const BulkMassage = async (Numeros, Message, res) => {
     }
   });
 }*/
+
+
+// Crie uma função que envie arquivos usando venom-bot

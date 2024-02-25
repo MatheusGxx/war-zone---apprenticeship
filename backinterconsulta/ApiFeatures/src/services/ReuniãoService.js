@@ -43,7 +43,6 @@ export const  CreatingDocumentsDoctor = async (body, res) => {
 
   const DataAtual = `${Dia}/${Mes}/${Ano}`
 
-
   const FilesToDownload = []
   const FilePathComplete = []
 
@@ -68,14 +67,11 @@ export const  CreatingDocumentsDoctor = async (body, res) => {
     `${catchingPatientbyIdentifier.map((data) => data.telefone)}`,  // Bairro Paciente faltando
     `${UltimaConsulta.Diagnostico}`, // Diagnóstico 
     `${UltimaConsulta.Tratamento}`, //Tratamento
-    `${UltimaConsulta.ReceitasSimples.map(
-      data => data.ReceitaSimplesSolicitada) && UltimaConsulta.ReceitasControlada.map(
-        data => data.ReceitaControladaSolicitada)}`, // Medicação
+    `${(UltimaConsulta.ReceitasSimples.map(data => data.ReceitaSimplesSolicitada)).concat(UltimaConsulta.ReceitasControlada.map(data => data.ReceitaControladaSolicitada)).join(', ')}`,
     `${UltimaConsulta.FerramentasTerapeuticas}`,// Ferramenta Terapeutica
     `${UltimaConsulta.Progresso}`, // Progresso
     `${UltimaConsulta.RecomendacoesFuturas}`, // Recomendaçoes Futuras
     `${getDataDoctor.EnderecoMedico}`,
-    `${catchingPatientbyIdentifier.map((data) => data._id)}`
   )
 
   FilesToDownload.push(`/documents/${FileLaudo}`)
@@ -270,8 +266,8 @@ export const  CreatingDocumentsDoctor = async (body, res) => {
   ) 
   }
 
-  const OneArrFiles = FilesToDownload.flat()
-  const OneArrFilesCompletes = FilePathComplete.flat()
+    const OneArrFiles = FilesToDownload.flat()
+    const OneArrFilesCompletes = FilePathComplete.flat()
 
     res.status(200).json({ files: OneArrFiles })
   } catch (e) {
@@ -484,7 +480,7 @@ export const SavedConsultaMedico = async (body, res) => {
           Atestado: Atestado,
           Exame: ExameSolicitado,
           result: result
-         })*/
+         }).then(response => response).catch(err => err)*/
         
       } else {  
         return res.status(200).json({ message: 'Erro ao atualizar a Consulta Atendida do Médico' });
@@ -1096,5 +1092,66 @@ export const AtualizedDocuments = async (receitaSimples, receitaControlada, ates
     return res.status(200).json({ message: 'Documentos Atualizados e salvos com sucesso!'})
   } catch (error) {
     return res.status(500).json({ message: 'Error internal Server' });
+  }
+}
+
+
+export const getDataPatientEndRoom = async (id,res) => {
+   try{
+    const dataPatient = await models.ModelRegisterPaciente.findOne(
+      { 'ConsultasSolicitadasPacientes._id': id },
+    )
+
+    const NomePaciente = dataPatient.nome
+    const FotoPaciente = dataPatient.Foto
+
+
+    if(!dataPatient){
+      return res.status(404).json({ message: 'Paciente nao existe dentro do banco de dados do Interconsulta'})
+    }
+
+    return res.status(200).json({ NomePaciente, FotoPaciente })
+
+   }catch(error){
+    return res.status(500).json({ message: 'Error internal Server' })
+   }
+}
+
+
+export const sendDocumentsPatient = async (id, res, files) => {
+  try{
+    const getDataPaciente = await models.ModelRegisterPaciente.findOne(
+      { 'ConsultasSolicitadasPacientes._id': id },
+    )
+    console.log(getDataPaciente)
+    
+     
+    const NomePaciente = getDataPaciente.nome
+    const NumeroPaciente = getDataPaciente.telefone
+    const EmailPatient = getDataPaciente.email
+    const UltimaConsulta = getDataPaciente.ConsultasSolicitadasPacientes[getDataPaciente.ConsultasSolicitadasPacientes.length -1]
+    const NomeMedico = UltimaConsulta.Solicitado
+
+    //Production
+    axios.post('http://back-a:8081/api/automatic-whatsapp', {
+      route: '/send-documents-patient',
+      NamePatient: NomePaciente,
+      NameDoctor: NomeMedico,
+      PathsFiles: files,
+      NumberPatient: NumeroPaciente,
+      EmailPatient: EmailPatient,
+    }).then(response => response).catch(err => err)
+    //Development
+    /*axios.post('http://localhost:8081/api/automatic-whatsapp', {
+      route: '/send-documents-patient',
+      NamePatient: NomePaciente,
+      NameDoctor: NomeMedico,
+      PathsFiles: files,
+      NumberPatient: NumeroPaciente,
+      EmailPatient: EmailPatient,
+    }).then(response => response).catch(err => err)*/
+
+  }catch(error){
+    return res.status(500).json({ message: 'Erro Internal Server'})
   }
 }

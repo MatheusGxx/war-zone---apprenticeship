@@ -41,7 +41,7 @@ router.post('/register', async (req, res ) => {
     await Register(body, response)
 })
 
-router.post('/obrigado/:id',  uploadPhotos.single("file") ,async (req, res ) => {
+router.post('/obrigado/:id', uploadPhotos.single("file") ,async (req, res ) => {
 
        console.log(req.body)
        console.log(req.params)

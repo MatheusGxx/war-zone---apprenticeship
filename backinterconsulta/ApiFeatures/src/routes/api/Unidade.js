@@ -37,5 +37,6 @@ router.post('/process-planilha/:id', uploadPlanilha.single('file'), async (req, 
   const Filename = file.filename
 
   ProcessPlanilha(body, response, params, PathPlanilha, Filename)
-});
+})
+
 export default router

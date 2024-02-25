@@ -40,11 +40,7 @@ const MainUnidade = ({title, subTitle, Component}) =>{
        </section>
 
        <div className='bg-white  min-h-[350px]  w-7/12 sm:w-full md:w-full lg:w-full rounded-lg flex justify-center items-center'>
-
-        <div className='flex justify-center items-center gap-5'>
-        <h1 className='font-bold text-blue-500 text-2xl animate-pulse'> Intergestão In Development </h1>
-        </div>
-
+       <Component/>
        </div>
        </main>
     </>

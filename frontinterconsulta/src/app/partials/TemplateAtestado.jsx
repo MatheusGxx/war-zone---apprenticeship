@@ -34,14 +34,21 @@ export const TemplateAtestado = ({
                         label=""
                         variant="standard"
                         InputProps={{
-                            sx: { borderBottom: "1px solid blue" },
+                            sx: { 
+                                borderBottom: "1px solid blue",
+                            },
+                            inputProps: {
+                                style: {
+                                    textAlign: "center", // Centraliza o texto horizontalmente
+                                },
+                            },
                         }}
                         className ="w-1/6 ml-3"
                         type='number'
                         required
                         onChange={(e) => HandleChangeDiasAfastados(e.target.value)}
                         value={data.DiasDeAtestado}
-                        />
+                    />
 
                  dias, a contar desta data, por motivo de saúde
                 </h1>
@@ -54,7 +61,7 @@ export const TemplateAtestado = ({
                     <TextField
                     label=""
                     variant="standard"
-                    type='number'
+                    type='text'
                     InputProps={{
                         sx: { borderBottom: "1px solid blue" },
                     }}

@@ -70,6 +70,8 @@ export const TemplateReceitaControlada = ({
              required
              value={data}
              onChange={(e) => HandleChangeReceitaC(e.target.value)}
+             rows={4}
+             multiline
              />
 
         </div>

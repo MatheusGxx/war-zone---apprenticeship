@@ -40,6 +40,8 @@ export const TemplateReceitaSimples = ({
             onChange={(e) => HandleChangeReceitaSimples(e.target.value)}
             className= "w-full"
             required
+            rows={4}
+            multiline
         />
         </div> 
 

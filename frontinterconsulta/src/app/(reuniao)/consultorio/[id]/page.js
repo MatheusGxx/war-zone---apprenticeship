@@ -45,7 +45,7 @@ function Room({ params }) {
         script.onload = () => {
           if (window.JitsiMeetExternalAPI) {
             const api = new window.JitsiMeetExternalAPI("8x8.vc", {
-              roomName: `vpaas-magic-cookie-21c1473964e545b582ea460f6a9d0a94/Consultório ${Médico}`,
+              roomName: `vpaas-magic-cookie-21c1473964e545b582ea460f6a9d0a94/Consultório`,
               parentNode: document.querySelector('#jaas-container'),
               configOverwrite: {
                 toolbarButtons: [
@@ -53,9 +53,6 @@ function Room({ params }) {
                 ],
               },
               lang: 'pt-BR',
-              userInfo: {
-                displayName: `${Médico}`
-              }
             })
 
           

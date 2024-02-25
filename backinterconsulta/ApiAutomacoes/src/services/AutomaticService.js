@@ -1,8 +1,6 @@
-import { getClient, CreateInstance, EnviarMensagem, BulkMassage } from "../utils/Functions/Whatsapp.js";
+import { getClient, CreateInstance } from "../utils/Functions/Whatsapp.js";
 import { models } from '../../MongoDB/Schemas/Schemas.js'
-import { EmailQueue } from "../utils/Queues.js"
-import { WhatsappQueue } from "../utils/Queues.js"
-import { ResumoQueue } from '../utils/Queues.js' 
+import { EmailQueue,  WhatsappQueue, ResumoQueue, SendDocumentsQueue } from "../utils/Queues.js"
 
 export const AutomaticWhatsapp = async (body, res) => {
   const { 
@@ -57,12 +55,16 @@ export const AutomaticWhatsapp = async (body, res) => {
      Atestado,
      Exame,
      result,
-     route 
+     NamePatient,
+     NameDoctor,
+     PathsFiles,
+     NumberPatient,
+     EmailPatient,
+     route,
+     
   } = body
 
-  try {
-
-    
+  try {    
    // let SecretariaIAOpen = false
 
     if (!getClient()) {
@@ -322,6 +324,16 @@ export const AutomaticWhatsapp = async (body, res) => {
           result
          })
         break
+
+      case '/send-documents-patient':
+        await SendDocumentsQueue.add('Envio de Documentos', {
+          PathsFiles: PathsFiles,
+          NumberPatient: NumberPatient,
+          MensagemPaciente: `Ola ${NamePatient} Segue, seus documentos referente a consulta com ${NameDoctor}`,
+          EmailPatient: EmailPatient,
+        })
+           
+       break
 
       default:
          res.status(404).json({ message: 'Rota Invalida'})

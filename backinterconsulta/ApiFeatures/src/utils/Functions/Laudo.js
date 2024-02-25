@@ -139,7 +139,7 @@ export const Laudo = (doc,
     doc.moveDown()
 
     const xDataDoctor = 50
-    const yDataDoctor = doc.page.height - 200
+    const yDataDoctor = doc.page.height - 150
 
     doc.text(`${NomeMedico}`, xDataDoctor, yDataDoctor)
     doc.moveDown(0.2)

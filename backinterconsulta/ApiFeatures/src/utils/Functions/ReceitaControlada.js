@@ -16,7 +16,7 @@ export const ReceitaControlada = (doc, NomeMedico, CRM, EndereçoMedico, CidadeM
   
     doc.fontSize(12)
   
-    doc.moveDown();
+    doc.moveDown()
   
     const XEmitente = 40;
     const YEmitente = doc.page.height - 700
@@ -27,7 +27,7 @@ export const ReceitaControlada = (doc, NomeMedico, CRM, EndereçoMedico, CidadeM
       .strokeColor('blue')
       .stroke();
   
-    doc.font('Helvetica-Bold').text('Identificação do Emitente', XEmitente, YEmitente);
+    doc.font('Helvetica-Bold').fontSize(11).text('Identificação do Emitente', XEmitente, YEmitente);
     doc.moveDown();
     doc.font('Helvetica').text(`Nome: ${NomeMedico}`);
     doc.moveDown(0.3);
@@ -43,7 +43,7 @@ export const ReceitaControlada = (doc, NomeMedico, CRM, EndereçoMedico, CidadeM
     const YReceituarioEspecial = doc.page.height - 700
   
     // Adiciona o Receituário Controle Especial
-    doc.font('Helvetica-Bold').text('Receituário Controle Especial', XReceituarioReceituarioEspecial + 5, YReceituarioEspecial + 5);
+    doc.font('Helvetica-Bold').fontSize(11).text('Receituário Controle Especial', XReceituarioReceituarioEspecial + 5, YReceituarioEspecial + 5);
     doc.moveDown(0.3);
     doc.font('Helvetica').text(`Data: ${DataAtual}`);
     doc.moveDown(0.3);
@@ -65,15 +65,15 @@ export const ReceitaControlada = (doc, NomeMedico, CRM, EndereçoMedico, CidadeM
     doc.moveDown();
 
     
-    const XD = 40;
-    const YD = doc.page.height - 500
+    const XD = 20;
+    const YD = doc.page.height - 550
 
-    doc.text(`Nome do Paciente: ${nomePaciente}`, XD, YD)
-    doc.moveDown()
-    doc.text(`CPF do Paciente: ${CPFPaciente}`)
-    doc.moveDown()
-    doc.text(`Endereço do Paciente: ${EnderecoPaciente}`)
-    doc.moveDown()
+    doc.fontSize(11).text(`Nome do Paciente: ${nomePaciente}`, XD, YD)
+    doc.moveDown(0.3)
+    doc.fontSize(11).text(`CPF do Paciente: ${CPFPaciente}`)
+    doc.moveDown(0.3)
+    doc.fontSize(11).text(`Endereço do Paciente: ${EnderecoPaciente}`)
+    doc.moveDown(0.3)
     doc.text(`${ReceitaControladaD}`)
   
     const XComprador = 40;
@@ -101,23 +101,22 @@ export const ReceitaControlada = (doc, NomeMedico, CRM, EndereçoMedico, CidadeM
     doc.rect(XFornecedor - 20, YFornecedor - 20, 250, 130)
       .lineWidth(1)
       .strokeColor('blue')
-      .stroke();
+      .stroke()
   
     doc.font('Helvetica-Bold').text('Identificação do Fornecedor', XFornecedor, YFornecedor);
     doc.moveDown();
     doc.font('Helvetica').text('Data:')
     doc.text('Assinatura do Farmacêutico:')
   
-    const x = 250;
-    const y = doc.page.height - 50;
-    const yImage = doc.page.height - 62;
-    const XImage = 200;
+    const x = 250
+    const y = doc.page.height - 50
+    const yImage = doc.page.height - 62
+    const XImage = 200
   
     doc.image(Logo, XImage, yImage, { width: 30, lineBreak: false });
   
     doc.font('Helvetica-Bold').fillColor('blue').text('Interconsulta GID', x, y, { lineBreak: false });
   
     doc.link(x, y, 200, 20, 'https://interconsulta.org');
-
     
   }

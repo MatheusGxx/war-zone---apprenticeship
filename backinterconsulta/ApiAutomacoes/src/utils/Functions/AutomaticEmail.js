@@ -1,4 +1,10 @@
 import nodemailer from 'nodemailer'
+import { promisify } from 'util';
+import fs from 'fs'
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path'
+
+const readFileAsync = promisify(fs.readFile);
 
 const Transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -17,7 +23,7 @@ export const sendEmail = async (to, subject, message) => {
         from: 'interconsulta.org@gmail.com',
         to: to,
         subject: subject,
-        html: message
+        attachments: []
     }
 
     try {
@@ -27,3 +33,43 @@ export const sendEmail = async (to, subject, message) => {
         console.error('Erro ao enviar e-mail:', error);
     }
 };
+
+
+
+export const sendDocumentsinEmail = async (to, subject, Documents) => {
+    const mailOptions = {
+        from: 'interconsulta.org@gmail.com',
+        to: to,
+        subject: subject,
+        attachments: []
+    }
+    try {
+        const currentFilePath = fileURLToPath(import.meta.url)
+        const currentDir = dirname(currentFilePath)
+        const ApiFeaturesPath = join(currentDir, '../../../..', 'ApiFeatures')
+
+        const Files = Documents.map((data) => {
+            const getPaths = join(ApiFeaturesPath, data)
+            return getPaths
+        });
+
+        const fileReadPromises = Files.map(async documentPath => {
+            try {
+                const documentContent = await readFileAsync(documentPath); // Use await para esperar pela leitura do arquivo
+                return {
+                    filename: documentPath.split('\\').pop(),
+                    content: documentContent
+                }
+            } catch (error) {
+                console.error('Erro ao ler arquivo:', error);
+                throw error; // Rejeitar a Promise se ocorrer um erro na leitura do arquivo
+            }
+        });
+        
+        mailOptions.attachments = await Promise.all(fileReadPromises);
+        const info = await Transporter.sendMail(mailOptions)
+        console.log(`Email enviado com sucesso para: ${info.accepted}`);
+    } catch(error) {
+        console.error(error);
+    }
+}

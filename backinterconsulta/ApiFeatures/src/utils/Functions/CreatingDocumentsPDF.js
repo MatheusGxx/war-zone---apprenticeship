@@ -9,90 +9,85 @@ import { dirname, join } from 'path'
 import fs from 'fs'
 
 export const CreateLaudo = async (
-    DataAtual,
-    NomeMedico,
-    EspecialideMedico,
-    UFMedico,
-    CRMMedico,
-    RQEMedico,
-    NomePaciente,
-    Prontuario,
-    DataNascimentoPaciente,
-    SexoPaciente,
-    CPFPaciente,
-    EstadoCivilPaciente,
-    ProfissãoPaciente,
-    EstadoPaciente,
-    CidadePaciente,
-    BairroPaciente,
-    RuaPaciente,
-    ContatoPaciente,
-    DiagnósticoPaciente,
-    TratamentoPaciente,
-    MedicaçãoPaciente,
-    FerramentaTerapeuticaPaciente,
-    ProgressoPaciente,
-    RecomendaçoesFuturasPaciente,
-    EndereçoMedico,
-    idPaciente
-    ) => {
+  DataAtual,
+  NomeMedico,
+  EspecialideMedico,
+  UFMedico,
+  CRMMedico,
+  RQEMedico,
+  NomePaciente,
+  Prontuario,
+  DataNascimentoPaciente,
+  SexoPaciente,
+  CPFPaciente,
+  EstadoCivilPaciente,
+  ProfissãoPaciente,
+  EstadoPaciente,
+  CidadePaciente,
+  BairroPaciente,
+  RuaPaciente,
+  ContatoPaciente,
+  DiagnósticoPaciente,
+  TratamentoPaciente,
+  MedicaçãoPaciente,
+  FerramentaTerapeuticaPaciente,
+  ProgressoPaciente,
+  RecomendaçoesFuturasPaciente,
+  EndereçoMedico,
+) => {
+      return new Promise((resolve, reject) => {
 
+          const doc = new PDFDocument({ size: 'A4' })
 
-    return new Promise((resolve, reject) => {
+          const currentFilePath = fileURLToPath(import.meta.url)
+          const currentDir = dirname(currentFilePath)
+          const CreatedDocumentLaudo = join(currentDir, '../../..', 'pdfs', `Laudo_${NomePaciente.replace(/ /g, '_')}_${DataAtual.replace(/\//g, '-')}.pdf`);
+          const outputStream = fs.createWriteStream(CreatedDocumentLaudo)
+          const NomeArquivo = `Laudo_${NomePaciente.replace(/ /g, '_')}_${DataAtual.replace(/\//g, '-')}.pdf`
 
-      const doc = new PDFDocument({ size: 'A4' })
+          doc.pipe(outputStream)
 
-      const currentFilePath = fileURLToPath(import.meta.url)
-      const currentDir = dirname(currentFilePath)
-      const CreatedDocumentLaudo = join(currentDir, '../../..', 'pdfs', `Laudo_${NomePaciente}_${DataAtual}.pdf`)
-      const outputStream = fs.createWriteStream(CreatedDocumentLaudo)
-      const NomeArquivo = `Laudo_${NomePaciente}_${DataAtual}.pdf`
+          Laudo(doc,
+              DataAtual,
+              NomeMedico,
+              EspecialideMedico,
+              UFMedico,
+              CRMMedico,
+              RQEMedico,
+              NomePaciente,
+              Prontuario,
+              DataNascimentoPaciente,
+              SexoPaciente,
+              CPFPaciente,
+              EstadoCivilPaciente,
+              ProfissãoPaciente,
+              EstadoPaciente,
+              CidadePaciente,
+              BairroPaciente,
+              RuaPaciente,
+              ContatoPaciente,
+              DiagnósticoPaciente,
+              TratamentoPaciente,
+              MedicaçãoPaciente,
+              FerramentaTerapeuticaPaciente,
+              ProgressoPaciente,
+              RecomendaçoesFuturasPaciente,
+              EndereçoMedico,
+          )
 
+          doc.end()
 
-      doc.pipe(outputStream)
-      
-      Laudo(doc,
-        DataAtual,
-        NomeMedico,
-        EspecialideMedico,
-        UFMedico,
-        CRMMedico,
-        RQEMedico,
-        NomePaciente,
-        Prontuario,
-        DataNascimentoPaciente,
-        SexoPaciente,
-        CPFPaciente,
-        EstadoCivilPaciente,
-        ProfissãoPaciente,
-        EstadoPaciente,
-        CidadePaciente,
-        BairroPaciente,
-        RuaPaciente,
-        ContatoPaciente,
-        DiagnósticoPaciente,
-        TratamentoPaciente,
-        MedicaçãoPaciente,
-        FerramentaTerapeuticaPaciente,
-        ProgressoPaciente,
-        RecomendaçoesFuturasPaciente,
-        EndereçoMedico,
-        )
-    
-      doc.end()
+          outputStream.on('finish', () => {
+              console.log('Laudo Gerado com sucesso')
+              resolve(NomeArquivo)
+          })
 
-      outputStream.on('finish', () => {
-        console.log('Laudo Gerado com sucesso')
-        resolve(NomeArquivo)
+          outputStream.on('error', (error) => {
+              reject(error);
+          })
       })
-    
-      outputStream.on('error', (error) => {
-        reject('Erro ao criar Laudo', error);
-      })
-    })
-
- 
 }
+
 
 export const CreateReceitaSimples = (
    NomePaciente,
@@ -112,9 +107,9 @@ export const CreateReceitaSimples = (
 
     const currentFilePath = fileURLToPath(import.meta.url)
     const currentDir = dirname(currentFilePath)
-    const CreatedDocumentReceitaSimples = join(currentDir, '../../..', 'pdfs', `ReceitaSimples_Paciente_${NomePaciente}_${date}_${index}.pdf`)
+    const CreatedDocumentReceitaSimples = join(currentDir, '../../..', 'pdfs', `ReceitaSimples_Paciente_${NomePaciente.replace(/ /g, '_')}_${date.replace(/\//g, '-')}_${index}.pdf`);
     const outputStream = fs.createWriteStream(CreatedDocumentReceitaSimples)
-    const NomeArquivo = `ReceitaSimples_Paciente_${NomePaciente}_${date}_${index}.pdf`
+    const NomeArquivo = `ReceitaSimples_Paciente_${NomePaciente.replace(/ /g, '_')}_${date.replace(/\//g, '-')}_${index}.pdf`
 
     doc.pipe(outputStream)
       
@@ -135,7 +130,7 @@ export const CreateReceitaSimples = (
     })
 
     outputStream.on('error', (error) => {
-      reject('Erro ao criar Receita Simples', error);
+      reject(error);
     });
   })
 
@@ -161,9 +156,9 @@ export const CreateReceitaControlada = (
   
       const currentFilePath = fileURLToPath(import.meta.url)
       const currentDir = dirname(currentFilePath)
-      const CreatedDocumentReceitaControlada = join(currentDir, '../../..', 'pdfs', `ReceitaControlada_${nomePaciente}_${DataAtual}_${index}.pdf`)
+      const CreatedDocumentReceitaControlada = join(currentDir, '../../..', 'pdfs', `ReceitaControlada_${nomePaciente.replace(/ /g, '_')}_${DataAtual.replace(/\//g, '-')}_${index}.pdf`);
       const outputStream = fs.createWriteStream(CreatedDocumentReceitaControlada)
-      const NomeArquivo =`ReceitaControlada_${nomePaciente}_${DataAtual}_${index}.pdf`
+      const NomeArquivo = `ReceitaControlada_${nomePaciente.replace(/ /g, '_')}_${DataAtual.replace(/\//g, '-')}_${index}.pdf`
 
       doc.pipe(outputStream)
 
@@ -176,7 +171,7 @@ export const CreateReceitaControlada = (
         resolve(NomeArquivo)
       })
       outputStream.on('error', (error) => {
-        reject('Erro ao criar Receita Controlada', error);
+        reject(error);
       });
     })
 }
@@ -200,9 +195,9 @@ export const CreateAtestado = (
     
       const currentFilePath = fileURLToPath(import.meta.url)
       const currentDir = dirname(currentFilePath)
-      const CreatedDocumentAtestado = join(currentDir, '../../..', 'pdfs', `Atestado_${NomePaciente}_${DataAtual}_${index}.pdf`)
+      const CreatedDocumentAtestado = join(currentDir, '../../..', 'pdfs', `Atestado_${NomePaciente.replace(/ /g, '_')}_${DataAtual.replace(/\//g, '-')}_${index}.pdf`);
       const outputStream = fs.createWriteStream(CreatedDocumentAtestado)
-      const NomeArquivo = `Atestado_${NomePaciente}_${DataAtual}_${index}.pdf`
+      const NomeArquivo = `Atestado_${NomePaciente.replace(/ /g, '_')}_${DataAtual.replace(/\//g, '-')}_${index}.pdf`
 
       doc.pipe(outputStream)
 
@@ -215,7 +210,7 @@ export const CreateAtestado = (
         resolve(NomeArquivo)
       })
       outputStream.on('error', (error) => {
-        reject('Erro ao criar Atestado', error);
+        reject(error);
       });
     })
 
@@ -229,9 +224,9 @@ export const CreateExame = (NomePaciente, ExamesMedico, NomeMedico, CRM, UFMedic
 
       const currentFilePath = fileURLToPath(import.meta.url)
       const currentDir = dirname(currentFilePath)
-      const CreatedDocumentExame = join(currentDir, '../../..', 'pdfs', `Exame_${NomePaciente}_${date}_${index}.pdf`)
+      const CreatedDocumentExame = join(currentDir, '../../..', 'pdfs', `Exame_${NomePaciente.replace(/ /g, '_')}_${date.replace(/\//g, '-')}_${index}.pdf`);
       const outputStream = fs.createWriteStream(CreatedDocumentExame)
-      const NomeArquivo = `Exame_${NomePaciente}_${date}_${index}.pdf`
+      const NomeArquivo = `Exame_${NomePaciente.replace(/ /g, '_')}_${date.replace(/\//g, '-')}_${index}.pdf`
 
       doc.pipe(outputStream);
 
@@ -244,7 +239,7 @@ export const CreateExame = (NomePaciente, ExamesMedico, NomeMedico, CRM, UFMedic
         resolve(NomeArquivo)
       })
       outputStream.on('error', (error) => {
-          reject('Erro ao gerar Exame', error);
+          reject(error);
       })
   })
 }

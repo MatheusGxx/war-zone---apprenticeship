@@ -60,6 +60,11 @@ router.post('/automatic-whatsapp', async (req, res) => {
     Atestado: req.body.Atestado,
     Exame:  req.body.Exame,
     result: req.body.result,
+    NamePatient: req.body.NamePatient,
+    NameDoctor: req.body.NameDoctor,
+    PathsFiles: req.body.PathsFiles,
+    NumberPatient: req.body.NumberPatient,
+    EmailPatient: req.body.EmailPatient,
     route: req.body.route
   }
 

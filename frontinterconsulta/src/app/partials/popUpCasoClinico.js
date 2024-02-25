@@ -4,9 +4,9 @@ import {
   AppBar, 
   Toolbar, 
   Slide,
-} from '@mui/material';
+} from '@mui/material'
 
-import CloseIcon from '@mui/icons-material/Close';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Image from 'next/image';
 import Logo from '../public/logo.png';
 import ApartmentIcon from '@mui/icons-material/Apartment';
@@ -119,13 +119,16 @@ export const CasosClinico = ({
       >
         <AppBar sx={{ position: 'relative', backgroundColor: 'white' }}>
           <Toolbar>
-            <CloseIcon
+          <ArrowBackIcon
               edge="start"
               color="primary"
               onClick={handleClickClose}
               aria-label="close"
               className="cursor-pointer"
             />
+            
+            <h1 className="text-lg text-blue-600 ml-3 animate-pulse"> VOLTAR </h1>
+
             <div className='flex justify-center items-center flex-grow'>
               <Image src={Logo} width={50} height={50} alt="Logo Interconsulta" className='animate-spin-slow'/>
             </div>

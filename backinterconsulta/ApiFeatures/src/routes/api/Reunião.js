@@ -30,18 +30,12 @@ import
     VerifyDocuments,
     ValidatorDocuments, 
     AtualizedDocuments,
+    sendDocumentsPatient,
+    getDataPatientEndRoom 
    }
  from "../../services/ReuniãoService.js"
-
- import {  
-  CreateLaudo, 
-  CreateReceitaSimples, 
-  CreateReceitaControlada, 
-  CreateAtestado, 
-  CreateExame
- } from "../../utils/Functions/CreatingDocumentsPDF.js"
- 
-
+import uploadSignedDocuments from '../../utils/multerSignDocument.js'
+import axios from 'axios'
 const router = Router()
 
 router.post('/create-documents-doctor', 
@@ -344,6 +338,30 @@ router.post('/atualized-documents',
 
          AtualizedDocuments(receitaSimples, receitaControlada, atestado, exame, IdentificadorConsulta, res)
          console.log(req.body)
+       }
+)
+
+router.post('/data-patient', 
+       async(req,res) => {
+        const { id } = req.body
+        getDataPatientEndRoom(id, res)
+        console.log(req.body)
+       }
+)
+
+router.post('/send-documents-patient', uploadSignedDocuments.any(), 
+       async(req,res) => {
+
+        console.log(req.body)
+        console.log(req.files)
+
+        const files = req.files
+
+        const PathDocumentSign = files.map((data) => data.path)
+        console.log(PathDocumentSign)
+
+        const { id } = req.body
+        sendDocumentsPatient(id, res, PathDocumentSign)
        }
 )
 

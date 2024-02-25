@@ -242,7 +242,7 @@ const ContentUnidade = () => {
               options={AreadeAtuacaoAtendidas}
               noOptionsText="Sem resultados"
               renderInput={(params) => <TextField {...params} label="Area de Atuaçao Médica" variant="standard" />}
-              className=" w-2/5 border-b border-blue-500 sm:w-full"
+              className=" w-10/12 border-b border-blue-500 sm:w-full"
             />
             <TextField
               variant="standard"

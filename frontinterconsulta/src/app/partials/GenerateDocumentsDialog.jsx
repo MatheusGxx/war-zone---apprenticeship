@@ -82,7 +82,6 @@ export const GenerateDocuments = ({ onClose, nomePaciente }) => {
      
      const files = await RequestCreateDocuments.mutateAsync(body3)
      
-     // Cria um novo objeto JSZip
      const zip = new JSZip()
 
      // Promise.all para esperar que todos os arquivos sejam adicionados ao zip

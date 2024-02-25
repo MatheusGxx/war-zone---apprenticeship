@@ -23,7 +23,6 @@ export const ResumoCasoClinico = async (
     Ferramentas Terapêuticas: ${FerramentasTerapeuticas},
     Progresso do Paciente: ${Progresso},
     Solicitação Materiais: ${SolicitacaoMateriais},
-    Solicitação Exames: ${SolicitacaoExames},
     Recomendações Futuras: ${RecomendacoesFuturas},
     Estado do Paciente: ${EstadoPaciente},
     Receitas Simples Solicitadas: ${ReceitaSimples}

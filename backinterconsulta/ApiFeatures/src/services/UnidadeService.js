@@ -96,17 +96,6 @@ export const ProcessPlanilha = async (body, res, params, file, filename) =>{
       const todasIguais = VerifyAreaAtuaçao.every(area => area === AreadeAtuacao) // Compara o Array de AreasdeAtuaçao vindo da planilha com a String Area de Atuaçao vinda do front se for igual passa se nao for nao passa.
         if(todasIguais){ 
             const pacientes = jsonArray.map( async (data) => { // aqui é a conversao de uma planilha do execel para json usando xlsx  
-
-              //const Duplicate = await models.ModelCasosClinicos.find({ Duplicate: data['Duplicada'] })
-              //console.log(pacientesHistorico)
-            
-              //if (Duplicate.length > 0) {
-                //console.log(`Planilha Duplicada`);
-                // Se desejar, você pode atualizar os dados no banco de dados aqui
-              //} else {
-                //console.log('Planilha nao duplicada')
-                // Se desejar, você pode inserir os dados no banco de dados aqui
-              //}
            
               const HistoricoData = {
                 Usuario: NameUnidade, 
@@ -177,12 +166,12 @@ export const ProcessPlanilha = async (body, res, params, file, filename) =>{
                 existingPaciente
               };
             })
-            await Promise.all(pacientes);
+            await Promise.all(pacientes)
   
             const TotalNumber = parseFloat(total)
             console.log(`Orçamento Total da Unidade de Saude: ${TotalNumber}`)
             const ConsultaNumber = parseFloat(consulta)
-            console.log(`Valor pago por consulta: ${ ConsultaNumber}`)
+            console.log(`Valor pago por consulta: ${ConsultaNumber}`)
             const ResultCréditos = TotalNumber / ConsultaNumber
             const CréditNumberFormat = Math.floor(ResultCréditos) 
             console.log(`Credito Atual : ${CréditNumberFormat}`)

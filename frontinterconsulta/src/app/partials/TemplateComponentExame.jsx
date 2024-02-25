@@ -60,8 +60,8 @@ export const TemplateComponenteExame = ({
                value={data}
                onChange={(e) => handleChangeExame(e.target.value)}
                className="w-full"
+               rows={4}
                multiline
-               rows={2}
                required
                   />
                   
