@@ -83,19 +83,13 @@ export const SendDocumentsWhatsapp = async (numeroPaciente, filesPath, MensagemP
       `return await n.processAttachments("0.4.613"===Debug.VERSION?t:t.map((e=>({file:e}))),e,e),n}`
     )
 
-
     writeFileSync(path, toFix)
 
-    const Files = filesPath.map((data) => {
-      const getPaths = join(currentDir, '../../..', data)
-      console.log(getPaths)
-      return getPaths 
-    })
-/
    await client.sendText(`${numeroPaciente}@c.us`, MensagemPaciente)
   
-   const promises = Files.map(async (data, index) => {
-     const sendDocuments = await client.sendFile(`${numeroPaciente}@c.us`, data, `${data.split('\\').pop()}`, `Documento: ${index + 1}`)
+   const promises = filesPath.map(async (data) => {
+     const getPaths = join(currentDir, '../../..', data)
+     const sendDocuments = await client.sendFile(`${numeroPaciente}@c.us`, getPaths, `${data.split('\\').pop()}`, `Documento`)
      console.log(`Documento Enviado para o Paciente do Numero: ${numeroPaciente}`)
      return sendDocuments;
    })
@@ -107,6 +101,7 @@ export const SendDocumentsWhatsapp = async (numeroPaciente, filesPath, MensagemP
    console.error('Erro ao enviar documentos:', error);
   }
 }
+
 /*export const SecretariaIA = async (client) => {
   const chatHistories = {};
 
