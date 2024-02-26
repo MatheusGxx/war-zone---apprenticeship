@@ -12,7 +12,6 @@ import { useMutation } from '@tanstack/react-query'
 import Avatar from '@mui/material/Avatar'
 import { CircularProgress } from '@mui/material'
 import { useSpring, animated, config } from 'react-spring'
-import { parseISO, isAfter, format, isSameDay } from 'date-fns';
 
 export const AgendamentoComponente = ({
     setDoenca,
@@ -118,39 +117,33 @@ const IniciarGravacao = async () => {
     return (
       <>
         <div className="flex flex-col gap-3">
-        {Horarios && Horarios.length > 0 && visibleData ? (
-          <>
-            <div className="flex gap-5 justify-center flex-wrap">
+        
+          {Horarios && Horarios.length > 0 && visibleData && (
+            <>
+              <div className="flex gap-5 justify-center flex-wrap">
               <h1 className="font-bold text-blue-500 text-center text-xl">
-                Datas Disponiveis do {especialidade}, {NomeMedico} para {doenca}
+               Datas Disponiveis do {especialidade}, {NomeMedico} para {doenca}
               </h1>
-              <>
-                {Horarios
-                  .filter(datas => isAfter(parseISO(datas.data), new Date()) || isSameDay(parseISO(datas.data), new Date())) 
-                  .map((datas, index) => {
-                    return (
-                      <div
-                        key={index}
-                        className="flex gap-5 justify-center items-center"
-                      >
-                        <h1> Data: {datas.data}</h1>
-                        <Checkbox
-                          {...datas}
-                          onChange={(e) => onChangeCheckBoxDate(e,datas._id)}
-                          disabled={checkboxSelecionado !== null && checkboxSelecionado !== datas._id}
-                        />
-                      </div>
-                    );
-                  })}
-              </>
-            </div>
-          </>
-        ) : (
-          <h1 className="font-bold text-red-500 text-center text-xl">
-            {NomeMedico} Nao tem Datas Disponiveis para agendamento no Momento
-          </h1>
-        )}
-
+               <>
+                {Horarios.map((datas, index) => {
+                  return (
+                    <div
+                      key={index}
+                      className="flex gap-5 justify-center items-center"
+                    >
+                      <h1> Data: {datas.data}</h1>
+                      <Checkbox
+                        {...datas}
+                        onChange={(e) => onChangeCheckBoxDate(e,datas._id)}
+                        disabled={checkboxSelecionado !== null && checkboxSelecionado !== datas._id}
+                      />
+                    </div>
+                  );
+                })}
+               </>
+              </div>
+            </>
+          )}
   
           {selectedDate && visibleHorarios && notIntervals !== false ? (
             <div>
