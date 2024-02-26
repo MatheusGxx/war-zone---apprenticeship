@@ -204,7 +204,7 @@ export const  CreatingDocumentsDoctor = async (body, res) => {
 
     ResultCreatedAtestado.map(data => {
       FilesToDownload.push(`/documents/${data}`)
-      const FileAtestadoComplete = join(currentDir, '../../..', 'pdfs', `${data}`)
+      const FileAtestadoComplete = join(currentDir, '../..', 'pdfs', `${data}`)
       FilePathComplete.push(FileAtestadoComplete)
       
     })
@@ -246,7 +246,7 @@ export const  CreatingDocumentsDoctor = async (body, res) => {
 
   ResultCreateExame.map(data => {
     FilesToDownload.push(`/documents/${data}`)
-    const FileExameComplete = join(currentDir, '../../..', 'pdfs', `${data}`)
+    const FileExameComplete = join(currentDir, '../..', 'pdfs', `${data}`)
     FilePathComplete.push(FileExameComplete)
   })
 

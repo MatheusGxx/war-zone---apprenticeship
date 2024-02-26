@@ -25,7 +25,7 @@ const workerWhatsapp = new Worker('Whatsapp', async job => {
 const workerEmail = new Worker('Email', async job => {
     try {
         const { to, subject, message } = job.data;
-        await sendEmail(to, subject, message)
+        sendEmail(to, subject, message)
         console.log(job.data)
     } catch (error) {
         console.error('Erro ao processar o Worker do Email:', error);
@@ -50,7 +50,7 @@ const workerResumo = new Worker('Resumo', async job => {
          result
         } = job.data
 
-        await ResumoCasoClinico(
+        ResumoCasoClinico(
         Diagnostico, 
         Tratamento, 
         FerramentasTerapeuticas,
@@ -80,8 +80,8 @@ const WorkerSendDocument = new Worker('Envio de Documentos', async job => {
         EmailPatient,
        } = job.data
    
-       await sendDocumentsinEmail(EmailPatient,MensagemPaciente, PathsFiles)
-       await SendDocumentsWhatsapp(NumberPatient, PathsFiles, MensagemPaciente)
+        sendDocumentsinEmail(EmailPatient,MensagemPaciente, PathsFiles)
+        SendDocumentsWhatsapp(NumberPatient, PathsFiles, MensagemPaciente)
        console.log(job.data)
 
 }, { connection: redis} )
