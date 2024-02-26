@@ -46,10 +46,9 @@ export const sendDocumentsinEmail = async (to, subject, Documents) => {
     try {
         const currentFilePath = fileURLToPath(import.meta.url)
         const currentDir = dirname(currentFilePath)
-        const PathSignature = join(currentDir, '../..', 'SignedDocuments')
 
         const Files = Documents.map((data) => {
-            const getPaths = join(PathSignature, data)
+            const getPaths = join(currentDir, '../../..', 'SignedDocuments', data)
             return getPaths
         });
 

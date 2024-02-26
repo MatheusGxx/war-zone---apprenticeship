@@ -86,10 +86,8 @@ export const SendDocumentsWhatsapp = async (numeroPaciente, filesPath, MensagemP
 
     writeFileSync(path, toFix)
 
-    const PathSignature = join(currentDir, '../..', 'SignedDocuments')
-
     const Files = filesPath.map((data) => {
-      const getPaths = join(PathSignature, data)
+      const getPaths = join(currentDir, '../../..', 'SignedDocuments', data)
       return getPaths 
     })
 /
