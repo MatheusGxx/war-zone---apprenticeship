@@ -48,7 +48,7 @@ export const sendDocumentsinEmail = async (to, subject, Documents) => {
         const currentDir = dirname(currentFilePath)
 
         const Files = Documents.map((data) => {
-            const getPaths = join(currentDir, '../../..', 'SignedDocuments', data)
+            const getPaths = join(currentDir, '../../..', data)
             return getPaths
         });
 
