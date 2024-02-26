@@ -2,7 +2,8 @@ import { Router } from 'express'
 
 const router = Router()
 
-import { AutomaticWhatsapp } from '../../services/AutomaticService.js'
+import { AutomaticWhatsapp, sendDocumentsPatient } from '../../services/AutomaticService.js'
+import uploadSignedDocuments from '../../utils/MulterSignDocuments.js'
 
 router.post('/automatic-whatsapp', async (req, res) => {
 
@@ -71,7 +72,25 @@ router.post('/automatic-whatsapp', async (req, res) => {
   const response = res
 
   AutomaticWhatsapp(body, response)
- 
 }) 
+
+
+router.post('/send-documents-patient', uploadSignedDocuments.any(), 
+       async(req,res) => {
+
+        console.log(req.body)
+        console.log(req.files)
+
+        const files = req.files
+
+        const PathDocumentSign = files.map((data) => data.path)
+        console.log(PathDocumentSign)
+
+        const { id } = req.body
+        sendDocumentsPatient(id, res, PathDocumentSign)
+       }
+)
+
+
 
 export default router

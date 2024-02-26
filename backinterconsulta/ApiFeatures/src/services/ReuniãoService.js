@@ -71,6 +71,7 @@ export const  CreatingDocumentsDoctor = async (body, res) => {
     `${UltimaConsulta.FerramentasTerapeuticas}`,// Ferramenta Terapeutica
     `${UltimaConsulta.Progresso}`, // Progresso
     `${UltimaConsulta.RecomendacoesFuturas}`, // Recomendaçoes Futuras
+    `${UltimaConsulta.FichaPaciente}`,
     `${getDataDoctor.EnderecoMedico}`,
   )
 
@@ -449,7 +450,7 @@ export const SavedConsultaMedico = async (body, res) => {
       if (updateStateConsultaMedico) {
         res.status(200).json({ message: 'Atualização da Consulta feita com Sucesso' })
        //Production
-       axios.post('http://back-a:8081/api/automatic-whatsapp', {
+       axios.post('http://back-a:8081/api2/automatic-whatsapp', {
           route: '/resumo-casos-clinicos',
           FichaPaciente: FichaPaciente,
           Diagnostico: Diagnostico,
@@ -466,7 +467,7 @@ export const SavedConsultaMedico = async (body, res) => {
           result: result
        }).then(response => response).catch(err => err)
       //Development
-        /*axios.post('http://localhost:8081/api/automatic-whatsapp', {
+        /*axios.post('http://localhost:8081/api2/automatic-whatsapp', {
           route: '/resumo-casos-clinicos',
           FichaPaciente: FichaPaciente,
           Diagnostico: Diagnostico,
@@ -1134,7 +1135,7 @@ export const sendDocumentsPatient = async (id, res, files) => {
     const NomeMedico = UltimaConsulta.Solicitado
 
     //Production
-    axios.post('http://back-a:8081/api/automatic-whatsapp', {
+    axios.post('http://back-a:8081/api2/automatic-whatsapp', {
       route: '/send-documents-patient',
       NamePatient: NomePaciente,
       NameDoctor: NomeMedico,
@@ -1143,7 +1144,7 @@ export const sendDocumentsPatient = async (id, res, files) => {
       EmailPatient: EmailPatient,
     }).then(response => response).catch(err => err)
     //Development
-    /*axios.post('http://localhost:8081/api/automatic-whatsapp', {
+    /*axios.post('http://localhost:8081/api2/automatic-whatsapp', {
       route: '/send-documents-patient',
       NamePatient: NomePaciente,
       NameDoctor: NomeMedico,

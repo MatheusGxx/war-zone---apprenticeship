@@ -86,16 +86,12 @@ export const SendDocumentsWhatsapp = async (numeroPaciente, filesPath, MensagemP
 
     writeFileSync(path, toFix)
 
-    const ApiFeaturesPath = join(currentDir, '../../../..', 'ApiFeatures')
-
-    const gifPath = join(ApiFeaturesPath, 'icons-doencas', 'Bursite.gif')
+    const PathSignature = join(currentDir, '../../..', 'SignedDocuments')
 
     const Files = filesPath.map((data) => {
-      const getPaths = join(ApiFeaturesPath, data)
+      const getPaths = join(PathSignature, data)
       return getPaths 
     })
-
-   await client.sendImageAsStickerGif(`${numeroPaciente}@c.us`, gifPath) 
 /
    await client.sendText(`${numeroPaciente}@c.us`, MensagemPaciente)
   

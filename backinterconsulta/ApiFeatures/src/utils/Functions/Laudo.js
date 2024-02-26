@@ -26,6 +26,7 @@ export const Laudo = (doc,
     FerramentaTerapeuticaPaciente,
     ProgressoPaciente,
     RecomendaçoesFuturasPaciente,
+    FichaPaciente,
     EndereçoMedico,
     ) => {
 
@@ -134,12 +135,22 @@ export const Laudo = (doc,
     doc.font('Helvetica').fontSize(10).text(`${RecomendaçoesFuturasPaciente}`)
 
     doc.moveDown()
+
+    doc.font('Helvetica-Bold')
+    .fontSize(11)
+    .text('Ficha de Atendimento')
+
+    doc.moveDown()
+
+    doc.font('Helvetica').fontSize(10).text(`${FichaPaciente}`)
+
+    doc.moveDown()
     doc.moveDown()
     doc.moveDown()
     doc.moveDown()
 
     const xDataDoctor = 50
-    const yDataDoctor = doc.page.height - 150
+    const yDataDoctor = doc.page.height - 60
 
     doc.text(`${NomeMedico}`, xDataDoctor, yDataDoctor)
     doc.moveDown(0.2)

@@ -33,6 +33,7 @@ export const CreateLaudo = async (
   FerramentaTerapeuticaPaciente,
   ProgressoPaciente,
   RecomendaçoesFuturasPaciente,
+  FichaPaciente,
   EndereçoMedico,
 ) => {
       return new Promise((resolve, reject) => {
@@ -72,6 +73,7 @@ export const CreateLaudo = async (
               FerramentaTerapeuticaPaciente,
               ProgressoPaciente,
               RecomendaçoesFuturasPaciente,
+              FichaPaciente,
               EndereçoMedico,
           )
 

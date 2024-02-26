@@ -12,6 +12,7 @@ import CloseIcon from '@mui/icons-material/Close'
 import Logo2 from '../public/Logo2.png'
 import KeyboardTabIcon from '@mui/icons-material/KeyboardTab'
 import UploadFileIcon from '@mui/icons-material/UploadFile';
+import { Api2 } from "../config"
 import SemFoto from '../public/SemFoto.jpg'
 
 const ObrigadoMédico = () =>{
@@ -51,7 +52,7 @@ const ObrigadoMédico = () =>{
   const sendDocumentsPatient = useMutation(
     async (value) => {
       try {
-        const response = await axios.post(`${config.apiBaseUrl}/api/send-documents-patient`, value);
+        const response = await axios.post(`${Api2.apiBaseUrl}/api2/send-documents-patient`, value);
         return response.data; 
       } catch (error) {
         console.error('Error during mutation:', error);

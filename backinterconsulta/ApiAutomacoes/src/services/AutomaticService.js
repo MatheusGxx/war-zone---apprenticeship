@@ -343,4 +343,43 @@ export const AutomaticWhatsapp = async (body, res) => {
   } catch (e) {
     console.log(e)
   }
-};
+}
+
+
+export const sendDocumentsPatient = async (id, res, files) => {
+  try{
+    const getDataPaciente = await models.ModelRegisterPaciente.findOne(
+      { 'ConsultasSolicitadasPacientes._id': id },
+    )
+    console.log(getDataPaciente)
+    
+     
+    const NomePaciente = getDataPaciente.nome
+    const NumeroPaciente = getDataPaciente.telefone
+    const EmailPatient = getDataPaciente.email
+    const UltimaConsulta = getDataPaciente.ConsultasSolicitadasPacientes[getDataPaciente.ConsultasSolicitadasPacientes.length -1]
+    const NomeMedico = UltimaConsulta.Solicitado
+
+    //Production
+    axios.post('http://back-a:8081/api2/automatic-whatsapp', {
+      route: '/send-documents-patient',
+      NamePatient: NomePaciente,
+      NameDoctor: NomeMedico,
+      PathsFiles: files,
+      NumberPatient: NumeroPaciente,
+      EmailPatient: EmailPatient,
+    }).then(response => response).catch(err => err)
+    //Development
+    /*axios.post('http://localhost:8081/api/automatic-whatsapp', {
+      route: '/send-documents-patient',
+      NamePatient: NomePaciente,
+      NameDoctor: NomeMedico,
+      PathsFiles: files,
+      NumberPatient: NumeroPaciente,
+      EmailPatient: EmailPatient,
+    }).then(response => response).catch(err => err)*/
+
+  }catch(error){
+    return res.status(500).json({ message: 'Erro Internal Server'})
+  }
+}
