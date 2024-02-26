@@ -246,7 +246,7 @@ const ReuniaoMédico = () =>{
      if(DocumentosPreenchidos.length > 0) 
      {
       const DocumentoEsquecidos = DocumentosPreenchidos.join(', ')
-      setSnackbarMessage(`${NomeMedico}, Voce ja preencheu: ${DocumentoEsquecidos}, entretando nao salvou, tem certeza que deseja continuar?`)
+      setSnackbarMessage(`${NomeMedico}, Voce preencheu: ${DocumentoEsquecidos}, entretando nao salvou, tem certeza que deseja continuar?`)
       handleSnackBarOpen()
      }
                    
