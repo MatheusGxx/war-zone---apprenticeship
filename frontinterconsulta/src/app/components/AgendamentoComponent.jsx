@@ -12,7 +12,7 @@ import { useMutation } from '@tanstack/react-query'
 import Avatar from '@mui/material/Avatar'
 import { CircularProgress } from '@mui/material'
 import { useSpring, animated, config } from 'react-spring'
-import { parseISO, isAfter, format } from 'date-fns';
+import { parseISO, isAfter, format, isSameDay } from 'date-fns';
 
 export const AgendamentoComponente = ({
     setDoenca,
