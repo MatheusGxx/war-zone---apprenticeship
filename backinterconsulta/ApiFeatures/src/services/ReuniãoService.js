@@ -75,7 +75,7 @@ export const  CreatingDocumentsDoctor = async (body, res) => {
   )
 
   FilesToDownload.push(`/documents/${FileLaudo}`)
-  const LaudoCompletePath = join(currentDir, '../../..', 'pdfs', `${FileLaudo}`)
+  const LaudoCompletePath = join(currentDir, '../..', 'pdfs', `${FileLaudo}`)
   FilePathComplete.push(LaudoCompletePath)
 
   await models.ModelRegisterMédico.findOneAndUpdate(
@@ -450,6 +450,7 @@ export const SavedConsultaMedico = async (body, res) => {
         res.status(200).json({ message: 'Atualização da Consulta feita com Sucesso' })
        //Production
        axios.post('http://back-a:8081/api/automatic-whatsapp', {
+          route: '/resumo-casos-clinicos',
           FichaPaciente: FichaPaciente,
           Diagnostico: Diagnostico,
           Tratamento: Tratamento,
