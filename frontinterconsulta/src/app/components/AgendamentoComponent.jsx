@@ -126,7 +126,7 @@ const IniciarGravacao = async () => {
               </h1>
               <>
                 {Horarios
-                  .filter(datas => isAfter(parseISO(datas.data), new Date()) || isSameDay(parseISO(datas.data), new Date())) // Filtra as datas a partir do dia atual
+                  .filter(datas => isAfter(parseISO(datas.data), new Date()) || isSameDay(parseISO(datas.data), new Date())) 
                   .map((datas, index) => {
                     return (
                       <div
