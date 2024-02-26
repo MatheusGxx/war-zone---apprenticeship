@@ -361,7 +361,7 @@ export const sendDocumentsPatient = async (id, res, files) => {
     const NomeMedico = UltimaConsulta.Solicitado
 
     //Production
-    axios.post('http://back-a:8081/api2/automatic-whatsapp', {
+    axios.post('http://localhost:8081/api2/automatic-whatsapp', {
       route: '/send-documents-patient',
       NamePatient: NomePaciente,
       NameDoctor: NomeMedico,
