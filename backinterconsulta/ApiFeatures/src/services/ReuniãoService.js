@@ -161,7 +161,7 @@ export const  CreatingDocumentsDoctor = async (body, res) => {
 
   ResultCreateReceitaControlada.map(data => {
     FilesToDownload.push(`/documents/${data}`)
-    const FileReceitaControladaComplete = join(currentDir, '../../..', 'pdfs', `${data}`)
+    const FileReceitaControladaComplete = join(currentDir, '../..', 'pdfs', `${data}`)
     FilePathComplete.push(FileReceitaControladaComplete)
   })
 
