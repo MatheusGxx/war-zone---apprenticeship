@@ -224,6 +224,31 @@ const ReuniaoMédico = () =>{
   }
 
   const HandleClickButtonFinal = async () => {
+
+    let DocumentosPreenchidos = []
+
+    if (receitaSimples !== '') {
+      DocumentosPreenchidos.push('Receita Simples')
+    }
+    if (receitaControlada !== '') {
+      DocumentosPreenchidos.push('Receita Controlada')
+    }
+    if (diasAfastamento !== '') {
+      DocumentosPreenchidos.push('Dias de Afastamento');
+    }
+    if(cid !== ''){
+      DocumentosPreenchidos.push('CID')
+    }
+    if(SolicitarExames !== ''){
+      DocumentosPreenchidos.push('Solicitação de Exames')
+    }
+
+     if(DocumentosPreenchidos.length > 0) 
+     {
+      const DocumentoEsquecidos = DocumentosPreenchidos.join(', ')
+      setSnackbarMessage(`${NomeMedico}, Voce ja preencheu: ${DocumentoEsquecidos}, entretando nao salvou, tem certeza que deseja continuar?`)
+      handleSnackBarOpen()
+     }
                    
      const dataValidator = await ValidatorDocumentsDoctor.mutateAsync({ id: IdentificadorConsulta })
      const FaltandoDocumento = dataValidator.missingDocuments
