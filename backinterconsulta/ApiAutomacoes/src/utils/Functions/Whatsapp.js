@@ -89,7 +89,7 @@ export const SendDocumentsWhatsapp = async (numeroPaciente, filesPath, MensagemP
   
    const promises = filesPath.map(async (data) => {
      const getPaths = join(currentDir, '../../..', data)
-     const sendDocuments = await client.sendFile(`${numeroPaciente}@c.us`, getPaths, `${data.split('\\').pop()}`, `Documento`)
+     const sendDocuments = await client.sendFile(`${numeroPaciente}@c.us`, getPaths, `${data.split('/').pop()}`, `Documento`)
      console.log(`Documento Enviado para o Paciente do Numero: ${numeroPaciente}`)
      return sendDocuments;
    })
