@@ -12,6 +12,7 @@ import { useMutation } from '@tanstack/react-query'
 import Avatar from '@mui/material/Avatar'
 import { CircularProgress } from '@mui/material'
 import { useSpring, animated, config } from 'react-spring'
+import { parseISO, isAfter, format } from 'date-fns';
 
 export const AgendamentoComponente = ({
     setDoenca,
@@ -125,7 +126,9 @@ const IniciarGravacao = async () => {
                Datas Disponiveis do {especialidade}, {NomeMedico} para {doenca}
               </h1>
                <>
-                {Horarios.map((datas, index) => {
+               {Horarios
+                .filter(datas => isAfter(parseISO(datas.data), new Date())) // Filtra as datas após a data atual
+                .map((datas, index) => {
                   return (
                     <div
                       key={index}
