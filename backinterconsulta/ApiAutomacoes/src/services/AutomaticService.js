@@ -55,11 +55,6 @@ export const AutomaticWhatsapp = async (body, res) => {
      Atestado,
      Exame,
      result,
-     NamePatient,
-     NameDoctor,
-     PathsFiles,
-     NumberPatient,
-     EmailPatient,
      route,
      
   } = body
@@ -325,16 +320,6 @@ export const AutomaticWhatsapp = async (body, res) => {
          })
         break
 
-      case '/send-documents-patient':
-        await SendDocumentsQueue.add('Envio de Documentos', {
-          PathsFiles: PathsFiles,
-          NumberPatient: NumberPatient,
-          MensagemPaciente: `Ola ${NamePatient} Segue, seus documentos referente a consulta com ${NameDoctor}`,
-          EmailPatient: EmailPatient,
-        })
-           
-       break
-
       default:
          res.status(404).json({ message: 'Rota Invalida'})
         break;
@@ -351,8 +336,6 @@ export const sendDocumentsPatient = async (id, res, files) => {
     const getDataPaciente = await models.ModelRegisterPaciente.findOne(
       { 'ConsultasSolicitadasPacientes._id': id },
     )
-    console.log(getDataPaciente)
-    
      
     const NomePaciente = getDataPaciente.nome
     const NumeroPaciente = getDataPaciente.telefone
@@ -360,24 +343,12 @@ export const sendDocumentsPatient = async (id, res, files) => {
     const UltimaConsulta = getDataPaciente.ConsultasSolicitadasPacientes[getDataPaciente.ConsultasSolicitadasPacientes.length -1]
     const NomeMedico = UltimaConsulta.Solicitado
 
-    //Production
-    axios.post('http://localhost:8081/api2/automatic-whatsapp', {
-      route: '/send-documents-patient',
-      NamePatient: NomePaciente,
-      NameDoctor: NomeMedico,
-      PathsFiles: files,
-      NumberPatient: NumeroPaciente,
-      EmailPatient: EmailPatient,
-    }).then(response => response).catch(err => err)
-    //Development
-    /*axios.post('http://localhost:8081/api/automatic-whatsapp', {
-      route: '/send-documents-patient',
-      NamePatient: NomePaciente,
-      NameDoctor: NomeMedico,
-      PathsFiles: files,
-      NumberPatient: NumeroPaciente,
-      EmailPatient: EmailPatient,
-    }).then(response => response).catch(err => err)*/
+     await SendDocumentsQueue.add('Envio de Documentos', {
+          PathsFiles: files,
+          NumberPatient: NumeroPaciente,
+          MensagemPaciente: `Ola ${NomePaciente} Segue, seus documentos referente a consulta com ${NomeMedico}`,
+          EmailPatient: EmailPatient,
+     })
 
   }catch(error){
     return res.status(500).json({ message: 'Erro Internal Server'})
