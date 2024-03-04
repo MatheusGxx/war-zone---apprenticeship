@@ -57,11 +57,6 @@ const ObrigadoMédico = () =>{
         console.error('Error during mutation:', error);
         throw error;
       }
-    },{
-      onSuccess: () => {
-         Router.push('/agenda')
-         secureLocalStorage.removeItem('EndMedico')
-      }
     }
   )
 
@@ -90,8 +85,15 @@ const ObrigadoMédico = () =>{
     selectedFiles.forEach((file, index) => {
       formData.append(`file`, file);
     });
+    
+    try{
+      await sendDocumentsPatient.mutateAsync(formData)
+      Router.push('/agenda')
+      secureLocalStorage.removeItem('EndMedico')      
+    }catch(err){
+      console.log(err)
+    }
 
-    await sendDocumentsPatient.mutateAsync(formData)
   }
 
   return(

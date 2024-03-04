@@ -13,12 +13,15 @@ import {
 
 import uploadSignedDocuments from '../../utils/MulterSignDocuments.js'
 import uploadPlanilha from '../../utils/MulterPlanilha.js'
+import config from '../../utils/RedisConnection.js'
+const { redisRead, redisWrite } = config
 
 import { 
    ProcessPlanilhaQueue,
    ProcessConsolidadoQueue, 
    BulkMessageQueueConfirmation,
 } from '../../utils/Queues.js'
+
 router.post('/automatic-whatsapp', async (req, res) => {
 
   console.log(req.body)
@@ -122,7 +125,7 @@ router.post('/process-planilha/:id', uploadPlanilha.single('file'), async (req, 
     Filename
   })
 
-  const queueEvents = new QueueEvents('ProcessPlanilha');
+  const queueEvents = new QueueEvents('ProcessPlanilha', { connection: redisRead })
   const queue = ProcessPlanilhaQueue;
 
   
@@ -161,7 +164,7 @@ router.post('/get-consolidado',
           body
         })
         
-        const queueEvents = new QueueEvents('ProcessConsolidado');
+        const queueEvents = new QueueEvents('ProcessConsolidado', { connection: redisRead })
         const queue = ProcessConsolidadoQueue
 
         const handleCompleted = async ({ jobId }) => {

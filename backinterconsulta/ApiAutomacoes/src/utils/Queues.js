@@ -19,7 +19,7 @@ import { ResumoCasoClinico } from './Functions/ResumoCasoClinico.js'
 import { ProcessPlanilha } from './ProcessPlanilha.js'
 import { ProcessCosolidado } from './ProcessConsolidado.js'
 
-const { redisRead, redisWrite } = config;
+const { redisRead, redisWrite } = config
 
 export const ResumoQueue  = new Queue('Resumo', { connection: redisRead });
 export const WhatsappQueue = new Queue('Whatsapp', { connection: redisRead });
@@ -141,7 +141,7 @@ const WorkerBulkMessageWarn = new Worker('BulkMessageWarn', async job => {
     await Promise.all([
         BulkMessageWhatsappPatientPublic(DataPatients, NomeUnidade),
         BulkMessageEmailPatientPublic(DataPatients, NomeUnidade)
-    ]);
+    ]); 
 
     console.log(job.data);
 }, { connection: redisWrite })

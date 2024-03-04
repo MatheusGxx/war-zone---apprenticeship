@@ -320,6 +320,8 @@ export const sendDocumentsPatient = async (id, res, files) => {
           EmailPatient: EmailPatient,
      })
 
+     res.status(200).json({ message: 'Documentos gerados com sucesso.' })
+
   }catch(error){
     return res.status(500).json({ message: 'Erro Internal Server'})
   }
