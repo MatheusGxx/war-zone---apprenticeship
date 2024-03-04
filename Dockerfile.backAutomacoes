@@ -24,13 +24,13 @@ WORKDIR /app
 # Copia os arquivos do aplicativo
 COPY backinterconsulta/ApiAutomacoes .
 
+# Instala as dependências
+RUN npm install 
+
 # Adiciona a manipulação de arquivos
 COPY edit.file.sh /app/edit_file.sh
 RUN chmod +x /app/edit_file.sh
 RUN /app/edit_file.sh
-
-# Instala as dependências
-RUN npm install 
 
 # Expose port
 EXPOSE 8081
