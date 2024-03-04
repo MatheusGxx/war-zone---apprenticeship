@@ -14,6 +14,7 @@ import KeyboardTabIcon from '@mui/icons-material/KeyboardTab'
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import { Api2 } from "../config"
 import SemFoto from '../public/SemFoto.jpg'
+import { useRouter } from "next/navigation";
 
 const ObrigadoMédico = () =>{
   
@@ -27,9 +28,7 @@ const ObrigadoMédico = () =>{
   const id = secureLocalStorage.getItem('EndMedico')
   const NomeMedico = NomeMedicoLocal || ''
 
-  const HandleClickDoctor = async () => {
-    secureLocalStorage.removeItem('EndMedico')
-  }
+  const Router = useRouter()
 
   const handleFileChange = () => {
     const files = Array.from(fileInputRef.current.files);
@@ -57,6 +56,11 @@ const ObrigadoMédico = () =>{
       } catch (error) {
         console.error('Error during mutation:', error);
         throw error;
+      }
+    },{
+      onSuccess: () => {
+         Router.push('/agenda')
+         secureLocalStorage.removeItem('EndMedico')
       }
     }
   )

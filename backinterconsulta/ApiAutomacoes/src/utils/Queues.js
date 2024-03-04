@@ -19,16 +19,16 @@ import { ResumoCasoClinico } from './Functions/ResumoCasoClinico.js'
 import { ProcessPlanilha } from './ProcessPlanilha.js'
 import { ProcessCosolidado } from './ProcessConsolidado.js'
 
-const { redis } = config
+const { redisRead, redisWrite } = config;
 
-export const ResumoQueue  = new Queue('Resumo', { connection: redis })
-export const WhatsappQueue = new Queue('Whatsapp', {connection: redis })
-export const EmailQueue = new Queue('Email', { connection: redis })
-export const SendDocumentsQueue = new Queue('Envio de Documentos', { connection: redis })
-export const ProcessPlanilhaQueue = new Queue('ProcessPlanilha', { connection: redis})
-export const ProcessConsolidadoQueue = new Queue('ProcessConsolidado', { connection: redis })
-export const BulkMessageQueueWarn = new Queue('BulkMessageWarn', { connection: redis })
-export const BulkMessageQueueConfirmation = new Queue('BulkMessageNotification', { connection: redis })
+export const ResumoQueue  = new Queue('Resumo', { connection: redisRead });
+export const WhatsappQueue = new Queue('Whatsapp', { connection: redisRead });
+export const EmailQueue = new Queue('Email', { connection: redisRead });
+export const SendDocumentsQueue = new Queue('Envio de Documentos', { connection: redisRead });
+export const ProcessPlanilhaQueue = new Queue('ProcessPlanilha', { connection: redisRead });
+export const ProcessConsolidadoQueue = new Queue('ProcessConsolidado', { connection: redisRead });
+export const BulkMessageQueueWarn = new Queue('BulkMessageWarn', { connection: redisRead });
+export const BulkMessageQueueConfirmation = new Queue('BulkMessageNotification', { connection: redisRead });
 
 const workerWhatsapp = new Worker('Whatsapp', async job => {
    try{
@@ -38,7 +38,7 @@ const workerWhatsapp = new Worker('Whatsapp', async job => {
    }catch(error){
      console.error('Erro ao processar o Worker de Whatsapp', error)
    }
-}, { connection: redis })
+}, { connection: redisWrite })
 
 const workerEmail = new Worker('Email', async job => {
     try {
@@ -48,7 +48,7 @@ const workerEmail = new Worker('Email', async job => {
     } catch (error) {
         console.error('Erro ao processar o Worker do Email:', error);
     }
-}, { connection: redis })
+}, { connection: redisWrite })
 
 const workerResumo = new Worker('Resumo', async job => {
 
@@ -88,7 +88,7 @@ const workerResumo = new Worker('Resumo', async job => {
     }catch(error){
         console.error('Erro ao processar o Worker do Resumo')
     }
-}, { connection: redis } )
+}, { connection: redisWrite } )
 
 const WorkerSendDocument = new Worker('Envio de Documentos', async job => {
     const {
@@ -102,7 +102,7 @@ const WorkerSendDocument = new Worker('Envio de Documentos', async job => {
         SendDocumentsWhatsapp(NumberPatient, PathsFiles, MensagemPaciente)
        console.log(job.data)
 
-}, { connection: redis } )
+}, { connection: redisWrite } )
 
 const WorkerProcessPlanilha = new Worker('ProcessPlanilha', async job => {
     const  {
@@ -117,7 +117,7 @@ const WorkerProcessPlanilha = new Worker('ProcessPlanilha', async job => {
 
       return ProcessamentoP
 
-}, { connection: redis } )
+}, { connection: redisWrite } )
 
 const WorkerProcessConsolidado = new Worker('ProcessConsolidado', async job => {
     const  {
@@ -130,7 +130,7 @@ const WorkerProcessConsolidado = new Worker('ProcessConsolidado', async job => {
 
        return consolidado
 
-}, { connection: redis } )
+}, { connection: redisWrite } )
 
 const WorkerBulkMessageWarn = new Worker('BulkMessageWarn', async job => {
     const  {
@@ -144,7 +144,7 @@ const WorkerBulkMessageWarn = new Worker('BulkMessageWarn', async job => {
     ]);
 
     console.log(job.data);
-}, { connection: redis })
+}, { connection: redisWrite })
 
 const WorkerBulkMessageConfirmation = new Worker('BulkMessageNotification', async job => {
     const  {
@@ -163,7 +163,7 @@ const WorkerBulkMessageConfirmation = new Worker('BulkMessageNotification', asyn
 
     console.log(job.data)
 
-}, { connection: redis })
+}, { connection: redisWrite })
 
 export default {
      workerWhatsapp, 
