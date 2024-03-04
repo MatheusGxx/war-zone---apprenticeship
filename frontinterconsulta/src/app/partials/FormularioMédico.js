@@ -57,6 +57,7 @@ const FormularioMédico = () => {
   const [cepMedico, setCEPMedico] = useState('')
   const [emailContador, setEmailContador] = useState('')
   const [numeroContador, setNumeroContador] = useState('')
+  const [typeDoctor, setTypeDoctor] = useState('')
   const [currentStep, setCurrentStep] = useState(1)
   const [croppedImage, setCroppedImage] = useState(null)
   const [croppedFile, setCroppedFile] = useState(null)
@@ -74,13 +75,14 @@ const FormularioMédico = () => {
     return response.data
   },{
     onSuccess:(data) =>{
-      const { token, NomeMedico, AreaAtuacao, CRMM, FotoMedico } = data
+      const { token, NomeMedico, AreaAtuacao, CRMM, FotoMedico, TypeDoctorr } = data
       secureLocalStorage.setItem('token', token)
       secureLocalStorage.setItem('id', parametrer)
       secureLocalStorage.setItem('NomeMedico', NomeMedico)
       secureLocalStorage.setItem('AreadeAtuacao', AreaAtuacao)
       secureLocalStorage.setItem('CRMMedico', CRMM)
       secureLocalStorage.setItem('FotoMedico', FotoMedico)
+      secureLocalStorage.setItem('TypeDoctor', TypeDoctorr)
     }
   })
 
@@ -133,6 +135,7 @@ const FormularioMédico = () => {
     formData.append('CEPMedico', cepMedico)
     formData.append('EmailContador', emailContador),
     formData.append('TelefoneContador', numeroContador)
+    formData.append('TypeDoctor', typeDoctor)
     formData.append("route", Router)
     formData.append("file", croppedFile)
 
@@ -197,6 +200,8 @@ const FormularioMédico = () => {
                   nome={nome}
                   setDataNascimento={setDataNascimento}
                   dataNascimento={dataNascimento}
+                  setTypeMedico={setTypeDoctor}
+                  typeMedico={typeDoctor}
                   setCurrentStep={setCurrentStep}
                   />
                 }
@@ -247,47 +252,47 @@ const FormularioMédico = () => {
                 {currentStep === 5  &&
                 //Preferencias de Pagamento
                     <RegisterFiveDoctor 
-                    setPrecoConsulta={setPrecoConsulta}
-                    precoConsulta={precoConsulta}
-                    setNomeTitular={setNomeTitular}
-                    nometitular={nometitular}
-                    setNumeroConta={setNumeroConta}
-                    numeroconta={numeroconta}
-                    setNumeroAgencia={setNumeroAgencia}
-                    numeroAgencia={numeroAgencia}
-                    setBanco={setBanco}
-                    banco={banco}
-                    setPix={setPix}
-                    pix={pix}
-                    setCurrentStep={setCurrentStep}
+                      setPrecoConsulta={setPrecoConsulta}
+                      precoConsulta={precoConsulta}
+                      setNomeTitular={setNomeTitular}
+                      nometitular={nometitular}
+                      setNumeroConta={setNumeroConta}
+                      numeroconta={numeroconta}
+                      setNumeroAgencia={setNumeroAgencia}
+                      numeroAgencia={numeroAgencia}
+                      setBanco={setBanco}
+                      banco={banco}
+                      setPix={setPix}
+                      pix={pix}
+                      setCurrentStep={setCurrentStep}
                     />
                 }
                 {currentStep === 6 && 
                  //Ficha de Cadastro
                     <RegisterSixDoctor
-                    setCPNJMedico={setCPNJMedico}
-                    cnpjMedico={cnpjMedico}
-                    setCPFMedico={setCPFMedico}
-                    cpfMedico={cpfMedico}
-                    setRazaoSocialEmpresa={setRazaoSocialEmpresa}
-                    razaoSocialEmpresa={razaoSocialEmpresa}
-                    setNomeFantasia={setNomeFantasia}
-                    nomeFantasia={nomeFantasia}
-                    setEnderecoMedico={setEnderecoMedico}
-                    enderecoMedico={enderecoMedico}
-                    setBairro={setBairro}
-                    bairro={bairro}
-                    setCidade={setCidade}
-                    cidade={cidade}
-                    setEstado={setEstado}
-                    estado={estado}
-                    setCEPMedico={setCEPMedico}
-                    cepMedico={cepMedico}
-                    setEmailContador={setEmailContador}
-                    setNumeroContador={setNumeroContador}
-                    emailContador={emailContador}
-                    numeroContador={numeroContador}
-                    setCurrentStep={setCurrentStep}
+                      setCPNJMedico={setCPNJMedico}
+                      cnpjMedico={cnpjMedico}
+                      setCPFMedico={setCPFMedico}
+                      cpfMedico={cpfMedico}
+                      setRazaoSocialEmpresa={setRazaoSocialEmpresa}
+                      razaoSocialEmpresa={razaoSocialEmpresa}
+                      setNomeFantasia={setNomeFantasia}
+                      nomeFantasia={nomeFantasia}
+                      setEnderecoMedico={setEnderecoMedico}
+                      enderecoMedico={enderecoMedico}
+                      setBairro={setBairro}
+                      bairro={bairro}
+                      setCidade={setCidade}
+                      cidade={cidade}
+                      setEstado={setEstado}
+                      estado={estado}
+                      setCEPMedico={setCEPMedico}
+                      cepMedico={cepMedico}
+                      setEmailContador={setEmailContador}
+                      setNumeroContador={setNumeroContador}
+                      emailContador={emailContador}
+                      numeroContador={numeroContador}
+                      setCurrentStep={setCurrentStep}
                     />
                 }
 

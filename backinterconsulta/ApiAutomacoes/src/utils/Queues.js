@@ -1,9 +1,23 @@
 // app.js
 import { Worker, Queue } from 'bullmq';
 import config from './RedisConnection.js'
-import { sendEmail, sendDocumentsinEmail } from './Functions/AutomaticEmail.js'
-import { EnviarMensagem, SendDocumentsWhatsapp } from './Functions/Whatsapp.js'
-import { ResumoCasoClinico } from './Functions/ResumoCasoClinico.js';
+import { 
+     sendEmail, 
+     sendDocumentsinEmail,
+     BulkMessageEmailPatientPublic,
+     BulkMessageEmailPatientPublicConfirmation,
+     BulkMessageEmailDoctorPublicConfirmation,
+ } from './Functions/AutomaticEmail.js'
+import { 
+     EnviarMensagem,
+     SendDocumentsWhatsapp, 
+     BulkMessageWhatsappPatientPublic,
+     BulkMessageWhatsappPatientConfirmation,
+     BulkMessageWhatsappDoctorConfirmation
+ } from './Functions/Whatsapp.js'
+import { ResumoCasoClinico } from './Functions/ResumoCasoClinico.js'
+import { ProcessPlanilha } from './ProcessPlanilha.js'
+import { ProcessCosolidado } from './ProcessConsolidado.js'
 
 const { redis } = config
 
@@ -11,6 +25,10 @@ export const ResumoQueue  = new Queue('Resumo', { connection: redis })
 export const WhatsappQueue = new Queue('Whatsapp', {connection: redis })
 export const EmailQueue = new Queue('Email', { connection: redis })
 export const SendDocumentsQueue = new Queue('Envio de Documentos', { connection: redis })
+export const ProcessPlanilhaQueue = new Queue('ProcessPlanilha', { connection: redis})
+export const ProcessConsolidadoQueue = new Queue('ProcessConsolidado', { connection: redis })
+export const BulkMessageQueueWarn = new Queue('BulkMessageWarn', { connection: redis })
+export const BulkMessageQueueConfirmation = new Queue('BulkMessageNotification', { connection: redis })
 
 const workerWhatsapp = new Worker('Whatsapp', async job => {
    try{
@@ -70,10 +88,10 @@ const workerResumo = new Worker('Resumo', async job => {
     }catch(error){
         console.error('Erro ao processar o Worker do Resumo')
     }
-}, {connection: redis } )
+}, { connection: redis } )
 
 const WorkerSendDocument = new Worker('Envio de Documentos', async job => {
-    const  {
+    const {
         PathsFiles,
         NumberPatient,
         MensagemPaciente,
@@ -84,6 +102,76 @@ const WorkerSendDocument = new Worker('Envio de Documentos', async job => {
         SendDocumentsWhatsapp(NumberPatient, PathsFiles, MensagemPaciente)
        console.log(job.data)
 
-}, { connection: redis} )
+}, { connection: redis } )
 
-export default { workerWhatsapp, workerEmail, workerResumo, WorkerSendDocument }
+const WorkerProcessPlanilha = new Worker('ProcessPlanilha', async job => {
+    const  {
+        body,
+        params, 
+        PathPlanilha, 
+        Filename
+       } = job.data
+
+      const ProcessamentoP = await ProcessPlanilha(body,params,PathPlanilha,Filename)
+      console.log(job.data)
+
+      return ProcessamentoP
+
+}, { connection: redis } )
+
+const WorkerProcessConsolidado = new Worker('ProcessConsolidado', async job => {
+    const  {
+        body
+       } = job.data
+
+       const consolidado = await ProcessCosolidado(body)
+
+       console.log(job.data)
+
+       return consolidado
+
+}, { connection: redis } )
+
+const WorkerBulkMessageWarn = new Worker('BulkMessageWarn', async job => {
+    const  {
+        DataPatients,
+        NomeUnidade
+       } = job.data
+
+    await Promise.all([
+        BulkMessageWhatsappPatientPublic(DataPatients, NomeUnidade),
+        BulkMessageEmailPatientPublic(DataPatients, NomeUnidade)
+    ]);
+
+    console.log(job.data);
+}, { connection: redis })
+
+const WorkerBulkMessageConfirmation = new Worker('BulkMessageNotification', async job => {
+    const  {
+        consultas,
+        NomeUnidade,
+        EndereçoUnidade
+       } = job.data
+         
+       await Promise.all([
+        BulkMessageEmailPatientPublicConfirmation(consultas, NomeUnidade, EndereçoUnidade),
+        BulkMessageWhatsappPatientConfirmation(consultas, NomeUnidade, EndereçoUnidade),
+         //BulkMessageEmailDoctorPublicConfirmation(body),
+        //BulkMessageWhatsappDoctorConfirmation(body)
+       ])
+    
+
+    console.log(job.data)
+
+}, { connection: redis })
+
+export default {
+     workerWhatsapp, 
+     workerEmail, 
+     workerResumo, 
+     WorkerSendDocument, 
+     WorkerProcessPlanilha, 
+     WorkerProcessConsolidado, 
+     WorkerBulkMessageWarn,
+     WorkerBulkMessageConfirmation,
+}

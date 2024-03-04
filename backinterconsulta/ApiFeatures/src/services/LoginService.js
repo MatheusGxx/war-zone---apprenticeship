@@ -50,8 +50,9 @@ export const Login = async (body, res) =>{
       const CRMM = QueryMedico.CRM
       const getFotoMedico = QueryMedico.Foto
       const FotoMedico = getFotoMedico ? getFotoMedico : null
+      const TypeDoctor = QueryMedico.TypeDoctor
 
-      return res.status(200).json({ token, NomeMedico, AreaAtuacao, CRMM, ModelidUserLogged, FotoMedico })
+      return res.status(200).json({ token, NomeMedico, AreaAtuacao, CRMM, ModelidUserLogged, FotoMedico, TypeDoctor })
 
     case '/welcome/login-paciente':
       const QueryPaciente = await models.ModelRegisterPaciente.findOne({ email: user.email})
@@ -244,6 +245,7 @@ export const RegisterEnd = async (body, params, file, res) => {
     CEPMedico,
     EmailContador,
     TelefoneContador,
+    TypeDoctor,
     Genero, 
     Data, 
     Doenca, 
@@ -266,13 +268,14 @@ export const RegisterEnd = async (body, params, file, res) => {
     nomeInstituicao, 
     CPNJ, 
     EspecialidadeDesejada, 
-    route } = body
+    route
+   } = body
 
    const { id } = params
    
   /*try{
   const dataMedico = { NomeConhecido, TituloEspecialista, FormacaoEspecialista, AnoGraduacao, PosGraduacao, EspecialidadeMedica, AreadeAtuacao, CRM, UFCRM, InstituicaoResidencia, DataNascimento, RQE, Certificacao, PrecoConsulta, ResumoProfissional,  FerramentasTerapeuticas, Slug, NomeTitular, NumeroConta, NumeroAgencia, Banco, ChavePix,  CPNJMedico, CPFMedico, RazaoSocialEmpresa,NomeFantasia,  EnderecoMedico, Bairro,Cidade, Estado, CEPMedico, EmailContador,
-  TelefoneContador,}
+  TelefoneContador, TypeDoctor }
 
   const dataPaciente = { Genero, Data, Doenca, TipoSanguineo, EstadoCivil, Profissao, CPF, CEP,  EnderecoPaciente, CidadePaciente, EstadoPaciente, Pais, CartaoSUS, NomeAcompanhante, TelefoneAcompanhante, EmailAcompanhante, }
 
@@ -364,6 +367,7 @@ export const RegisterEnd = async (body, params, file, res) => {
           Médico.CEPMedico = CEPMedico,
           Médico.EmailContador = EmailContador,
           Médico.TelefoneContador = TelefoneContador,
+          Médico.TypeDoctor = TypeDoctor,
           Médico.Foto = file
         
           await Médico.save();
@@ -376,13 +380,15 @@ export const RegisterEnd = async (body, params, file, res) => {
           const CRMM = Médico.CRM
           const getFotoMedico = Médico.Foto
           const FotoMedico = getFotoMedico ? getFotoMedico : null
+          const TypeDoctorr = Médico.TypeDoctor
         
           res.status(200).
           json({ token, 
                  NomeMedico, 
                  AreaAtuacao,
                  CRMM,
-                 FotoMedico
+                 FotoMedico,
+                 TypeDoctorr
                })
           
           const IdentificadorObrigadoMedico =  Médico._id

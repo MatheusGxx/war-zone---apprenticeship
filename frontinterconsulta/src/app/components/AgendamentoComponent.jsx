@@ -122,7 +122,10 @@ const IniciarGravacao = async () => {
             <>
               <div className="flex gap-5 justify-center flex-wrap">
               <h1 className="font-bold text-blue-500 text-center text-xl">
-               Datas Disponiveis do {especialidade}, {NomeMedico} para {doenca}
+                {doenca ?  
+                `Datas Disponiveis do ${especialidade}, ${NomeMedico} para ${doenca}`: 
+                `Datas Disponiveis do ${especialidade}, ${NomeMedico}`
+                }
               </h1>
                <>
                 {Horarios.map((datas, index) => {
@@ -195,9 +198,9 @@ const IniciarGravacao = async () => {
         <>
         <animated.div style={props}>
           {Sintoma ? 
-             <h1 className='font-bold text-blue-500 text-center text-xl'> Confirme os seus sintomas sobre {doenca} </h1>
+             <h1 className='font-bold text-blue-500 text-center text-xl'> Confirme os seus sintomas {doenca ? `sobre ${doenca}` : `para o ${NomeMedico}`} </h1>
           : 
-          <h1 className='font-bold text-blue-500 text-center text-xl'> Descreva o seu Sintoma sobre {doenca} </h1>
+          <h1 className='font-bold text-blue-500 text-center text-xl'> Descreva o seu Sintoma  {doenca ? `sobre ${doenca}` : `para o ${NomeMedico}`} </h1>
           }
 
         <div className='w-full flex justify-center items-center'>
@@ -218,7 +221,7 @@ const IniciarGravacao = async () => {
              <Avatar alt="Foto Médico" src={`${config2.apiBaseUrl}/${FotoPaciente}`} />
              <div className='flex justify-center items-center'>
                <p className='sm:whitespace-pre-wrap'>
-               {`Conte quais são os Sintomas que ${doenca} esta te causando`} <br/>
+                {doenca ? `Conte quais são os Sintomas que ${doenca} esta te causando` : `Conte o que voce esta sentido`} <br/>
                </p>
              </div>
            </div>

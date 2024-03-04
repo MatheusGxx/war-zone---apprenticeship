@@ -54,9 +54,6 @@ router.post('/agendamento-unidade-de-saude',
       Solicitante: req.body.Solicitante,
       Casos: req.body.Casos,
       Status: req.body.Status,
-      //Automaçao
-      IdentificadorUnidadeSaudeRoute: req.body.IdentificadorUnidadeSaudeRoute,
-      route: req.body.route
     }
 
     console.log(req.body)

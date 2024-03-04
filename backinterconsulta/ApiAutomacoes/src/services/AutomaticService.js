@@ -1,6 +1,6 @@
 import { getClient, CreateInstance } from "../utils/Functions/Whatsapp.js";
 import { models } from '../../MongoDB/Schemas/Schemas.js'
-import { EmailQueue,  WhatsappQueue, ResumoQueue, SendDocumentsQueue } from "../utils/Queues.js"
+import { EmailQueue, WhatsappQueue, ResumoQueue, SendDocumentsQueue, BulkMessageQueueConfirmation } from "../utils/Queues.js"
 
 export const AutomaticWhatsapp = async (body, res) => {
   const { 
@@ -208,37 +208,7 @@ export const AutomaticWhatsapp = async (body, res) => {
         })
         
        break
-       /////////////////// Unidade de Saude /////////////// 
-       /*case '/unidade-especialista':
-      
-       const dataPlataformUnidade = await models.ModelRegisterMédico.find({ _id: { $in:  IdentificadorUnidadeSaudeRoute} });
-
-        const getTelefoneDoctor = dataPlataformUnidade.map((data) => {
-          return data.telefone
-        })
-        console.log(`Telefone dos médicos: ${getTelefoneDoctor}`)
-
-        BulkMassage(getTelefoneDoctor, `Ola Doutor Temos novos casos clinicos quentinhos saindo do forno para voce, para ter acesso a eles acesse agora ${`https://interconsulta.org/casos-clinicos`}`, res)
-        break*/
-
-
-
-        //Sangue Compativel Paciente
-        //case '/especialistas-disponiveis':
-
-        //const getPacientesPublicos = await models.ModelCasosClinicos.find({ 
-          //'Historico.Telefone': {$in: IdentificadorPacientePublico}
-        //})
-
-        //const getNamesPacientesPublicos = getPacientesPublicos.NomePaciente
-
-        //const getPacienteParticular = await models.ModelRegisterPaciente.findById( IdentificadorPacienteParticular)
-
-        //const getNamesPaciente = getPacienteParticular.nome
-        
-        //BulkMassage(IdentificadorPacientePublico, `Ola\n${getNamesPaciente} esta precisando da sua doaçao.\nCaso esteja disponivel #SalveMaisUm!\nAgende sua doaçao em Link Homocentro:`, res)
-        //break
-
+       
         case '/especialistas-disponiveis-agendamento':
 
         await WhatsappQueue.add('Whatsapp Fila', {
@@ -352,5 +322,311 @@ export const sendDocumentsPatient = async (id, res, files) => {
 
   }catch(error){
     return res.status(500).json({ message: 'Erro Internal Server'})
+  }
+}
+
+
+
+
+export const SavedConsultaUnidadeSaude = async (body, res) => {
+  const { IDSMedicos, IDUnidade ,Solicitante, Casos, Status, CPFPacientes, DataInicioConsolidado , DataFimConsolidado, PacientesQueSuportamos, NomeUnidade } = body
+   
+   try {
+
+     const getUnidade = await models.ModelRegisterUnidadeSaude.findById(IDUnidade)
+
+     const getMedicos = await models.ModelRegisterMédico.find({
+       _id: { $in:  IDSMedicos },
+     })
+
+      const getPacientes = await models.ModelCasosClinicos.find({ CPF: { $in: CPFPacientes }})
+        
+      const DataPatient = getPacientes.map((data) => ({
+       Email: data.Email,
+       NomePaciente: data.NomePaciente,
+       CPFPaciente: data.CPF,
+      }))
+
+  
+      const NumberPatients = getPacientes.length
+
+     for (const medico of getMedicos) {
+       const ConsultaUnidadedeSaude = {
+         Data: '',
+         Inicio: '',
+         Fim: '',
+         Solicitante: '',  
+         EmailSolicitante: '',
+         NumeroSolicitante:  '',
+         Solicitado: '',
+         EspecialidadeSolicitado: '',
+         NomeUnidadeSolicitante: getUnidade.nomeInstituicao,
+         FotoUnidadeSolicitante: getUnidade.Foto,
+         Casos: [],
+         Status: Status,
+       }
+
+       const QuantidadeCasosClinicos = Casos[0].QuantidadeCasosClinicos
+   
+       //const totalIntervalos = medico.Horarios.reduce((total, horario) => total + horario.IntervaloAtendimentos.length, 0)
+       //const FaltamIntervalos = QuantidadeCasosClinicos - totalIntervalos;
+   
+       //if (FaltamIntervalos > 0) {
+         //const novoHorario = await criarNoCvoHorario(medico, FaltamIntervalos);
+         //medico.Horarios.push(novoHorario)
+         //await medico.save()
+
+         // Looping para multiplos Horarios Automaticos 
+
+           
+       let casosDistribuidos = 0
+   
+       for (const horario of medico.Horarios) {
+         const intervalosAtendimentos = horario.IntervaloAtendimentos.map((data) => data.Intervalo)
+         for (const intervalo of intervalosAtendimentos) {
+           if (casosDistribuidos < QuantidadeCasosClinicos) {
+             let novaConsulta = { ...ConsultaUnidadedeSaude }
+             const intervaloParts = intervalo.split(" - ")
+
+             novaConsulta.Inicio = intervaloParts[0]
+             novaConsulta.Fim = intervaloParts[1]
+             novaConsulta.Data = horario.data
+   
+             novaConsulta.Casos = Casos[casosDistribuidos]
+             novaConsulta.Solicitante = Casos[casosDistribuidos].NomePaciente
+             novaConsulta.EmailSolicitante = Casos[casosDistribuidos].Email
+             novaConsulta.NumeroSolicitante = Casos[casosDistribuidos].Telefone
+             novaConsulta.Solicitado = medico.NomeEspecialista
+             novaConsulta.EspecialidadeSolicitado = medico.EspecialidadeMedica // Aqui temos que colocar a propriedade de Solicitante dentro do array de Casos
+
+             medico.ConsultasUnidadedeSaude.push({ ...novaConsulta })
+             casosDistribuidos++
+
+             //Depois que o Looping terminar termos que pegar a let casosDistruidos o valor dela de quantas vezes ela passou no looping e subtrair pela Quanitdade de casos clinicos
+           }
+         }
+       }
+       
+       const casosNaoDistribuidos = QuantidadeCasosClinicos - casosDistribuidos;
+       const casosNaoDistribuidosLista = []
+
+       if (casosNaoDistribuidos > 0) {
+           console.log(`Ainda há ${casosNaoDistribuidos} casos clínicos não distribuídos.`)
+
+           for (let i = casosDistribuidos; i < QuantidadeCasosClinicos; i++) {
+             const caso = Casos[i]
+             casosNaoDistribuidosLista.push({
+                 CPF: caso.CPF,
+                 NomePaciente: caso.NomePaciente,
+                 Doenca: caso.Doenca
+             })
+         }
+       }
+
+     await models.ModelWaitList.create({ ListDeEspera: casosNaoDistribuidosLista });
+
+     await medico.save()
+
+     if(NumberPatients <= PacientesQueSuportamos){ // Pacientes que suportamos é maior que o numero de pacientes da Planilha
+        const PacientesTotais = DataPatient
+
+        const DataInicioConsolidadoDate = new Date(DataInicioConsolidado)
+        const DataFimConsolidadoDate = new Date(DataFimConsolidado)
+        
+        const getPacientesTotaisAgendaMédica = await models.ModelRegisterMédico.find({
+          'ConsultasUnidadedeSaude.Casos.CPF': { $in: PacientesTotais.map((data) => data.CPFPaciente) },
+        }, {'ConsultasUnidadedeSaude': 1})
+        
+        const Datas = getPacientesTotaisAgendaMédica.flatMap((data) =>
+          data.ConsultasUnidadedeSaude.flatMap(data => data.Data)
+        )
+        
+        const datasNoIntervalo = Datas.filter(data => {
+          const dataConsulta = new Date(data)
+          return dataConsulta >= DataInicioConsolidadoDate && dataConsulta <= DataFimConsolidadoDate
+        })
+
+        models.ModelRegisterMédico.findOne({ 'ConsultasUnidadedeSaude.Casos.CPF': { $in: PacientesTotais.map((data) => data.CPFPaciente)} })
+        .then(async medico => {
+          if (!medico) {
+            console.log('Médico não encontrado')
+            return
+          }
+      
+          const consultas = medico.ConsultasUnidadedeSaude.filter(consulta => {
+            return datasNoIntervalo.includes(consulta.Data)
+          })
+          
+          const NomeUnidade = getUnidade.nomeInstituicao
+          const EndereçoUnidade = getUnidade.Endereco
+          await BulkMessageQueueConfirmation.add('BulkMessageNotification', {
+             consultas, 
+             NomeUnidade,
+             EndereçoUnidade
+          }) 
+
+        })
+        .catch(err => {
+          console.error('Erro ao buscar médico:', err)
+        })
+        
+  
+
+      }else if(PacientesQueSuportamos < NumberPatients){ // Tem mais pacientes na planilha do que a nossa capacidade de Atendimento
+        const PacientesLimitados = DataPatient.slice(0, PacientesQueSuportamos)
+
+        const DataInicioConsolidadoDate = new Date(DataInicioConsolidado)
+        const DataFimConsolidadoDate = new Date(DataFimConsolidado)
+        
+        const getPacientesTotaisAgendaMédica = await models.ModelRegisterMédico.find({
+          'ConsultasUnidadedeSaude.Casos.CPF': { $in: PacientesLimitados.map((data) => data.CPFPaciente) },
+        }, {'ConsultasUnidadedeSaude': 1})
+        
+        const Datas = getPacientesTotaisAgendaMédica.flatMap((data) =>
+          data.ConsultasUnidadedeSaude.flatMap(data => data.Data)
+        )
+        
+        const datasNoIntervalo = Datas.filter(data => {
+          const dataConsulta = new Date(data)
+          return dataConsulta >= DataInicioConsolidadoDate && dataConsulta <= DataFimConsolidadoDate
+        })
+
+        models.ModelRegisterMédico.findOne({ 'ConsultasUnidadedeSaude.Casos.CPF': { $in: PacientesLimitados.map((data) => data.CPFPaciente)} })
+        .then(async medico => {
+          if (!medico) {
+            console.log('Médico não encontrado')
+            return
+          }
+      
+          const consultas = medico.ConsultasUnidadedeSaude.filter(consulta => {
+            return datasNoIntervalo.includes(consulta.Data)
+          })
+          
+          const NomeUnidade = getUnidade.nomeInstituicao
+          const EndereçoUnidade = getUnidade.Endereco
+          await BulkMessageQueueConfirmation.add('BulkMessageNotification', {
+             consultas, 
+             NomeUnidade,
+             EndereçoUnidade
+          })
+          
+
+        })
+        .catch(err => {
+          console.error('Erro ao buscar médico:', err)
+        })
+
+      }
+
+  }  
+     const UnidadeSaude = await models.ModelRegisterUnidadeSaude.findById(IDUnidade)
+  
+     const ConsultasUnidade2 = {
+       Solicitante: '',
+       Solicitado: '',
+       Casos: '',
+       Status: '',
+     }
+
+     Casos.forEach((casosClinicos) => {
+       let newConsulta = { ...ConsultasUnidade2 }
+       newConsulta.Solicitante = Solicitante
+       newConsulta.Solicitado = 'Médico Especialista'
+       newConsulta.Casos = casosClinicos
+       newConsulta.Status = Status
+       UnidadeSaude.ConsultasUnidadedeSaude.push(newConsulta)
+     })
+ 
+     await UnidadeSaude.save()
+
+     res.status(200).json({ message: 'Consultas Agendadas com Sucesso' })
+ 
+   } catch (err) {
+     console.log(err)
+     return res.status(500).json({ message: 'Erro ao Agendar Consultas da Unidade de Saude' })
+   }
+   
+}
+
+export const AcceptMedical = async (id, newState, res) => {
+  try{
+    await models.ModelRegisterMédico.findOneAndUpdate(
+      {
+        'ConsultasUnidadedeSaude._id': id
+      },
+      { $set: { 'ConsultasUnidadedeSaude.$.Status': newState }},
+      { new: true }
+    )
+    const getAcceptConsulta = await models.ModelRegisterMédico.findOne(
+      {
+        'ConsultasUnidadedeSaude._id': id
+      },
+      {
+        'ConsultasUnidadedeSaude': 1
+      }
+    )
+   const Consulta = getAcceptConsulta.ConsultasUnidadedeSaude.find(consulta => consulta._id.equals(id))
+
+   const EmailPaciente = Consulta.EmailSolicitante
+   const NomePaciente = Consulta.Solicitante
+   const NumeroPaciente = Consulta.NumeroSolicitante
+   const NomeMedico = Consulta.Solicitado
+
+   await EmailQueue.add('Email', { 
+    to: EmailPaciente,
+    subject: `Atenção ${NomePaciente} sua consulta foi Aceita com Sucesso!`,
+    message: `✨ ${NomePaciente}, Confirmação Recebida com Gratidão!\n\nAgradecemos por confirmar sua presença! A DR(a) ${NomeMedico} e toda a equipe estão prontos para oferecer um atendimento excepcional. Sua cooperação faz toda a diferença. Se surgir algo, estamos aqui para ajudar. 🌈`
+   })
+
+   await WhatsappQueue.add('Whatsapp', {
+    numero: NumeroPaciente,
+    mensagem: `✨ ${NomePaciente}, Confirmação Recebida com Gratidão!\n\nAgradecemos por confirmar sua presença! A DR(a) ${NomeMedico} e toda a equipe estão prontos para oferecer um atendimento excepcional. Sua cooperação faz toda a diferença. Se surgir algo, estamos aqui para ajudar. 🌈`,
+   })
+
+   return res.status(200).json({ message: 'Consulta Aceita com Sucesso'})
+  }catch(error){
+    return res.status(500).json({ message: 'Error internal server'})
+  }
+}
+
+
+export const RejectMedical = async (id, newState, res) => {
+  try{
+     await models.ModelRegisterMédico.findOneAndUpdate(
+      {
+        'ConsultasUnidadedeSaude._id': id
+      },
+      { $set: { 'ConsultasUnidadedeSaude.$.Status': newState }},
+      { new: true }
+    )
+
+    const getRejectConsulta = await models.ModelRegisterMédico.findOne(
+      {
+        'ConsultasUnidadedeSaude._id': id
+      },
+      {
+        'ConsultasUnidadedeSaude': 1
+      }
+    )
+   const Consulta = getRejectConsulta.ConsultasUnidadedeSaude.find(consulta => consulta._id.equals(id))
+
+   const EmailPaciente = Consulta.EmailSolicitante
+   const NomePaciente = Consulta.Solicitante
+   const NumeroPaciente = Consulta.NumeroSolicitante
+
+   await EmailQueue.add('Email', { 
+    to: EmailPaciente,
+    subject: `Atenção ${NomePaciente} sua consulta foi cancelada com Sucesso!`,
+    message: `😢 ${NomePaciente}, Cancelamento Recebido com Compreensão!\n\nEntendemos que imprevistos acontecem. Obrigado por nos informar com antecedência. Se precisar reagendar ou tiver dúvidas, estamos à disposição. Sua atenção é crucial para otimizar nosso atendimento a todos os pacientes. 🌷`
+   })
+
+   await WhatsappQueue.add('Whatsapp', {
+    numero: NumeroPaciente,
+    mensagem: `😢 ${NomePaciente}, Cancelamento Recebido com Compreensão!\n\nEntendemos que imprevistos acontecem. Obrigado por nos informar com antecedência. Se precisar reagendar ou tiver dúvidas, estamos à disposição. Sua atenção é crucial para otimizar nosso atendimento a todos os pacientes. 🌷`, 
+   })
+
+   return res.status(200).json({ message: 'Consulta Rejeitada com Sucesso'})
+  }catch(error){
+    return res.status(500).json({ message: 'Error internal server'})
   }
 }

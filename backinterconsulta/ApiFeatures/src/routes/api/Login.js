@@ -81,6 +81,7 @@ router.post('/obrigado/:id', uploadPhotos.single("file") ,async (req, res ) => {
          CEPMedico: req.body.CEPMedico,
          EmailContador: req.body.EmailContador,
          TelefoneContador: req.body.TelefoneContador,
+         TypeDoctor: req.body.TypeDoctor,
          Genero: req.body.Genero,
          Data: req.body.Data,
          Doenca: req.body.Doenca,

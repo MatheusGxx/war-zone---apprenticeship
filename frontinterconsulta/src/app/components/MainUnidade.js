@@ -3,6 +3,9 @@ import Baixar from '../partials/Baixar.js'
 import secureLocalStorage from 'react-secure-storage'
 import Image from 'next/image'
 import Logo from '../public/logo.png'
+import { config } from '../config.js'
+import { motion } from "framer-motion";
+
 
 const MainUnidade = ({title, subTitle, Component}) =>{
 
@@ -38,10 +41,9 @@ const MainUnidade = ({title, subTitle, Component}) =>{
         </div>
 
        </section>
-
-       <div className='bg-white  min-h-[350px]  w-7/12 sm:w-full md:w-full lg:w-full rounded-lg flex justify-center items-center'>
-       <Component/>
-       </div>
+       <div className='bg-white min-h-[350px] w-7/12 sm:w-full md:w-full lg:w-full rounded-lg flex justify-center items-center'>
+        <Component />
+        </div>
        </main>
     </>
   )

@@ -115,25 +115,22 @@ export const SavedConsultaPacienteParticular = async (body, res) => {
 
 
  export const SavedConsultaUnidadeSaude = async (body, res) => {
-   const {  IDMedicos, IDUnidade ,Solicitante, Casos, Status,
-    //Automaçao
-    IdentificadorUnidadeSaudeRoute,
-    route } = body
+   const {  IDMedicos, IDUnidade ,Solicitante, Casos, Status } = body
     
     try {
       const getMedicos = await models.ModelRegisterMédico.find({
         _id: { $in: IDMedicos },
-      });
+      })
   
       for (const medico of getMedicos) {
         const ConsultaUnidadedeSaude = {
           Data: '',
           Inicio: '',
           Fim: '',
-          Solicitante: Solicitante,
+          Solicitante: '',
           Casos: [],
           Status: Status,
-        };
+        }
 
         const QuantidadeCasosClinicos = Casos[0].QuantidadeCasosClinicos
 
@@ -141,18 +138,18 @@ export const SavedConsultaPacienteParticular = async (body, res) => {
         //const FaltamIntervalos = QuantidadeCasosClinicos - totalIntervalos;
     
         //if (FaltamIntervalos > 0) {
-          //const novoHorario = await criarNovoHorario(medico, FaltamIntervalos);
+          //const novoHorario = await criarNoCvoHorario(medico, FaltamIntervalos);
           //medico.Horarios.push(novoHorario)
           //await medico.save()
 
           // Looping para multiplos Horarios Automaticos 
 
             
-        let casosDistribuidos = 0;
+        let casosDistribuidos = 0
     
         for (const horario of medico.Horarios) {
-          const intervalosAtendimentos = horario.IntervaloAtendimentos;
-    
+          const intervalosAtendimentos = horario.IntervaloAtendimentos.map((data) => data.Intervalo)
+           
           for (const intervalo of intervalosAtendimentos) {
             if (casosDistribuidos < QuantidadeCasosClinicos) {
               let novaConsulta = { ...ConsultaUnidadedeSaude }
@@ -162,13 +159,36 @@ export const SavedConsultaPacienteParticular = async (body, res) => {
               novaConsulta.Fim = intervaloParts[1]
               novaConsulta.Data = horario.data
     
-              novaConsulta.Casos = Casos[casosDistribuidos];
+              novaConsulta.Casos = Casos[casosDistribuidos]
+              novaConsulta.Solicitante = Casos[casosDistribuidos].NomePaciente;// Aqui temos que colocar a propriedade de Solicitante dentro do array de Casos
     
-              medico.ConsultasUnidadedeSaude.push({ ...novaConsulta });
+              medico.ConsultasUnidadedeSaude.push({ ...novaConsulta })
+              console.log(casosDistribuidos)
               casosDistribuidos++;
+
+              //Depois que o Looping terminar termos que pegar a let casosDistruidos o valor dela de quantas vezes ela passou no looping e subtrair pela Quanitdade de casos clinicos
             }
           }
         }
+        
+        const casosNaoDistribuidos = QuantidadeCasosClinicos - casosDistribuidos;
+        const casosNaoDistribuidosLista = []
+
+        if (casosNaoDistribuidos > 0) {
+            console.log(`Ainda há ${casosNaoDistribuidos} casos clínicos não distribuídos.`)
+
+            for (let i = casosDistribuidos; i < QuantidadeCasosClinicos; i++) {
+              const caso = Casos[i];
+              casosNaoDistribuidosLista.push({
+                  CPF: caso.CPF,
+                  NomePaciente: caso.NomePaciente,
+                  Doenca: caso.Doenca
+              })
+          }
+        }
+
+      await models.ModelWaitList.create({ ListDeEspera: casosNaoDistribuidosLista });
+
       await medico.save();
    }
       
@@ -179,7 +199,8 @@ export const SavedConsultaPacienteParticular = async (body, res) => {
         Solicitado: '',
         Casos: '',
         Status: '',
-      };
+      }
+
       Casos.forEach((casosClinicos) => {
         let newConsulta = { ...ConsultasUnidade2 };
         newConsulta.Solicitante = Solicitante;
@@ -193,6 +214,7 @@ export const SavedConsultaPacienteParticular = async (body, res) => {
   
       res.status(200).json({ message: 'Consultas Agendadas com Sucesso' })
     } catch (error) {
+      console.error(error)
       return res.status(500).json({ message: 'Erro ao Agendar Consultas da Unidade de Saude' })
     }
     

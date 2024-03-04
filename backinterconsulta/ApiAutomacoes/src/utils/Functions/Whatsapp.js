@@ -4,6 +4,7 @@ import { dirname, join } from 'path'
 import { promisify } from 'util'
 import { readFileSync, writeFileSync } from 'fs'
 import fs from 'fs'
+import { models } from '../../../MongoDB/Schemas/Schemas.js'
 
 const readFileAsync = promisify(fs.readFile)
 
@@ -37,38 +38,115 @@ export const EnviarMensagem = async (numero, mensagem) => {
   }
 }
 
-export const BulkMassage = async (Numeros, Message, res) => {
+export const BulkMessageWhatsappPatientPublic = async (dataPatients, NomeUnidade) => {
   try {
-    const delay = 1000; // 3 seconds interval
 
+    if(client){
+      console.log('Instancia do Venom ja esta Criada')
+    }else{
+      client = await venom.create({
+        session: 'Interconsulta',
+      }).catch((error) => {
+        console.log('Erro ao Iniciar o Venom', error);
+      });
+    }
+    const delay = 1000
+    
     await Promise.all(
-      Numeros.map(async (data, index) => {
+      dataPatients.map(async (data, index) => {
         await new Promise((resolve) => {
           setTimeout(async () => {
             try {
-              const result = await client.sendText(`${data}@c.us`, Message);
-              console.log(`Numero ${data} Notificado com Sucesso\nMensagem Enviada: ${result.text}`);
+              const Message = `${data.NomePaciente},\n\n🌷 A Secretaria de Saúde ${NomeUnidade} tem uma novidade especial para você! Estamos em busca de um especialista em ${data.Especialidade} para cuidar do seu bem-estar com todo carinho. 🩹`
+              const result = await client.sendText(`${data.Telefone}@c.us`, Message);
+              console.log(`Paciente: ${data.NomePaciente}, Notificado com Sucesso\nMensagem Enviada: ${result.text}`);
             } catch (error) {
-              console.error(`Erro ao enviar mensagem para ${medico}: `, error);
+              console.error(`Erro ao enviar mensagem para ${data.NomePaciente}: `, error);
             }
             resolve();
           }, index * delay)
         });
       })
-    );
-
-      // Se todas as mensagens foram enviadas com sucesso, envie o status 200
-      if (!res.headersSent) { // res.headersSent = ja enviamos uma resposta do servidor para o client side
-        res.status(200).json({ message: 'Mensagem em Massa Enviadas' })
-      }
+    )
 
   } catch (error) {
-    console.log('Erro ao enviar mensagem em massa para os Medicos ', error);
-    // Se houver um erro, envie um status de erro, por exemplo, 500
-    if (!res.headersSent) {
-      res.status(500).json({ message: 'Erro ao enviar mensagens em Massa'})
-    }
+    console.log('Erro ao enviar mensagem em massa para os Medicos ', error)
   }
+}
+
+export const BulkMessageWhatsappPatientConfirmation = async (consultas, NomeUnidade, EndereçoUnidade) => {
+
+
+  if(client){
+    console.log('Instancia do Venom ja esta Criada')
+  }else{
+    client = await venom.create({
+      session: 'Interconsulta',
+    }).catch((error) => {
+      console.log('Erro ao Iniciar o Venom', error);
+    });
+  }
+
+ const delay = 1000
+    
+ await Promise.all(
+   consultas.map(async (data, index) => {
+     await new Promise((resolve) => {
+       setTimeout(async () => {
+         try {
+           const Message = `🌟 Olá ${data.Solicitante}!\n\nA Secretaria de Saúde ${NomeUnidade} do município tem uma notícia especial para você! Sua consulta está agendada com ${data.Solicitado}, especialista em ${data.EspecialidadeSolicitado}, no dia ${data.Data} às ${data.Inicio}. Sua presença é fundamental! Estamos trabalhando arduamente para atender a todos os cidadãos. Seja consciente, não falte, ou se necessário, cancele com antecedência. Lembre-se, outros pacientes também aguardam por atendimento. 🌷\n\nEntre Nesse Link agora para confirmar a sua consulta: http://localhost:3000/accept-medical?response=${data.NomeUnidadeSolicitante}&namePatient=${data.Solicitante}&date=${data.Data}&start=${data.Inicio}&upload=${data.FotoUnidadeSolicitante}&id=${data._id}`
+           const result = await client.sendText(`${data.NumeroSolicitante}@c.us`, Message);
+           console.log(`Paciente: ${data.Solicitante}, Notificado com Sucesso\nMensagem Enviada: ${result.text}`);
+         } catch (error) {
+           console.error(`Erro ao enviar mensagem para ${data.Solicitante}: `, error);
+         }
+         resolve();
+       }, index * delay)
+     });
+   })
+ )
+}
+
+
+export const BulkMessageWhatsappDoctorConfirmation = async(body) => {
+  const { IDSMedicos, NomeUnidade, } = body
+  
+  if(client){
+    console.log('Instancia do Venom ja esta Criada')
+  }else{
+    client = await venom.create({
+      session: 'Interconsulta',
+    }).catch((error) => {
+      console.log('Erro ao Iniciar o Venom', error);
+    });
+  }
+  
+  const getDoctors = await models.ModelRegisterMédico.find({ _id: { $in: IDSMedicos }})
+
+  const DataDoctors = getDoctors.map((data) => ({
+   Telefone: data.telefone,
+   NomeEspecialista: data.NomeEspecialista
+ }))
+
+ const delay = 1000
+    
+ await Promise.all(
+   DataDoctors.map(async (data, index) => {
+     await new Promise((resolve) => {
+       setTimeout(async () => {
+         try {
+           const Message = `${NomeUnidade} Informa: ${data.NomeEspecialista} tem paciente novo na sua agenda!`
+           const result = await client.sendText(`${data.Telefone}@c.us`, Message);
+           console.log(`Médico: ${data.NomeEspecialista}, Notificado com Sucesso\nMensagem Enviada: ${result.text}`);
+         } catch (error) {
+           console.error(`Erro ao enviar mensagem para ${data.NomeEspecialista}: `, error);
+         }
+         resolve();
+       }, index * delay)
+     });
+   })
+ )
+
 }
 
 export const SendDocumentsWhatsapp = async (numeroPaciente, filesPath, MensagemPaciente) => {

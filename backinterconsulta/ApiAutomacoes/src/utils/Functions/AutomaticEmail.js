@@ -3,7 +3,7 @@ import { promisify } from 'util';
 import fs from 'fs'
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path'
-
+import { models } from '../../../MongoDB/Schemas/Schemas.js';
 const readFileAsync = promisify(fs.readFile);
 
 const Transporter = nodemailer.createTransport({
@@ -14,15 +14,17 @@ const Transporter = nodemailer.createTransport({
         pass: '@InterConsulta2024',
         clientId: '344062049191-2m2u2nustn7rupk8esk0254fq2f7308i.apps.googleusercontent.com',
         clientSecret: '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',
-        refreshToken: '1//043kChSbRis2JCgYIARAAGAQSNwF-L9Ir5MxAnx6V4893yqE8JC8QrwzGMEKGGopfhQZ8L41F1XyYlO9WNqeLpLnc76DtCrVJ400'
+        refreshToken: '1//04uJKqugcVi4YCgYIARAAGAQSNwF-L9IrKzWVIrAt_uXyfEhNlnVZzYVG9MmIMJ7dhXJ-hv9Kg6uwPJeWV6SFEPKSHvTMWO0Ff9Q'
     }
 })
 
 export const sendEmail = async (to, subject, message) => {
+    console.log(`Destinatario: ${to}`)
     const mailOptions = {
         from: 'interconsulta.org@gmail.com',
         to: to,
         subject: subject,
+        html: message,
         attachments: []
     }
 
@@ -71,4 +73,100 @@ export const sendDocumentsinEmail = async (to, subject, Documents) => {
     } catch(error) {
         console.error(error);
     }
+}
+
+
+export const BulkMessageEmailPatientPublic = async (dataPatient, NomeUnidade,) => {
+
+    const delay = 1000
+
+    await Promise.all(
+        dataPatient.map(async (data, index) => {
+            await new Promise((resolve, reject) => {
+                setTimeout(async () => {
+                    try {
+                        const mailOptions = {
+                            from: 'interconsulta.org@gmail.com',
+                            to: data.Email,
+                            subject: `${NomeUnidade} Informa`,
+                            html: `<p>${data.NomePaciente},\n\n🌷 A Secretaria de Saúde ${NomeUnidade} tem uma novidade especial para você! Estamos em busca de um especialista em ${data.Especialidade} para cuidar do seu bem-estar com todo carinho. 🩹</p>`
+
+                        };
+                        await Transporter.sendMail(mailOptions);
+                        console.log(`Email enviado para ${data.NomePaciente}`);
+                        resolve();
+                    } catch (error) {
+                        console.error(`Erro ao enviar email para ${data.NomePaciente}: `, error);
+                        reject(error);
+                    }
+                }, index * delay);
+            });
+        })
+    );
+};
+
+
+export const BulkMessageEmailPatientPublicConfirmation = async (consultas, NomeUnidade, EndereçoUnidade) => {
+
+    const delay = 1000
+
+    await Promise.all(
+        consultas.map(async (data, index) => {
+            await new Promise((resolve, reject) => {
+                setTimeout(async () => {
+                    try {
+                        const mailOptions = {
+                            from: 'interconsulta.org@gmail.com',
+                            to: data.EmailSolicitante,
+                            subject: `${data.Solicitante}, Parabens o ${NomeUnidade} conseguiu uma consulta para voce!`,
+                            html: `<p>🌟 Olá ${data.Solicitante}!\n\nA Secretaria de Saúde ${NomeUnidade} do município tem uma notícia especial para você! Sua consulta está agendada com ${data.Solicitado}, especialista em ${data.EspecialidadeSolicitado}, no dia ${data.Data} às ${data.Inicio}. Sua presença é fundamental! Estamos trabalhando arduamente para atender a todos os cidadãos. Seja consciente, não falte, ou se necessário, cancele com antecedência. Lembre-se, outros pacientes também aguardam por atendimento. 🌷\n\nEntre Nesse Link agora para confirmar a sua consulta: http://localhost:3000/accept-medical?response=${data.NomeUnidadeSolicitante}&namePatient=${data.Solicitante}&date=${data.Data}&start=${data.Inicio}&upload=${data.FotoUnidadeSolicitante}&id=${data._id}
+                            </p>`
+                        }
+                        await Transporter.sendMail(mailOptions);
+                        console.log(`Email enviado para ${data.Solicitante}`);
+                        resolve();
+                    } catch (error) {
+                        console.error(`Erro ao enviar email para ${data.Solicitante}`, error);
+                        reject(error);
+                    }
+                }, index * delay)
+            })
+        })
+    )
+}
+
+export const BulkMessageEmailDoctorPublicConfirmation = async (body) => {
+    const { IDSMedicos, NomeUnidade, } = body
+    
+    const getDoctors = await models.ModelRegisterMédico.find({ _id: { $in: IDSMedicos }})
+
+    const DataDoctors = getDoctors.map((data) => ({
+     Email: data.email,
+     NomeEspecialista: data.NomeEspecialista
+   }))
+
+   const delay = 1000
+
+    await Promise.all(
+     DataDoctors.map(async (data, index) => {
+         await new Promise((resolve, reject) => {
+             setTimeout(async () => {
+                 try {
+                     const mailOptions = {
+                         from: 'interconsulta.org@gmail.com',
+                         to: data.Email,
+                         subject: `${data.NomeEspecialista}, voce tem um Aviso do ${NomeUnidade}`,
+                         html: `<p>${data.NomeEspecialista}, Tem paciente novo do ${NomeUnidade} na sua Agenda! </p>`
+                     };
+                     await Transporter.sendMail(mailOptions);
+                     console.log(`Email enviado para ${data.NomeEspecialista}`);
+                     resolve();
+                 } catch (error) {
+                     console.error(`Erro ao enviar email para ${data.NomeEspecialista}: `, error);
+                     reject(error);
+                 }
+             }, index * delay)
+         })
+     })
+ )
 }

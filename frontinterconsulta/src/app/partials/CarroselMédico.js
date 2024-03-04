@@ -1,6 +1,7 @@
 'use client'
 import React from 'react';
 import Image from 'next/image';
+import { config } from '../config'
 
 export const MedicoCarousel = ({ successData }) => {
   return (

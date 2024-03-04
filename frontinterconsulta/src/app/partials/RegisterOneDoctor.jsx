@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { TextField, Autocomplete, Snackbar , Alert } from "@mui/material"
 import { TitutloEspecialista } from "./TituloEspecialista"
+import { TypesDoctors } from '../components/TypesDoctors'
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos'
 import Image from 'next/image'
@@ -15,6 +16,8 @@ export const RegisterOneDoctor = (
     nome,
     setDataNascimento,
     dataNascimento,
+    setTypeMedico,
+    typeMedico,
     setCurrentStep
   }
   ) => {
@@ -41,6 +44,9 @@ export const RegisterOneDoctor = (
       }
       if (dataNascimento === '') {
         camposVazios.push('Data de Nascimento');
+      }
+      if(typeMedico === ''){
+        camposVazios.push('typeMedico')
       }
     
       if (camposVazios.length > 0) {
@@ -108,6 +114,19 @@ export const RegisterOneDoctor = (
       onChange={(e) => handleData(e)}
       value={dataNascimento}/>
 
+     <Autocomplete
+      value={typeMedico === '' ? null : typeMedico}
+      onChange={(event, newValue) => {
+        if (newValue !== null) {
+          setTypeMedico(newValue);
+        }
+      }}
+      options={TypesDoctors}
+      noOptionsText="Sem resultados"
+      renderInput={(params) => <TextField {...params} label="Tipo de Atendimento" variant="standard" />}
+      className="w-full border-b border-blue-500 sm:w-full"
+    />
+
       <div className="w-full flex justify-between items-center">
       <ArrowBackIosIcon color="primary" className="cursor-pointer" onClick={handleBackClick}/>
       <Image src={Logo} width={50} height={50} alt="Logo Interconsulta" className="animate-spin-slow"/>
@@ -116,7 +135,7 @@ export const RegisterOneDoctor = (
 
       <Snackbar
         open={snackbarOpen}
-        autoHideDuration={6000} // Tempo em milissegundos que o Snackbar será exibido
+        autoHideDuration={6000} 
         onClose={handleSnackbarClose}
       >
         <Alert onClose={handleSnackbarClose} severity="error">

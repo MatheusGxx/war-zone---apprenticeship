@@ -5,6 +5,8 @@ import { Snackbar , Alert, TextField, Autocomplete, CircularProgress, InputAdorn
 import {  AreadeAtuacaoAtendidas } from '../partials/AreadeAtuaçaoAtendidas.js'
 import { useMutation } from '@tanstack/react-query'
 import { MedicoCarousel } from '../partials/CarroselMédico.js'
+import InsertEmoticonIcon from '@mui/icons-material/InsertEmoticon';
+
 import axios from 'axios'
 import Image from "next/image";
 import Logo from '../public/logo.png'
@@ -12,7 +14,9 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import secureLocalStorage from 'react-secure-storage'
 import { usePathname } from 'next/navigation.js';
 import { parse } from 'date-fns'
+import { Api2 } from '../config.js'
 import { config } from '../config.js'
+import { PacienteFaltando } from '../partials/PacientesFaltando.jsx'
 
 const ContentUnidade = () => {
   const[atuacao, setAtuacao] = useState('')
@@ -27,7 +31,7 @@ const ContentUnidade = () => {
   const divInfoRef = useRef(null)
   const[visiblePlan, setVisiblePlan] = useState(false)
   const[visibleButton, setVisibileButton] = useState(true)
-  const[successData, setSuccessData] = useState(null)
+  const[successData, setSuccessData] = useState([])
   const[horasMedicas, setHorasMedicas] = useState('')
   const[atendimentos, setAtendimentos] = useState('')
   const[medicos, setMedicosDisponiveis] = useState('')
@@ -39,17 +43,22 @@ const ContentUnidade = () => {
   const[on, setOn] = useState(true)
   const[reset, setReset] = useState(false)
   const[agendamentoOn, setAgendamentoOn] = useState(false)
+  const[okCasosClinicos, setOkCasosClinicos] = useState(false)
+  const[messageUnidade, setMessageUnidade] = useState('')
+  const[messageErr, setMessageErr] = useState('')
   const[position, setPosition] = useState({
     vertical: 'top',
     horizontal: 'center'
   })
+  const[pacienteFaltando, setPacienteSobrando] = useState(null)
+  const[onPopup, setOnPopup] = useState(false)
+  const[pacientes, setPacientes] = useState(false)
 
   const { vertical, horizontal } = position
+
   const currencySymbol = 'R$'
   
-  const idLocal = typeof window !== 'undefined' ? secureLocalStorage.getItem('id') : false
-
-  const id = idLocal || ''
+  const id = secureLocalStorage.getItem('id')
 
   const NameUnidadeSaude = typeof window !== 'undefined' ? secureLocalStorage.getItem('NomeUnidade') : false
   
@@ -58,18 +67,58 @@ const ContentUnidade = () => {
   const Route = usePathname()
 
   const CreateRequestMutation = useMutation(async (valueRequest) => {
-    const response = await axios.post(`${config.apiBaseUrl}/api/process-planilha/${id}`, valueRequest)
+    const response = await axios.post(`${Api2.apiBaseUrl}/api2/process-planilha/${id}`, valueRequest)
     return response.data
+  },{
+    onSuccess:(data) => {
+      const CPFSPacientes = data.map((data) => data.CPF)
+      PostConsolidado(CPFSPacientes)
+      setMessageUnidade(`${OriginalUnidadeUnidade}, Nós acabamos de informar todos os Pacientes da sua planilha que voce esta procurando médico para eles!`)
+    }
   })
 
-  const NotificationDoctor = useMutation(async (valueRequest) => {
-    const request = await axios.post(`${config.apiBaseUrl}/api/agendamento-unidade-de-saude`, valueRequest)
-    return request.data
+  const CreateConsolidado = useMutation(async (valueRequest) => {
+    const response = await axios.post(`${Api2.apiBaseUrl}/api2/get-consolidado`, valueRequest)
+    return response.data
+  },{
+    onSuccess: () => {
+      setOkCasosClinicos(false)
+    },
+    onError: (err) => {
+      setMessageErr(err.response.data.error)
+      setSnackbarMessage(err.response.data.error)
+      handleSnackBarOpen()
+      setVisibileButton(true)
+      setVisiblePlan(false)
+      console.error(err.response.data.error)  
+    }
+  })
+
+  const NotificationConfirmationDoctorAndPatient = useMutation(async (valueRequest) => {
+    const response = await axios.post(`${Api2.apiBaseUrl}/api2/notification-doctors-and-patients`, valueRequest)
+    return response.data
+  },{
+    onSuccess: () => {
+      PostFilaDeEspera()
+    }
+  })
+
+  const RequestFilaDeEspera = useMutation(async (valueRequest) => {
+    const response = await axios.post(`${config.apiBaseUrl}/api/get-wait-list`, valueRequest)
+    return response.data
+  },{
+    onSuccess:(data) => {
+      const { UltimosPacientesEspera } = data
+      const UltimosPacientes = UltimosPacientesEspera.ListDeEspera
+      setPacientes(UltimosPacientes)
+      setPacienteSobrando(UltimosPacientes.length)
+    }
   })
     
   useEffect(() =>{
   secureLocalStorage.getItem('id')
-  },[])
+  },[objectData, successData])
+
   useEffect(() => {
   
     if (
@@ -84,30 +133,40 @@ const ContentUnidade = () => {
         block: 'start',
       });
     }
-  }, [horasMedicas, atendimentos, medicos, custo, consolidado, on, reset, successData, inicio, fim]);
+  }, [horasMedicas, atendimentos, medicos, custo, consolidado, on, reset, inicio, fim, pacienteFaltando]);
   
   
-  const NotificationMedicos = () =>{
+  const NotificationPatientsAndDoctor = async () =>{
     if(successData && successData.length > 0){
+      const CPFPacientes = objectData.map((data) => data.CPF)
       const IDSMedicos = successData.map((data) =>  data._id)
-            
-      const ObjectMedicosIDS = {
-        IDMedicos: IDSMedicos,
-        IDUnidade: id,
-        Solicitante: OriginalUnidadeUnidade,
-        Casos: objectData,
-        Status: `${OriginalUnidadeUnidade} Aguardando`,
-        //Automaçao
-        IdentificadorUnidadeSaudeRoute: IDSMedicos,
-        route: Route
-      }
+
       try{
-        NotificationDoctor.mutateAsync(ObjectMedicosIDS)
-        setAgendamentoOn(true)
-      }catch(e){
-         snackbarMessage('Erro ao Notificar os Méddicos')
-         handleSnackBarOpen()
+        await NotificationConfirmationDoctorAndPatient.mutateAsync(
+          { CPFPacientes, 
+            IDSMedicos, 
+            NomeUnidade: OriginalUnidadeUnidade, 
+            QuantidadeMedicosDisponiveis: medicos,
+            IDUnidade: id,
+            Solicitante: OriginalUnidadeUnidade,
+            Casos: objectData,
+            Status: `${OriginalUnidadeUnidade} Aguardando - Unidade`,
+            PacientesQueSuportamos: horasMedicas,
+            DataInicioConsolidado: InicioMedicos,
+            DataFimConsolidado: FimMedicos,
+            NomeUnidade: OriginalUnidadeUnidade
+          }
+        )
+         setAgendamentoOn(true)
+      }catch(err){
+        console.log(err)
+        snackbarMessage('Erro ao Notificar os Médicos')
+        handleSnackBarOpen()
       }
+      
+   }else{
+    setSnackbarMessage(`${OriginalUnidadeUnidade} no momento nao temos Médicos o suficiente para notificarmos os seus Pacientes`)
+    handleSnackBarOpen()
    }
   }
 
@@ -161,23 +220,28 @@ const ContentUnidade = () => {
     setMedicosDisponiveis('')
     setCusto('')
     setConsolidado('')
-    setSuccessData(null)
+    setSuccessData([])
+    setObjectaData([])
     setOn(true)
     setReset(true)
     setAgendamentoOn(false)
+    setVisibileButton(true)
+    setPacienteSobrando(null)
+    setOnPopup(false)
   }
- 
-  const HandleClickFinal = async () => {
-    const formData = new FormData();
-    formData.append("AreadeAtuacao", atuacao);
-    formData.append("inicio", inicio);
-    formData.append("fim", fim);
-    formData.append('total', valorTotal)
-    formData.append('consulta', valorConsulta)
-    formData.append("file", selectedFile)
-  
-    try {
-      const data = await CreateRequestMutation.mutateAsync(formData)
+
+  const PostConsolidado = async (CPFsPacientes) => {
+    try{
+      const data = await CreateConsolidado.mutateAsync({
+        inicio: inicio,
+        fim: fim,
+        total: valorConsulta,
+        consulta: valorConsulta,
+        id: id,
+        AreadeAtuacao:atuacao,
+        CPFsPacientes: CPFsPacientes
+      })
+
       setInicioMedicos(data.Inicio)
       setFimMedicos(data.Fim)
       setHorasMedicas(data.SomaAtendimentosDia)
@@ -186,8 +250,21 @@ const ContentUnidade = () => {
       setCusto(data.CustoEstilizado)
       setConsolidado(data.Consolidado)
       setSuccessData(data.MedicosDisponiveis)
-      setObjectaData(data.ObjectData)
       setOn(false)
+    }catch(err){
+      return err
+    }
+
+  }
+ 
+  const HandleClickFinal = async () => {
+    const formData = new FormData();
+    formData.append("AreadeAtuacao", atuacao);
+    formData.append("file", selectedFile)
+  
+    try {
+      const data = await CreateRequestMutation.mutateAsync(formData)
+      setObjectaData(data)
     } catch (err) {
       if (err.response && err.response.data && err.response.data.Error) {
         if (Array.isArray(err.response.data.Error)) {
@@ -197,8 +274,10 @@ const ContentUnidade = () => {
           setSnackbarMessage(err.response.data.Error)
         }
       } else {
-        setSnackbarMessage('Deu algo de errado ao subir os seus casos clinicos =/');
-      }
+        setSnackbarMessage(err.response.data.error)}
+        setMessageErr(err.response.data.error)
+        setVisibileButton(true)
+        setVisiblePlan(false)
       handleSnackBarOpen();
     }
   };
@@ -225,7 +304,25 @@ const ContentUnidade = () => {
     } else {
       HandleClickFinal();
     }
-  };
+  }
+
+  const PostFilaDeEspera = async () => {
+    try{
+      await RequestFilaDeEspera.mutateAsync()
+    }catch(err){ 
+      return err
+    }
+  }
+
+  const HandlePopUp = () => {
+    setOnPopup(true)
+  }
+
+  const HandleOkCasosClinicos = () => {
+     setOkCasosClinicos(true)
+     setVisiblePlan(false)
+     HandleClickEnd()
+  }
   return (
     <>
       <div className='flex flex-col gap-10 m-10 sm:ml-0 sm:flex sm:justify-center md:justify-center'>
@@ -323,40 +420,26 @@ const ContentUnidade = () => {
                  </div>
                 </>
            : ''}
-                
-             <button
-              className={`rounded-full w-72 h-10 p-2 ${
-                CreateRequestMutation.isSuccess
-                  ? 'bg-blue-600'
-                  : 'bg-red-600 animate-pulse'
-              } ${
-                reset && !CreateRequestMutation.isLoading
-                  ? 'bg-red-600 animate-pulse'
-                  : ''
-              }`}
-              onClick={HandleClickEnd}
-            >
-              <p className='text-white font-bold'>
-                {CreateRequestMutation.isSuccess && !reset
-                  ? 'Atendimento Dimensionado'
-                  : ''}
-                {CreateRequestMutation.isError
-                  ? 'Erro ao dimensionar atendimento'
-                  : ''}
-                {!CreateRequestMutation.isSuccess &&
-                !CreateRequestMutation.isError &&
-                !CreateRequestMutation.isLoading &&
-                !reset &&
-                'Dimensionar Atendimento'}
-                {reset &&
-                !CreateRequestMutation.isError &&
-                !CreateRequestMutation.isLoading &&
-                'Redimensionar Atendimento'}
-              </p>
-              {CreateRequestMutation.isLoading  && (
-                <CircularProgress size={24} sx={{ color: 'white' }} />
-              )}
-            </button>
+           
+           
+           {visiblePlan && messageErr === '' ?   
+           <button className='bg-blue-600 rounded-full p-2 w-full' onClick={HandleOkCasosClinicos}>
+            <p className='font-bold text-white'> Enviar Casos Clinicos </p>
+           </button> : ''
+           }       
+
+            {okCasosClinicos && messageErr === '' && 
+            <div className='flex gap-4 flex-col justify-center items-center'>
+              <div className='flex gap-4'>
+              <InsertEmoticonIcon color="primary" fontSize='large'/>
+              <h1 className='font-bold text-blue-500 text-center'> {messageUnidade} </h1>
+              </div>
+              <div className='flex gap-4'>
+              <CircularProgress color="primary" size={24}/>
+              <h1 className='font-bold text-blue-500 animate-pulse text-center'> Aguarde Estamos preparando o Consolidado para a sua gestão </h1>
+              </div>
+            </div>
+            }
         </div>
         </>
          : ''}
@@ -411,8 +494,7 @@ const ContentUnidade = () => {
              onChange={(e) => setHorasMedicas(e.target.value)}
              className="w-1/3 sm:w-full"
              value={horasMedicas}
-                  />
-        
+            />
            <TextField
            variant="standard"
            label="Orçamento Estimado"
@@ -440,8 +522,6 @@ const ContentUnidade = () => {
           </>
         }
 
-        {successData &&  <MedicoCarousel successData={successData} />}
-     
        <div className="border-b-2 border-blue-500  w-full  pt-3 sm:hidden md:hidden lg:hidden xl:hidden"></div>
 
        <div className='flex gap-5 justify-center items-center whitespace-nowrap'>
@@ -450,21 +530,29 @@ const ContentUnidade = () => {
        </div>
     </div>
 
-    <div className={`flex gap-5 ${NotificationDoctor.isSuccess && agendamentoOn && 'flex-col gap-5'}`}>
+      {pacienteFaltando && 
+        <> 
+        <button className="border-red-500 border-4 rounded-lg p-2 animate-pulse" onClick={HandlePopUp}>
+          <p className='font-bold text-red-500'>  {OriginalUnidadeUnidade} tem {pacienteFaltando}  Pacientes da sua Demanda sobrando, clique aqui para ve-los!</p>
+        </button>
+        </>
+      }
+
+    <div className={`flex gap-5 ${NotificationConfirmationDoctorAndPatient.isSuccess && agendamentoOn && 'flex-col gap-5'}`}>
       <button 
-        className={`${NotificationDoctor.isSuccess && agendamentoOn ? 'bg-blue-500' : 'bg-green-400'}
+        className={`${NotificationConfirmationDoctorAndPatient.isSuccess && agendamentoOn ? 'bg-blue-500' : 'bg-green-400'}
           p-2 rounded-full text-white font-bold min-w-[150px] flex items-center justify-center gap-5 cursor-pointer`}
-        onClick={NotificationMedicos}
-        disabled={agendamentoOn === true || NotificationDoctor.isLoading}
+        onClick={NotificationPatientsAndDoctor}
+        disabled={agendamentoOn === true || NotificationConfirmationDoctorAndPatient.isLoading}
       >
-        {NotificationDoctor.isLoading ? (
+        {NotificationConfirmationDoctorAndPatient.isLoading ? (
           <>
           <CircularProgress size={24} /> Estamos Notificando os Nossos Médicos Aguarde...<div className='flex justify-center items-center'> </div>
           </>
         ) : (
           <p className='whitespace-nowrap'>
-            {NotificationDoctor.isSuccess && agendamentoOn
-              ? `${OriginalUnidadeUnidade} Obrigado por solicitar o agendamento, em breve entraremos em contato`
+            {NotificationConfirmationDoctorAndPatient.isSuccess && agendamentoOn
+              ? `${OriginalUnidadeUnidade} Obrigado por solicitar o agendamento todos os Médicos e Pacientes foram Notificados!`
               : 'Solicitar Agendamento'}
           </p>
         )}
@@ -481,6 +569,15 @@ const ContentUnidade = () => {
        </>
           : ''}
       </div>
+
+      {onPopup &&
+       <PacienteFaltando
+       NomeUnidade={OriginalUnidadeUnidade}
+       QuantidadePacientesFaltando={pacienteFaltando}
+       Pacientes={pacientes}
+       onClose={() => setOnPopup(false)}
+       />
+       }
 
       <Snackbar
         open={snackbarOpen}

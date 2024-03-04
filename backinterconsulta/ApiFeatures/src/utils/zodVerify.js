@@ -47,6 +47,7 @@ export const VerifyDataMédico = z.object({
   Cidade: z.string(),
   Estado: z.string(),
   CEPMedico: z.string(),
+  TypeDoctor: z.string()
 });
 
 export const VerifyDataPaciente = z.object({

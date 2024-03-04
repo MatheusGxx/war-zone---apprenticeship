@@ -14,8 +14,6 @@ const ModelDataCasosClinicos = {
   Posição: String,
   MatrículaProntuário: String,
   CartãoSUS: String,
-  Telefone: String,
-  Email: String,
   Acompanhante: String,
   TelefoneAcompanhante: String,
   EmailAcompanhante: String,
@@ -116,6 +114,7 @@ const RegisterMédico = new mongoose.Schema({
   CEPMedico: String,
   EmailContador: String,
   TelefoneContador:String,
+  TypeDoctor: String,
   DoencasAndSintomas: [{
     Doenca: String,
     Sintomas: [String],
@@ -196,7 +195,12 @@ const RegisterMédico = new mongoose.Schema({
     Inicio: String,
     Fim: String,
     Solicitante: String,
+    EmailSolicitante: String,
+    NumeroSolicitante: String,
     Solicitado: String,
+    EspecialidadeSolicitado: String,
+    NomeUnidadeSolicitante: String,
+    FotoUnidadeSolicitante: String,
     Casos: [{
       CPF: String,
       Doenca: String,
@@ -204,7 +208,6 @@ const RegisterMédico = new mongoose.Schema({
       QuantidadeCasosClinicos: Number,
       IdentificadorConsulta: String,
     }],
-    CPF: String,
     Status: String,
     Consulta: String,
   }],
@@ -241,6 +244,17 @@ const RegisterPaciente = new mongoose.Schema({
   GifDoenca: String,
   QueixaInicial: String,
   ChavePix: String,
+  TrackingUTM:[{
+    UTM_Referrer: String,
+    UTM_Funil: String,
+    UTM_Temp: String,
+    UTM_Rota: String,
+    UTM_Source: String,
+    UTM_Medium: String,
+    UTM_Campaign: String,
+    UTM_Term: String,
+    UTM_Content:String,
+  }],
   ConsultasSolicitadasPacientes: [{
     Data: String,
     Inicio: String,
@@ -306,6 +320,9 @@ const RegisterUnidadeSaude = new mongoose.Schema({
   GestoesSolicitadas: [{
     ...ModelGestoesSolicitadas  
   }],
+  HistoricoQuantidadeCasosClinicos:[{
+    QuantidadeCasosClinicos: String,
+  }],
   ConsultasUnidadedeSaude: [{
     Data: String,
     Inicio: String,
@@ -345,15 +362,30 @@ const CasosClinicos = new mongoose.Schema({
   Profissão: String,
   CPF: String,
   TipoSanguineo: String,
+  Email: String,
+  Telefone: String,
+  FotoUnidadeResponsavel: String,
+  NomeUnidadeResponsavel: String,
     Historico:[{
       ...ModelDataCasosClinicos
     }],
+  MedicosEscolhidos:[{
+    ids: [String]
+  }],
   Duplicate: String,
+})
+
+const ListadeEspera = new mongoose.Schema({
+  ListDeEspera:[{
+    NomePaciente: String,
+    CPF: String,
+    Doenca: String,
+  }]
 })
 
 const ListDoencasAndSintomasDoctor = new mongoose.Schema({
   Especialidade: String,
-  AreadeAtuacao: String,
+  AreadeAtuacao: String,  
   DoencasESintomas:[{
     Doenca: String,
     Sintomas: [String],
@@ -382,6 +414,8 @@ const ModelRegisterUnidadeSaude = mongoose.model('RegisterUnidadeSaude', Registe
 const ModelCasosClinicos = mongoose.model('casosClinicos', CasosClinicos)
 const List = mongoose.model('listDoctors', ListDoencasAndSintomasDoctor)
 const SafeID = mongoose.model('SafeID', SafeIDSchema)
+const ModelWaitList = mongoose.model('ListaDeEspera', ListadeEspera)
+
 
 export const models = {
   ModelRegisterMédico,
@@ -389,5 +423,6 @@ export const models = {
   ModelRegisterUnidadeSaude,
   ModelCasosClinicos,
   List,
-  SafeID
+  SafeID,
+  ModelWaitList 
 };

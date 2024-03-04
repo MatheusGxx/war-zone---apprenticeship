@@ -12,7 +12,7 @@ export const ConvertingDate = (data, Campo) => {
   }
 
   // Formatando a data para o formato desejado "DD/MM/YYYY"
-  const dataFormatada = format(dataNascimento, 'dd/MM/yyyy');
+  const dataFormatada = format(dataNascimento, 'dd/MM/yyyy')
   return dataFormatada
 }
 

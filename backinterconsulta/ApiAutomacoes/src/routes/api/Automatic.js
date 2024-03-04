@@ -1,10 +1,24 @@
 import { Router } from 'express'
+import { Job, QueueEvents } from 'bullmq';
 
 const router = Router()
 
-import { AutomaticWhatsapp, sendDocumentsPatient } from '../../services/AutomaticService.js'
-import uploadSignedDocuments from '../../utils/MulterSignDocuments.js'
+import { 
+  AutomaticWhatsapp, 
+  sendDocumentsPatient, 
+  SavedConsultaUnidadeSaude,
+  AcceptMedical,
+  RejectMedical,
+} from '../../services/AutomaticService.js'
 
+import uploadSignedDocuments from '../../utils/MulterSignDocuments.js'
+import uploadPlanilha from '../../utils/MulterPlanilha.js'
+
+import { 
+   ProcessPlanilhaQueue,
+   ProcessConsolidadoQueue, 
+   BulkMessageQueueConfirmation,
+} from '../../utils/Queues.js'
 router.post('/automatic-whatsapp', async (req, res) => {
 
   console.log(req.body)
@@ -69,7 +83,6 @@ router.post('/automatic-whatsapp', async (req, res) => {
   AutomaticWhatsapp(body, response)
 }) 
 
-
 router.post('/send-documents-patient', uploadSignedDocuments.any(), 
        async(req,res) => {
 
@@ -86,6 +99,126 @@ router.post('/send-documents-patient', uploadSignedDocuments.any(),
        }
 )
 
+router.post('/process-planilha/:id', uploadPlanilha.single('file'), async (req, res) => {
+  console.log(req.params.id);
+  console.log(req.body);
+  console.log(req.file);
 
+  const body = {
+    AreadeAtuacao: req.body.AreadeAtuacao,
+  };
+
+  const params = {
+    id: req.params.id,
+  };
+  const file = req.file;
+  const PathPlanilha = file.path;
+  const Filename = file.filename
+
+  await ProcessPlanilhaQueue.add('ProcessPlanilha', {
+    body,
+    params, 
+    PathPlanilha, 
+    Filename
+  })
+
+  const queueEvents = new QueueEvents('ProcessPlanilha');
+  const queue = ProcessPlanilhaQueue;
+
+  
+  const handleCompleted = async ({ jobId }) => {
+    const job = await Job.fromId(queue, jobId)
+    if (job.returnvalue.error) {
+      res.status(400).json(job.returnvalue)
+    } else {
+      res.status(200).json(job.returnvalue)
+    }
+    // Remove o manipulador de eventos após o uso para garantir que ele não seja executado novamente
+    queueEvents.removeListener('completed', handleCompleted)
+  };
+
+  // Adicionar o manipulador de eventos
+  queueEvents.on('completed', handleCompleted);
+});
+
+
+router.post('/get-consolidado',
+     async(req, res) => {
+
+       console.log(req.body) 
+
+       const body = {
+        inicio: req.body.inicio,
+        fim: req.body.fim,
+        total: req.body.total,
+        consulta: req.body.consulta,
+        id: req.body.id,
+        AreadeAtuacao: req.body.AreadeAtuacao,
+        CPFsPacientes: req.body.CPFsPacientes
+      }
+     
+        await ProcessConsolidadoQueue.add('ProcessConsolidado', {
+          body
+        })
+        
+        const queueEvents = new QueueEvents('ProcessConsolidado');
+        const queue = ProcessConsolidadoQueue
+
+        const handleCompleted = async ({ jobId }) => {
+          const job = await Job.fromId(queue, jobId)
+
+          if (job.returnvalue.error) {
+            res.status(400).json(job.returnvalue)
+          } else {
+            res.status(200).json(job.returnvalue)
+          }
+          // Remove o manipulador de eventos após o uso para garantir que ele não seja executado novamente
+          queueEvents.removeListener('completed', handleCompleted)
+        };
+      
+        // Adiciona o manipulador de eventos
+        queueEvents.on('completed', handleCompleted);
+
+     }
+)
+
+
+router.post('/notification-doctors-and-patients', 
+     async (req,res) => {
+      const body = {
+        CPFPacientes: req.body.CPFPacientes,
+        IDSMedicos: req.body.IDSMedicos,
+        NomeUnidade: req.body.NomeUnidade,
+        QuantidadeMedicosDisponiveis: req.body.QuantidadeMedicosDisponiveis,
+        IDUnidade: req.body.IDUnidade,
+        Solicitante: req.body.Solicitante,
+        Casos: req.body.Casos,
+        Status: req.body.Status,
+        DataInicioConsolidado: req.body.DataInicioConsolidado,
+        DataFimConsolidado: req.body.DataFimConsolidado,
+        PacientesQueSuportamos: req.body.PacientesQueSuportamos,
+        NomeUnidade: req.body.NomeUnidade 
+      }
+
+      SavedConsultaUnidadeSaude(body, res)
+      console.log(req.body)
+     }
+)
+
+router.post('/accept-medical',
+       async(req, res) => {
+        const { id, newState } = req.body 
+        AcceptMedical(id, newState, res)
+        console.log(req.body)
+       }
+)
+
+router.post('/reject-medical',
+       async(req, res) => {
+        const { id, newState } = req.body 
+        RejectMedical(id, newState, res)
+        console.log(req.body)
+       }
+)
 
 export default router

@@ -72,6 +72,7 @@ export const MainAgenda = () => {
   const[idCasoUnidade2, setIdCasoUnidade2] =  useState([])
   const[casoClinicoClicked, setCasoClinicoClicked] = useState([])
   const[idMedico, setIDMedico] = useState('')
+  const[doctorUnidade, setDoctorUnidade] = useState(null)
 
   const[disablednotArrObject, setDisableArrayNotObjetcts] = useState(false)
   const[disableArrayObject, setDisableArrayObject] = useState(false)
@@ -111,7 +112,7 @@ export const MainAgenda = () => {
   const NomeMedico = NomeMedicoLocal || ''
   const NomePacienteLocal = secureLocalStorage.getItem('NomePaciente')
   const NomeUnidade = secureLocalStorage.getItem('NomeUnidade')
-  const reuniao = secureLocalStorage.getItem('reunião')
+  const TypeDoctor = secureLocalStorage.getItem('TypeDoctor')
  
   const DeleteCasoClinico = useMutation(
     async (body) => {
@@ -550,8 +551,11 @@ const HandleConsulta = async (id) => {
             <TabContext value={value}>
               <Box sx={{ borderBottom: 1, borderColor: 'divider' }} className="flex justify-center">
                 <TabList onChange={handleChange} aria-label="Tab-list">
-                  <Tab label="Agenda Médica" value="1" />
-                  <Tab label="Seus Pacientes" value="2" />
+
+                <Tab label="Agenda" value="1" />
+                  {NomeMedico ?  
+                  <Tab label="Seus Pacientes" value="2" /> 
+                  : ''}
                 </TabList>
               </Box>
               <TabPanel value="1" >
@@ -601,23 +605,19 @@ const HandleConsulta = async (id) => {
                        </div>
                       </th>
                      }
-                     
-                     {NomePacienteLocal ? null
-                      : 
-                      <th className="border-b bg-white text-black py-2 px-4 font-normal">
-                      <div className='flex items-center justify-center'>
-                        <div className="bg-blue-500 rounded-full h-3 w-3 inline-block mr-2"></div>
-                         Status
-                      </div>
-                     </th>
-                      }
+                    {TypeDoctor === 'SUS' ?  null :
                      <th className="border-b bg-white text-black py-2 px-4 font-normal">
                       <div className='flex items-center justify-center'>
-                        <div className="bg-blue-500 rounded-full h-3 w-3 inline-block mr-2"></div>
-                        {NomePacienteLocal ? 'Status': <p className='whitespace-nowrap'> Linha da vida </p>}
+                      <div className="bg-blue-500 rounded-full h-3 w-3 inline-block mr-2"></div>
+                        {NomePacienteLocal ? 'Status':
+                        <>  
+                         <p className='whitespace-nowrap'> Linha da vida </p>
+                        </>
+                        }
                       </div>
                       </th>
-                      {NomeMedico ? 
+                     }
+                      {TypeDoctor !== 'SUS' ? 
                        <th className="border-b bg-white text-black py-2 px-4 font-normal">
                          <div className='flex items-center'>
                            <div className="bg-blue-500 rounded-full h-3 w-3 inline-block mr-2"></div>
@@ -626,7 +626,7 @@ const HandleConsulta = async (id) => {
                         </th>
                        : null}
      
-                     {NomeMedico ? 
+                     {TypeDoctor !== 'SUS' ? 
                        <th className="border-b bg-white text-black py-2 px-4 font-normal">
                          <div className='flex items-center'>
                            <div className="bg-blue-500 rounded-full h-3 w-3 inline-block mr-2"></div>
@@ -634,6 +634,7 @@ const HandleConsulta = async (id) => {
                           </div>
                         </th>
                        : null}
+                       
                      {NomePacienteLocal ? 
                       <th className="border-b bg-white text-black py-2 px-4 font-normal">
                          <div className='flex items-center justify-center'>
@@ -716,12 +717,13 @@ const HandleConsulta = async (id) => {
                  data && data.ConsultasGerais ?
                  data.ConsultasGerais.map((row, index) => (
                    <tr key={index}>
+                    {() =>setDoctorUnidade(true)}
                      <td className="border-b py-2 px-4 text-center">{row.Data}</td>
                      <td className="border-b py-2 px-4 text-center">{row.Inicio}</td>
                      <td className='border-b py-2 px-4 text-center'>{row.Fim}</td>
                      <td className="border-b py-2 px-4 text-center whitespace-nowrap">{row.Solicitante}</td>
-                     <td className='border-b py-2 px-4 text-center whitespace-nowrap'>{row.Status}</td>
                      {row.Status && (
+                      TypeDoctor === 'SUS' ? null : 
                      <td className='border-b py-2 px-4 text-center whitespace-nowrap'>
                        <div className='flex justify-center items-center cursor-pointer' onClick={() => {
                          const casosIdentificadores = Array.isArray(row.Casos)
@@ -741,95 +743,108 @@ const HandleConsulta = async (id) => {
                        </div>
                      </td>
                    )}
-     
-                   <td className="border-b py-2 px-4 text-center whitespace-nowrap">
-                    {
-                    row.Status.includes('Confirmada') ? 
-                    <div className='flex justify-center items-center'>
-                      <Image src={Confirmado2} alt='Confirmado' height={20} width={20}/> 
-                    </div>
-                    :
-                    row.Status.includes('Aguardando') ? 
-                    <Checkbox
-                    checked={casoClinicoClicked.includes(row._id) && checkedIndex === index}
-                    onChange={(event) => {
-                      const IdentificadorCasoPublico = Array.isArray(row.Casos)
-                        ? row.Casos.map(data => data.IdentificadorConsulta)
-                        : [];
-                      
-                      const CPFPaciente2 = Array.isArray(row.Casos)
-                        ? row.Casos.map(data => data.CPF)
-                        : []
-
-                      const NomePacientePublico = Array.isArray(row.Casos) 
-                      ? row.Casos.map((data) => data.NomePaciente) 
-                      : []
-
-                  
-                      HandleClickCheckBox(row._id, IdentificadorCasoPublico, CPFPaciente2, event,row, NomePacientePublico, row.Inicio, row.Fim, row.Solicitante, row.Data, index)
-                    }}
-                    disabled={
-                      (disablednotArrObject && (!Array.isArray(row.Casos) || (Array.isArray(row.Casos) && row.Casos.length === 0))) ||
-                      (disableArrayObject && (Array.isArray(row.Casos) && row.Casos.length > 0)) ||
-                      (selectedSolicitante !== null && selectedSolicitante !== row.Solicitante) ||
-                      checkedIndex !== null && checkedIndex !== index 
-                      
-                    }
-                  />
-                    :
-                    row.Status.includes('Atendida') ?
-                      <div className="flex justify-center items-center">
-                        <Image src={Logo} alt='Atendida' height={37} width={37}/> 
-                      </div>
-                    :
-                    row.Status.includes('Aceita') ?
-                     <div className="flex justify-center items-center">
-                       <Image src={Cancelada} alt="Aceita" height={20}  width={20}/>
+                    
+                    {TypeDoctor === 'SUS' ? null : 
+                     <td className="border-b py-2 px-4 text-center whitespace-nowrap">
+                     {
+                     row.Status.includes('Confirmada') ? 
+                     <div className='flex justify-center items-center'>
+                       <Image src={Confirmado2} alt='Confirmado' height={20} width={20}/> 
                      </div>
-                    : null
-                     }
-                </td>
-
-                {row.Status.includes('Atendida') ? 
-                  <td className='border-b py-2 px-4 text-center cursor-pointer'>
-                 <div className="flex justify-center items-center">
+                     :
+                     row.Status.includes('Aguardando') ? 
+                     <Checkbox
+                     checked={casoClinicoClicked.includes(row._id) && checkedIndex === index}
+                     onChange={(event) => {
+                       const IdentificadorCasoPublico = Array.isArray(row.Casos)
+                         ? row.Casos.map(data => data.IdentificadorConsulta)
+                         : [];
+                       
+                       const CPFPaciente2 = Array.isArray(row.Casos)
+                         ? row.Casos.map(data => data.CPF)
+                         : []
+ 
+                       const NomePacientePublico = Array.isArray(row.Casos) 
+                       ? row.Casos.map((data) => data.NomePaciente) 
+                       : []
+ 
                    
-                 </div>
+                       HandleClickCheckBox(row._id, IdentificadorCasoPublico, CPFPaciente2, event,row, NomePacientePublico, row.Inicio, row.Fim, row.Solicitante, row.Data, index)
+                     }}
+                     disabled={
+                       (disablednotArrObject && (!Array.isArray(row.Casos) || (Array.isArray(row.Casos) && row.Casos.length === 0))) ||
+                       (disableArrayObject && (Array.isArray(row.Casos) && row.Casos.length > 0)) ||
+                       (selectedSolicitante !== null && selectedSolicitante !== row.Solicitante) ||
+                       checkedIndex !== null && checkedIndex !== index 
+                       
+                     }
+                   />
+                     :
+                     row.Status.includes('Atendida') ?
+                       <div className="flex justify-center items-center">
+                         <Image src={Logo} alt='Atendida' height={37} width={37}/> 
+                       </div>
+                     :
+                     row.Status.includes('Aceita') ?
+                      <div className="flex justify-center items-center">
+                        <Image src={Cancelada} alt="Aceita" height={20}  width={20}/>
+                      </div>
+                     : null
+                      }
                  </td>
-                :
-                <td className="border-b py-2 px-4 text-center whitespace-nowrap" 
-               
-                onClick={() => {
-                 const IdentificadorConsulta = Array.isArray(row.Casos)
-                 ? row.Casos.map(data => data.IdentificadorConsulta)
-                 : [];
-               
-                 const CPFPaciente3 = Array.isArray(row.Casos)
-                 ? row.Casos.map(data => data.CPF)
-                 : []
+                }
                 
-                  DeleteConsulta(row._id, IdentificadorConsulta, CPFPaciente3, row.Solicitante, row.Data, row.Inicio, row.Fim, row.idHorario, row.HorarioSelecionado)
-                }}>
-                  <CloseIcon color="error" className='cursor-pointer'/>
-                </td>}
+                {TypeDoctor === 'SUS' ? null :
+                    row.Status.includes('Atendida') ? 
+                    <td className='border-b py-2 px-4 text-center cursor-pointer'>
+                   <div className="flex justify-center items-center">
+                     
+                   </div>
+                   </td>
+                  :
+                  <td className="border-b py-2 px-4 text-center whitespace-nowrap" 
+                 
+                  onClick={() => {
+                   const IdentificadorConsulta = Array.isArray(row.Casos)
+                   ? row.Casos.map(data => data.IdentificadorConsulta)
+                   : [];
+                 
+                   const CPFPaciente3 = Array.isArray(row.Casos)
+                   ? row.Casos.map(data => data.CPF)
+                   : []
+                  
+                    DeleteConsulta(row._id, IdentificadorConsulta, CPFPaciente3, row.Solicitante, row.Data, row.Inicio, row.Fim, row.idHorario, row.HorarioSelecionado)
+                  }}>
+                    <CloseIcon color="error" className='cursor-pointer'/>
+                  </td>
+                }
+                 
+                 <td className='border-b py-2 px-4 text-center whitespace-nowrap'>
+                 {TypeDoctor === 'SUS' ? 
+                  row.Status.includes('Aguardando') ? 'Aguardando' :
 
+                  row.Status.includes('Confirmada') ?
+                  <div className='flex justify-center items-center gap-3'>
+                      <Image src={Logo} alt='Atendida' height={37} width={37}/> 
+                      <p> Aceita </p>
+                  </div>
+                   :
+                  row.Status.includes('Cancelada') && 
 
-                {row.Status.includes('Confirmada') ?
-                  <td className='border-b py-2 px-4 text-center cursor-pointer'>
-                  <div className="flex justify-center items-center">
-              
+                  <div className='flex justify-center items-center gap-3'>
+                    <CloseIcon color="error" fontSize='large'/> 
+                    <p> Cancelada </p>
+                  </div>
+                  
+                 :  
+                  row.Status.includes('Confirmada') &&
                   <GroupsIcon 
                   color="primary"
                   onClick={() => HandleConsulta(row._id)}
                   disabled={GenerateLink.isLoading}
                   />
-                  
-                  </div>
-                  </td>
-                : 
-                <td className='border-b py-2 px-4 text-center cursor-pointer'>
-                </td>
-                }
+                  } 
+                 </td>               
 
                </tr>
                  )) :

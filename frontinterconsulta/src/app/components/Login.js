@@ -25,7 +25,6 @@ const Login = ({title, ImagemLateral, MessageButton, secondRoute, treeRoute, pla
 
   const CreateRequestMutation = useMutation(async (valueRequest) =>{
     const response = await axios.post(`${config.apiBaseUrl}/api/login`, valueRequest)
-    console.log(response.data)
     return response.data
   },{
     onSuccess: (data) => { 
@@ -37,13 +36,14 @@ const Login = ({title, ImagemLateral, MessageButton, secondRoute, treeRoute, pla
          CRMM,
          ModelidUserLogged,
          FotoMedico,
+         TypeDoctor,
          NomePaciente,
          DoencaPaciente,
          FotoPaciente,
          NomeUnidade,
          FotoUnidade,
         } = data
-
+      
      switch(route){
 
       case '/welcome/login-medico':
@@ -54,8 +54,9 @@ const Login = ({title, ImagemLateral, MessageButton, secondRoute, treeRoute, pla
       const AreadeAtuacaoStorage = secureLocalStorage.getItem('AreadeAtuacao')
       const CRMStorage = secureLocalStorage.getItem('CRMMedico')
       const FotoStorageMedico = secureLocalStorage.getItem('FotoMedico')
+      const TypeDoctorStorage = secureLocalStorage.getItem('TypeDoctor')
 
-      if(tokenStorage && ModelidUser &&  NomeMedicoStorage && AreadeAtuacaoStorage && CRMStorage && FotoStorageMedico){
+      if(tokenStorage && ModelidUser &&  NomeMedicoStorage && AreadeAtuacaoStorage && CRMStorage && FotoStorageMedico && TypeDoctorStorage){
         console.log('Medico ja esta autenticado no interconsulta =/')
       }else{
         secureLocalStorage.setItem('token', token)
@@ -64,6 +65,7 @@ const Login = ({title, ImagemLateral, MessageButton, secondRoute, treeRoute, pla
         secureLocalStorage.setItem('AreadeAtuacao', AreaAtuacao)
         secureLocalStorage.setItem('CRMMedico', CRMM)
         secureLocalStorage.setItem('FotoMedico', FotoMedico)
+        secureLocalStorage.setItem('TypeDoctor', TypeDoctor)
       }
       break
 
