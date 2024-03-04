@@ -151,10 +151,9 @@ export const BulkMessageWhatsappDoctorConfirmation = async(body) => {
 
 export const SendDocumentsWhatsapp = async (numeroPaciente, filesPath, MensagemPaciente) => {
   try {
+    const currentFilePath = fileURLToPath(import.meta.url)
     const currentDir = dirname(currentFilePath)
-    /*const currentFilePath = fileURLToPath(import.meta.url)
-    const currentDir = dirname(currentFilePath)
-
+    /*
     const path = join(currentDir, '../../..', 'node_modules/venom-bot/dist/lib/wapi', 'wapi.js')
     let toFix = readFileSync(path);
     toFix = toFix.toString().replace(
