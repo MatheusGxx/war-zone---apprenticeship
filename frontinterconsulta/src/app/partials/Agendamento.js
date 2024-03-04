@@ -246,8 +246,7 @@ useEffect(() => {
   }
 
   const onChangeCheckBoxDate = (e, id) => {
-    // Verificar se a tem data disponivel 
-    
+
     if(e.target.checked){
       const selectedDateObj = Horarios.find((horario) => horario._id === id)
       setTempoConsulta(selectedDateObj.TempoDeConsulta)

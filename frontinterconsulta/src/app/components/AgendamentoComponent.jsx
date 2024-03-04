@@ -6,6 +6,7 @@ import GraphicEqIcon from '@mui/icons-material/GraphicEq'
 import SendIcon from '@mui/icons-material/Send'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import { config2 } from '../config.js'
+import { startOfDay, parse, isAfter } from 'date-fns';
 
 import axios from 'axios'
 import { useMutation } from '@tanstack/react-query'
@@ -117,37 +118,41 @@ const IniciarGravacao = async () => {
     return (
       <>
         <div className="flex flex-col gap-3">
-        
+         
           {Horarios && Horarios.length > 0 && visibleData && (
             <>
               <div className="flex gap-5 justify-center flex-wrap">
-              <h1 className="font-bold text-blue-500 text-center text-xl">
-                {doenca ?  
-                `Datas Disponiveis do ${especialidade}, ${NomeMedico} para ${doenca}`: 
-                `Datas Disponiveis do ${especialidade}, ${NomeMedico}`
-                }
-              </h1>
-               <>
-                {Horarios.map((datas, index) => {
-                  return (
-                    <div
-                      key={index}
-                      className="flex gap-5 justify-center items-center"
-                    >
-                      <h1> Data: {datas.data}</h1>
-                      <Checkbox
-                        {...datas}
-                        onChange={(e) => onChangeCheckBoxDate(e,datas._id)}
-                        disabled={checkboxSelecionado !== null && checkboxSelecionado !== datas._id}
-                      />
-                    </div>
-                  );
-                })}
-               </>
+                <h1 className="font-bold text-blue-500 text-center text-xl">
+                  {doenca ?  
+                    `Datas Disponiveis do ${especialidade}, ${NomeMedico} para ${doenca}`: 
+                    `Datas Disponiveis do ${especialidade}, ${NomeMedico}`
+                  }
+                </h1>
+                <>
+                  {Horarios.filter(horario => {
+                    const dataHorario = parse(horario.data, 'dd/MM/yyyy', new Date());
+                    const hoje = startOfDay(new Date())
+                    return isAfter(dataHorario, hoje) || dataHorario.getTime() === hoje.getTime()
+                  }).map((datas, index) => {
+                    return (
+                      <div
+                        key={index}
+                        className="flex gap-5 justify-center items-center"
+                      >
+                        <h1> Data: {datas.data}</h1>
+                        <Checkbox
+                          {...datas}
+                          onChange={(e) => onChangeCheckBoxDate(e,datas._id)}
+                          disabled={checkboxSelecionado !== null && checkboxSelecionado !== datas._id}
+                        />
+                      </div>
+                    );
+                  })}
+                </>
               </div>
             </>
           )}
-  
+
           {selectedDate && visibleHorarios && notIntervals !== false ? (
             <div>
               <div className="flex gap-5 flex-wrap mt-5 border-blue-500 border-4 rounded-lg  justify-center items-center">

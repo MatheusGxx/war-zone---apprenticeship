@@ -617,7 +617,7 @@ const HandleConsulta = async (id) => {
                       </div>
                       </th>
                      }
-                      {TypeDoctor !== 'SUS' ? 
+                      {TypeDoctor !== 'SUS' && !NomePacienteLocal ? 
                        <th className="border-b bg-white text-black py-2 px-4 font-normal">
                          <div className='flex items-center'>
                            <div className="bg-blue-500 rounded-full h-3 w-3 inline-block mr-2"></div>
@@ -626,7 +626,7 @@ const HandleConsulta = async (id) => {
                         </th>
                        : null}
      
-                     {TypeDoctor !== 'SUS' ? 
+                     {TypeDoctor !== 'SUS' && !NomePacienteLocal ? 
                        <th className="border-b bg-white text-black py-2 px-4 font-normal">
                          <div className='flex items-center'>
                            <div className="bg-blue-500 rounded-full h-3 w-3 inline-block mr-2"></div>
@@ -842,6 +842,7 @@ const HandleConsulta = async (id) => {
                   color="primary"
                   onClick={() => HandleConsulta(row._id)}
                   disabled={GenerateLink.isLoading}
+                  className='cursor-pointer'
                   />
                   } 
                  </td>               

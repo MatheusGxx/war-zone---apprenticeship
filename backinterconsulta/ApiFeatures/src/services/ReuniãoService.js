@@ -465,7 +465,7 @@ export const SavedConsultaMedico = async (body, res) => {
           Atestado: Atestado,
           Exame: ExameSolicitado,
           result: result
-       }).then(response => response).catch(err => err)
+       }).then(response => response).catch(err => err) 
       //Development
         /*axios.post('http://localhost:8081/api2/automatic-whatsapp', {
           route: '/resumo-casos-clinicos',
@@ -1125,9 +1125,7 @@ export const sendDocumentsPatient = async (id, res, files) => {
     const getDataPaciente = await models.ModelRegisterPaciente.findOne(
       { 'ConsultasSolicitadasPacientes._id': id },
     )
-    console.log(getDataPaciente)
-    
-     
+         
     const NomePaciente = getDataPaciente.nome
     const NumeroPaciente = getDataPaciente.telefone
     const EmailPatient = getDataPaciente.email

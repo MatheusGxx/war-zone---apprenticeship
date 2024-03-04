@@ -233,13 +233,13 @@ const ReuniaoMédico = () =>{
     if (receitaControlada !== '') {
       DocumentosPreenchidos.push('Receita Controlada')
     }
-    if (diasAfastamento !== '') {
-      DocumentosPreenchidos.push('Dias de Afastamento');
+    if (diasAfastamento !== null ) {
+      DocumentosPreenchidos.push('Dias de Afastamento')
     }
     if(cid !== ''){
       DocumentosPreenchidos.push('CID')
     }
-    if(SolicitarExames !== ''){
+    if(SolicitarExames.length > 0){
       DocumentosPreenchidos.push('Solicitação de Exames')
     }
 
