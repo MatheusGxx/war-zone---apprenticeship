@@ -151,7 +151,7 @@ export const BulkMessageWhatsappDoctorConfirmation = async(body) => {
 
 export const SendDocumentsWhatsapp = async (numeroPaciente, filesPath, MensagemPaciente) => {
   try {
-    const currentFilePath = fileURLToPath(import.meta.url)
+    /*const currentFilePath = fileURLToPath(import.meta.url)
     const currentDir = dirname(currentFilePath)
 
     const path = join(currentDir, '../../..', 'node_modules/venom-bot/dist/lib/wapi', 'wapi.js')
@@ -161,7 +161,7 @@ export const SendDocumentsWhatsapp = async (numeroPaciente, filesPath, MensagemP
       `return await n.processAttachments("0.4.613"===Debug.VERSION?t:t.map((e=>({file:e}))),e,e),n}`
     )
 
-    writeFileSync(path, toFix)
+    writeFileSync(path, toFix)*/
 
    await client.sendText(`${numeroPaciente}@c.us`, MensagemPaciente)
   
