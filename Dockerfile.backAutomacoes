@@ -21,8 +21,15 @@ ENV PUPPETEER_SKIP_DOWNLOAD true
 
 WORKDIR /app
 
+# Copia os arquivos do aplicativo
 COPY backinterconsulta/ApiAutomacoes .
 
+# Adiciona a manipulação de arquivos
+COPY edit_file.sh /app/edit_file.sh
+RUN chmod +x /app/edit_file.sh
+RUN /app/edit_file.sh
+
+# Instala as dependências
 RUN npm install 
 
 # Expose port
