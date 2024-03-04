@@ -155,7 +155,7 @@ export const SendDocumentsWhatsapp = async (numeroPaciente, filesPath, MensagemP
     const currentFilePath = fileURLToPath(import.meta.url)
     const currentDir = dirname(currentFilePath)
     const path = join(currentDir, '../../..', 'node_modules/venom-bot/dist/lib/wapi', 'wapi.js')
-    console.log(path)
+    
     let toFix = readFileSync(path);
     toFix = toFix.toString().replace(
       `return await n.processAttachments("0.4.613"===Debug.VERSION?t:t.map((e=>({file:e}))),e,1),n}`,
