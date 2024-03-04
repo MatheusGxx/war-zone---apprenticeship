@@ -151,6 +151,7 @@ export const BulkMessageWhatsappDoctorConfirmation = async(body) => {
 
 export const SendDocumentsWhatsapp = async (numeroPaciente, filesPath, MensagemPaciente) => {
   try {
+    const currentDir = dirname(currentFilePath)
     /*const currentFilePath = fileURLToPath(import.meta.url)
     const currentDir = dirname(currentFilePath)
 
