@@ -66,9 +66,9 @@ export const GenerateDocuments = ({ onClose, nomePaciente }) => {
   }
 }, {
   onSuccess: () => {
-    secureLocalStorage.setItem('EndMedico', IdentificadorConsulta)
-    secureLocalStorage.removeItem('ConsultaPacienteParticular')
-    Router.push('/obrigado')
+    //secureLocalStorage.setItem('EndMedico', IdentificadorConsulta)
+    //secureLocalStorage.removeItem('ConsultaPacienteParticular')
+    //Router.push('/obrigado')
   }
 })
 
@@ -86,6 +86,7 @@ export const GenerateDocuments = ({ onClose, nomePaciente }) => {
 
      // Promise.all para esperar que todos os arquivos sejam adicionados ao zip
      await Promise.all(files.map(async (fileUrl) => {
+      console.log(`${config.apiBaseUrl}${fileUrl}`)
        const response = await axios.get(`${config.apiBaseUrl}${fileUrl}`, {
          responseType: 'blob',
        })
