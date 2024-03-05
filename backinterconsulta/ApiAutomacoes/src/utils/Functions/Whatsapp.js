@@ -76,7 +76,6 @@ export const BulkMessageWhatsappPatientPublic = async (dataPatients, NomeUnidade
 
 export const BulkMessageWhatsappPatientConfirmation = async (consultas, NomeUnidade, EndereçoUnidade) => {
 
-
   if(client){
     console.log('Instancia do Venom ja esta Criada')
   }else{
@@ -94,8 +93,8 @@ export const BulkMessageWhatsappPatientConfirmation = async (consultas, NomeUnid
      await new Promise((resolve) => {
        setTimeout(async () => {
          try {
-           const Message = `🌟 Olá ${data.Solicitante}!\n\nA Secretaria de Saúde ${NomeUnidade} do município tem uma notícia especial para você! Sua consulta está agendada com ${data.Solicitado}, especialista em ${data.EspecialidadeSolicitado}, no dia ${data.Data} às ${data.Inicio}. Sua presença é fundamental! Estamos trabalhando arduamente para atender a todos os cidadãos. Seja consciente, não falte, ou se necessário, cancele com antecedência. Lembre-se, outros pacientes também aguardam por atendimento. 🌷\n\nEntre Nesse Link agora para confirmar a sua consulta: http://localhost:3000/accept-medical?response=${data.NomeUnidadeSolicitante}&namePatient=${data.Solicitante}&date=${data.Data}&start=${data.Inicio}&upload=${data.FotoUnidadeSolicitante}&id=${data._id}`
-           const result = await client.sendText(`${data.NumeroSolicitante}@c.us`, Message);
+          const Message = `🌟 Olá ${data.Solicitante}!\n\nA Secretaria de Saúde ${NomeUnidade} do município tem uma notícia especial para você! Sua consulta está agendada com ${data.Solicitado}, especialista em ${data.EspecialidadeSolicitado}, no dia ${data.Data} às ${data.Inicio}. Sua presença é fundamental! Estamos trabalhando arduamente para atender a todos os cidadãos. Seja consciente, não falte, ou se necessário, cancele com antecedência. Lembre-se, outros pacientes também aguardam por atendimento. 🌷\n\nEntre Nesse Link abaixo agora para confirmar a sua consulta:\n\nhttps://interconsulta.org/accept-medical?response=${encodeURIComponent(data.NomeUnidadeSolicitante)}&namePatient=${encodeURIComponent(data.Solicitante)}&date=${encodeURIComponent(data.Data)}&start=${encodeURIComponent(data.Inicio)}&upload=${encodeURIComponent(data.FotoUnidadeSolicitante)}&id=${encodeURIComponent(data._id)}`;
+          const result = await client.sendText(`${data.NumeroSolicitante}@c.us`, Message);
            console.log(`Paciente: ${data.Solicitante}, Notificado com Sucesso\nMensagem Enviada: ${result.text}`);
          } catch (error) {
            console.error(`Erro ao enviar mensagem para ${data.Solicitante}: `, error);
