@@ -1,50 +1,26 @@
 import { useState, useEffect, useRef } from 'react';
 import Cropper from 'cropperjs';
 import 'cropperjs/dist/cropper.min.css';
-
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import { CircularProgress } from '@mui/material';
 import Image from 'next/image';
 import SemFoto from '../public/SemFoto.jpg';
 
 export const RegisterMédicoSeven = ({
-  hiddenFileInput,
-  setFoto,
-  Foto,
-  HandleClickEnd,
-  CreateRequestMutation,
-  setCroppedImage,
+  onImageChange,
+  onImageCrop,
+  imageFile,
   croppedImage,
-  setCroppedFile,
-  croppedFile,
+  onSubmit,
 }) => {
-  const cropperRef = useRef(null)
+  const cropperRef = useRef(null);
 
   const handleClick = () => {
-    hiddenFileInput.current.click();
+    onImageChange(document.getElementById('hiddenFileInput').files[0]);
   };
-
-  const handleChange = (event) => {
-    const selectedFile = event.target.files[0];
-    setFoto(selectedFile);
-  };
-
-  const handleCrop = () => {
-
-    const croppedDataUrl = cropperRef.current.getCroppedCanvas()
-
-       // Convertendo o canvas para um Blob (arquivo) usando o método toBlob
-       croppedDataUrl.toBlob((blob) => {
-        // Criando um arquivo a partir do Blob
-        const croppedFile = new File([blob], 'croppedImage.png', { type: 'image/png' });
-        setCroppedFile(croppedFile);
-        setCroppedImage(croppedDataUrl.toDataURL());
-      }, 'image/png');  
-  }
 
   useEffect(() => {
-
-    if (Foto) {
+    if (imageFile) {
       const cropper = new Cropper(cropperRef.current, {
         aspectRatio: 1,
         viewMode: 2,
@@ -56,65 +32,62 @@ export const RegisterMédicoSeven = ({
         cropper.destroy();
       };
     }
-  }, [Foto]);
+  }, [imageFile]);
+
+  useEffect(() => {
+    if (imageFile) {
+      const imageElement = cropperRef.current.image;
+      const cropper = cropperRef.current;
+
+      imageElement.src = URL.createObjectURL(imageFile);
+      cropper.getCroppedCanvas().toBlob((blob) => {
+        onImageCrop(blob);
+      }, 'image/png');
+    }
+  }, [imageFile, onImageCrop]);
 
   return (
     <>
       <h1 className="text-blue-500 text-center"> Foto do Médico:</h1>
 
-      {Foto ? (
-        <div className="flex justify-center items-center">
+      <div className="flex justify-center items-center">
+        {croppedImage ? (
           <img
-            ref={cropperRef}
-            src={URL.createObjectURL(Foto)}
-            alt="Foto Médico"
+            src={URL.createObjectURL(croppedImage)}
+            alt="Cropped Image"
             className="rounded-lg"
           />
-        </div>
-      ) : (
-        <>
-          <div
-            onClick={() => handleClick()}
-            className="cursor-pointer flex justify-center items-center"
-          >
-            <Image src={SemFoto} width={300} height={300} alt="Sem Foto" />
-          </div>
-          <input
-            type="file"
-            onChange={(e) => handleChange(e)}
-            ref={hiddenFileInput}
-            style={{ display: 'none' }}
-            name="file"
-          />
-        </>
-      )}
+        ) : (
+          <>
+            <div
+              onClick={() => handleClick()}
+              className="cursor-pointer flex justify-center items-center"
+            >
+              <Image src={SemFoto} width={300} height={300} alt="Sem Foto" />
+            </div>
+            <input
+              id="hiddenFileInput"
+              type="file"
+              onChange={(e) => handleClick()}
+              ref={useRef(null)}
+              style={{ display: 'none' }}
+              name="file"
+            />
+          </>
+        )}
+      </div>
 
-      {Foto && (
-        <div className="flex justify-center items-center mt-3">
-          <button
-            onClick={handleCrop}
-            className="bg-blue-500 text-white px-4 py-2 rounded-md"
-          >
-            <p> Cortar Imagem </p>
-          </button>
-        </div>
-      )}
-
-      {croppedImage && (
-        <div className="flex justify-center items-center mt-3">
-          <img src={croppedImage} alt="Cropped Image" className="rounded-lg" />
-        </div>
-      )}
-
-      <div className="mr-3 flex justify-center items-center mt-5">
+      <div className="flex justify-center items-center mt-3">
         <button
-          onClick={HandleClickEnd}
-          className="w-72 h-12 rounded-full bg-indigo-950 text-white font-light"
+          onClick={onSubmit}
+          className="bg-blue-500 text-white px-4 py-2 rounded-md"
         >
-          {CreateRequestMutation.isLoading ? (
+          {onSubmit.isLoading ? (
             <CircularProgress size={24} />
           ) : (
-            'Entrar'
+            <>
+              Entrar <AddPhotoAlternateIcon className="ml-2" />
+            </>
           )}
         </button>
       </div>
