@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { TextField, Autocomplete, Snackbar , Alert } from "@mui/material"
 import { EspecialidadesAtendidas } from "./EspecialidadesAtendidas"
+import { EspecialidadesUnidades } from './EspecialidadesUnidade'
 import { AreadeAtuacaoAtendidas } from './AreadeAtuaçaoAtendidas'
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos'
@@ -17,7 +18,8 @@ export const RegisterTwoDoctor = (
     setAtuacao,
     setResumo,
     resumo,
-    setCurrentStep
+    setCurrentStep,
+    typeDoctorPublic
   }
   ) => {
 
@@ -75,7 +77,7 @@ export const RegisterTwoDoctor = (
             setEspecialidade(newValue);
           }
         }}
-        options={EspecialidadesAtendidas}
+        options={typeDoctorPublic ? EspecialidadesUnidades : EspecialidadesAtendidas}
         noOptionsText="Sem resultados"
         renderInput={(params) => <TextField {...params} label="Especialidade Médica" variant="standard" />}
         className="w-full border-b border-blue-500 sm:w-full"

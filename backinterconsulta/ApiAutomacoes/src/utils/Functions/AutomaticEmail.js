@@ -14,12 +14,11 @@ const Transporter = nodemailer.createTransport({
         pass: '@InterConsulta2024',
         clientId: '344062049191-2m2u2nustn7rupk8esk0254fq2f7308i.apps.googleusercontent.com',
         clientSecret: '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',
-        refreshToken: '1//04uJKqugcVi4YCgYIARAAGAQSNwF-L9IrKzWVIrAt_uXyfEhNlnVZzYVG9MmIMJ7dhXJ-hv9Kg6uwPJeWV6SFEPKSHvTMWO0Ff9Q'
+        refreshToken: '1//04f_NsWBQLOjTCgYIARAAGAQSNwF-L9IrlHVXcKL87AXZVoytuC7KLSpmZTDKafDyqpPzjqkpwR2L9Qd_bibNB5SGltJNVL-5jMw'
     }
 })
 
 export const sendEmail = async (to, subject, message) => {
-    console.log(`Destinatario: ${to}`)
     const mailOptions = {
         from: 'interconsulta.org@gmail.com',
         to: to,

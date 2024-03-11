@@ -20,6 +20,7 @@ import { useRouter } from 'next/navigation'
 export const GenerateDocuments = ({ onClose, nomePaciente }) => {
   const [open, setOpen] = useState(false)
   const [date, setDate] = useState(null)
+  const [hours, setHours] = useState(null)
 
   useEffect(() => {
     setOpen(true)
@@ -34,7 +35,13 @@ export const GenerateDocuments = ({ onClose, nomePaciente }) => {
   
     const DataAtual = `${Dia}/${Mes}/${Ano}`
     setDate(DataAtual)
-  },[date])
+
+    const Hora = ObjectDate.getHours()
+    const Minutos = ObjectDate.getMinutes()
+    const Segundos = ObjectDate.getSeconds()
+    const Hours = `${Hora}:${Minutos}:${Segundos}`
+    setHours(Hours)
+  },[date, hours])
 
 
   const Router = useRouter()
@@ -66,9 +73,9 @@ export const GenerateDocuments = ({ onClose, nomePaciente }) => {
   }
 }, {
   onSuccess: () => {
-    //secureLocalStorage.setItem('EndMedico', IdentificadorConsulta)
-    //secureLocalStorage.removeItem('ConsultaPacienteParticular')
-    //Router.push('/obrigado')
+    secureLocalStorage.setItem('EndMedico', IdentificadorConsulta)
+    secureLocalStorage.removeItem('ConsultaPacienteParticular')
+    Router.push('/obrigado')
   }
 })
 
@@ -86,7 +93,6 @@ export const GenerateDocuments = ({ onClose, nomePaciente }) => {
 
      // Promise.all para esperar que todos os arquivos sejam adicionados ao zip
      await Promise.all(files.map(async (fileUrl) => {
-      console.log(`${config.apiBaseUrl}${fileUrl}`)
        const response = await axios.get(`${config.apiBaseUrl}${fileUrl}`, {
          responseType: 'blob',
        })
@@ -99,7 +105,7 @@ export const GenerateDocuments = ({ onClose, nomePaciente }) => {
      const zipContent = await zip.generateAsync({ type: 'blob' });
 
      // Salva o arquivo zip
-     saveAs(zipContent, `Documentos_do_Paciente_${nomePaciente}_${date}.zip`)
+     saveAs(zipContent, `Documentos_do_Paciente_${nomePaciente}_${date}-${hours}.zip`)
 
  }
 
@@ -148,7 +154,7 @@ export const GenerateDocuments = ({ onClose, nomePaciente }) => {
 
           <button 
           onClick={HandleClose2}
-          disabled={SaveDocuments.isLoading && RequestCreateDocuments.isLoading}
+          disabled={SaveDocuments.isLoading || RequestCreateDocuments.isLoading}
           className="w-11/12 h-12 rounded-full bg-blue-600 text-white font-bold">
                <p className="whitespace-nowrap"> Voltar a Edição </p>
           </button>  

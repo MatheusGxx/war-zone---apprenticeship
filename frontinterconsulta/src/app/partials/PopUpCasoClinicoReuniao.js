@@ -92,14 +92,14 @@ export const CasosClinicoReuniao = ({
       >
         <AppBar sx={{ position: 'relative', backgroundColor: 'white' }}>
           <Toolbar>
-           <ArrowBackIcon
+            <div className="flex justify-center items-center cursor-pointer" onClick={handleClickClose}>
+            <ArrowBackIcon
               edge="start"
               color="primary"
-              onClick={handleClickClose}
               aria-label="close"
-              className="cursor-pointer"
             />
             <h1 className="text-lg text-blue-600 ml-3 animate-pulse"> VOLTAR </h1>
+            </div>
             <div className='flex justify-center items-center flex-grow'>
               <Image src={Logo} width={50} height={50} alt="Logo Interconsulta" className='animate-spin-slow'/>
             </div>

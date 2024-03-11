@@ -3,7 +3,7 @@ import { differenceInDays, parse } from 'date-fns'
 
 export const ProcessCosolidado = async (body) => {
 
-    const { inicio, fim, total, consulta, id, AreadeAtuacao, CPFsPacientes } = body
+    const { inicio, fim, total, consulta, id, EspecialidadeMedica , CPFsPacientes } = body
 
     const TotalNumber = parseFloat(total)
     console.log(`Orçamento Total da Unidade de Saude: ${TotalNumber}`)
@@ -44,7 +44,7 @@ export const ProcessCosolidado = async (body) => {
           }
         },
         {
-          'AreadeAtuacao': AreadeAtuacao 
+          'EspecialidadeMedica': EspecialidadeMedica
         }
       ]
     })
@@ -100,17 +100,19 @@ export const ProcessCosolidado = async (body) => {
 
     const Lenght = Datas.length
     console.log(`Quantidade de Horarios Medicos Disponiveis: ${Lenght}`)
-
-    const AtendimentosDiasNoIntervalo = MedicosDisponiveis.map((medico) => {
+    
+    const AtendimentosDiasNoIntervalo = MedicosDisponiveis.flatMap((medico) => {
       return medico.Horarios.filter((horario) => {
-        return horario.data >= inicio && horario.data <= fim
-      }).map((horarioFiltrado) => {
-        return horarioFiltrado.AtendimentosDia
+          return horario.data >= inicio && horario.data <= fim
+      }).flatMap((horarioFiltrado) => {
+          return horarioFiltrado.IntervaloAtendimentos.filter((intervalo) => {
+              return intervalo.Escolhido === 'Livre'
+          })
       })
-    }).flat()
+  })
 
-    const SomaAtendimentosDia = AtendimentosDiasNoIntervalo.reduce((total, atendimentos) => total + atendimentos, 0)
-    console.log(`Somataria dos Atendimentos Dia dos médicos: ${SomaAtendimentosDia}`)
+    const SomaAtendimentosDia = AtendimentosDiasNoIntervalo.length
+    console.log(`Quantidade de Atendimentos Médicos que suportamos: ${SomaAtendimentosDia}`)
 
     const SubstraçaoMessageAtendimentosDia =  SomaAtendimentosDia - QuantidadeCasosClinicos
 
@@ -146,15 +148,27 @@ export const ProcessCosolidado = async (body) => {
     const DivisãoDiaFrase =  SomaAtendimentosDia / QuantidadeMedicosDisponiveis
 
     const DivisãoDiaFraseFinal = DivisãoDiaFrase /  DiferençaEntreDiasDosMedicos
+    
 
-    const ArrendondamentoDiaFraseFinal = Math.ceil(DivisãoDiaFraseFinal)
+    let ArrendondamentoDiaFraseFinal 
 
+    if(QuantidadeCasosClinicos > SomaAtendimentosDia ){
+      ArrendondamentoDiaFraseFinal = Math.ceil(DivisãoDiaFraseFinal)
+    }else if(SomaAtendimentosDia >= QuantidadeCasosClinicos){
+      const DivisãoDiaFrase =  QuantidadeCasosClinicos / QuantidadeMedicosDisponiveis
+      const countFinal = DivisãoDiaFrase /  DiferençaEntreDiasDosMedicos
+      const ArrendondamentoCountFinal = Math.ceil(countFinal)
+      ArrendondamentoDiaFraseFinal = ArrendondamentoCountFinal
+    }
     console.log(`Quantidade de Atendimentos Dia Final ${ArrendondamentoDiaFraseFinal}`)
      
-    const Consolidado = `Se cada médico atender ${ArrendondamentoDiaFraseFinal} caso clinico por dia, no fim de ${DiferençaEntreDiasDosMedicos} dias voce tera atendido ${Final} dos seus casos clinicos em ${AreadeAtuacao}`
+    const Consolidado = `Se cada médico fizer ${ArrendondamentoDiaFraseFinal} 
+    atendimentos por dia, no fim de ${DiferençaEntreDiasDosMedicos} 
+    dias, você terá atendido ${Final} dos seus pacientes em ${EspecialidadeMedica}`
+
     console.log(`Frase para a unidade de Saude : ${Consolidado}.`)
 
-    let Custo;
+    /*let Custo;
     let CustoEstilizado
     
     if (SomaAtendimentosDia >= QuantidadeCasosClinicos) {
@@ -173,13 +187,12 @@ export const ProcessCosolidado = async (body) => {
             })
         }
     }
-    console.log(`Orçamento Estimado: ${CustoEstilizado}`)
+    console.log(`Orçamento Estimado: ${CustoEstilizado}`)*/
 
     UnidadedeSaude.GestoesSolicitadas.push({
-      AreadeAtuacao: AreadeAtuacao,
       Inicio: inicio,
       Fim: fim,
-      OrçamentoEscolhido: TotalNumber,
+      //OrçamentoEscolhido: TotalNumber,
       ValorPorConsulta: ConsultaNumber,
       CréditosDisponiveis: CréditNumberFormat,
       DiferençaDiasGestor: ResultFinal,
@@ -196,7 +209,7 @@ export const ProcessCosolidado = async (body) => {
       CasosClinicosSuportados: Final,
       MediaAtendimentosDia: ArrendondamentoDiaFraseFinal,
       FraseFinalConsolidada: Consolidado,
-      OrçamentoEstimado: CustoEstilizado,
+      //OrçamentoEstimado: CustoEstilizado,
       MedicosDisponiveis: VerifyQuantidadeMedicosDisponiveis.map((data) => ({
         Nome: data.nome.toString(),
         Especialidade: data.EspecialidadeMedica.toString(),
@@ -213,7 +226,7 @@ export const ProcessCosolidado = async (body) => {
       SomaAtendimentosDia,
       MessageAtendimentosDia,
       QuantidadeMedicosDisponiveis,
-      CustoEstilizado,
+      //CustoEstilizado,
       Consolidado,
       MedicosDisponiveis,
    }

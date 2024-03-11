@@ -61,6 +61,11 @@ const FormularioMédico = () => {
   const [currentStep, setCurrentStep] = useState(1)
   const [croppedImage, setCroppedImage] = useState(null)
   const [croppedFile, setCroppedFile] = useState(null)
+  const [typeDoctorPublic, setTypeDoctorPublic] = useState(false)
+
+  useEffect(() => {
+
+  },[typeDoctorPublic])
 
   const Params = useSearchParams()
 
@@ -203,6 +208,7 @@ const FormularioMédico = () => {
                   setTypeMedico={setTypeDoctor}
                   typeMedico={typeDoctor}
                   setCurrentStep={setCurrentStep}
+                  setTypeDoctorPublic={setTypeDoctorPublic}
                   />
                 }
 
@@ -216,6 +222,7 @@ const FormularioMédico = () => {
                    setResumo={setResumo}
                    resumo={resumo}
                    setCurrentStep={setCurrentStep}
+                   typeDoctorPublic={typeDoctorPublic}
                    />
                 }
 

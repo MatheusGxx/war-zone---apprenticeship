@@ -1,11 +1,12 @@
 'use client'
 import { useState, useRef, useEffect } from 'react';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
-import { Snackbar , Alert, TextField, Autocomplete, CircularProgress, InputAdornment, Typography } from "@mui/material";
-import {  AreadeAtuacaoAtendidas } from '../partials/AreadeAtuaçaoAtendidas.js'
+import { Snackbar , Alert, TextField, Autocomplete, CircularProgress, InputAdornment, Typography } from "@mui/material"
+import { EspecialidadesAtendidas } from '../partials/EspecialidadesAtendidas'
 import { useMutation } from '@tanstack/react-query'
 import { MedicoCarousel } from '../partials/CarroselMédico.js'
-import InsertEmoticonIcon from '@mui/icons-material/InsertEmoticon';
+import InsertEmoticonIcon from '@mui/icons-material/InsertEmoticon'
+import { EspecialidadesUnidades } from '../partials/EspecialidadesUnidade'
 
 import axios from 'axios'
 import Image from "next/image";
@@ -19,7 +20,7 @@ import { config } from '../config.js'
 import { PacienteFaltando } from '../partials/PacientesFaltando.jsx'
 
 const ContentUnidade = () => {
-  const[atuacao, setAtuacao] = useState('')
+  const[especialidade, setEspecialidade] = useState('')
   const[inicio, setInicio] = useState('')
   const[fim, setFim] = useState('')
   const[InicioMedicos, setInicioMedicos] = useState('')
@@ -79,6 +80,7 @@ const ContentUnidade = () => {
 
   const CreateConsolidado = useMutation(async (valueRequest) => {
     const response = await axios.post(`${Api2.apiBaseUrl}/api2/get-consolidado`, valueRequest)
+    console.log(response.data)
     return response.data
   },{
     onSuccess: () => {
@@ -125,7 +127,6 @@ const ContentUnidade = () => {
       horasMedicas !== '' &&
       atendimentos !== '' &&
       medicos &&
-      custo !== '' &&
       consolidado !== ''
     ) {
       divInfoRef.current.scrollIntoView({
@@ -133,7 +134,7 @@ const ContentUnidade = () => {
         block: 'start',
       });
     }
-  }, [horasMedicas, atendimentos, medicos, custo, consolidado, on, reset, inicio, fim, pacienteFaltando]);
+  }, [horasMedicas, atendimentos, medicos, consolidado, on, reset, inicio, fim, pacienteFaltando]);
   
   
   const NotificationPatientsAndDoctor = async () =>{
@@ -238,7 +239,7 @@ const ContentUnidade = () => {
         total: valorConsulta,
         consulta: valorConsulta,
         id: id,
-        AreadeAtuacao:atuacao,
+        EspecialidadeMedica: especialidade,
         CPFsPacientes: CPFsPacientes
       })
 
@@ -247,7 +248,7 @@ const ContentUnidade = () => {
       setHorasMedicas(data.SomaAtendimentosDia)
       setAtendimentos(data.MessageAtendimentosDia)
       setMedicosDisponiveis(data.QuantidadeMedicosDisponiveis)
-      setCusto(data.CustoEstilizado)
+      //setCusto(data.CustoEstilizado)
       setConsolidado(data.Consolidado)
       setSuccessData(data.MedicosDisponiveis)
       setOn(false)
@@ -259,7 +260,7 @@ const ContentUnidade = () => {
  
   const HandleClickFinal = async () => {
     const formData = new FormData();
-    formData.append("AreadeAtuacao", atuacao);
+    formData.append("EspecialidadeMedica", especialidade)
     formData.append("file", selectedFile)
   
     try {
@@ -295,7 +296,7 @@ const ContentUnidade = () => {
     const DataInicio = parse(`${inicio}`, 'dd/MM/yyyy', new Date())
     const DataFim = parse(`${fim}`, 'dd/MM/yyyy', new Date())
   
-    if (atuacao === '' || inicio === '' || fim === '' || selectedFile === null || valorTotal === '' || valorConsulta === '') {
+    if (especialidade === '' || inicio === '' || fim === '' || selectedFile === null) {
       setSnackbarMessage("Ops, você não preencheu todos os campos Obrigatórios para subir os seus Casos clinicos");
       handleSnackBarOpen();
     } else if (DataInicio >= DataFim) {
@@ -330,72 +331,46 @@ const ContentUnidade = () => {
         <>
         <div className="flex items-center justify-center gap-10 sm:flex sm:flex-col sm:gap-5">
             <Autocomplete
-              value={atuacao === '' ? null : atuacao}
+              value={especialidade === '' ? null : especialidade}
               onChange={(event, newValue) => {
                 if (newValue !== null) {
-                  setAtuacao(newValue);
+                  setEspecialidade(newValue)
                 }
               }}
-              options={AreadeAtuacaoAtendidas}
+              options={EspecialidadesUnidades}
               noOptionsText="Sem resultados"
-              renderInput={(params) => <TextField {...params} label="Area de Atuaçao Médica" variant="standard" />}
+              renderInput={(params) => <TextField {...params} label="Especialidade Médica" variant="standard" />}
               className=" w-10/12 border-b border-blue-500 sm:w-full"
             />
-            <TextField
+          </div>
+
+          <div className='flex justify-center items-center gap-5'>
+          <TextField
               variant="standard"
-              label="Inicio"
+              label="Data Inicio"
               InputProps={{
                 sx: { borderBottom: "1px solid blue" },
               }}
               type="text"
               required
               onChange={handleInicioChange}
-              className="w-1/3 sm:w-full"
+              className="w-1/2 sm:w-full"
               value={inicio}
             />
             <TextField
               variant="standard"
-              label="Fim"
+              label="Data Fim"
               InputProps={{
                 sx: { borderBottom: "1px solid blue" },
               }}
               type="text"
               required
               onChange={handleFimChange}
-              className="w-1/3 sm:w-full"
+              className="w-1/2 sm:w-full"
               value={fim}
             />
           </div>
-          <div className='flex justify-center items-center gap-10'>
-          <TextField
-            variant="standard"
-            label="Orçamento Disponivel"
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">{currencySymbol}</InputAdornment>
-              ),
-              sx: { borderBottom: '1px solid blue' },
-            }}
-            type="text"
-            required
-            onChange={handleValorTotalChange}
-            value={valorTotal}
-          />
-          <TextField
-            variant="standard"
-            label="Valor da Consulta"
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">{currencySymbol}</InputAdornment>
-              ),
-              sx: { borderBottom: '1px solid blue' },
-            }}
-            type="text"
-            required
-            onChange={handleValorConsultaChange}
-            value={valorConsulta}
-          />
-          </div>
+
           <input
             type="file"
             className="hidden"
@@ -445,7 +420,7 @@ const ContentUnidade = () => {
          : ''}
           
 
-        {horasMedicas !== '' && atendimentos !== '' && medicos && custo !== '' && consolidado !== '' && successData !== null ?
+        {horasMedicas !== '' && atendimentos !== '' && medicos  && consolidado !== '' && successData !== null ?
           <>
         <div className='flex justify-center items-center flex-col gap-5'>
           <div className=' flex justify-center items-center flex-col border-blue-500 border-4 rounded-lg w-full p-5 gap-5' ref={divInfoRef}>
@@ -454,7 +429,7 @@ const ContentUnidade = () => {
               <Image src={Logo} alt="Logo Interconsulta" height={40} width={40} className="animate-spin-slow"/>
               <h1 className='text-2xl text-blue-600 font-bold'> {OriginalUnidadeUnidade} Segue a sua Programaçao abaixo </h1>
            </div>
-           <div className="flex justify-center items-center flex-wrap gap-10 mb-5">
+           <div className="flex justify-center items-center gap-10 mb-5">
              <TextField
              variant="standard"
              label="Data Inicio"
@@ -495,19 +470,6 @@ const ContentUnidade = () => {
              className="w-1/3 sm:w-full"
              value={horasMedicas}
             />
-           <TextField
-           variant="standard"
-           label="Orçamento Estimado"
-           InputProps={{
-             sx: { borderBottom: '1px solid blue' },
-             readOnly: true,
-           }}
-           type="text"
-           required
-           onChange={(e) => setCusto(e.target.value)}
-           className="w-1/3 sm:w-full"
-           value={custo}
-                  />
         </div>
 
           {CreateRequestMutation.isLoading &&
@@ -515,18 +477,16 @@ const ContentUnidade = () => {
           }
         {successData &&
             <>
-          <div className='flex gap-5'>
-              <Image src={Logo} alt="Logo Interconsulta" height={30} width={30} className="animate-spin-slow"/>
-              <h2 className='text-blue-600 font-bold text-2xl'> Profissionais em {atuacao} ({medicos})</h2>
-              </div>
+          <div className='flex justify-center items-center w-full'>
+              <h2 className='text-blue-600 font-bold text-2xl text-center'> Total de Médicos Disponiveis em {especialidade} ({medicos})</h2>
+          </div>
           </>
         }
 
        <div className="border-b-2 border-blue-500  w-full  pt-3 sm:hidden md:hidden lg:hidden xl:hidden"></div>
 
        <div className='flex gap-5 justify-center items-center whitespace-nowrap'>
-          <Image src={Logo} alt="Logo Interconsulta" height={30} width={30} className="animate-bounce"/>
-          <h1 className='font-bold text-red-600 whitespace-pre-wrap text-center'> {consolidado} </h1>
+          <h1 className='font-bold text-red-600 whitespace-normal text-center'> {consolidado} </h1>
        </div>
     </div>
 

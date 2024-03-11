@@ -10,7 +10,6 @@ const DadosIniciais = {
 const ModelDataCasosClinicos = {
   Usuario: String,
   UnidadeSaude: String,
-  AreadeAtuacao: String,
   Posição: String,
   MatrículaProntuário: String,
   CartãoSUS: String,
@@ -44,7 +43,6 @@ const ModelDataCasosClinicos = {
 }
 
 const ModelGestoesSolicitadas = {
-  AreadeAtuacao: String,
   Inicio: String,
   Fim: String,
   OrçamentoEscolhido: String,

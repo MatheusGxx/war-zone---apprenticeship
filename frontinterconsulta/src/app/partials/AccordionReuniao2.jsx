@@ -194,7 +194,7 @@ export const AccordionReuniaoMédico2 = ({
   const HandleAddAtestado = async () => {
     try{  
       await SavedAtestado.mutateAsync({ id: IdentificadorConsulta,  diasAfastamento: diasAfastamento, CID: cid })
-      setDiasAfastamento('')
+      setDiasAfastamento(null)
       setCID('')
     }catch(error){
       console.log(error)
@@ -263,7 +263,7 @@ export const AccordionReuniaoMédico2 = ({
   const HandleAddExames = async () => {
     try{
       await SavedExame.mutateAsync({id: IdentificadorConsulta, exame: SolicitarExames })
-      setSolicitarExames('')
+      setSolicitarExames([])
     }catch(error){
       console.log(error)
     }

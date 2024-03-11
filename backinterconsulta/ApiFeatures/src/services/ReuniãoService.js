@@ -465,7 +465,7 @@ export const SavedConsultaMedico = async (body, res) => {
           Atestado: Atestado,
           Exame: ExameSolicitado,
           result: result
-       }).then(response => response).catch(err => err) 
+       }).then(response => response).catch(err => err)
       //Development
         /*axios.post('http://localhost:8081/api2/automatic-whatsapp', {
           route: '/resumo-casos-clinicos',

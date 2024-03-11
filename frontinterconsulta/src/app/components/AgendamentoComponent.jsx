@@ -5,8 +5,8 @@ import KeyboardVoiceIcon from '@mui/icons-material/KeyboardVoice'
 import GraphicEqIcon from '@mui/icons-material/GraphicEq'
 import SendIcon from '@mui/icons-material/Send'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
-import { config2 } from '../config.js'
-import { startOfDay, parse, isAfter } from 'date-fns';
+import { config2, Api2 } from '../config.js'
+import { startOfDay, parse, isAfter, isSameDay } from 'date-fns';
 
 import axios from 'axios'
 import { useMutation } from '@tanstack/react-query'
@@ -37,13 +37,41 @@ export const AgendamentoComponente = ({
     Sintoma,
     selectOneDate,
     notIntervals,
-    nomePaciente
+    nomePaciente,
+    setHorariosAntigos,
+    horariosAntigos,
+    idMedico,
 }) => {
+
 
   const mediaRecorder = useRef(null)
   const [gravando, setGravando] = useState(false)
   const [audioRecordings, setAudioRecordings] = useState([])
   const [sucessAudio, setIsSucessAudio] = useState(false)
+
+  
+  const WarningDoctorHorariosAntigos = useMutation(async (valueRequest) => {
+    try {
+      const response = await axios.post(`${Api2.apiBaseUrl}/api2/warning-doctor-horarios-antigos`, valueRequest)
+      return response.data
+    } catch (error) {
+      throw new Error(`Error fetching: ${error}`);
+    }
+  })
+
+  useEffect(() => {
+    const WarningDoctorHorariosAntigosFunctionAsync = async () => { 
+      await WarningDoctorHorariosAntigos.mutateAsync({
+        NomePacienteWarningDoctorHorariosAntigos: nomePaciente,
+        idMedicoWarningDoctorHorariosAntigos: idMedico
+      })
+    }
+
+    if(horariosAntigos){
+       WarningDoctorHorariosAntigosFunctionAsync()
+    }
+  
+  },[horariosAntigos, nomePaciente, idMedico])
 
   const props = useSpring({
     opacity: selectOneDate ? 2 : 0,
@@ -114,7 +142,8 @@ const IniciarGravacao = async () => {
        mediaRecorder.current.stop()
     }
   }
- 
+   
+
     return (
       <>
         <div className="flex flex-col gap-3">
@@ -132,7 +161,7 @@ const IniciarGravacao = async () => {
                   {Horarios.filter(horario => {
                     const dataHorario = parse(horario.data, 'dd/MM/yyyy', new Date());
                     const hoje = startOfDay(new Date())
-                    return isAfter(dataHorario, hoje) || dataHorario.getTime() === hoje.getTime()
+                    return isAfter(dataHorario, hoje) || isSameDay(dataHorario, hoje)
                   }).map((datas, index) => {
                     return (
                       <div
@@ -146,8 +175,19 @@ const IniciarGravacao = async () => {
                           disabled={checkboxSelecionado !== null && checkboxSelecionado !== datas._id}
                         />
                       </div>
-                    );
+                    )
                   })}
+                   {Horarios.filter(horario => {
+                            const dataHorario = parse(horario.data, 'dd/MM/yyyy', new Date());
+                            const hoje = startOfDay(new Date());
+                            return isAfter(dataHorario, hoje) || isSameDay(dataHorario, hoje)
+                    }).length === 0 && (
+                         <>
+                          <p className="text-center text-red-500 mt-4 font-bold text-xl">Infelizmente o {NomeMedico}, Nao tem datas Disponiveis Atualmente.</p>
+                           {setHorariosAntigos(true)}
+                           
+                         </>
+                  )}
                 </>
               </div>
             </>

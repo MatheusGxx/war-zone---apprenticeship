@@ -35,7 +35,6 @@ export const EspecialidadesDisponiveis = async (body, res) =>{
         { 'DoencasAndSintomas.Sintomas': { $in: doenca } },
       ],
     })
-
     
     if(id){
       const getPaciente = await models.ModelRegisterPaciente.findById(id)
@@ -280,14 +279,11 @@ export const UpdateOnlineDoctor = async (body, res) => {
 
 export const GetDataSintomasAndDoenca = async (res) => {
   try {
-    const getDoencas = await models.List.find({}, 'DoencasESintomas')
-
-    const arr = getDoencas.flatMap(item =>
-      item.DoencasESintomas.flatMap(doencaSintoma => [
-        doencaSintoma.Doenca,
-        ...doencaSintoma.Sintomas
-      ])
-    )
+    const getDoencas = await models.List.find({});
+    const Doencas = getDoencas.map(data => data.DoencasESintomas.map(data => data.Doenca)).flat();
+    const Sintomas = getDoencas.map(data => data.DoencasESintomas.map(data => data.Sintomas.map(data => data))).flat(2);
+    
+    const arr = [...Doencas, ...Sintomas];
 
     res.status(200).json({ arr });
   } catch (error) {

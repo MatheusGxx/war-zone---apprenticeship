@@ -104,7 +104,7 @@ export const SavedConsultaPacienteParticular = async (body, res) => {
     }
     
     //Production
-     axios.post('http://back-a:8081/api2/automatic-whatsapp', body)
+    axios.post('http://back-a:8081/api2/automatic-whatsapp', body)
     //Development
     //axios.post('http://localhost:8081/api2/automatic-whatsapp', body)
 
@@ -736,18 +736,36 @@ export const GenerateLink = async (body, res) =>{
   const { IdentificadorConsultaParticular } = body
   
   try{
+    
     const documentosAtualizados = await models.ModelRegisterMédico.findOne(
       { 'ConsultasSolicitadasPacientes._id':  IdentificadorConsultaParticular  },
       { 'ConsultasSolicitadasPacientes.$': 1 }
     )
     
 
-    const dataConsulta = documentosAtualizados.ConsultasSolicitadasPacientes.map((data) => data.Data)
-    const inicioConsulta = documentosAtualizados.ConsultasSolicitadasPacientes.map((data) => data.Inicio)
-    const fimConsulta =  documentosAtualizados.ConsultasSolicitadasPacientes.map((data) => data.Fim)
+    //const dataConsulta = documentosAtualizados.ConsultasSolicitadasPacientes.map((data) => data.Data)
+    //const inicioConsulta = documentosAtualizados.ConsultasSolicitadasPacientes.map((data) => data.Inicio)
+    //const fimConsulta =  documentosAtualizados.ConsultasSolicitadasPacientes.map((data) => data.Fim)
+
+    const documentosAtualizados2 = await models.ModelRegisterMédico.find({
+      'ConsultasSolicitadasPacientes._id': { $in: IdentificadorConsultaParticular }
+    })
 
 
-    const isValid = await ValidatorDateAndTime(dataConsulta, inicioConsulta, fimConsulta)
+    let LinksConsulta
+    
+    documentosAtualizados2.forEach(doc => {
+      doc.ConsultasSolicitadasPacientes.forEach(consulta => {
+        consulta.LinkConsulta.forEach(link => {
+          LinksConsulta = link.Link
+        })
+      })
+    })
+
+    res.status(200).json({ message: `/consultorio/${LinksConsulta}`})   
+
+
+    /*const isValid = await ValidatorDateAndTime(dataConsulta, inicioConsulta, fimConsulta)
 
 
     if(isValid){
@@ -774,17 +792,16 @@ export const GenerateLink = async (body, res) =>{
     }else{
       try{
         const TempoFaltando = await calculateTimeDifference(dataConsulta, inicioConsulta, fimConsulta)
-        console.log(TempoFaltando)
    
         if (TempoFaltando === 'Consulta Expirada') {
            res.json({ TempoFaltando: TempoFaltando })
        } else {
           res.json({ TempoFaltando: TempoFaltando })
        }
-      }catch(error){
-         console.log(error)
+      }catch(err){
+         console.log(err)
       }
-    }
+    }*/
   }catch(error){
     return res.status(500).json({ message: 'Error internal in Server of Generate Link meeting'})
   }

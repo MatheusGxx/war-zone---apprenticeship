@@ -31,6 +31,16 @@ export const getClient = () => {
 
 export const EnviarMensagem = async (numero, mensagem) => {
   try {
+    if(client){
+      console.log('Instancia do Venom ja esta Criada')
+    }else{
+      client = await venom.create({
+        session: 'Interconsulta',
+      }).catch((error) => {
+        console.log('Erro ao Iniciar o Venom', error);
+      });
+    }
+    
       const Mensagem = await client.sendText(`${numero}@c.us`, mensagem);
       console.log(`Mensagem no WhatsApp enviada para: ${numero}, Texto Enviado: ${Mensagem.text}, Status do Erro: ${Mensagem.erro}`);
   } catch (error) {

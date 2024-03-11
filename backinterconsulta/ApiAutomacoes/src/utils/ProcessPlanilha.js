@@ -14,12 +14,13 @@ import { BulkMessageQueueWarn } from "./Queues.js"
 
 export const ProcessPlanilha = async (body, params, file, filename) => {
 
-    const { AreadeAtuacao } = body
+    const { EspecialidadeMedica } = body
  
     const { id } = params 
+
     file
   
-    if(AreadeAtuacao){
+    if(EspecialidadeMedica){
   
       const UnidadedeSaude = await models.ModelRegisterUnidadeSaude.findById(id)
     
@@ -64,15 +65,14 @@ export const ProcessPlanilha = async (body, params, file, filename) => {
   
       let ObjectData = []
         
-      const VerifyAreaAtuaçao = jsonArray.map((data) => data.SubEspecialidade)
-        const todasIguais = VerifyAreaAtuaçao.every(area => area === AreadeAtuacao) // Compara o Array de AreasdeAtuaçao vindo da planilha com a String Area de Atuaçao vinda do front se for igual passa se nao for nao passa.
+      const VerifyAreaAtuaçao = jsonArray.map((data) => data.Especialidade)
+        const todasIguais = VerifyAreaAtuaçao.every(area => area === EspecialidadeMedica) // Compara o Array de AreasdeAtuaçao vindo da planilha com a String Area de Atuaçao vinda do front se for igual passa se nao for nao passa.
           if(todasIguais){ 
               const pacientes = jsonArray.map( async (data) => { // aqui é a conversao de uma planilha do execel para json usando xlsx  
              
                 const HistoricoData = {
                   Usuario: NameUnidade, 
                   UnidadeSaude: data['Unidade-de-Saúde'],
-                  AreadeAtuacao: AreadeAtuacao,
                   Posiçao: data['Posição'],
                   MatrículaProntuário: data['Matrícula-Prontuário'],
                   CartãoSUS: data['Cartão-SUS'],

@@ -7,6 +7,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { RegisterEndProvider, ProviderHorariosDoctor, BloodProvider, } from '../context/context'
 import { useEffect } from 'react'
 import secureLocalStorage from 'react-secure-storage'
+import { ScriptsSocials } from '../partials/ScriptSocials'
 const queryClient = new QueryClient()
 
 export default function RootLayout({ children }) {
@@ -50,6 +51,7 @@ export default function RootLayout({ children }) {
 
   return (
     <html lang="pt-br">
+      <ScriptsSocials/>
       <body className="background">
        
           <RegisterEndProvider>

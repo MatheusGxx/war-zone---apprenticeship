@@ -46,7 +46,7 @@ const ReuniaoTwo = () =>{
  })
 
   const HandleEndConsulta = async () => {
-    const body1 = {
+    /*const body1 = {
       IdentificadorConsulta: IdentificadorConsulta,
       id: id
     };
@@ -71,11 +71,20 @@ const ReuniaoTwo = () =>{
        secureLocalStorage.setItem('EndPaciente',IdentificadorConsulta)
        secureLocalStorage.removeItem('ConsultaPacienteParticular')
        Router.push('/obrigado')
+    }*/
+
+    const body2 ={
+      id: id,
+      IdentificadorConsulta: IdentificadorConsulta,
     }
+     await SavedConsulta.mutateAsync(body2)
+     secureLocalStorage.setItem('EndPaciente',IdentificadorConsulta)
+     secureLocalStorage.removeItem('ConsultaPacienteParticular')
+     Router.push('/obrigado')
   }
   
   const handleSnackbarClose = () => {
-    setSnackbarOpen(false);
+    setSnackbarOpen(false)
   };
 
   const handleSnackBarOpen = () => {

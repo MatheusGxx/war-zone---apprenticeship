@@ -7,4 +7,4 @@ export const AreadeAtuacaoAtendidas = [
   'Cirurgia do pé e tornozelo',
   'Cirurgia do Quadril',
   'Cirurgia da Coluna'
-];
+]

@@ -1,5 +1,4 @@
 export const TypesDoctors = [
-    'Particular',
-    'SUS',
-    'Particular e SUS'
+    'Atendimento Particular',
+    'Atendimento Público',
 ]

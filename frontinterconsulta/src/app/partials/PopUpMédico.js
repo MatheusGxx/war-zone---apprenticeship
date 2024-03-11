@@ -10,11 +10,11 @@ function PopUpMédico() {
 
   useEffect(() => {
     setOpen(true)
-  }, []);
+  }, [])
 
   const handleClose = () => {
     setOpen(false)
-  };
+  }
 
   return (
     <>

@@ -18,12 +18,13 @@ import { ComponenteAudio } from "../partials/ComponentAudio"
 import { useBlood } from "../context/context.js"
 import { PopUpBlood } from "../partials/PopUpBlood"
 
+
 const ContentPaciente = () => {
   const[selectedDoenca, setSelectedDoenca] = useState('')
   const[especialidade, setEspecialidade] = useState(null)
   const[nameProfissional, setNomeProfissional] = useState(null)
   const[medicoSlug, setMedicoSlug] = useState(null)
-  const[Horarios, setHorarios] = useState()
+  const[Horarios, setHorarios] = useState(null)
   const[idMedico, setIDMedico] = useState(null)
   const[idDoctor, setIDDoctor] = useState(null)
   const[token, setToken] = useState('')
@@ -90,7 +91,7 @@ const ContentPaciente = () => {
         const body = {
           doenca: selectedDoenca,
           id: id
-        };
+        }
         
         try {
           const Data = await CreateRequestMutation.mutateAsync(body);
@@ -274,24 +275,6 @@ const ContentPaciente = () => {
                       <Rating name="simple-controlled"value={medico.mediaAvaliacoes}readOnly={readOnlyMode}/>
                     </div>
                   ))}
-
-                  {logged && 
-                  <>
-                 <AgendamentoConsulta 
-                  EspecialidadeMedica={especialidade}
-                  titleButon={nameProfissional ? `Agendar com ${nameProfissional}` : 'Agendar consulta'}
-                  DoencaAutoComplete={selectedDoenca}
-                  SlugRoute={ medicoSlug }
-                  Horarios={Horarios}
-                  idMedico={idMedico}
-                  NomeMedico={nameProfissional ? nameProfissional : ''}
-                  ValorConsulta={valorConsulta}
-                  FotoMedico={fotoMedico}
-                  avaliacoes={avaliacoesDoctor}
-                  onClose={() => setLogged(false)}
-                  />
-                  </>
-                  }
                 </div>
               ) : null}
         </div>
@@ -343,30 +326,30 @@ const ContentPaciente = () => {
                       <Rating name="simple-controlled" value={medico.mediaAvaliacoes} readOnly={readOnlyMode}/>
                     </div>
                   ))}
-
-                  {logged && 
-                  <>
-                   <AgendamentoConsulta 
-                  EspecialidadeMedica={especialidade}
-                  titleButon={nameProfissional ? `Agendar com ${nameProfissional}` : 'Agendar consulta'}
-                  DoencaAutoComplete={selectedDoenca}
-                  SlugRoute={ medicoSlug }
-                  Horarios={Horarios}
-                  idMedico={idMedico}
-                  NomeMedico={nameProfissional ? nameProfissional : ''}
-                  ValorConsulta={valorConsulta}
-                  FotoMedico={fotoMedico}
-                  avaliacoes={avaliacoesDoctor}
-                  onClose={() => setLogged(false)}
-                  />
-                  </>
-                }
                 </div>
               ) : null}
             </div>
           )}
         </div>
       )}
+  
+    {logged && 
+      <>
+        <AgendamentoConsulta 
+          EspecialidadeMedica={especialidade}
+          titleButon={nameProfissional ? `Agendar com ${nameProfissional}` : 'Agendar consulta'}
+          DoencaAutoComplete={selectedDoenca}
+          SlugRoute={ medicoSlug }
+          Horarios={Horarios}
+          idMedico={idMedico}
+          NomeMedico={nameProfissional ? nameProfissional : ''}
+          ValorConsulta={valorConsulta}
+          FotoMedico={fotoMedico}
+          avaliacoes={avaliacoesDoctor}
+          onClose={() => setLogged(false)}
+           />
+        </>
+      }
 
       {endRegister &&
       <>

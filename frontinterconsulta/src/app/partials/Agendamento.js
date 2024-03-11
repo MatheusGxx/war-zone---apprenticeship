@@ -1,5 +1,5 @@
 'use client'
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { 
    Dialog,
    DialogContent, 
@@ -18,7 +18,7 @@ import axios from 'axios'
 import { Checkout } from "../components/Checkout.jsx"
 import { AgendamentoComponente } from "../components/AgendamentoComponent.jsx"
 import { parse, isBefore, compareAsc } from 'date-fns'
-import { config } from '../config.js'
+import { config, Api2 } from '../config.js'
 
 const AgendamentoConsulta = ({ 
   EspecialidadeMedica,
@@ -69,11 +69,13 @@ const AgendamentoConsulta = ({
   const [notIntervals, setNotIntervals] = useState(null)
   const [tempoConsulta, setTempoConsulta] = useState(null)
   const [documentos, setDocumentos] = useState([])
+  const [notHorarios, setNotHorarios] = useState(false)
+  const [horariosAntigos, setHorariosAntigos] = useState(false)
+  const [onePhotoPatient, setOnePhotoPatient] = useState(false)
 
   const CadastroFinalSucess = secureLocalStorage.getItem('CadastroEndSucess')
 
   const Route = usePathname()
-
   const RouteEspecialistaDisponiveis = Route === '/especialistas-disponiveis'
 
   const Navigation = useRouter()
@@ -92,20 +94,48 @@ const AgendamentoConsulta = ({
 
   const Resumo = secureLocalStorage.getItem('Sintoma')
 
+  const WarningDoctorNotSchedules = useMutation(async (valueRequest) => {
+    try {
+      const response = await axios.post(`${Api2.apiBaseUrl}/api2/warning-doctor-not-schedules`, valueRequest)
+      return response.data
+    } catch (error) {
+      throw new Error(`Error fetching: ${error}`);
+    }
+  })
+
+  const WarningDoctorNotHorariosAsyncFunction = async () => {
+    await WarningDoctorNotSchedules.mutateAsync({ 
+      NomePacienteWarningDoctorNotHorarios: NameLocalPaciente,
+      idMedicoWarningDoctorNotHorarios: idMedico,
+    })
+  }
+
+  useEffect(()  => {
+    setOpen(true)
+   },[])
+
+  useEffect(() => {
+    if (Horarios.length === 0) {
+      setNotHorarios(true);
+    }
+
+    if(notHorarios){
+      WarningDoctorNotHorariosAsyncFunction()
+    }
+     
+  }, [notHorarios])
+
   useEffect(() => {
     setResumo(Resumo || '')
-  }, []);
+  }, [])
 
-  useEffect(()  =>{
-   handleOpenClick()
-  },[])
 
-   useEffect(() => {
-      if(Doenca){
-        setDoenca(Doenca)
-      }else{
+  useEffect(() => {
+    if(Doenca){
+       setDoenca(Doenca)
+    }else{
         setDoenca('')
-      }
+    }
    },[Doenca])
 
    useEffect(() =>{
@@ -114,9 +144,6 @@ const AgendamentoConsulta = ({
      }
    },[DoencaInputAutocomplete])
 
-   useEffect(() => {
-    
-   },[Horarios])
 
    const getPhotoPaciente = useMutation(async (valueRequest) => {
     try {
@@ -132,6 +159,10 @@ useEffect(() => {
   const FetchData = async () => {
     try {
      if(Horarios.length > 0){
+      setOnePhotoPatient(true)
+     }
+
+     if(onePhotoPatient){
       const body = {
         id: idLocal,
       }
@@ -144,7 +175,7 @@ useEffect(() => {
   };
 
   FetchData();
-}, [idLocal])
+}, [idLocal, onePhotoPatient])
 
 
    const AgendamentoMarcado = useMutation(async (valueRequest) =>{
@@ -155,18 +186,14 @@ useEffect(() => {
 
   const RoutePush = () =>{
     if(RouteEspecialistaDisponiveis){ // só acontece na rota de Especialistas Disponiveis se o usuario tiver Logado
-      Doenca && id
-      ? 
-      Navigation.push(`/especialista/${SlugRoute}`)
-      :
-      Navigation.push(`/especialista/${SlugRoute}`)
-    }
-  }
-  
-
-  const handleOpenClick = () => {
-    setOpen(true)
-  }
+      if(Doenca && id && notHorarios === false && horariosAntigos === false){
+        Navigation.push(`/especialista/${SlugRoute}`)  
+      }else{
+        setOpen(false)
+        onClose()
+      }
+   }
+}
 
   const handleCloseClick = () => {
     setOpen(false)
@@ -286,7 +313,6 @@ useEffect(() => {
         } 
           
         const Intervalo = intervalsAtuais.map((data) => data.Intervalo)
-        
           setSelectedDate(selectedDateObj.data)
           setSelectedIntervals(Intervalo)
           setVisibleHorarios(true)
@@ -356,9 +382,6 @@ useEffect(() => {
   }
 }
 
-  React.useEffect(() => {
-     setOpen(true)
-  },[])
 
   return (
     <>
@@ -412,6 +435,9 @@ useEffect(() => {
             selectOneDate={selectOneDate}
             notIntervals={notIntervals}
             nomePaciente={NamePaciente}
+            setHorariosAntigos={setHorariosAntigos}
+            horariosAntigos={horariosAntigos}
+            idMedico={idMedico}
             />
          }      
          </> 

@@ -66,6 +66,7 @@ function PopUpMedicoHoras({ onClose }) {
   const CreateMutationRequest = useMutation(
     async (valueRequest) => {
       const request = await axios.post(`${config.apiBaseUrl}/api/register-horarios/${VerifyID}`, valueRequest)
+      console.log(request.data.message)
       setMensagem(request.data.message)
       return request.data.message;
     },

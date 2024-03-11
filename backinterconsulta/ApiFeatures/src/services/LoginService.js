@@ -374,7 +374,6 @@ export const RegisterEnd = async (body, params, file, res) => {
 
           const token = jwt.sign({userId: Médico._id}, secretKey, {expiresIn: '1h'})
 
-
           const NomeMedico = Médico.NomeEspecialista
           const AreaAtuacao = Médico.AreadeAtuacao
           const CRMM = Médico.CRM
@@ -572,6 +571,10 @@ export const getListDoencasDoctor = async (body, res) => {
       }
     
       const QueryEspecialidadeList = await models.List.findOne({ Especialidade: Especialidade })
+      
+      if(!QueryEspecialidadeList){
+        return res.json({ message: 'Tipo de Doutor nao Atende Doenças no banco de dados do Interconsulta'})
+      }
     
       getDoctor.DoencasAndSintomas = QueryEspecialidadeList.DoencasESintomas
       const ImageEspecialidade = `icons/${Especialidade}.png`
@@ -580,8 +583,8 @@ export const getListDoencasDoctor = async (body, res) => {
     
       getDoctor.save()
   
-    }catch(error){
-      console.log(error)
+    }catch(err){
+      return res.status(400).json({ err })
     }
 }
 

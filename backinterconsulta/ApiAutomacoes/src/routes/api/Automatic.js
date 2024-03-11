@@ -9,6 +9,8 @@ import {
   SavedConsultaUnidadeSaude,
   AcceptMedical,
   RejectMedical,
+  WarningDoctorNotSchedules,
+  WarningDoctorHorariosAntigos
 } from '../../services/AutomaticService.js'
 
 import uploadSignedDocuments from '../../utils/MulterSignDocuments.js'
@@ -108,7 +110,7 @@ router.post('/process-planilha/:id', uploadPlanilha.single('file'), async (req, 
   console.log(req.file);
 
   const body = {
-    AreadeAtuacao: req.body.AreadeAtuacao,
+    EspecialidadeMedica: req.body.EspecialidadeMedica,
   };
 
   const params = {
@@ -156,7 +158,7 @@ router.post('/get-consolidado',
         total: req.body.total,
         consulta: req.body.consulta,
         id: req.body.id,
-        AreadeAtuacao: req.body.AreadeAtuacao,
+        EspecialidadeMedica: req.body.EspecialidadeMedica,
         CPFsPacientes: req.body.CPFsPacientes
       }
      
@@ -220,6 +222,24 @@ router.post('/reject-medical',
        async(req, res) => {
         const { id, newState } = req.body 
         RejectMedical(id, newState, res)
+        console.log(req.body)
+       }
+)
+
+
+router.post('/warning-doctor-not-schedules',
+       async(req, res) => {
+        const {idMedicoWarningDoctorNotHorarios, NomePacienteWarningDoctorNotHorarios } = req.body 
+        WarningDoctorNotSchedules(idMedicoWarningDoctorNotHorarios, NomePacienteWarningDoctorNotHorarios, res)
+        console.log(req.body)
+       }
+)
+
+
+router.post('/warning-doctor-horarios-antigos',
+       async(req, res) => {
+        const { NomePacienteWarningDoctorHorariosAntigos, idMedicoWarningDoctorHorariosAntigos } = req.body 
+        WarningDoctorHorariosAntigos(NomePacienteWarningDoctorHorariosAntigos, idMedicoWarningDoctorHorariosAntigos, res)
         console.log(req.body)
        }
 )

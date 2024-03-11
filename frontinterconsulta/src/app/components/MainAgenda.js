@@ -48,6 +48,7 @@ import TabList from '@mui/lab/TabList'
 import TabPanel from '@mui/lab/TabPanel'
 
 import { PatientsDoctor } from './PatientsDoctor'
+import { PopupCancelPaciente } from '../partials/PopUpCancelPaciente'
 
 export const MainAgenda = () => {
 
@@ -85,6 +86,16 @@ export const MainAgenda = () => {
   const[dataPacienteParticular, setDataPacienteParticular] = useState('')
   const[inicioPacienteParticular, setInicioPacienteParticular] = useState('')
   const[fimPacienteParticular, setFimPacienteParticular] = useState('')
+  const[cancelPaciente, setCancelPaciente] = useState(false)
+
+  const [nomePaciente, setNomePaciente] = useState('')
+  const [nomeMédico, setNomeMédicoPaciente] = useState('')
+  const [dataPaciente, setDataPaciente] = useState('')
+  const [inicioPaciente, setInicioPaciente] = useState('')
+  const [fimPaciente, setFimPaciente] = useState('')
+  const [idConsultaPaciente, setidConsultaPaciente] = useState('')
+  const [idHorarioConsultaPaciente, setidHorarioConsultaPaciente] = useState('')
+  const [horarioSelecionadoPaciente, setidHorarioSelecionadoPaciente] = useState('')
 
   const { horariosDoctor } = useHorariosDoctor()
   const { blood } = useBlood()
@@ -107,6 +118,7 @@ export const MainAgenda = () => {
   useEffect(() => {
     
   },[casoClinicoClicked, idCasoPaciente2, idCasoUnidade2, CPFPaciente2, idMedico])
+  
 
   const NomeMedicoLocal = secureLocalStorage.getItem('NomeMedico')
   const NomeMedico = NomeMedicoLocal || ''
@@ -141,22 +153,6 @@ export const MainAgenda = () => {
     },
   })
 
-  const DeleteCasoClinicoPacienteParticular = useMutation(
-    async (body) => {
-      try {
-        const response = await axios.delete(`${config.apiBaseUrl}/api/delete-caso-clinico-paciente-particular`,{ data: body })
-        return response.data; 
-      } catch (error) {
-        console.error('Error during delete mutation Paciente Particular:', error);
-        throw error
-      }
-    },
-    {
-      onSettled: () => {
-        queryClient.invalidateQueries('Consultas')
-      },
-    }
-  )
 
   const GenerateLink = useMutation(async (valueRequest) => {
     const response = await axios.post(`${config.apiBaseUrl}/api/generate-link`, valueRequest)
@@ -310,19 +306,28 @@ export const MainAgenda = () => {
       }
   }
 
-  const DeleteConsultaPacienteParticular = async (idConsulta, Solicitante, Data, Inicio, Fim, idHorario, HorarioSelecionado) => {
+  const DeleteConsultaPacienteParticular = async (idConsulta, Solicitante, Solicitado, Data, Inicio, Fim, idHorario, HorarioSelecionado) => {
     try{
-      const body = {
-        id: idConsulta,
-        Solicitante: Solicitante,
-        idPaciente: id,
-        Data: Data,
-        Inicio: Inicio,
-        Fim: Fim,
-        idHorario: idHorario,
-        HorarioSelecionado: HorarioSelecionado,
-       }
-       await DeleteCasoClinicoPacienteParticular.mutateAsync(body)
+      //const body = {
+        //id: idConsulta,
+        //Solicitante: Solicitante,
+        //idPaciente: id,
+        //Data: Data,
+        //Inicio: Inicio,
+        //Fim: Fim,
+        //idHorario: idHorario,
+        //HorarioSelecionado: HorarioSelecionado,
+       //}
+       //await DeleteCasoClinicoPacienteParticular.mutateAsync(body)
+       setNomePaciente(Solicitante)
+       setNomeMédicoPaciente(Solicitado)
+       setDataPaciente(Data)
+       setInicioPaciente(Inicio)
+       setFimPaciente(Fim)
+       setidConsultaPaciente(idConsulta)
+       setidHorarioConsultaPaciente(idHorario)
+       setidHorarioSelecionadoPaciente(HorarioSelecionado)
+       setCancelPaciente(true)
     }catch(e){
       throw new Error('Erro para excluir o Caso Clinico do Paciente Particular', e.message)
     }
@@ -403,6 +408,7 @@ const HandleConsulta = async (id) => {
         IdentificadorConsultaParticular: id,
       };
        const data = await GenerateLink.mutateAsync(body)
+       console.log(data)
        
        if(data.message){
         Router.push(data.message)
@@ -605,7 +611,7 @@ const HandleConsulta = async (id) => {
                        </div>
                       </th>
                      }
-                    {TypeDoctor === 'SUS' ?  null :
+                    {TypeDoctor === 'Atendimento Público' ?  null :
                      <th className="border-b bg-white text-black py-2 px-4 font-normal">
                       <div className='flex items-center justify-center'>
                       <div className="bg-blue-500 rounded-full h-3 w-3 inline-block mr-2"></div>
@@ -617,7 +623,7 @@ const HandleConsulta = async (id) => {
                       </div>
                       </th>
                      }
-                      {TypeDoctor !== 'SUS' && !NomePacienteLocal ? 
+                      {TypeDoctor !== 'Atendimento Público' && !NomePacienteLocal ? 
                        <th className="border-b bg-white text-black py-2 px-4 font-normal">
                          <div className='flex items-center'>
                            <div className="bg-blue-500 rounded-full h-3 w-3 inline-block mr-2"></div>
@@ -626,7 +632,7 @@ const HandleConsulta = async (id) => {
                         </th>
                        : null}
      
-                     {TypeDoctor !== 'SUS' && !NomePacienteLocal ? 
+                     {TypeDoctor !== 'Atendimento Público' && !NomePacienteLocal ? 
                        <th className="border-b bg-white text-black py-2 px-4 font-normal">
                          <div className='flex items-center'>
                            <div className="bg-blue-500 rounded-full h-3 w-3 inline-block mr-2"></div>
@@ -697,9 +703,8 @@ const HandleConsulta = async (id) => {
                         <Image src={Logo} alt='Atendida' height={37} width={37}/> 
                       </div> : null}
                           
-                         </div>
+                        </div>
                        </td>
-                      
                      )}
      
                    <td className='border-b py-2 px-4 text-center cursor-pointer'>
@@ -708,7 +713,7 @@ const HandleConsulta = async (id) => {
                       '' :
                       row.Status.includes('Cancelada') ? ''
                       :
-                        <CloseIcon color="error" className='cursor-pointer' onClick={() => DeleteConsultaPacienteParticular(row._id, row.Solicitante, row.Data, row.Inicio, row.Fim, row.idHorario, row.HorarioSelecionado)}/>}
+                       <CloseIcon color="error" className='cursor-pointer' onClick={() => DeleteConsultaPacienteParticular(row._id, row.Solicitante, row.Solicitado, row.Data, row.Inicio, row.Fim, row.idHorario, row.HorarioSelecionado)}/>}
                      </div>      
                    </td>
                      </tr>
@@ -723,7 +728,7 @@ const HandleConsulta = async (id) => {
                      <td className='border-b py-2 px-4 text-center'>{row.Fim}</td>
                      <td className="border-b py-2 px-4 text-center whitespace-nowrap">{row.Solicitante}</td>
                      {row.Status && (
-                      TypeDoctor === 'SUS' ? null : 
+                      TypeDoctor === 'Atendimento Público' ? null : 
                      <td className='border-b py-2 px-4 text-center whitespace-nowrap'>
                        <div className='flex justify-center items-center cursor-pointer' onClick={() => {
                          const casosIdentificadores = Array.isArray(row.Casos)
@@ -744,7 +749,7 @@ const HandleConsulta = async (id) => {
                      </td>
                    )}
                     
-                    {TypeDoctor === 'SUS' ? null : 
+                    {TypeDoctor === 'Atendimento Público' ? null : 
                      <td className="border-b py-2 px-4 text-center whitespace-nowrap">
                      {
                      row.Status.includes('Confirmada') ? 
@@ -794,7 +799,7 @@ const HandleConsulta = async (id) => {
                  </td>
                 }
                 
-                {TypeDoctor === 'SUS' ? null :
+                {TypeDoctor === 'Atendimento Público' ? null :
                     row.Status.includes('Atendida') ? 
                     <td className='border-b py-2 px-4 text-center cursor-pointer'>
                    <div className="flex justify-center items-center">
@@ -820,7 +825,7 @@ const HandleConsulta = async (id) => {
                 }
                  
                  <td className='border-b py-2 px-4 text-center whitespace-nowrap'>
-                 {TypeDoctor === 'SUS' ? 
+                 {TypeDoctor === 'Atendimento Público' ? 
                   row.Status.includes('Aguardando') ? 'Aguardando' :
 
                   row.Status.includes('Confirmada') ?
@@ -955,7 +960,21 @@ const HandleConsulta = async (id) => {
        </div>
        </> 
        }
- 
+
+       {cancelPaciente && 
+       <PopupCancelPaciente
+        nomePaciente={nomePaciente}
+        nomeMédico={nomeMédico}
+        data={dataPaciente}
+        inicio={inicioPaciente} 
+        fim={fimPaciente}
+        idConsulta={idConsultaPaciente}
+        idHorario={idHorarioConsultaPaciente}
+        HorarioSelecionado={horarioSelecionadoPaciente}
+        onClose={() => setCancelPaciente(false)}
+       />
+       }
+
        {horariosDoctor && 
           <PopUpMedicoHoras/>
        }

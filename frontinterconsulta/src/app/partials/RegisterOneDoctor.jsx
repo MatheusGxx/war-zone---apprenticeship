@@ -7,6 +7,7 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos'
 import Image from 'next/image'
 import Logo from '../public/logo.png'
+import { useEffect } from 'react'
 
 export const RegisterOneDoctor = (
   {
@@ -18,12 +19,22 @@ export const RegisterOneDoctor = (
     dataNascimento,
     setTypeMedico,
     typeMedico,
-    setCurrentStep
+    setCurrentStep,
+    setTypeDoctorPublic
   }
   ) => {
 
     const [snackbarOpen, setSnackbarOpen] = useState(false)
     const [snackbarMessage, setSnackbarMessage] = useState("")
+
+    useEffect(() => {
+       if(typeMedico === 'Atendimento Público'){
+        setTypeDoctorPublic(true)
+       }
+       if(typeMedico === 'Atendimento Particular'){
+        setTypeDoctorPublic(false)
+       }
+    },[typeMedico])
       
     const regex = /^(\d{0,2})\/?(\d{0,2})\/?(\d{0,4})$/
 

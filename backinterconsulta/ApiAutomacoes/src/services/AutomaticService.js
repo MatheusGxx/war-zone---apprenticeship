@@ -55,6 +55,8 @@ export const AutomaticWhatsapp = async (body, res) => {
      Atestado,
      Exame,
      result,
+     NomePacienteWarningDoctorNotHorarios,
+     idMedicoWarningDoctorNotHorarios,
      route,
      
   } = body
@@ -83,12 +85,12 @@ export const AutomaticWhatsapp = async (body, res) => {
         const EmailDoctor = dataMedico.email
         const NomeMedicoL = dataMedico.nome
 
-        await WhatsappQueue.add('Whatsapp Fila', {
+        await WhatsappQueue.add('Whatsapp', {
           numero:`${dataMedico.telefone}`,
           mensagem: messageMedico
         })
 
-        await EmailQueue.add('Email Fila',
+        await EmailQueue.add('Email',
         {
           to: EmailDoctor, 
           subject: `Ola Dr(a) ${NomeMedicoL} Seja bem vindo`,
@@ -104,12 +106,12 @@ export const AutomaticWhatsapp = async (body, res) => {
 
         const messagePaciente = `Ola Paciente ${dataPaciente.nome}, Nos do interconsulta ficamos felizes por você se cadastrar na nossa plataforma. Para finalizar o seu cadastro e ter acesso aos nossos especialistas para tratar a sua dor, clique no link abaixo:\n${urlPaciente}`
 
-        await WhatsappQueue.add('Whatsapp Fila', {
+        await WhatsappQueue.add('Whatsapp', {
           numero:`${dataPaciente.telefone}`,
           mensagem: messagePaciente
         })
 
-        await EmailQueue.add('Email Fila',
+        await EmailQueue.add('Email',
         {
           to: `${dataPaciente.email}`, 
           subject: `Ola Paciente ${dataPaciente.nome} Seja bem vindo`,
@@ -126,12 +128,12 @@ export const AutomaticWhatsapp = async (body, res) => {
 
         const messageUnidade = `Ola Unidade de Saude ${dataUnidade.nome}, Nos do interconsulta ficamos felizes por você se cadastrar na nossa plataforma. Para finalizar o seu cadastro e ter acesso aos nossos especialistas para resolver todos os seus casos clinicos, clique no link abaixo:\n${urlUnidade}`
 
-        await WhatsappQueue.add('Whatsapp Fila', {
+        await WhatsappQueue.add('Whatsapp', {
           numero:`${dataUnidade.telefone}`,
           mensagem: messageUnidade
         })
 
-        await EmailQueue.add('Email Fila',
+        await EmailQueue.add('Email',
         {
           to: `${dataUnidade.email}`, 
           subject: `Ola Dr(a) ${dataUnidade.nome} Seja bem vindo`,
@@ -149,12 +151,12 @@ export const AutomaticWhatsapp = async (body, res) => {
    
          const messageObrigadoMedico = `Parabens ${dataObrigadoMedico.NomeEspecialista} agora voce é Oficialmente ${dataObrigadoMedico.EspecialidadeMedica} do #Interconsulta e ja pode atender todos os nossos casos clinicos disponiveis, clicando no Link Abaixo!\n${UrlObrigadoMédico}`
  
-         await WhatsappQueue.add('Whatsapp Fila', {
+         await WhatsappQueue.add('Whatsapp', {
           numero:`${dataObrigadoMedico.telefone}`,
           mensagem: messageObrigadoMedico
         })
 
-        await EmailQueue.add('Email Fila',
+        await EmailQueue.add('Email',
         {
           to: `${dataObrigadoMedico.email}`, 
           subject: `Parabens ${dataObrigadoMedico.NomeEspecialista}`,
@@ -172,12 +174,12 @@ export const AutomaticWhatsapp = async (body, res) => {
    
          const messageObrigadoPaciente = `Parabens ${dataObrigadoPaciente.nome} agora voce se tornou um paciente do #interconsulta e pode escolher qualquer um de nossos especialistas para apresentar resolver ${dataObrigadoPaciente.Doenca}, basta apenas clicar no link Abaixo!\n${UrlObrigadoPaciente}`
  
-         await WhatsappQueue.add('Whatsapp Fila', {
+         await WhatsappQueue.add('Whatsapp', {
           numero:`${dataObrigadoPaciente.telefone}`,
           mensagem: messageObrigadoPaciente
         })
 
-        await EmailQueue.add('Email Fila',
+        await EmailQueue.add('Email',
         {
           to: `${dataObrigadoPaciente.email}`, 
           subject: `Parabens ${dataObrigadoPaciente.nome}`,
@@ -195,14 +197,14 @@ export const AutomaticWhatsapp = async (body, res) => {
    
          const messageObrigadoUnidade = `Parabens ${dataObrigadoUnidade.nome} agora voce se tornou uma oficialmente uma Unidade de Saude do #Interconsulta para subir todos os seus casos clinicos e achar os especialistas para atende-los clique no Link abaixo!\n${urlObrigadoUnidade}`
  
-         await WhatsappQueue.add('Whatsapp Fila', {
+         await WhatsappQueue.add('Whatsapp', {
           numero:`${dataObrigadoUnidade.telefone}`,
           mensagem: messageObrigadoUnidade
         })
 
-        await EmailQueue.add('Email Fila',
+        await EmailQueue.add('Email',
         {
-          to: `${dataObrigadoMedico.email}`, 
+          to: `${dataObrigadoUnidade.email}`, 
           subject: `Parabens ${dataObrigadoUnidade.nomeInstituicao}`,
           message: messageObrigadoUnidade
         })
@@ -211,12 +213,12 @@ export const AutomaticWhatsapp = async (body, res) => {
        
         case '/especialistas-disponiveis-agendamento':
 
-        await WhatsappQueue.add('Whatsapp Fila', {
+        await WhatsappQueue.add('Whatsapp', {
           numero:`${TelefoneMedicoAgendamento}`,
           mensagem: `Ola ${NomeMedico}, o Paciente, ${NomePaciente} agendou uma consulta com voce\nna Data de ${DataAgendamento} as ${InicioAgendamento} a ${FimAgendamento} Entre no Link abaixo para confirmar a sua consulta:\nwww.interconsulta.org/agenda`
         })
 
-        await EmailQueue.add('Email Fila',
+        await EmailQueue.add('Email',
         {
           to: `${EmailMedico}`, 
           subject: `${NomeMedico} voce tem uma nova consulta marcada!`,
@@ -227,12 +229,12 @@ export const AutomaticWhatsapp = async (body, res) => {
 
         case '/confirmaçao-consulta-medico':
 
-        await WhatsappQueue.add('Whatsapp Fila', {
+        await WhatsappQueue.add('Whatsapp', {
           numero:`${NumeroPacienteAceitouConsulta}`,
           mensagem:`${NomeMedicoAceitouConsulta} Informa: Ola ${NomePacienteAceitouConsulta} acabei de aceitar a consulta\nda Data de: ${DataAceitouConsulta} que começa das ${InicioAceitouConsulta} a ${FimAceitouConsulta}\nentre agora na sua agenda para acessar o Link da consulta:\nwww.interconsulta.org/agenda`
         })
 
-        await EmailQueue.add('Email Fila',
+        await EmailQueue.add('Email',
         {
           to: `${EmailPacienteAceitouConsulta}`, 
           subject: `Ola Paciente ${NomeMedicoAceitouConsulta}, o médico aceitou a sua consulta`,
@@ -242,12 +244,12 @@ export const AutomaticWhatsapp = async (body, res) => {
         break
         case '/rejeicao-consulta-medico':
 
-        await WhatsappQueue.add('Whatsapp Fila', {
+        await WhatsappQueue.add('Whatsapp', {
           numero:`${NumeroPacienteRejeitouConsulta}`,
           mensagem:`${NomeMedicoRejeitouConsulta} Informa: Ola ${NomePacienteRejeitouConsulta}, infelizmente tive que cancelar a nossa consulta\nda Data de: ${DataRejeitouConsulta} que começa das ${InicioRejeitouConsulta} a ${FimRejeitouConsulta}\nmas nao desanime voce pode marcar outra consulta comigo em outro horario agora mesmo! entre no link abaixo e agende de novo comigo agora mesmo!\nwww.interconsulta.org/especialistas-disponiveis`
         })
 
-        await EmailQueue.add('Email Fila',
+        await EmailQueue.add('Email',
         {
           to: `${EmailPacienteRejeitouConsulta}`, 
           subject:`Ola Paciente ${NomePacienteRejeitouConsulta}, infelizmente o médico cancelou a sua consulta`,
@@ -258,12 +260,12 @@ export const AutomaticWhatsapp = async (body, res) => {
 
         case '/exclusion-consulta-paciente':
 
-        await WhatsappQueue.add('Whatsapp Fila', {
+        await WhatsappQueue.add('Whatsapp', {
           numero:`${NumeroMedicoExclusao}`,
           mensagem: `Ola ${NomeMedicoExclusao}, Passando pra te avisar que o Paciente ${NomePacienteExclusao} cancelou a consulta da Data: ${DataExclusaoPaciente} das ${InicioExlusaoPaciente} a ${FimExclusaoPaciente} de voces.`
         })
 
-        await EmailQueue.add('Email Fila',
+        await EmailQueue.add('Email',
         {
           to: `${EmailMedicoExclusao}`, 
           subject: `Ola ${NomeMedicoExclusao}, o Paciente cancelou a sua consulta =/`,
@@ -272,22 +274,23 @@ export const AutomaticWhatsapp = async (body, res) => {
 
         break
 
-       case '/resumo-casos-clinicos':
-         await ResumoQueue.add('Resumo', {
-          FichaPaciente,
-          Diagnostico,
-          Tratamento,
-          FerramentasTerapeuticas,
-          Progresso,
-          SolicitacaoMateriais,
-          RecomendacoesFuturas,
-          EstadoPaciente,
-          ReceitaSimples,
-          ReceitaControlada,
-          Atestado,
-          Exame,
-          result
-         })
+        case '/resumo-casos-clinicos':
+          await ResumoQueue.add('Resumo', {
+            FichaPaciente,
+            Diagnostico,
+            Tratamento,
+            FerramentasTerapeuticas,
+            Progresso,
+            SolicitacaoMateriais,
+            RecomendacoesFuturas,
+            EstadoPaciente,
+            ReceitaSimples,
+            ReceitaControlada,
+            Atestado,
+            Exame,
+            result
+          })
+
         break
 
       default:
@@ -630,5 +633,59 @@ export const RejectMedical = async (id, newState, res) => {
    return res.status(200).json({ message: 'Consulta Rejeitada com Sucesso'})
   }catch(error){
     return res.status(500).json({ message: 'Error internal server'})
+  }
+}
+
+
+export const WarningDoctorNotSchedules = async (idMedicoWarningDoctorNotHorarios, NomePacienteWarningDoctorNotHorarios, res) => {
+  try{
+    const getDoctor = await models.ModelRegisterMédico.findById(idMedicoWarningDoctorNotHorarios)
+       
+    const NameDoctor = getDoctor.NomeEspecialista
+    const NumberDoctor =  getDoctor.telefone
+    const EmailDoctorWarning = getDoctor.email
+
+    await WhatsappQueue.add('Whatsapp', {
+     numero:`${NumberDoctor}`,
+     mensagem: `Ola ${NameDoctor} o Paciente ${NomePacienteWarningDoctorNotHorarios} Tem interesse em marcar uma consulta com voce entretando voce não tem Horarios cadastrados Disponiveis na Plataforma =/\nNão perca mais tempo entre agora e cadastre um Horario para começar a atender agora!`
+   })
+
+   await EmailQueue.add('Email',
+   {
+     to: `${EmailDoctorWarning}`, 
+     subject: `Ola ${NameDoctor} tem um Paciente querendo agendar com voce!`,
+     message: `${NameDoctor} o Paciente ${NomePacienteWarningDoctorNotHorarios} Tem interesse em marcar uma consulta com voce entretando voce não tem Horarios cadastrados Disponiveis na Plataforma =/ Não perca mais tempo entre agora e cadastre um Horario para começar a atender agora!`
+   })
+
+   return res.status(200).json({ message: 'Médico Notificado com Sucesso'})
+  }catch(err){
+    return res.status(400).json({ message: 'Erro ao Notificar Médico que ele nao tem Horarios'})
+  }
+}
+
+
+export const WarningDoctorHorariosAntigos = async (NomePacienteWarningDoctorHorariosAntigos, idMedicoWarningDoctorHorariosAntigos, res) => {
+  try{
+    const getDoctor = await models.ModelRegisterMédico.findById(idMedicoWarningDoctorHorariosAntigos)
+       
+    const NameDoctor = getDoctor.NomeEspecialista
+    const NumberDoctor =  getDoctor.telefone
+    const EmailDoctorWarning = getDoctor.email
+
+    await WhatsappQueue.add('Whatsapp', {
+     numero:`${NumberDoctor}`,
+     mensagem: `Ola ${NameDoctor} o Paciente ${NomePacienteWarningDoctorHorariosAntigos} Tem interesse em marcar uma consulta com voce entretando seus Horarios estão todos antigos =/, entre agora na plataforma e cadastre Horarios com Datas atuais para poder começar a atender novamente agora mesmo!`
+   })
+
+   await EmailQueue.add('Email',
+   {
+     to: `${EmailDoctorWarning}`, 
+     subject: `Atenção ${NameDoctor}`,
+     message: `${NameDoctor}o Paciente ${NomePacienteWarningDoctorHorariosAntigos} Tem interesse em marcar uma consulta com voce entretando seus Horarios estão todos antigos =/, entre agora na plataforma e cadastre Horarios com Datas atuais para poder começar a atender novamente agora mesmo!`
+   })
+
+   return res.status(200).json({ message: 'Médico Notificado com Sucesso'})
+  }catch(err){
+    return res.status(400).json({ message: 'Erro ao Notificar Médico que ele nao tem Horarios'})
   }
 }

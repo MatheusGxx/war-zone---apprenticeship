@@ -1,6 +1,7 @@
 import { EspecialidadesAtendidas } from '../utils/EspecialidadesAtendidas.js'
 import { models } from "../../MongoDB/Schemas/Schemas.js"
 import { parse, eachMinuteOfInterval, format } from "date-fns"
+import { utcToZonedTime } from 'date-fns-tz';
 import { formatarHoras } from '../utils/Functions/FormatHours.js'
 
 export const getInfosMedico = async (params, res) =>{
@@ -88,35 +89,68 @@ export const RegisterHorarios = async (body, res, params) =>{
      // Converter as strings de início e fim para objetos de hora
     const horaInicio = parse(`${data} ${inicio}`, 'dd/MM/yyyy HH:mm', new Date())
     const horaFim = parse(`${data} ${fim}`, 'dd/MM/yyyy HH:mm', new Date())
-
-    const ExistingHorario = Medico.Horarios.find(horario => horario.data === data) 
+    
+    const ExistingHorario = Medico.Horarios.find(horario => horario.data === data)
     if(ExistingHorario){
-
+        
       const DuplicateHorario = Medico.Horarios.find(horario => horario.data === data && horario.inicio === inicio && horario.fim === fim)
-      
+
       if(DuplicateHorario){
         return res.json({ message: `${Medico.NomeEspecialista} o horario selecionado esta duplicado, por favor escolha outro`})
       }
 
-      const intervalos = eachMinuteOfInterval({
+      const getIntervals = ExistingHorario.IntervaloAtendimentos.map(data => data.Intervalo)
+
+      const timeZone = 'America/Sao_Paulo'; // Defina o fuso horário desejado
+
+      const IntervalosDisponiveis = getIntervals.map(interval => {
+        const [startString, endString] = interval.split(' - ');
+        const startDate = utcToZonedTime(parse(`${data} ${startString}`, 'dd/MM/yyyy HH:mm', new Date()), timeZone);
+        const endDate = utcToZonedTime(parse(`${data} ${endString}`, 'dd/MM/yyyy HH:mm', new Date()), timeZone);
+        return { startDate, endDate };
+      })
+
+      const IntervalosAtuais = eachMinuteOfInterval({
         start: horaInicio,
         end: parse(`${data} ${fim}`, 'dd/MM/yyyy HH:mm', new Date()),
       }, { step: TempoConsultaNumber })
+
+
+      const menorData = IntervalosAtuais[0]
+      const existeDataInicialIgualInicial = IntervalosDisponiveis.some(intervalo => {
+        return intervalo.startDate.getTime() === menorData.getTime();
+       })
+
+     const maiorData = IntervalosAtuais[IntervalosAtuais.length -1]
+
+     const existeDataInicialIgualFinal = IntervalosDisponiveis.some(intervalo => {
+      return intervalo.endDate.getTime() === maiorData.getTime();
+     })
+     console.log(existeDataInicialIgualFinal)
+
+     if (existeDataInicialIgualInicial || existeDataInicialIgualFinal) {
+        return res.json({ message: 'O horario cadastrado esta Duplicando Intervalos ja existentes, Logo foi recusado.'})
+    } 
+      
+    const intervalos = eachMinuteOfInterval({
+       start: horaInicio,
+       end: parse(`${data} ${fim}`, 'dd/MM/yyyy HH:mm', new Date()),
+    }, { step: TempoConsultaNumber })
      
-      const intervalosFormatados = intervalos.slice(0, -1).map((horaInicio, index) => {// Tirando o Ultimo Horario do array para criar o Horario Inicio 
-        const horaFim = intervalos[index + 1] // Pegando sempre +1 do array de intervalos de horas formatadas de meia em meia hora para formar a Hora fim que sera sempre os Horarios que tem :30
+    const intervalosFormatados = intervalos.slice(0, -1).map((horaInicio, index) => {// Tirando o Ultimo Horario do array para criar o Horario Inicio 
+      const horaFim = intervalos[index + 1] // Pegando sempre +1 do array de intervalos de horas formatadas de meia em meia hora para formar a Hora fim que sera sempre os Horarios que tem :30
         return {
           Intervalo: `${format(horaInicio, 'HH:mm')} - ${format(horaFim, 'HH:mm')}`,
           Escolhido: 'Livre',
         }
-      })
+    })
 
-      const novosIntervalos = intervalosFormatados.filter(intervalo => {
-        return !ExistingHorario.IntervaloAtendimentos.some(existing => existing.Intervalo === intervalo.Intervalo);
-      });
+    const novosIntervalos = intervalosFormatados.filter(intervalo => {
+      return !ExistingHorario.IntervaloAtendimentos.some(existing => existing.Intervalo === intervalo.Intervalo);
+    });
     
-      // Adicionar os novos intervalos
-      ExistingHorario.IntervaloAtendimentos = ExistingHorario.IntervaloAtendimentos.concat(novosIntervalos)
+    // Adicionar os novos intervalos
+    ExistingHorario.IntervaloAtendimentos = ExistingHorario.IntervaloAtendimentos.concat(novosIntervalos)
 
      const Existing = ExistingHorario.IntervaloAtendimentos.sort((a, b) => {
       const timeA = parse(a.Intervalo.split(' - ')[0], 'HH:mm', new Date());
@@ -135,7 +169,7 @@ export const RegisterHorarios = async (body, res, params) =>{
 
       await Medico.save()
     }else{  
-        // Calcular os intervalos de 15 em 15 minutos
+
         const intervalos = eachMinuteOfInterval({
           start: horaInicio,
           end: parse(`${data} ${fim}`, 'dd/MM/yyyy HH:mm', new Date()),
@@ -152,15 +186,15 @@ export const RegisterHorarios = async (body, res, params) =>{
         Medico.Horarios.push({ data, inicio, fim, HorasDedicadas, AtendimentosDia: 0, IntervaloAtendimentos: intervalosFormatados, TempoDeConsulta: TempoConsultaNumber})
         await Medico.save()
 
-        const ConvertingTempodeAtendimentoDecimal = TempoConsultaNumber / 60
+        const ConvertingTempodeAtendimentoDecimal = 15 / 60
  
         const HorasD = Medico.Horarios[Medico.Horarios.length -1].HorasDedicadas
         const QuantidadedeAtendimentos =  HorasD / ConvertingTempodeAtendimentoDecimal
     
         const ArredondandoQuantitidadesAtendimentos = Math.ceil(QuantidadedeAtendimentos)
-    
+  
         // Atualizando apenas o novo AtendimentosDia com base no último cadastrado
-       Medico.Horarios[Medico.Horarios.length - 1].AtendimentosDia = ArredondandoQuantitidadesAtendimentos
+        Medico.Horarios[Medico.Horarios.length - 1].AtendimentosDia = ArredondandoQuantitidadesAtendimentos
         
        
         //Total de Atendimentos
