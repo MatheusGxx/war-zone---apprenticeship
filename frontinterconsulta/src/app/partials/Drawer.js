@@ -8,125 +8,57 @@ import secureLocalStorage from 'react-secure-storage'
 import { usePathname } from 'next/navigation'
 import { config } from '../config.js'
 
+const routeConfigs = [
+  {
+    path: '/casos-clinicos',
+    label: 'Casos Clinicos',
+    roles: ['médico'],
+  },
+  {
+    path: '/especialistas-disponiveis',
+    label: 'Especialistas Disponiveis',
+    roles: ['paciente', 'unidade'],
+  },
+  {
+    path: '/unidade-especialista',
+    label: 'Inter Gestão',
+    roles: ['unidade'],
+  },
+  {
+    path: '/agenda',
+    label: 'Agenda',
+    roles: ['médico', 'paciente', 'unidade'],
+  },
+]
 
-export const DrawerComponent = ({ open, Close, Navigation}) =>{
+export const DrawerComponent = ({ open, onClose, onNavigation }) => {
+  const pathname = usePathname()
+  const userRoles = [
+    secureLocalStorage.getItem('NomeMedico'),
+    secureLocalStorage.getItem('NomePaciente'),
+    secureLocalStorage.getItem('NomeUnidade'),
+  ]
+  const userRoleSet = new Set(userRoles.filter(Boolean))
 
-  const Route = usePathname()
-    
-  const RotaMédico = Route === '/casos-clinicos';
+  const filteredRoutes = routeConfigs.filter((config) => {
+    if (config.roles.includes('all')) return true
+    return config.roles.some((role) => userRoleSet.has(role))
+  })
 
-  const RotaPaciente = Route === '/especialistas-disponiveis'
+  const listItems = filteredRoutes.map((config) => {
+    if (pathname === config.path) {
+      return (
+        <ListItemButton key={config.path} onClick={() => onNavigation(config.path)}>
+          <ListItemText>{config.label}</ListItemText>
+        </ListItemButton>
+      )
+    }
+    return null
+  }).filter(Boolean)
 
-  const RotaUnidade = Route ===  '/unidade-especialista'
-
-  const Agenda = Route === '/agenda'
-
-  const Médico = secureLocalStorage.getItem('NomeMedico')
-  const Paciente = secureLocalStorage.getItem('NomePaciente')
-  const Unidade = secureLocalStorage.getItem('NomeUnidade')
-
-  return(
-    <>
-       <Drawer anchor="top" open={open} onClose={Close}>
-        {RotaMédico && 
-        <List>
-           <ListItemButton onClick={() => Navigation('/casos-clinicos')}>
-                  <ListItemText> Casos Clinicos </ListItemText>
-           </ListItemButton>
-
-           <ListItemButton onClick={() => Navigation('/agenda')}>
-                  <ListItemText> Agenda </ListItemText>
-           </ListItemButton>
-        </List>
-        }
-
-        {RotaPaciente && 
-                <List>
-                  <ListItemButton onClick={() => Navigation('/especialistas-disponiveis')}>
-                          <ListItemText> Especialistas Disponiveis </ListItemText>
-                  </ListItemButton>
-
-                  <ListItemButton onClick={() => Navigation('/unidade-especialista')}>
-                          <ListItemText> Inter Gestão </ListItemText>
-                  </ListItemButton>
-
-                  <ListItemButton onClick={() => Navigation('/agenda')}>
-                          <ListItemText> Agenda </ListItemText>
-                  </ListItemButton>
-                </List>
-        }
-
-        {RotaUnidade && 
-                <List>
-
-                   <ListItemButton onClick={() => Navigation('/unidade-especialista')}>
-                                <ListItemText> Inter Gestão </ListItemText>
-                      </ListItemButton>
-
-                   <ListItemButton onClick={() => Navigation('/especialistas-disponiveis')}>
-                           <ListItemText> Especialistas Disponiveis </ListItemText>
-                    </ListItemButton>
-
-                     <ListItemButton onClick={() => Navigation('/agenda')}>
-                              <ListItemText> Agenda </ListItemText>
-                     </ListItemButton>
-                 </List>
-        }
-
-        {Agenda && Médico &&
-         <List>
-         <ListItemButton onClick={() => Navigation('/casos-clinicos')}>
-                <ListItemText> Casos Clinicos </ListItemText>
-         </ListItemButton>
-
-         <ListItemButton onClick={() => Navigation('/agenda')}>
-                <ListItemText> Agenda </ListItemText>
-         </ListItemButton>
-
-         <ListItemButton> Horarios </ListItemButton>
-      </List>
-        }
-        
-        {Agenda && Paciente && 
-            <List>
-                  <ListItemButton onClick={() => Navigation('/especialistas-disponiveis')}>
-                          <ListItemText> Especialistas Disponiveis </ListItemText>
-                  </ListItemButton>
-
-                  <ListItemButton onClick={() => Navigation('/unidade-especialista')}>
-                          <ListItemText> Inter Gestão </ListItemText>
-                  </ListItemButton>
-
-                  <ListItemButton onClick={() => Navigation('/agenda')}>
-                          <ListItemText> Agenda </ListItemText>
-                  </ListItemButton>
-                </List>
-        }
-        {Agenda && Unidade &&
-         <List>
-
-                   <ListItemButton onClick={() => Navigation('/unidade-especialista')}>
-                                <ListItemText> Inter Gestão </ListItemText>
-                      </ListItemButton>
-
-                   <ListItemButton onClick={() => Navigation('/especialistas-disponiveis')}>
-                           <ListItemText> Especialistas Disponiveis </ListItemText>
-                    </ListItemButton>
-
-                     <ListItemButton onClick={() => Navigation('/agenda')}>
-                              <ListItemText> Agenda </ListItemText>
-                     </ListItemButton>
-                 </List>
-        }
-
-        {Agenda && Unidade === null && Médico === null && Paciente === null &&
-           <List>
-            <ListItemButton onClick={() => Navigation('/welcome')}>
-               <ListItemText> Login </ListItemText>
-           </ListItemButton> 
-          </List>
-        }
-        </Drawer>
-    </>
+  return (
+    <Drawer anchor="top" open={open} onClose={onClose}>
+      <List>{listItems}</List>
+    </Drawer>
   )
 }
