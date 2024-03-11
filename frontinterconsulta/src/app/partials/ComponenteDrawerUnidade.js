@@ -13,31 +13,30 @@ import secureLocalStorage from 'react-secure-storage'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 import { config } from '../config.js'
 
-export const ComponentDrawerUnidade = ({ Navigation, Loggout, Image }) => {
-
-  const NomeUnidade = typeof window !== 'undefined' ? secureLocalStorage.getItem('NomeUnidade') : false
+export const ComponentDrawerUnidade = ({ Navigation, Loggout, Image, NomeUnidade }) => {
+  NomeUnidade = typeof NomeUnidade === 'undefined' ? secureLocalStorage.getItem('NomeUnidade') : NomeUnidade
+  if (NomeUnidade === null) {
+    NomeUnidade = 'Unknown'
+  }
 
   return (
     <>
       <List>
-        <ListItemButton>
+        <ListItemButton key="profile" onClick={() => Navigation('/profile')}>
           <div className='flex gap-10'>
             <ListItemIcon>
-            {Image ? 
-                 <Avatar style={{ width: 60, height: 60 }}>
-                 <img
-                   src={Image}
-                   alt="Imagem do usuário"
-                   style={{ width: '100%', height: '100%' }}
-                 />
-               </Avatar> :
-               <>
-               <div className='flex justify-center items-center'>
-               <AccountCircleIcon color="primary" className='cursor-pointer' fontSize='large'/>
-               </div>
-               </>
-              
-                }
+              {Image ? 
+                <Avatar style={{ width: 60, height: 60 }}>
+                  <img
+                    src={Image}
+                    alt="Imagem do usuário"
+                    style={{ width: '100%', height: '100%' }}
+                  />
+                </Avatar> :
+                <div className='flex justify-center items-center'>
+                  <AccountCircleIcon color="primary" className='cursor-pointer' fontSize='large' />
+                </div>
+              }
             </ListItemIcon>
             <div className="flex justify-center items-center">
               <ListItemText sx={{ color: 'blue', fontWeight: 'bold' }}>{NomeUnidade}</ListItemText>
@@ -45,7 +44,7 @@ export const ComponentDrawerUnidade = ({ Navigation, Loggout, Image }) => {
           </div>
         </ListItemButton>
 
-        <ListItemButton onClick={() => Navigation('/agenda')}>
+        <ListItemButton key="agenda" onClick={() => Navigation('/agenda')}>
           <ListItemIcon>
             <EventAvailableIcon color='primary' />
           </ListItemIcon>
@@ -56,7 +55,7 @@ export const ComponentDrawerUnidade = ({ Navigation, Loggout, Image }) => {
       <Divider />
 
       <List>
-        <ListItemButton onClick={() => Loggout('/welcome/login-unidade')}>
+        <ListItemButton key="logout" type="button" onClick={() => Loggout('/welcome/login-unidade')}>
           <ListItemIcon>
             <ExitToAppIcon color="primary" />
           </ListItemIcon>
@@ -65,4 +64,11 @@ export const ComponentDrawerUnidade = ({ Navigation, Loggout, Image }) => {
       </List>
     </>
   )
+}
+
+ComponentDrawerUnidade.defaultProps = {
+  Navigation: () => {},
+  Loggout: () => {},
+  Image: null,
+  NomeUnidade: null,
 }
