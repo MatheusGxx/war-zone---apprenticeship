@@ -25,16 +25,11 @@ export const DocumentsEscolhidos = ({ date,
  }) => {
 
   const { setExame } = useExame()
-  setExame(exames)
   const { setReceitaSimples } = useReceitaSimples()
-  setReceitaSimples(receitaS)
   const { setReceitaControlada} = useReceitaControlada()
-  setReceitaControlada(receitaC)
   const { setAtestado } = useAtestado()
-  setAtestado(atestado)
 
- 
-    const HandleChangeExame = (index, newValue) => {
+  const HandleChangeExame = (index, newValue) => {
       const updatedExames = [...exames];
       updatedExames[index].Exame = newValue;
       setExame(updatedExames)
@@ -58,7 +53,7 @@ export const DocumentsEscolhidos = ({ date,
         setAtestado(updatedAtestado)
       }
   
-      const HandleChangeCID = (index, newValue) => {
+    const HandleChangeCID = (index, newValue) => {
         const updatedAtestado =    [...atestado]
         updatedAtestado[index].CID = newValue
         setAtestado(updatedAtestado)
@@ -69,82 +64,65 @@ export const DocumentsEscolhidos = ({ date,
         <div className='flex flex-col gap-3 mt-10 w-10/12'>
         {exames && exames.map((data, index) => {
             return (
-                <TemplateComponenteExame
-                    key={index} // Adicionando key para cada componente
-                    index={index}
-                    date={date}
-                    nomePaciente={nomePaciente}
-                    nomeMedico={nomeMedico}
-                    CRMMedico={CRMMedico}
-                    EnderecoMedico={EnderecoMedico}
-                    SolicitarExames={SolicitarExames}
-                    data={data.Exame}
-                    handleChangeExame={(newValue) => HandleChangeExame(index, newValue)} 
-                />
+                <div key={index}>
+                    <TemplateComponenteExame
+                        index={index}
+                        date={date}
+                        nomePaciente={nomePaciente}
+                        nomeMedico={nomeMedico}
+                        CRMMedico={CRMMedico}
+                        EnderecoMedico={EnderecoMedico}
+                        SolicitarExames={SolicitarExames}
+                        data={data.Exame}
+                        handleChangeExame={(newValue) => HandleChangeExame(index, newValue)} 
+                    />
+                </div>
             );
         })}
 
        {receitaS && receitaS.map((data, index) => {
             return(
-                <>
-                <TemplateReceitaSimples
-                    index={index}
-                    data={data.ReceitaSimplesSolicitada}
-                    NomePaciente={nomePaciente}
-                    CPFPaciente={CPFPaciente}
-                    Endereço={EnderecoMedico}
-                    NomeMedico={nomeMedico}
-                    CRM={CRMMedico}
-                    UF={UF}
-                    date={date}
-                    HoraAtual={HoraAtual}
-                    HandleChangeReceitaSimples={(newValue) => HandleChangeReceitaSimples(index, newValue)}
-                />
-                </>
+                <div key={index}>
+                    <TemplateReceitaSimples
+                        index={index}
+                        data={data.ReceitaSimplesSolicitada}
+                        NomePaciente={nomePaciente}
+                        CPFPaciente={CPFPaciente}
+                        Endereço={EnderecoMedico}
+                        NomeMedico={nomeMedico}
+                        CRM={CRMMedico}
+                        UF={UF}
+                        date={date}
+                        HoraAtual={HoraAtual}
+                        HandleChangeReceitaSimples={(newValue) => HandleChangeReceitaSimples(index, newValue)}
+                    />
+                </div>
             )
         })}
 
         {receitaC && receitaC.map((data, index) => {
                 return(
-                <>
-                <TemplateReceitaControlada
-                    Endereço={EnderecoMedico}
-                    NomeMedico={nomeMedico}
-                    CRM={CRMMedico}
-                    UF={UF}
-                    CidadeMedico={CidadeMedico}
-                    NomePaciente={nomePaciente}
-                    EnderecoPaciente={EnderecoPaciente}
-                    CPFPaciente={CPFPaciente}
-                    date={date}
-                    data={data.ReceitaControladaSolicitada}
-                    index={index}
-                    HandleChangeReceitaC={(newValue) => HandleChangeReceitaC(index, newValue)}
-                />
-                </>
+                <div key={index}>
+                    <TemplateReceitaControlada
+                        Endereço={EnderecoMedico}
+                        NomeMedico={nomeMedico}
+                        CRM={CRMMedico}
+                        UF={UF}
+                        CidadeMedico={CidadeMedico}
+                        NomePaciente={nomePaciente}
+                        EnderecoPaciente={EnderecoPaciente}
+                        CPFPaciente={CPFPaciente}
+                        date={date}
+                        data={data.ReceitaControladaSolicitada}
+                        index={index}
+                        HandleChangeReceitaC={(newValue) => HandleChangeReceitaC(index, newValue)}
+                    />
+                </div>
                 )
             })}
 
           {atestado && atestado.map((data, index) => {
                 return(
-                  <>
+                  <div key={index}>
                     <TemplateAtestado
-                        NomeMedico={nomeMedico}
-                        CRMMedico={CRMMedico}
-                        NomePaciente={nomePaciente} 
-                        CPFPaciente={CPFPaciente}
-                        Localidade={EnderecoMedico}
-                        date={date}
-                        data={data}
-                        index={index}
-                        HandleChangeDiasAfastados={(newValue) => HandleChangeDiasAfastados(index, newValue)}
-                        HandleChangeCID={(newValue) => HandleChangeCID(index, newValue)}
-                    />
-                  </>
-                )
-            })}
-        </div>
-       
-        </>
-    )
-}
+                       
