@@ -5,50 +5,47 @@ import { TemplateReceitaSimples } from '../partials/TemplateReceitaSimples'
 import { useReceitaSimples } from '../context/context'
 
 export const ReceitaSimples = ({
-    NomePaciente,
-    CPFPaciente,
-    Endereço,
-    NomeMedico,
-    CRM,
-    UF,
-    date,
-    HoraAtual,
-    receitaS,
+  NomePaciente,
+  CPFPaciente,
+  Endereço,
+  NomeMedico,
+  CRM,
+  UF,
+  date,
+  HoraAtual,
+  receitaS,
 }) => {
+  const { setReceitaSimples } = useReceitaSimples()
 
-    const { setReceitaSimples } = useReceitaSimples()
-    setReceitaSimples(receitaS)
-   
-    const HandleChangeReceitaSimples = (index, newValue) => {
-      const updateReceitaSimples = [...receitaS];
-      updateReceitaSimples[index].ReceitaSimplesSolicitada = newValue;
-      setReceitaSimples(updateReceitaSimples)
-    }
-    
-    return(
-        <>
-        <div className="flex gap-10 flex-col mt-10">
-        {receitaS && receitaS.map((data, index) => {
-            return(
-                <>
-                <TemplateReceitaSimples
-                    index={index}
-                    data={data.ReceitaSimplesSolicitada}
-                    NomePaciente={NomePaciente}
-                    CPFPaciente={CPFPaciente}
-                    Endereço={Endereço}
-                    NomeMedico={NomeMedico}
-                    CRM={CRM}
-                    UF={UF}
-                    date={date}
-                    HoraAtual={HoraAtual}
-                    HandleChangeReceitaSimples={(newValue) => HandleChangeReceitaSimples(index, newValue)}
-                />
-                </>
-            )
-        })}
-       
-        </div> 
-        </>
+  const HandleChangeReceitaSimples = (newValue) => {
+    setReceitaSimples((prevReceitaSimples) =>
+      prevReceitaSimples.map((data, index) =>
+        index === receitaS.index ? { ...data, ReceitaSimplesSolicitada: newValue } : data
+      )
     )
+  }
+
+  return (
+    <>
+      <div className="flex gap-10 flex-col mt-10">
+        {receitaS &&
+          receitaS.map((data, index) => (
+            <TemplateReceitaSimples
+              key={index}
+              index={index}
+              data={data.ReceitaSimplesSolicitada}
+              NomePaciente={NomePaciente}
+              CPFPaciente={CPFPaciente}
+              Endereço={Endereço}
+              NomeMedico={NomeMedico}
+              CRM={CRM}
+              UF={UF}
+              date={date}
+              HoraAtual={HoraAtual}
+              HandleChangeReceitaSimples={HandleChangeReceitaSimples}
+            />
+          ))}
+      </div>
+    </>
+  )
 }

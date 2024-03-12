@@ -1,118 +1,122 @@
-'use client'
 import { useState } from 'react'
-import { TextField, Autocomplete, Snackbar , Alert } from "@mui/material"
-import { EspecialidadesAtendidas } from "./EspecialidadesAtendidas"
-import { EspecialidadesUnidades } from './EspecialidadesUnidade'
-import { AreadeAtuacaoAtendidas } from './AreadeAtuaçaoAtendidas'
+import {
+  TextField,
+  Autocomplete,
+  Snackbar,
+  Alert,
+  Button,
+  Typography,
+} from '@mui/material'
+import { EspecialidadesAtendidas, EspecialidadesUnidades, AreadeAtuacaoAtendidas } from './data'
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos'
 import Image from 'next/image'
 import Logo from '../public/logo.png'
 
+export const RegisterTwoDoctor = ({
+  especialidade,
+  setEspecialidade,
+  atuacao,
+  setAtuacao,
+  resumo,
+  setResumo,
+  setCurrentStep,
+  typeDoctorPublic,
+}) => {
+  const [errorMessage, setErrorMessage] = useState('')
+  const [snackbarOpen, setSnackbarOpen] = useState(false)
 
-export const RegisterTwoDoctor = (
-  {
-    especialidade,
-    setEspecialidade,
-    atuacao,
-    setAtuacao,
-    setResumo,
-    resumo,
-    setCurrentStep,
-    typeDoctorPublic
-  }
-  ) => {
-
-    const [snackbarOpen, setSnackbarOpen] = useState(false)
-    const [snackbarMessage, setSnackbarMessage] = useState("")
-
-    const Verification = () => {
-      let camposVazios = [];
-    
-      if (especialidade === '') {
-        camposVazios.push('Especialidade Médica');
-      }
-      if (atuacao === 'Área de Atuação Médica Principal') {
-        camposVazios.push('');
-      }
-      if (resumo === '') {
-        camposVazios.push('Conte um pouco sobre sua carreira médica e trajetória profissional');
-      }
-    
-      if (camposVazios.length > 0) {
-        const camposFaltantes = camposVazios.join(', ');
-        setSnackbarMessage(`Ops Doutor, você não preencheu o(s) campo(s): ${camposFaltantes}.`);
-        handleSnackBarOpen();
-      } else {
-
-        handleNextClick();
-      }
-    }
-    
-    const handleNextClick = () => {
-      setCurrentStep((prevStep) => (prevStep < 5 ? prevStep + 1 : prevStep));
-    };
-  
-    const handleBackClick = () => {
-      setCurrentStep((prevStep) => (prevStep > 1 ? prevStep - 1 : prevStep));
-    }
-
-    const handleSnackbarClose = () => {
-      setSnackbarOpen(false)
-    };
-  
-    const handleSnackBarOpen = () =>{
+  const handleNextClick = () => {
+    if (
+      !especialidade ||
+      especialidade === 'Selecione' ||
+      !atuacao ||
+      atuacao === 'Selecione' ||
+      !resumo ||
+      resumo.trim().length === 0
+    ) {
+      setErrorMessage('Por favor, preencha todos os campos.')
       setSnackbarOpen(true)
+      return
     }
-  return(
+
+    setCurrentStep((prevStep) => (prevStep < 5 ? prevStep + 1 : prevStep))
+  }
+
+  const handleBackClick = () => {
+    setCurrentStep((prevStep) => (prevStep > 1 ? prevStep - 1 : prevStep))
+  }
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false)
+  }
+
+  const handleSnackBarOpen = () => {
+    setSnackbarOpen(true)
+  }
+
+  return (
     <>
-      <h1 className="text-blue-500 text-center"> 
-      Especialidade Médica Principal
-      </h1>
+      <Typography variant="h5" component="h1" textAlign="center" mb={3}>
+        Especialidade Médica Principal
+      </Typography>
 
       <Autocomplete
-        value={especialidade === '' ? null : especialidade}
+        value={especialidade || null}
         onChange={(event, newValue) => {
-          if (newValue !== null) {
-            setEspecialidade(newValue);
-          }
+          setEspecialidade(newValue)
         }}
         options={typeDoctorPublic ? EspecialidadesUnidades : EspecialidadesAtendidas}
         noOptionsText="Sem resultados"
-        renderInput={(params) => <TextField {...params} label="Especialidade Médica" variant="standard" />}
+        renderInput={(params) => (
+          <TextField {...params} label="Especialidade Médica" variant="standard" />
+        )}
         className="w-full border-b border-blue-500 sm:w-full"
       />
 
       <Autocomplete
-        value={atuacao === '' ? null : atuacao}
+        value={atuacao || null}
         onChange={(event, newValue) => {
-          if (newValue !== null) {
-                setAtuacao(newValue);
-            }
-          }}
+          setAtuacao(newValue)
+        }}
         options={AreadeAtuacaoAtendidas}
         noOptionsText="Sem resultados"
-        renderInput={(params) => <TextField {...params} label="Área de Atuação Médica Principal" variant="standard" />}
+        renderInput={(params) => (
+          <TextField {...params} label="Área de Atuação Médica Principal" variant="standard" />
+        )}
         className="w-full border-b border-blue-500 sm:w-full"
       />
 
       <TextField
         label="Conte um pouco sobre sua carreira médica e trajetória profissional"
         multiline
-        rows={4} 
-        variant="standard" 
+        rows={4}
+        variant="standard"
         InputProps={{
-          sx: { borderBottom: "1px solid blue" }, // Define a cor da linha inferior
+          sx: { borderBottom: '1px solid blue' }, // Define a cor da linha inferior
         }}
         onChange={(e) => setResumo(e.target.value)}
         value={resumo}
         required
       />
 
-      <div className="w-full flex justify-between items-center">
-      <ArrowBackIosIcon color="primary" className="cursor-pointer" onClick={handleBackClick}/>
-      <Image src={Logo} width={50} height={50} alt="Logo Interconsulta" className="animate-spin-slow"/>
-      <ArrowForwardIosIcon color="primary" className="cursor-pointer" onClick={Verification}/>    
+      <div className="w-full flex justify-between items-center mt-4">
+        <Button
+          variant="outlined"
+          color="primary"
+          startIcon={<ArrowBackIosIcon />}
+          onClick={handleBackClick}
+        >
+          Anterior
+        </Button>
+        <Button
+          variant="contained"
+          color="primary"
+          endIcon={<ArrowForwardIosIcon />}
+          onClick={handleNextClick}
+        >
+          Próximo
+        </Button>
       </div>
 
       <Snackbar
@@ -121,9 +125,9 @@ export const RegisterTwoDoctor = (
         onClose={handleSnackbarClose}
       >
         <Alert onClose={handleSnackbarClose} severity="error">
-          {snackbarMessage}
+          {errorMessage}
         </Alert>
       </Snackbar>
-   </>
+    </>
   )
 }

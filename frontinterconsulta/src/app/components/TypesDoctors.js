@@ -1,4 +1,4 @@
-export const TypesDoctors = [
-    'Atendimento Particular',
-    'Atendimento Público',
-]
+export enum TypesDoctors {
+  AtendimentoParticular = 'Atendimento Particular',
+  AtendimentoPublico = 'Atendimento Público',
+}

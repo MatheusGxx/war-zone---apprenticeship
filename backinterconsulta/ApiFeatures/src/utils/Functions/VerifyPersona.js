@@ -1,19 +1,32 @@
-import { VerifyDataMédico, VefiryDataUnidade, VerifyDataPaciente } from '../zodVerify.js'
- 
-export const VefiryData = async (route, dataMedico, dataPaciente, dataUnidade) =>{
+import { VerifyDataMedico, VerifyDataUnidade, VerifyDataPaciente } from '../zodVerify.js';
 
-  switch(route){
+export const verifyDataMedico = (dataMedico) => {
+  VerifyDataMédico.parse(dataMedico);
+  console.log('Schema Validado');
+};
+
+export const verifyDataPaciente = (dataPaciente) => {
+  VerifyDataPaciente.parse(dataPaciente);
+  console.log('Schema Validado');
+};
+
+export const verifyDataUnidade = (dataUnidade) => {
+  VefiryDataUnidade.parse(dataUnidade);
+  console.log('Schema Validado');
+};
+
+export const VefiryData = (route, dataMedico, dataPaciente, dataUnidade) => {
+  switch (route) {
     case '/welcome/login-medico/cadastro-medico/obrigado-medico':
-       VerifyDataMédico.parse(dataMedico)
-       console.log('Schema Validado')
-       break
+      verifyDataMedico(dataMedico);
+      break;
     case '/welcome/login-paciente/cadastro-paciente/obrigado-paciente':
-      VerifyDataPaciente.parse(dataPaciente)
-      console.log('Schema Validado')
-      break
+      verifyDataPaciente(dataPaciente);
+      break;
     case '/welcome/login-unidade/cadastro-unidade/obrigado-unidade':
-      VefiryDataUnidade.parse(dataUnidade)
-      console.log('Schema Validado')
-      break
+      verifyDataUnidade(dataUnidade);
+      break;
+    default:
+      throw new Error(`Invalid route: ${route}`);
   }
-}
+};

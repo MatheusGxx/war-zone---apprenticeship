@@ -6,14 +6,11 @@ import FormularioMédico from '../partials/FormularioMédico.js'
 import FormularioUnidade from '../partials/FormularioUnidade.js'
 import { config } from '../config.js'
 
-
-const Obrigado = ({ImagemLateral, title, copy}) =>{
-
+const Obrigado = ({ ImagemLateral, title, copy }) => {
   const pathname = usePathname()
 
-  const RotaMédico = pathname === `/welcome/login-medico/cadastro-medico/obrigado-medico`;
-
-  const RotaUnidade = pathname ===  '/welcome/login-unidade/cadastro-unidade/obrigado-unidade'
+  const RotaMédico = useMemo(() => pathname === `/welcome/login-medico/cadastro-medico/obrigado-medico`, [pathname])
+  const RotaUnidade = useMemo(() => pathname ===  '/welcome/login-unidade/cadastro-unidade/obrigado-unidade', [pathname])
 
   return(
     <>
@@ -22,6 +19,8 @@ const Obrigado = ({ImagemLateral, title, copy}) =>{
            <Image
              src={ImagemLateral}
              alt="Imagem Login"
+             height={400}
+             width={400}
            />  
         </section>
 
@@ -35,19 +34,5 @@ const Obrigado = ({ImagemLateral, title, copy}) =>{
 
             {RotaMédico && <FormularioMédico />}
             {RotaUnidade && <FormularioUnidade/>}
-            
-              <Image
-              src={SecondLogo}
-              alt='SecondLogo'
-              height={200}
-              width={220}
-              />            
-            </div>
-        </section>
 
-      </main>  
-    </>
-  )
-}
 
-export default Obrigado
