@@ -129,6 +129,15 @@ router.post('/obrigado/:id', uploadPhotos.single("file") ,async (req, res ) => {
         console.log(req.body)
 })
 
+router.post('/create-lead',
+      async(req, res) => {
+        const { nome, email, telefone, doenca } = req.body
+        
+        
+        console.log(req.body)
+      } 
+)
+
 
 export default router
 

@@ -588,3 +588,17 @@ export const getListDoencasDoctor = async (body, res) => {
     }
 }
 
+export const RegisterLandingPage = async (nome, email, telefone, doenca,res) => {
+  try{
+
+    const createLead = await models.ModelRegisterPaciente.create({
+      nome,
+      senha: String,
+      email,
+      telefone,
+    })
+  }catch(err){
+    return res.status(400).json({ message: 'Erro ao cadastrar Lead da Landing Page'})
+  }
+}
+

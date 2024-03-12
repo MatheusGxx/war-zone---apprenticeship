@@ -21,6 +21,8 @@ ENV PUPPETEER_SKIP_DOWNLOAD true
 
 WORKDIR /app
 
+RUN ln -sf /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime
+
 # Copia os arquivos do aplicativo
 COPY backinterconsulta/ApiAutomacoes .
 
