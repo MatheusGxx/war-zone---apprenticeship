@@ -1,32 +1,33 @@
 'use client'
-
 import '../globals.css'
-import ScriptsSocials from '../partials/ScriptSocials'
-import ReuniaoAcabandoProvider from '../context/ReuniaoAcabandoContext'
-import ReceitaSimplesProvider from '../context/ReceitaSimplesContext'
-import ReceitaControladaProvider from '../context/ReceitaControladaContext'
-import AtestadoProvider from '../context/AtestadoContext'
-import ExameProvider from '../context/ExameContext'
+import { 
+   ReuniaoAcabandoProvider,
+   ReceitaSimplesProvider, 
+   ReceitaControladaProvider, 
+   AtestadoProvider,
+   ExameProvider
+} from '../context/context'
+import { ScriptsSocials } from '../partials/ScriptSocials'
 
 export default function RootLayout({ children }) {
   return (
     <html lang="pt-br">
-      <head>
-        <ScriptsSocials />
-      </head>
+      <ScriptsSocials/>
       <body className="background">
         <ReuniaoAcabandoProvider>
           <ReceitaSimplesProvider>
             <ReceitaControladaProvider>
               <AtestadoProvider>
                 <ExameProvider>
-                  {children}
+                <div className="">
+                    {children}
+                </div> 
                 </ExameProvider>
               </AtestadoProvider>
             </ReceitaControladaProvider>
           </ReceitaSimplesProvider>
-        </ReuniaoAcabandoProvider>
+        </ReuniaoAcabandoProvider> 
       </body>
     </html>
   )
-}
+} 

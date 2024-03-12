@@ -1,10 +1,12 @@
-import * as rateLimit from 'express-rate-limit';
+import rateLimit from 'express-rate-limit'
 
 const limiter = rateLimit({
-  windowMs: 2 * 60 * 1000, // 2 minutes
+  windowMs: 2 * 60 * 1000,
   max: 1,
-  message: 'You have exceeded the request limit. Please wait for a moment.',
-  headers: true, // include rate limit headers in the response
-});
+  message: 'Você ultrapassou o limite de requisições. Aguarde um momento.',
+  standardHeaders: true,
+  legacyHeaders: false,
+})
 
-export default limiter;
+
+export default limiter 

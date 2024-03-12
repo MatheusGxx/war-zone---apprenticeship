@@ -17,14 +17,10 @@ const { verifier, challenge } = generateChallenge()
 
 router.get('/authorize-safeid/:id',
     async (req, res) => {
-      const { id } = req.params
-
-      // Validate id parameter
-      if (!id) {
-        return res.status(400).json({ message: 'Missing id parameter' });
-      }
 
       const url = await getSafeId(challenge)
+    
+      const { id } = req.params
 
       const savedURL = new models.SafeID({
         SafeID: [
@@ -34,24 +30,24 @@ router.get('/authorize-safeid/:id',
           }
         ]
       })
-
+    
       console.log(`Salvando url e ID do médico no banco de dados: ${savedURL}`);
 
-      try {
-        await savedURL.save()
-        return res.json({ url })
-      } catch (error) {
-        return res.status(500).json({ message: 'Error saving SafeID to database' });
-      }
-})
+      await savedURL.save()
 
-router.get('/get-code-safeid',
-    async (req, res) => {
-      try {
-        const { code } = req.query
+      return res.json({ url })
+})  
+
+router.get('/get-code-safeid', 
+     async (req, res) => {
+
+      try{
+        
+        const { code, state, error } = req.query
         console.log(`Code: ${code}`)
 
         const lastSavedURL = await models.SafeID.findOne().sort({ _id: -1 });
+        console.log(`Salvando code no banco de dados: ${lastSavedURL}`)
 
         if (!lastSavedURL) {
           return res.status(404).json({ message: 'Nenhum SafeID encontrado' });
@@ -95,17 +91,12 @@ router.get('/get-code-safeid',
         
         console.log(`Arquivo do PDF assinado com certificado digital: ${PDFPath2}`)
 
-        try {
-          await lastSavedURL.save()
-        } catch (error) {
-          return res.status(500).json({ message: 'Error updating SafeID in database' });
-        }
-
-      } catch (error) {
-        return res.status(500).json({ message: 'Erro ao gerar Certificado digital usando a API do SafeID'})
-      }
+        await lastSavedURL.save()
+       
+      }catch(error){
+        return res.status(200).json({ message: 'Erro ao gerar Certificado digital usando a API do SafeID'})
+      }  
   })
 
 
 export default router
-

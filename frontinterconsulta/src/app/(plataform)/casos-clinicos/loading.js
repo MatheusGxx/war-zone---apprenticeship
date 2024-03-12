@@ -1,9 +1,9 @@
-// src/components/Loading/index.js
+import PreloaderInterno from '../../partials/PreloaderInterno'
 
-import PreloaderInterno from '../../../partials/PreloaderInterno'
-
-const Loading = () => {
-  return <PreloaderInterno />
+const Loading = () =>{
+  return(
+   <PreloaderInterno/>
+  )
 }
 
 export default Loading

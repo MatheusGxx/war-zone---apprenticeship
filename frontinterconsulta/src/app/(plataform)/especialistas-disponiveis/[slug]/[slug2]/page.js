@@ -1,7 +1,7 @@
-import PerfilMedico from '../../../../components/PerfilMedico.js';
+import  PerfilMédico   from '../../../../components/PerfilMédico.js'
 
-const DinamycRouteTwo = ({ slug2 }) => {
-  return <PerfilMedico slug={slug2} />;
-};
+const DinamycRouteTwo = ({ params }) =>{
+   <PerfilMédico params={params.slug2}/>
+}
 
-export default DinamycRouteTwo;
+export default DinamycRouteTwo

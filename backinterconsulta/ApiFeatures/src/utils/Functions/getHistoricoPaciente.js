@@ -1,27 +1,13 @@
-import { parse } from 'date-fns';
+import { parse } from 'date-fns'
 
-export const getHistoricoPaciente = async (req, res) => {
-  const { Paciente, ModelPacientee } = req; // destructure Paciente and ModelPacientee from req object
+export const getHistoricoPaciente = async (Paciente, ModelPacientee, res) => {
+  const Pacientee = Paciente;
 
-  if (!Paciente || !ModelPacientee) {
-    return res.status(400).json({ error: 'Paciente or ModelPacientee not provided' });
-  }
+  const updatedPacientee = await ModelPacientee.findById(Pacientee._id);
 
-  const paciente = new ModelPacientee(Paciente); // create a new instance of ModelPacientee
+  const HistoricoCasosClinicosAtualizados = updatedPacientee.Historico.sort((a, b) =>
+    parse(a.DataInsercao, 'dd/MM/yyyy', new Date()) - parse(b.DataInsercao, 'dd/MM/yyyy', new Date())
+  );
 
-  const updatedPaciente = await ModelPacientee.findById(paciente._id); // use the instance's id for query
-
-  if (!updatedPaciente) {
-    return res.status(404).json({ error: 'Paciente not found' });
-  }
-
-  const HistoricoCasosClinicosAtualizados = updatedPaciente.Historico.sort((a, b) => {
-    const dateA = parse(a.DataInsercao, 'dd/MM/yyyy', new Date());
-    const dateB = parse(b.DataInsercao, 'dd/MM/yyyy', new Date());
-
-    return dateA - dateB;
-  });
-
-  return res.status(200).json({ HistoricoCasosClinicosAtualizados, Paciente: updatedPaciente });
+  return res.status(200).json({ HistoricoCasosClinicosAtualizados, Pacientee: updatedPacientee });
 };
-

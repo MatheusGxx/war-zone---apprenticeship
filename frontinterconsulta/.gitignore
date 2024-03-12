@@ -1,10 +1,9 @@
-# This file lists patterns of files and/or directories to be ignored by Git.
-# For more information, see: https://git-scm.com/docs/gitignore
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
 /node_modules
 /.pnp
-*.pnp.js
+.pnp.js
 
 # testing
 /coverage
@@ -25,3 +24,8 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo

@@ -1,23 +1,19 @@
-# Use an official Node.js runtime as the base image
-FROM node:16-alpine
+FROM node:latest
 
-# Set the working directory to /app
-WORKDIR /app
+WORKDIR /front
 
-# Copy the current directory contents into the container at /app
-COPY . /app
+RUN ln -sf /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime
 
-# Install git and any needed dependencies
-RUN apk add --no-cache git
+COPY frontinterconsulta/ .
 
-# Install Node.js dependencies
-RUN npm ci
+RUN apt-get update && \
+    apt-get install -y git && \ 
+    npm install
 
-# Build the application
-RUN npm run build
+RUN npm install sharp
 
-# Expose port 3000 for the app
+RUN npm run build 
+
 EXPOSE 3000
 
-# Start the app
 CMD ["npm", "run", "start"]

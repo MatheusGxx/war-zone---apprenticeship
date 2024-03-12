@@ -1,5 +1,5 @@
-import { Router } from 'express';
-const router = Router();
+import { Router } from 'express'
+const router = Router()
 
 import {
   GetDoença,
@@ -12,89 +12,124 @@ import {
   UpdateOnlineDoctor,
   GetDataSintomasAndDoenca,
   VerifyDataPatient,
-  ValidatorPatientConsulta,
-} from '../../services/PacienteService.js';
+  ValidatorPatientConsulta
+} from '../../services/PacienteService.js'
 
-router.post('/get-doenca', async (req, res) => {
-  try {
-    const { doenca } = req.query;
-    await GetDoença(doenca, res);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+router.post('/get-doenca', async( req, res) => {
+  
+  console.log(req.query)
+  
+  const doenca = req.query.doenca
+  const response = res
 
-router.post('/especialidades', async (req, res) => {
-  try {
-    const { doenca, id } = req.body;
-    const body = { doenca, id };
-    await EspecialidadesDisponiveis(body, res);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+  await GetDoença(doenca, response)
+})
 
-router.get('/get-especialista/:slug', async (req, res) => {
-  try {
-    const { slug } = req.params;
-    const body = { slugIdentificador: slug };
-    getEspecialista(body, res);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+router.post('/especialidades', async (req, res ) => {
+
+  console.log(req.body)
+  const body ={
+    doenca: req.body.doenca,
+    id: req.body.id
   }
-});
+  const response = res
+
+  await EspecialidadesDisponiveis(body, response)
+})
+
+router.get('/get-especialista/:slug', async (req,res ) => {
+
+  const body = {
+    slugIdentificador: req.params.slug
+  }  
+  const response = res
+
+  getEspecialista(body, response)
+
+})
+
 
 router.get('/get-recomendacoes/:slug', async (req, res) => {
-  try {
-    const { slug } = req.params;
-    const body = { slugIdentificador: slug };
-    GetRecomendacoesEspecialistas(body, res);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
 
-router.get('/get-paciente/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    const body = { id };
-    GetPaciente(body, res);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+  const body = {
+    slugIdentificador: req.params.slug
   }
-});
+
+  const response = res
+  
+  GetRecomendacoesEspecialistas(body, response)
+
+})
+
+router.get('/get-paciente/:id', async(req,res ) =>{
+    
+  const body = {
+    id: req.params.id
+  }
+  console.log(req.params)
+
+  const response = res
+
+  GetPaciente(body, response)
+})
 
 router.post('/get-blood/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    const body = { id };
-    console.log(`ID do Paciente para pegar o Tipo Sanguineo que combina com ele ${id}`);
-    getBlood(body, res);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+  
+  const params = {
+    id: req.params.id
   }
-});
 
-router.get('/verify-status', async (req, res) => {
-  try {
-    const { id } = req.query;
-    getMedicoStatus(id, res);
-    console.log(req.query);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+  const response = res
+  console.log(`ID do Paciente para pegar o Tipo Sanguineo que combina com ele ${req.params.id}`)
 
-router.post('/atualized-status', async (req, res) => {
-  try {
-    const { id, status } = req.body;
-    const body = { id, status };
-    UpdateOnlineDoctor(body, res);
-    console.log(req.body);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+  getBlood(params, response)
+})
 
-router.post('/get-sintomas-doencas', async (req, res) => {
+router.get('/verify-status',
+      async (req, res) => {
+        const { id } = req.query;
+        getMedicoStatus(id, res);
+        console.log(req.query)
+      }
+)
 
+router.post('/atualized-status',
+       async(req, res) =>{
+        const body = {
+          id: req.body.id,
+          status: req.body.status
+        }
+        UpdateOnlineDoctor(body,res)        
+        console.log(req.body)
+       }
+)
+
+router.post('/get-sintomas-doencas', 
+       async(req, res) =>{
+        GetDataSintomasAndDoenca(res)
+       }
+)
+
+router.post('/verify-data-patient',
+       async(req, res) => {
+
+       const body = {
+        id: req.body.id
+       }
+       
+        VerifyDataPatient(body, res)
+
+        console.log(`ID do Paciente, ${req.body.id}`)
+       }
+)
+
+
+router.post('/validator-patient',
+      async(req, res) => {
+        const { id } = req.body
+        
+        ValidatorPatientConsulta(id,res)
+        console.log(req.body)
+      }
+)
+export default router

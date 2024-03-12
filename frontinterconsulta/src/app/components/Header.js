@@ -1,3 +1,4 @@
+'use client'
 import React, { useState, useEffect } from "react"
 import PopUpRecuperaçao from "../partials/PopUpRecuperaçao"
 import { useMutation } from '@tanstack/react-query'
@@ -9,13 +10,19 @@ const Header = () => {
   const [mostrarFormulario, setMostrarFormulario] = useState(false)
   const [paginaCarregada, setPaginaCarregada] = useState(false)
 
+  const handleMouseEnter = () => {
+    if (paginaCarregada) {
+      setMostrarFormulario(true)
+    }
+  }
+
   const ValidatorPatientConsulta = useMutation(
     async (valueRequest) => {
       const response = await axios.post(`${config.apiBaseUrl}/api/validator-patient`, valueRequest)
       return response.data.ConsultasSolicitadas
     }
   )
-
+  
   const id = secureLocalStorage.getItem('id')
 
   useEffect(() => {
@@ -23,33 +30,35 @@ const Header = () => {
       const data = await ValidatorPatientConsulta.mutateAsync({ id: id })
       return data
     };
-
+  
     const VerifyConsultaPatient = async () => {
       if (id) {
         const ResultPatient = await FetchingDataPatient()
-        return ResultPatient.length > 0 ? false : true
+  
+        if (ResultPatient.length > 0) {
+          return false
+        } else {
+          return true
+        }
       }
       return false
     }
-
+  
     VerifyConsultaPatient().then((valid) => {
-      setPaginaCarregada(valid)
+      if (valid) {
+        setPaginaCarregada(true)
+      }
     })
-  }, [id])
-
-  useEffect(() => {
-    if (paginaCarregada) {
-      setMostrarFormulario(true)
-    }
-  }, [paginaCarregada])
+  }, []);
+  
 
   return (
     <>
       <header
         className="container bg-blue-900 p-1 text-white"
-        onMouseEnter={() => {
+        onMouseEnter={() => { 
           if (paginaCarregada) {
-            setMostrarFormulario(true)
+            handleMouseEnter();
           }
         }}
       >

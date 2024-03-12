@@ -2,23 +2,23 @@
 import '../globals.css'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { RegisterEndProvider } from '../context/context'
-import ScriptsSocials from '../partials/ScriptSocials'
+import { ScriptsSocials } from '../partials/ScriptSocials'
 
 const queryClient = new QueryClient()
 
 export default function RootLayout({ children }) {
+
   return (
     <html lang="pt-br">
-      <head>
-        <ScriptsSocials />
-      </head>
+      <ScriptsSocials/>
       <body>
         <RegisterEndProvider>
           <QueryClientProvider client={queryClient}>
-            {children}
+                {children}
           </QueryClientProvider>
         </RegisterEndProvider>
       </body>
     </html>
   )
 }
+

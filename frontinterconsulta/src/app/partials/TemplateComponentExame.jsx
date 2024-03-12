@@ -6,7 +6,7 @@ import Image from 'next/image'
 import Logo from '../public/logo.png'
 import { useState } from 'react'
 
-const TemplateComponenteExame = ({
+export const TemplateComponenteExame = ({
     key,
     index,
     date, 
@@ -17,8 +17,10 @@ const TemplateComponenteExame = ({
     data,
     handleChangeExame,
 }) => {
+
     return(
-        <div className="flex flex-col gap-3 border-blue-500 border-4 rounded-lg p-6" key={index}>
+        <>
+        <div key={index} className="flex flex-col gap-3 border-blue-500 border-4 rounded-lg p-6">
         <div className='mt-5'>
         <div className="flex justify-center items-center mb-4 gap-5">
           <NoteAddIcon color="primary"/>
@@ -34,29 +36,32 @@ const TemplateComponenteExame = ({
          <TextField
              label=""
              variant="standard"
-             sx={{ borderBottom: "1px solid blue" }}
-             disabled
-             required
-             value={nomePaciente}
-             className = "w-full"
+             InputProps={{
+                sx: { borderBottom: "1px solid blue" },
+                readOnly: true
+             }}
+              className = "w-full"
+              required
+              value={nomePaciente}
             />
         </div>
     
-        <h1 className='font-bold text-blue-900' sx={{ mb: 2 }}>Solicito:</h1>
+        <h1 className='font-bold text-blue-900'>Solicito:</h1>
 
-        <div className="flex justify-center items-center gap-3 w-full">
+       
+         <div className="flex justify-center items-center gap-3 w-full">
 
             <TextField
                variant="outlined"
-               sx={{ border: "1px solid blue" }}
+               InputProps={{
+                  sx: { border: "1px solid blue" },
+               }}
                name="Exame"
                value={data}
                onChange={(e) => handleChangeExame(e.target.value)}
                className="w-full"
                rows={4}
                multiline
-               minRows={4}
-               maxRows={6}
                required
                   />
                   
@@ -72,8 +77,10 @@ const TemplateComponenteExame = ({
              <TextField
              label=""
              variant="standard"
-             sx={{ borderBottom: "1px solid blue" }}
-             disabled
+             InputProps={{
+                sx: { borderBottom: "1px solid blue" },
+                readOnly: true
+             }}
               className ="w-full"
               required
               value={nomeMedico}
@@ -85,8 +92,10 @@ const TemplateComponenteExame = ({
              <TextField
              label=""
              variant="standard"
-             sx={{ borderBottom: "1px solid blue" }}
-             disabled
+             InputProps={{
+                sx: { borderBottom: "1px solid blue" },
+                readOnly: true
+             }}
               className ="w-full"
               required
               value={CRMMedico}
@@ -98,8 +107,10 @@ const TemplateComponenteExame = ({
              <TextField
              label=""
              variant="standard"
-             sx={{ borderBottom: "1px solid blue" }}
-             disabled
+             InputProps={{
+                sx: { borderBottom: "1px solid blue" },
+                readOnly: true
+             }}
               className ="w-full"
               required
               value={EnderecoMedico}
@@ -119,11 +130,11 @@ const TemplateComponenteExame = ({
               height={40}
               width={40}
               className='animate-spin-slow'
-              sx={{ borderRadius: '50%' }}
             />
           </div>
           
         </div>
        
-        )   
+        </>
+    )   
 }

@@ -1,10 +1,4 @@
-export const TITLES_SPECIALIST = [
+export const TitutloEspecialista = [
   'Dr.',
   'Dra.'
-];
-
-// or if you prefer using enum
-export enum TitlesSpecialist {
-  DR = 'Dr.',
-  DRA = 'Dra.'
-}
+]

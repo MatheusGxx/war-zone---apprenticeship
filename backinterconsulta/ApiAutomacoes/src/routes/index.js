@@ -1,11 +1,8 @@
-import { Router } from 'express'
 import api from '../routes/api/index.js'
+import { Router } from 'express'
 
-// Create a new router object
-const apiRouter = Router()
+const router = Router()
 
-// Mount the '/api2' route on the router object
-apiRouter.use('/api2', api)
+router.use('/api2', api)
 
-// Export the router object
-export default apiRouter
+export default router

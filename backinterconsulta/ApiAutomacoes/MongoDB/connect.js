@@ -1,23 +1,17 @@
-import mongoose from "mongoose";
-import dotenv from "dotenv";
+import mongoose from "mongoose"
 
-dotenv.config();
+const connect = () =>{
+  mongoose.connect('mongodb+srv://matheusfff02:030503Aa@instacemongointerconsul.1gfrhkw.mongodb.net/')
 
-const connect = async () => {
-  try {
-    await mongoose.connect(`mongodb+srv://matheusfff02:${process.env.MONGO_PASSWORD}@instacemongointerconsul.1gfrhkw.mongodb.net/`);
-    const db = mongoose.connection;
-    db.once("open", () => {
-      console.log("MongoDB connected");
-    });
-  } catch (error) {
-    console.error("Error connecting to MongoDB", error);
-  }
-};
+  const db = mongoose.connection
+
+  db.once('open', () =>{
+    console.log('MongoDB on')
+  })
+
+  db.on('error', console.error.bind(console, 'Error Connection in MongoDB'))
+}
 
 export default {
-  connect,
-};
-
-
-MONGO_PASSWORD=030503Aa
+  connect
+}

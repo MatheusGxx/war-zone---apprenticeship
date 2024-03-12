@@ -1,33 +1,31 @@
-import { nanoid } from 'nanoid';
-import { ModelRegisterPaciente } from '../../../MongoDB/Schemas/Schemas.js';
+import { models } from '../../../MongoDB/Schemas/Schemas.js'
+import { customAlphabet } from 'nanoid'
 
-// Generate a random 4-digit number
-const generateFourDigitNumber = () => nanoid(4).split('').join('');
+const alphabet = '0123456789';
+const generateFourDigitNumber = customAlphabet(alphabet, 4);
 
-export const getSavedPaciente = async (CPF) => {
-  try {
-    const getPaciente = await ModelRegisterPaciente.findOne({ CPF });
-    console.log(getPaciente);
-    return getPaciente;
-  } catch (error) {
-    throw new Error('Error fetching saved paciente');
+
+export const SavedPaciente = async (CPF) => {
+  try{
+    const getPaciente = await models.ModelRegisterPaciente.findOne({ CPF: CPF})
+    console.log(getPaciente)
+    return getPaciente
+  }catch(e){
+    throw new Error
   }
-};
+}
 
-export const createAccountedPaciente = async (CPF, telefone, nome) => {
-  const newPasswordPaciente = generateFourDigitNumber();
 
-  const newPaciente = new ModelRegisterPaciente({
-    nome,
-    CPF,
+export const CreatedAccountedPaciente = async (CPF,telefone,nome) =>{
+  const newPasswordPaciente = generateFourDigitNumber()
+  const criatedAccountednewPaciente = await new models.ModelRegisterMédico({
+    nome: nome,
+    CPF: CPF,
     senha: newPasswordPaciente,
-    telefone,
-  });
+    telefone: telefone
+  })
 
-  try {
-    await newPaciente.save();
-    return newPaciente;
-  } catch (error) {
-    throw new Error('Error creating new paciente');
-  }
-};
+  await criatedAccountednewPaciente.save()
+
+  return criatedAccountednewPaciente
+}

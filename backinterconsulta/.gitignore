@@ -1,15 +1,1 @@
-const gulp = require('gulp');
-const exclude = [/\/node_modules\//];
-
-function processFiles(cb) {
-  gulp.src(['./**/*', '!./**/*.md'], { base: '.', cwd: process.cwd() })
-    .pipe(filter(file => !exclude.some(pattern => pattern.test(file.path))))
-    .pipe(someFunctionYouWantToApply())
-    .pipe(gulp.dest('build'));
-
-  cb();
-}
-
-const filter = require('gulp-filter');
-
-gulp.task('default', processFiles);
+/*/node_modules

@@ -1,13 +1,13 @@
-import { format, sub } from "date-fns"
-import { ptBR } from 'date-fns/locale'
+import { format } from "date-fns"
+import { ptBR } from 'date-fns/locale/index.js'
 
 export const formatarHoras = (horas) => {
-  const date = new Date();
-  date.setHours(Math.floor(horas));
-  date.setMinutes(Math.round((horas - Math.floor(horas)) * 60));
+  const horasInteiras = Math.floor(horas);
+  const minutosFracionarios = (horas - horasInteiras) * 60;
+
+  const date = new Date(0);
+  date.setHours(horasInteiras);
+  date.setMinutes(minutosFracionarios);
 
   return format(date, 'HH:mm', { locale: ptBR });
 };
-
-// Usage example:
-// const formattedTime = formatarHoras(12.5); // "12:30"

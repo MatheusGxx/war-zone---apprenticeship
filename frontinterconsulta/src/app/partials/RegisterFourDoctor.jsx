@@ -1,169 +1,194 @@
+'use client'
 import { useState } from 'react'
-import {
-  TextField,
-  Autocomplete,
-  Snackbar,
-  Alert,
-  Button,
-  Typography
-} from '@mui/material'
-import { CertificacoesEndocanabinoide } from './CertificacaoEndocanabinoide.js'
+import { TextField, Autocomplete, Snackbar, Alert } from "@mui/material"
+import { CertificaçoesEndocanabinoide } from './CertificacaoEndocanabinoide.js'
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos'
 import Image from 'next/image'
 import Logo from '../public/logo.png'
 
-const validateForm = (formacao, anograduacao, crm, ufCRM) => {
-  const errors = []
 
-  if (!formacao) {
-    errors.push('Instituição da formação médica é obrigatório.')
+export const RegisterFourDoctor = (
+  {
+    setFormacao,
+    formacao,
+    setAnoGraduacao,
+    anograduacao,
+    setCRM,
+    crm,
+    setUFCRM,
+    ufCRM,
+    setInstituicaoResidencia,
+    instituicaoResidencia,
+    setRQE,
+    rqe,
+    setPosGraduacao,
+    posGraducao,
+    certificacao,
+    setCertificacao,
+    setCurrentStep
   }
+  ) => {
+    
+    const [snackbarOpen, setSnackbarOpen] = useState(false)
+    const [snackbarMessage, setSnackbarMessage] = useState("")
 
-  if (!anograduacao) {
-    errors.push('Ano da formação médica é obrigatório.')
-  }
+    const Verification = () => {
+      let camposVazios = [];
+    
+      if (formacao === '') {
+        camposVazios.push('Instituiçao da Graduaçao Médica');
+      }
+      if (anograduacao === '') {
+        camposVazios.push('Ano da Graduaçao Médica');
+      }
+      if (crm === '') {
+        camposVazios.push('CRM');
+      } 
+      if(ufCRM === ''){
+        camposVazios.push('UF do CRM')
+      }
+      if (camposVazios.length > 0) {
+        const camposFaltantes = camposVazios.join(', ');
+        setSnackbarMessage(`Ops Doutor, você não preencheu o(s) campo(s): ${camposFaltantes}.`);
+        handleSnackBarOpen();
+      } else {
 
-  if (!crm) {
-    errors.push('CRM é obrigatório.')
-  }
+        handleNextClick();
+      }
+    }
 
-  if (!ufCRM) {
-    errors.push('UF do CRM é obrigatório.')
-  }
-
-  return errors
-}
-
-export const RegisterFourDoctor = ({
-  setFormacao,
-  formacao,
-  setAnoGraduacao,
-  anograduacao,
-  setCRM,
-  crm,
-  setUFCRM,
-  ufCRM,
-  setInstituicaoResidencia,
-  instituicaoResidencia,
-  setRQE,
-  rqe,
-  setPosGraduacao,
-  posGraduacao,
-  certificacao,
-  setCertificacao,
-  setCurrentStep
-}) => {
-  const [errors, setErrors] = useState([])
-  const [snackbarOpen, setSnackbarOpen] = useState(false)
-  const [snackbarMessage, setSnackbarMessage] = useState('')
-
-  const handleNextClick = () => {
-    const validationErrors = validateForm(formacao, anograduacao, crm, ufCRM)
-    setErrors(validationErrors)
-
-    if (validationErrors.length === 0) {
+    const handleNextClick = () => {
       setCurrentStep((prevStep) => (prevStep < 5 ? prevStep + 1 : prevStep))
     }
-  }
+  
+    const handleBackClick = () => {
+      setCurrentStep((prevStep) => (prevStep > 1 ? prevStep - 1 : prevStep))
+    }
+         
+    const regex = /^(\d{0,2})\/?(\d{0,2})\/?(\d{0,4})$/
 
-  const handleBackClick = () => {
-    setCurrentStep((prevStep) => (prevStep > 1 ? prevStep - 1 : prevStep))
-  }
+    const handleData = (e) => {
+      const value = e.target.value.replace(/[^0-9]/g, '');
+      const formattedValue = value.replace(regex, '$1/$2/$3')
+      setAnoGraduacao(formattedValue);
+    }
 
-  const regex = /^(\d{0,2})\/?(\d{0,2})\/?(\d{0,4})$/
-
-  const handleData = (e) => {
-    const value = e.target.value.replace(/[^0-9]/g, '')
-    const formattedValue = value.replace(regex, '$1/$2/$3')
-    setAnoGraduacao(formattedValue)
-  }
-
-  const handleSnackbarClose = () => {
-    setSnackbarOpen(false)
-  }
-
-  const handleSnackBarOpen = () => {
-    setSnackbarOpen(true)
-  }
-
-  return (
+    const handleSnackbarClose = () => {
+      setSnackbarOpen(false)
+    };
+  
+    const handleSnackBarOpen = () =>{
+      setSnackbarOpen(true)
+    }
+  return(
     <>
-      <h1 className="text-blue-500 text-center">Formação Médica</h1>
-      <TextField
-        variant="standard"
-        label="Instituição da formação médica"
-        InputProps={{
-          sx: { borderBottom: '1px solid blue' }
-        }}
-        type="text"
-        required
-        onChange={(e) => setFormacao(e.target.value)}
-        value={formacao}
-        error={!!errors.find((error) => error.includes('Instituição'))}
-        helperText={errors.find((error) => error.includes('Instituição'))}
-      />
+     <h1 className="text-blue-500 text-center">Formaçao Médica</h1>
+                  <TextField
+                   variant="standard"
+                   label="Instituiçao da Graduaçao Médica"
+                   InputProps={{
+                    sx: { borderBottom: "1px solid blue" },
+                  }}
+                   type="text"
+                   required
+                   onChange={(e) => setFormacao(e.target.value)}
+                   value={formacao}/>
 
-      <TextField
-        variant="standard"
-        label="Ano da formação médica"
-        InputProps={{
-          sx: { borderBottom: '1px solid blue' }
-        }}
-        type="text"
-        required
-        onChange={(e) => handleData(e)}
-        value={anograduacao}
-        error={!!errors.find((error) => error.includes('Ano'))}
-        helperText={errors.find((error) => error.includes('Ano'))}
-      />
+                <TextField
+                   variant="standard"
+                   label="Ano da Graduaçao Médica"
+                   InputProps={{
+                    sx: { borderBottom: "1px solid blue" },
+                  }}
+                   type="text"
+                   required
+                   onChange={(e) => handleData(e)}
+                   value={anograduacao}/>
 
-      <TextField
-        variant="standard"
-        label="CRM"
-        InputProps={{
-          sx: { borderBottom: '1px solid blue' }
-        }}
-        type="number"
-        required
-        onChange={(e) => setCRM(e.target.value)}
-        value={crm}
-        error={!!errors.find((error) => error.includes('CRM'))}
-        helperText={errors.find((error) => error.includes('CRM'))}
-      />
+                <TextField
+                   variant="standard"
+                   label="CRM"
+                   InputProps={{
+                    sx: { borderBottom: "1px solid blue" }, // Define a cor da linha inferior
+                  }}
+                  type="number"
+                  required
+                  onChange={(e) => setCRM(e.target.value)}
+                  value={crm}/>
 
-      <TextField
-        variant="standard"
-        label="UF do CRM"
-        InputProps={{
-          sx: { borderBottom: '1px solid blue' }
-        }}
-        type="text"
-        required
-        onChange={(e) => setUFCRM(e.target.value)}
-        value={ufCRM}
-        error={!!errors.find((error) => error.includes('UF'))}
-        helperText={errors.find((error) => error.includes('UF'))}
-      />
+               <TextField
+                   variant="standard"
+                   label="UF do CRM"
+                   InputProps={{
+                    sx: { borderBottom: "1px solid blue" }, // Define a cor da linha inferior
+                  }}
+                  type="text"
+                  required
+                  onChange={(e) => setUFCRM(e.target.value)}
+                  value={ufCRM}/>
 
-      <TextField
-        variant="standard"
-        label="Instituição da residência médica"
-        InputProps={{
-          sx: { borderBottom: '1px solid blue' }
-        }}
-        type="text"
-        required
-        onChange={(e) => setInstituicaoResidencia(e.target.value)}
-        value={instituicaoResidencia}
-      />
+              <TextField
+                   variant="standard"
+                   label="Instituicao da Residencia Médica"
+                   InputProps={{
+                    sx: { borderBottom: "1px solid blue" }, // Define a cor da linha inferior
+                  }}
+                  type="text"
+                  required
+                  onChange={(e) => setInstituicaoResidencia(e.target.value)}
+                  value={instituicaoResidencia}/>
 
-      <TextField
-        variant="standard"
-        label="RQE"
-        InputProps={{
-          sx: { borderBottom: '1px solid blue' }
-        }}
-        type="number"
-        required
-        onChange
+              <TextField
+                   variant="standard"
+                   label="RQE"
+                   InputProps={{
+                    sx: { borderBottom: "1px solid blue" }, // Define a cor da linha inferior
+                  }}
+                  type="number"
+                  required
+                  onChange={(e) => setRQE(e.target.value)}
+                  value={rqe}/>
+
+                <TextField
+                   variant="standard"
+                   label="Pós Graduaçao Médica Principal"
+                   InputProps={{
+                    sx: { borderBottom: "1px solid blue" }, // Define a cor da linha inferior
+                  }}
+                   type="text"
+                   required
+                   onChange={(e) => setPosGraduacao(e.target.value)}
+                   value={posGraducao}/>
+
+                <Autocomplete
+                    value={certificacao === '' ? null : certificacao}
+                    onChange={(event, newValue) => {
+                      if (newValue !== null) {
+                            setCertificacao(newValue);
+                        }
+                      }}
+                    options={CertificaçoesEndocanabinoide}
+                    noOptionsText="Sem resultados"
+                    renderInput={(params) => <TextField {...params} label="Certificacao em Medicina endocanabinoide" variant="standard" />}
+                    className="w-full border-b border-blue-500 sm:w-full"
+                  />
+              <div className="w-full flex justify-between items-center">
+              <ArrowBackIosIcon color="primary" className="cursor-pointer" onClick={handleBackClick}/>
+              <Image src={Logo} width={50} height={50} alt="Logo Interconsulta" className="animate-spin-slow"/>
+              <ArrowForwardIosIcon color="primary" className="cursor-pointer" onClick={Verification}/>    
+              </div>
+              
+              <Snackbar
+              open={snackbarOpen}
+              autoHideDuration={6000} // Tempo em milissegundos que o Snackbar será exibido
+              onClose={handleSnackbarClose}
+            >
+              <Alert onClose={handleSnackbarClose} severity="error">
+                {snackbarMessage}
+              </Alert>
+            </Snackbar>
+
+    </>
+  )
+}

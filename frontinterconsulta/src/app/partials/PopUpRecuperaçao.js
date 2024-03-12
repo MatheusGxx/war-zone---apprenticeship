@@ -1,169 +1,121 @@
 'use client'
-import { useState, useEffect } from 'react'
-import { useSearchParams } from 'next/navigation'
-import {
-  Dialog,
-  DialogContent,
-  DialogActions,
-  DialogTitle,
-  TextField,
-  Button,
-  Typography,
-  IconButton,
-  LinearProgress,
-} from '@mui/material'
-import SentimentVeryDissatisfiedIcon from '@mui/icons-material/SentimentVeryDissatisfied'
+import { useState, useEffect} from "react"
+import { useSearchParams } from "next/navigation"
+import { Dialog, DialogContent, DialogActions, DialogTitle, TextField} from "@mui/material"
+import SentimentVeryDissatisfiedIcon from '@mui/icons-material/SentimentVeryDissatisfied';
 import Logo2 from '../public/Logo2.png'
 import Logo from '../public/logo.png'
 import Image from 'next/image'
 
-const PopUpRecuperacao = () => {
-  const [open, setOpen] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
-  const [telefone, setTelefone] = useState('')
-  const [error, setError] = useState(false)
-  const [errorMessage, setErrorMessage] = useState('')
+const PopUpRecuperaçao = () =>{
 
-  const searchParams = useSearchParams()
-  const persona = searchParams.get('persona')
+  useEffect(() =>{
+    HandleOpen()
+  },[])
 
-  const handleClickEnd = async () => {
-    setLoading(true)
-    setError(false)
-    setErrorMessage('')
+  const[open, setOpen] = useState(false)
 
-    try {
-      // Request of data in APIRestFull
-      // Replace with actual API request
-      const response = await fetch('/api/send-data', {
-        method: 'POST',
-        body: JSON.stringify({ name, email, telefone, persona }),
-      })
+  const[name, setName ] = useState('')
+  const[email, setEmail ] = useState('')
+  const[telefone, setTelefone ] = useState('')
 
-      if (!response.ok) {
-        throw new Error('Failed to send data')
-      }
-
-      handleClose()
-    } catch (error) {
-      setError(true)
-      setErrorMessage('Failed to send data. Please try again later.')
-    } finally {
-      setLoading(false)
-    }
+  const HandleOpen = () =>{
+    setOpen(!open) //True
   }
 
-  const handleClose = () => {
+  const HandleClose = () =>{
     setOpen(false)
-    setName('')
-    setEmail('')
-    setTelefone('')
   }
+  const Params = useSearchParams()
 
-  useEffect(() => {
-    setOpen(true)
-  }, [])
+  const Value = Params.get('persona')
 
-  return (
+  const PersonaMédico = Value === 'medico'
+  const PersonaPaciente = Value === 'paciente'
+  const PersonaUnidade = Value === 'unidade'
+
+  const handleClickEnd = () =>{
+     //Request of data in APIRestFull
+  }
+  return(
     <>
-      <Dialog open={open} onClose={handleClose} className="p-10">
-        <div className="flex flex-col justify-center">
-          <DialogTitle>
+
+    <Dialog open={open} onClose={HandleClose} className="p-10">
+           <div className="flex flex-col justify-center ">
+             <DialogTitle>
+                <Image
+                src={Logo2}
+                alt="Logo 2 Interconsulta"
+                height={200}
+                width={220}
+                />
+              </DialogTitle>
+             { PersonaMédico &&  <DialogTitle className="text-center"> Não Saia Dr(a)
+             <SentimentVeryDissatisfiedIcon/> </DialogTitle> }
+
+             { PersonaPaciente &&  <DialogTitle className="text-center"> Não Saia Paciente
+             <SentimentVeryDissatisfiedIcon/> </DialogTitle> }
+
+             { PersonaUnidade &&  <DialogTitle className="text-center"> Não Saia Unidade
+             <SentimentVeryDissatisfiedIcon/> </DialogTitle> }
+
+             {(PersonaMédico || PersonaPaciente || PersonaUnidade) === false && <DialogTitle className="text-center"> Fique por dentro! </DialogTitle>}
+
+             
+            </div>
+            <DialogContent>
+            <div className="flex flex-col gap-5">
+              <TextField
+                     variant="standard"
+                     label="Seu Nome"
+                     InputProps={{
+                      sx: { borderBottom: "1px solid blue" }
+                    }}
+                    onChange={(e) => setName(e.target.value)}
+                    value={name}
+                    type="text"
+                    required/>
+                  <TextField
+                     variant="standard"
+                     label="Seu Melhor email"
+                     InputProps={{
+                      sx: { borderBottom: "1px solid blue" }
+                    }}
+                    onChange={(e) => setEmail(e.target.value)}
+                    value={email}
+                    type="email"
+                    required/>
+                  <TextField
+                     variant="standard"
+                     label="Telefone para contato"
+                     InputProps={{
+                      sx: { borderBottom: "1px solid blue" }
+                    }}
+                    onChange={(e) => setTelefone(e.target.value)}
+                    value={telefone}
+                    type="number"
+                    required/>
+                   </div>
+            </DialogContent>
+            <DialogActions>
+            <button onClick={() => handleClickEnd()} className="w-64 h-10 rounded-full bg-indigo-950 text-white font-light">
+             Enviar
+           </button>
+            </DialogActions>
+
+            <div className="flex justify-end p-4">
             <Image
-              src={Logo2}
-              alt="Logo 2 Interconsulta"
-              height={200}
-              width={220}
-            />
-          </DialogTitle>
-          {persona === 'medico' && (
-            <DialogTitle className="text-center"> Não Saia Dr(a)
-              <SentimentVeryDissatisfiedIcon />
-            </DialogTitle>
-          )}
-          {persona === 'paciente' && (
-            <DialogTitle className="text-center"> Não Saia Paciente
-              <SentimentVeryDissatisfiedIcon />
-            </DialogTitle>
-          )}
-          {persona === 'unidade' && (
-            <DialogTitle className="text-center"> Não Saia Unidade
-              <SentimentVeryDissatisfiedIcon />
-            </DialogTitle>
-          )}
-          {(persona !== 'medico' && persona !== 'paciente' && persona !== 'unidade') && (
-            <DialogTitle className="text-center"> Fique por dentro! </DialogTitle>
-          )}
-        </div>
-        <DialogContent>
-          <div className="flex flex-col gap-5">
-            <TextField
-              variant="standard"
-              label="Seu Nome"
-              InputProps={{
-                sx: { borderBottom: '1px solid blue' },
-              }}
-              onChange={(e) => setName(e.target.value)}
-              value={name}
-              type="text"
-              required
-              error={error}
-              helperText={errorMessage}
-            />
-            <TextField
-              variant="standard"
-              label="Seu Melhor email"
-              InputProps={{
-                sx: { borderBottom: '1px solid blue' },
-              }}
-              onChange={(e) => setEmail(e.target.value)}
-              value={email}
-              type="email"
-              required
-              error={error}
-              helperText={errorMessage}
-            />
-            <TextField
-              variant="standard"
-              label="Telefone para contato"
-              InputProps={{
-                sx: { borderBottom: '1px solid blue' },
-              }}
-              onChange={(e) => setTelefone(e.target.value)}
-              value={telefone}
-              type="number"
-              required
-              error={error}
-              helperText={errorMessage}
-            />
-          </div>
-          {loading && (
-            <LinearProgress />
-          )}
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={handleClickEnd}
-            variant="contained"
-            color="primary"
-            disabled={loading}
-          >
-            Enviar
-          </Button>
-        </DialogActions>
-        <div className="flex justify-end p-4">
-          <Image
             src={Logo}
             alt="Logo Interconsulta"
             height={40}
             width={40}
-          />
-        </div>
-      </Dialog>
+            />
+           </div>
+
+    </Dialog>
+    
     </>
   )
 }
 
-export default PopUpRecuperacao
+export default PopUpRecuperaçao

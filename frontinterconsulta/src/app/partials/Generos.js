@@ -1,6 +1,4 @@
-enum Gender {
-  Male = 'Masculino',
-  Female = 'Feminino',
-}
-
-export { Gender };
+export const Generos = [
+  'Masculino',
+  'Feminino',
+]
