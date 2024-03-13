@@ -91,6 +91,7 @@ const ContentPaciente = () => {
       secureLocalStorage.setItem('id', idPacienteLP)
       secureLocalStorage.setItem('NomePaciente', NomePacienteLP)
       secureLocalStorage.setItem('Doenca', DoencaPacienteLP)
+      window.location.reload()
     }
   },[])
 
