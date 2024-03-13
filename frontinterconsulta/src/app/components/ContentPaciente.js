@@ -91,8 +91,11 @@ const ContentPaciente = () => {
       secureLocalStorage.setItem('id', idPacienteLP)
       secureLocalStorage.setItem('NomePaciente', NomePacienteLP)
       secureLocalStorage.setItem('Doenca', DoencaPacienteLP)
-      window.location.reload()
+
+      const urlWithoutParams = window.location.origin + window.location.pathname
+      window.history.replaceState({}, document.title, urlWithoutParams)
     }
+    window.location.reload()
   },[])
 
   useEffect(() => {
