@@ -5,6 +5,8 @@ import {
    Register,
    RegisterEnd,
    getListDoencasDoctor,
+   CreateLeadLandingPage
+
 } from '../../services/LoginService.js'
 
 const router = Router()
@@ -132,7 +134,7 @@ router.post('/obrigado/:id', uploadPhotos.single("file") ,async (req, res ) => {
 router.post('/create-lead',
       async(req, res) => {
         const { nome, email, telefone, doenca } = req.body
-        
+        CreateLeadLandingPage(nome,email,telefone,doenca,res)
         
         console.log(req.body)
       } 
