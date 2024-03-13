@@ -17,6 +17,7 @@ import { config } from '../config.js'
 import { ComponenteAudio } from "../partials/ComponentAudio"
 import { useBlood } from "../context/context.js"
 import { PopUpBlood } from "../partials/PopUpBlood"
+import { useSearchParams } from "next/navigation"
 
 
 const ContentPaciente = () => {
@@ -42,6 +43,8 @@ const ContentPaciente = () => {
 
   const queryClient = useQueryClient()
   const { registerEndOk } = useEndRegister()
+
+  const params = useSearchParams()
 
   const DoencaLocal = secureLocalStorage.getItem('Doenca') 
 
@@ -74,6 +77,21 @@ const ContentPaciente = () => {
   useEffect(() =>{
     const Token = secureLocalStorage.getItem('id')
     setToken(Token)
+  },[])
+
+  useEffect(() => {
+    const LeadLandingPage = params.get('lp')
+    const idPacienteLP = params.get('id')
+    const tokenPacienteLP = params.get('token')
+    const NomePacienteLP = params.get('NomePaciente')
+    const DoencaPacienteLP = params.get('Doenca')
+
+    if(LeadLandingPage){
+      secureLocalStorage.setItem('token', tokenPacienteLP)
+      secureLocalStorage.setItem('id', idPacienteLP)
+      secureLocalStorage.setItem('NomePaciente', NomePacienteLP)
+      secureLocalStorage.setItem('Doenca', DoencaPacienteLP)
+    }
   },[])
 
   useEffect(() => {

@@ -36,8 +36,11 @@ export const Login = async (body, res) =>{
   if(!ComparePassword){
     return res.status(401).json({error: 'Senha incorreta'})
   }
+  
+  // 30 Dias em segundos
+  const expiresInSeconds = 30 * 24 * 60 * 60
 
-  const token = jwt.sign({userId: user._id}, secretKey, {expiresIn: '1h'})
+  const token = jwt.sign({userId: user._id}, secretKey, { expiresIn: expiresInSeconds })
 
   const ModelidUserLogged =  user._id
   
@@ -596,7 +599,7 @@ export const CreateLeadLandingPage = async (nome,email,telefone,doenca,res) => {
     const numericPasswordPatient = generateNumericId()
     
 
-   await models.ModelRegisterPaciente.create({
+   const NewLead = await models.ModelRegisterPaciente.create({
       nome,
       senha: await Criptografia(numericPasswordPatient),
       email,
@@ -604,7 +607,15 @@ export const CreateLeadLandingPage = async (nome,email,telefone,doenca,res) => {
       telefone,
     })
 
-    return res.status(200).json({ message: 'Lead Cadastrado com Sucesso' })
+    // 30 Dias em segundos
+    const expiresInSeconds = 30 * 24 * 60 * 60
+
+    const id = NewLead._id
+    const token = jwt.sign({ userId: NewLead._id }, secretKey, { expiresIn: expiresInSeconds });
+    const NomePaciente = NewLead.nome
+    const Doenca = NewLead.Doenca
+
+    return res.status(200).json({ id, token, NomePaciente, Doenca })
   }catch(err){
     return res.status(400).json({ message: 'Erro ao cadastrar Lead da Landing Page'})
   }
