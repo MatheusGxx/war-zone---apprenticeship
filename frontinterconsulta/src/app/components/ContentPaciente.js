@@ -18,6 +18,7 @@ import { ComponenteAudio } from "../partials/ComponentAudio"
 import { useBlood } from "../context/context.js"
 import { PopUpBlood } from "../partials/PopUpBlood"
 import { useSearchParams } from "next/navigation"
+import { format } from "date-fns"
 
 
 const ContentPaciente = () => {
@@ -62,6 +63,17 @@ const ContentPaciente = () => {
 
   const InitialContant = secureLocalStorage.getItem('InitialContact')
 
+  const TrackingUTM = useMutation(
+    async (valueRequest) => {
+      try {
+        const response = await axios.post(`${config.apiBaseUrl}/api/tracking-utm`, valueRequest)
+        return response.data
+      } catch (error) {
+        console.error('Error in Tracking UTM', error);
+      }
+    }
+  )
+
   const VerifyDataPatient = useMutation(
     async (valueRequest) => {
       try {
@@ -73,6 +85,7 @@ const ContentPaciente = () => {
       }
     }
   )
+
 
   useEffect(() =>{
     const Token = secureLocalStorage.getItem('id')
@@ -95,6 +108,42 @@ const ContentPaciente = () => {
       window.history.replaceState({}, document.title, urlWithoutParams)
       window.location.reload()
     }
+  },[])
+
+  useEffect(() => {
+    const currentDate = new Date()
+    const formattedDate = format(currentDate, 'dd/MM/yyyy')
+
+    const FunctionAsyncTrackingUTM = async (referrer, funil, temp, rota, source, medium, campaign, term, content) => {
+      await TrackingUTM.mutateAsync({
+        id: id,
+        data: formattedDate, 
+        UTM_Referrer: referrer,
+        UTM_Funil: funil,
+        UTM_Temp: temp,
+        UTM_Rota: rota,
+        UTM_Source: source,
+        UTM_Medium: medium,
+        UTM_Campaign: campaign,
+        UTM_Term: term,
+        UTM_Content: content,
+      })
+    }
+
+    const referrer = params.get('UTM_Referrer') 
+    const funil = params.get('UTM_Funil') 
+    const temp = params.get('UTM_Temp')  
+    const rota = params.get('UTM_Rota')
+    const source = params.get('UTM_Source') 
+    const medium = params.get('UTM_Medium') 
+    const campaign = params.get('UTM_Campaign') 
+    const term = params.get('UTM_Term') 
+    const content = params.get('UTM_Content')  
+
+    if(referrer && funil && temp && rota && source && medium && campaign && term && content){
+      FunctionAsyncTrackingUTM(referrer, funil, temp, rota, source, medium, campaign, term, content)
+    }
+
   },[])
 
   useEffect(() => {

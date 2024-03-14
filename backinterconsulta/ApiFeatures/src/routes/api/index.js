@@ -5,6 +5,7 @@ import Unidade from './Unidade.js'
 import Agenda from './Agenda.js'
 import Reunião from './Reunião.js'
 import SafeID from './SafeID.js'
+import Tracking from './Tracking.js'
 
 import { Router } from 'express'
 
@@ -17,6 +18,7 @@ router.use('/', Unidade)
 router.use('/', Agenda)
 router.use('/', Reunião)
 router.use('/', SafeID)
+router.use('/', Tracking)
 
 
 export default router

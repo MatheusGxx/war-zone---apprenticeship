@@ -242,6 +242,18 @@ const RegisterPaciente = new mongoose.Schema({
   GifDoenca: String,
   QueixaInicial: String,
   ChavePix: String,
+  TrackingUTM:[{
+    data,
+    UTM_Referrer: String,
+    UTM_Funil: String,
+    UTM_Temp: String,
+    UTM_Rota: String,
+    UTM_Source: String,
+    UTM_Medium: String,
+    UTM_Campaign: String,
+    UTM_Term: String,
+    UTM_Content: String,
+  }],
   ConsultasSolicitadasPacientes: [{
     Data: String,
     Inicio: String,

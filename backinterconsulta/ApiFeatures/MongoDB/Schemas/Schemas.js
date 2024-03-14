@@ -243,6 +243,7 @@ const RegisterPaciente = new mongoose.Schema({
   QueixaInicial: String,
   ChavePix: String,
   TrackingUTM:[{
+    data,
     UTM_Referrer: String,
     UTM_Funil: String,
     UTM_Temp: String,
@@ -251,7 +252,7 @@ const RegisterPaciente = new mongoose.Schema({
     UTM_Medium: String,
     UTM_Campaign: String,
     UTM_Term: String,
-    UTM_Content:String,
+    UTM_Content: String,
   }],
   ConsultasSolicitadasPacientes: [{
     Data: String,
