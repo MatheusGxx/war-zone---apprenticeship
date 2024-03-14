@@ -1,4 +1,4 @@
-import { models } from "../../MongoDB/Schemas/Schemas"
+import { models } from "../../MongoDB/Schemas/Schemas.js"
 
 export const TrackingUTM = async (
     id,

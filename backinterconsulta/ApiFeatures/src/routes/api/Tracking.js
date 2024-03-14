@@ -1,4 +1,4 @@
-import { TrackingUTM } from '../../services/TrackingService'
+import { TrackingUTM } from '../../services/TrackingService.js'
 
 import { Router } from 'express'
 
