@@ -243,7 +243,7 @@ const RegisterPaciente = new mongoose.Schema({
   QueixaInicial: String,
   ChavePix: String,
   TrackingUTM:[{
-    data,
+    data: String,
     UTM_Referrer: String,
     UTM_Funil: String,
     UTM_Temp: String,
