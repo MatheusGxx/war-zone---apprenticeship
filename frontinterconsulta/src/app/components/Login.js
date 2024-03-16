@@ -1,27 +1,46 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Logo from '../public/logo.png'
 import SecondLogo from '../public/Logo2.png'
 import { config } from '../config.js'
 
 import { TextField, CircularProgress, Snackbar, Alert } from '@mui/material'
-import { useRouter, usePathname } from 'next/navigation'
+import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { useMutation } from '@tanstack/react-query'
 import IconBack from '../partials/IconBack.js'
 import axios from 'axios'
 import secureLocalStorage from 'react-secure-storage'
 
 
-const Login = ({title, ImagemLateral, MessageButton, secondRoute, treeRoute, plataform, apelido}) => {
+const Login = ({ title, ImagemLateral, MessageButton, secondRoute, treeRoute, plataform, apelido }) => {
 
   const[email, setEmail] = useState('')
   const[senha, setSenha] = useState('')
   const[snackbarOpen, setSnackbarOpen] = useState(false);
   const[snackbarMessage, setSnackbarMessage] = useState('');
+  const[okUTM, setOkUTM] = useState(false)
 
   const Router = useRouter()
-  const route = usePathname() 
+  const route = usePathname()
+  const params = useSearchParams()
+
+  const referrer = params.get('UTM_Referrer') 
+  const funil = params.get('UTM_Funil') 
+  const temp = params.get('UTM_Temp')  
+  const rota = params.get('UTM_Rota')
+  const source = params.get('UTM_Source') 
+  const medium = params.get('UTM_Medium') 
+  const campaign = params.get('UTM_Campaign') 
+  const term = params.get('UTM_Term') 
+  const content = params.get('UTM_Content')
+
+  useEffect(() => {
+    if(referrer && funil && temp && rota && source && medium && campaign && term && content){
+      setOkUTM(true)
+    }
+
+  },[okUTM])
 
   const CreateRequestMutation = useMutation(async (valueRequest) =>{
     const response = await axios.post(`${config.apiBaseUrl}/api/login`, valueRequest)
@@ -115,7 +134,11 @@ const Login = ({title, ImagemLateral, MessageButton, secondRoute, treeRoute, pla
   }
 
   const HandleClickCadastro = async () =>{
-     Router.push(`/welcome/${secondRoute}/${treeRoute}`)
+     if(okUTM){
+      Router.push(`/welcome/${secondRoute}/${treeRoute}?UTM_Referrer=${encodeURIComponent(referrer)}&UTM_Funil=${encodeURIComponent(funil)}&UTM_Temp=${encodeURIComponent(temp)}&UTM_Rota=${encodeURIComponent(rota)}&UTM_Source=${encodeURIComponent(source)}&UTM_Medium=${encodeURIComponent(medium)}&UTM_Campaign=${encodeURIComponent(campaign)}&UTM_Term=${encodeURIComponent(term)}&UTM_Content=${encodeURIComponent(content)}`)
+    }else{
+      Router.push(`/welcome/${secondRoute}/${treeRoute}`)
+    }
   }
 
   const HandleClick = async () => {

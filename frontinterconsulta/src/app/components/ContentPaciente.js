@@ -18,8 +18,6 @@ import { ComponenteAudio } from "../partials/ComponentAudio"
 import { useBlood } from "../context/context.js"
 import { PopUpBlood } from "../partials/PopUpBlood"
 import { useSearchParams } from "next/navigation"
-import { format } from "date-fns"
-
 
 const ContentPaciente = () => {
   const[selectedDoenca, setSelectedDoenca] = useState('')
@@ -40,6 +38,7 @@ const ContentPaciente = () => {
   const[avaliacoesDoctor, setAvaliacoesDoctor] = useState(null)
   const[endRegister, setEndRegister] = useState(false)
   const[isValid, setIsValid] = useState(null)
+  const[okUTM, setOkUTM] = useState(false)
   const { blood } = useBlood()
 
   const queryClient = useQueryClient()
@@ -63,17 +62,6 @@ const ContentPaciente = () => {
 
   const InitialContant = secureLocalStorage.getItem('InitialContact')
 
-  const TrackingUTM = useMutation(
-    async (valueRequest) => {
-      try {
-        const response = await axios.post(`${config.apiBaseUrl}/api/tracking-utm`, valueRequest)
-        return response.data
-      } catch (error) {
-        console.error('Error in Tracking UTM', error);
-      }
-    }
-  )
-
   const VerifyDataPatient = useMutation(
     async (valueRequest) => {
       try {
@@ -92,59 +80,54 @@ const ContentPaciente = () => {
     setToken(Token)
   },[])
 
+  
+  const referrer = params.get('UTM_Referrer') 
+  const funil = params.get('UTM_Funil') 
+  const temp = params.get('UTM_Temp')  
+  const rota = params.get('UTM_Rota')
+  const source = params.get('UTM_Source') 
+  const medium = params.get('UTM_Medium') 
+  const campaign = params.get('UTM_Campaign') 
+  const term = params.get('UTM_Term') 
+  const content = params.get('UTM_Content')  
+
   useEffect(() => {
     const LeadLandingPage = params.get('lp')
     const idPacienteLP = params.get('id')
     const tokenPacienteLP = params.get('token')
     const NomePacienteLP = params.get('NomePaciente')
     const DoencaPacienteLP = params.get('Doenca')
-
-    if(LeadLandingPage){
+  
+    if (LeadLandingPage) {
       secureLocalStorage.setItem('token', tokenPacienteLP)
       secureLocalStorage.setItem('id', idPacienteLP)
       secureLocalStorage.setItem('NomePaciente', NomePacienteLP)
       secureLocalStorage.setItem('Doenca', DoencaPacienteLP)
-      const urlWithoutParams = window.location.origin + window.location.pathname
-      window.history.replaceState({}, document.title, urlWithoutParams)
-      window.location.reload()
+
+      let newURLParams
+      let newURLNoParams
+
+      if(referrer && funil && temp && rota && source && medium && campaign && term && content){
+        newURLParams = `${window.location.origin}${window.location.pathname}?UTM_Referrer=${encodeURIComponent(referrer)}&UTM_Funil=${encodeURIComponent(funil)}&UTM_Temp=${encodeURIComponent(temp)}&UTM_Rota=${encodeURIComponent(rota)}&UTM_Source=${encodeURIComponent(source)}&UTM_Medium=${encodeURIComponent(medium)}&UTM_Campaign=${encodeURIComponent(campaign)}&UTM_Term=${encodeURIComponent(term)}&UTM_Content=${encodeURIComponent(content)}`
+        window.history.replaceState({}, document.title, newURLParams)
+        window.location.reload()
+      }else{
+        newURLNoParams = `${window.location.origin}${window.location.pathname}`
+        window.history.replaceState({}, document.title, newURLNoParams)
+        window.location.reload()
+      }
     }
-  },[])
+  }, []);
+  
+
 
   useEffect(() => {
-    const currentDate = new Date()
-    const formattedDate = format(currentDate, 'dd/MM/yyyy')
-
-    const FunctionAsyncTrackingUTM = async (referrer, funil, temp, rota, source, medium, campaign, term, content) => {
-      await TrackingUTM.mutateAsync({
-        id: id,
-        data: formattedDate, 
-        UTM_Referrer: referrer,
-        UTM_Funil: funil,
-        UTM_Temp: temp,
-        UTM_Rota: rota,
-        UTM_Source: source,
-        UTM_Medium: medium,
-        UTM_Campaign: campaign,
-        UTM_Term: term,
-        UTM_Content: content,
-      })
-    }
-
-    const referrer = params.get('UTM_Referrer') 
-    const funil = params.get('UTM_Funil') 
-    const temp = params.get('UTM_Temp')  
-    const rota = params.get('UTM_Rota')
-    const source = params.get('UTM_Source') 
-    const medium = params.get('UTM_Medium') 
-    const campaign = params.get('UTM_Campaign') 
-    const term = params.get('UTM_Term') 
-    const content = params.get('UTM_Content')  
 
     if(referrer && funil && temp && rota && source && medium && campaign && term && content){
-      FunctionAsyncTrackingUTM(referrer, funil, temp, rota, source, medium, campaign, term, content)
+      setOkUTM(true)
     }
 
-  },[])
+  },[okUTM])
 
   useEffect(() => {
     if (DoencaLocal) {
@@ -246,12 +229,12 @@ const ContentPaciente = () => {
         setAvaliacoesDoctor(Avaliacoes)
       }
     }else{  // Se nao tiver Logado 
-
+      
       DoencaRouteDinamic && id
       ? 
-      Router.push(`/especialista/${slug}`)
+      Router.push(`/especialista/${slug}?UTM_Referrer=${encodeURIComponent(referrer)}&UTM_Funil=${encodeURIComponent(funil)}&UTM_Temp=${encodeURIComponent(temp)}&UTM_Rota=${encodeURIComponent(rota)}&UTM_Source=${encodeURIComponent(source)}&UTM_Medium=${encodeURIComponent(medium)}&UTM_Campaign=${encodeURIComponent(campaign)}&UTM_Term=${encodeURIComponent(term)}&UTM_Content=${encodeURIComponent(content)}`)
       :
-      Router.push(`/especialista/${slug}`)
+      Router.push(`/especialista/${slug}?UTM_Referrer=${encodeURIComponent(referrer)}&UTM_Funil=${encodeURIComponent(funil)}&UTM_Temp=${encodeURIComponent(temp)}&UTM_Rota=${encodeURIComponent(rota)}&UTM_Source=${encodeURIComponent(source)}&UTM_Medium=${encodeURIComponent(medium)}&UTM_Campaign=${encodeURIComponent(campaign)}&UTM_Term=${encodeURIComponent(term)}&UTM_Content=${encodeURIComponent(content)}`)
    
     }
   }
@@ -448,7 +431,6 @@ const ContentPaciente = () => {
 
       {InitialContant && 
        <ComponenteAudio
-         
        />
       }
       {blood &&

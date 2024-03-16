@@ -79,9 +79,7 @@ export const AutomaticWhatsapp = async (body, res) => {
       case '/welcome/login-medico/cadastro-medico':
         const dataMedico = await models.ModelRegisterMédico.findById(IdentificadorMedico)
 
-        const UrlMedico = `https://interconsulta.org/welcome/login-medico/cadastro-medico/obrigado-medico?id=${dataMedico._id}`
-
-        const messageMedico = `Ola Dr(a) ${dataMedico.nome}, Nos do interconsulta ficamos felizes por você se cadastrar na nossa plataforma. Para finalizar o seu cadastro e ter acesso aos nossos casos clínicos, clique no link abaixo:\n${UrlMedico}`
+        const messageMedico = `Ola Dr(a) ${dataMedico.nome}, seu cadastro inicial no #Interconsulta foi concluido com sucesso!`
         const EmailDoctor = dataMedico.email
         const NomeMedicoL = dataMedico.nome
 
@@ -102,9 +100,7 @@ export const AutomaticWhatsapp = async (body, res) => {
       case '/welcome/login-paciente/cadastro-paciente':
         const dataPaciente = await models.ModelRegisterPaciente.findById(IdentificadorPaciente)
     
-        const urlPaciente = `https://interconsulta.org/welcome/login-paciente/cadastro-paciente/obrigado-paciente?id=${dataPaciente._id}`
-
-        const messagePaciente = `Ola Paciente ${dataPaciente.nome}, Nos do interconsulta ficamos felizes por você se cadastrar na nossa plataforma. Para finalizar o seu cadastro e ter acesso aos nossos especialistas para tratar a sua dor, clique no link abaixo:\n${urlPaciente}`
+        const messagePaciente = `Ola Paciente ${dataPaciente.nome}, seu cadastro inicial no #Interconsulta foi concluido com sucesso!`
 
         await WhatsappQueue.add('Whatsapp', {
           numero:`${dataPaciente.telefone}`,
@@ -146,10 +142,8 @@ export const AutomaticWhatsapp = async (body, res) => {
      
       case '/welcome/login-medico/cadastro-medico/obrigado-medico':
          const dataObrigadoMedico = await models.ModelRegisterMédico.findById(IdentificadorObrigadoMedico)
-
-         const UrlObrigadoMédico = `https://interconsulta.org/casos-clinicos`
    
-         const messageObrigadoMedico = `Parabens ${dataObrigadoMedico.NomeEspecialista} agora voce é Oficialmente ${dataObrigadoMedico.EspecialidadeMedica} do #Interconsulta e ja pode atender todos os nossos casos clinicos disponiveis, clicando no Link Abaixo!\n${UrlObrigadoMédico}`
+         const messageObrigadoMedico = `Parabens ${dataObrigadoMedico.NomeEspecialista} agora voce é Oficialmente ${dataObrigadoMedico.EspecialidadeMedica} do #Interconsulta e ja pode atender todos os nossos casos clinicos!`
  
          await WhatsappQueue.add('Whatsapp', {
           numero:`${dataObrigadoMedico.telefone}`,
@@ -168,11 +162,8 @@ export const AutomaticWhatsapp = async (body, res) => {
 
       case '/welcome/login-paciente/cadastro-paciente/obrigado-paciente':
          const dataObrigadoPaciente = await models.ModelRegisterPaciente.findById(IdentificadorObrigadoPaciente)
-
-         const UrlObrigadoPaciente = `https://interconsulta.org/especialistas-disponiveis`;
-
    
-         const messageObrigadoPaciente = `Parabens ${dataObrigadoPaciente.nome} agora voce se tornou um paciente do #interconsulta e pode escolher qualquer um de nossos especialistas para apresentar resolver ${dataObrigadoPaciente.Doenca}, basta apenas clicar no link Abaixo!\n${UrlObrigadoPaciente}`
+         const messageObrigadoPaciente = `Parabens ${dataObrigadoPaciente.nome} agora voce se tornou um paciente do #interconsulta e pode escolher qualquer um de nossos especialistas para apresentar resolver ${dataObrigadoPaciente.Doenca}.`
  
          await WhatsappQueue.add('Whatsapp', {
           numero:`${dataObrigadoPaciente.telefone}`,

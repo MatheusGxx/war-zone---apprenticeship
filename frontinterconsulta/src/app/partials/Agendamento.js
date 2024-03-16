@@ -19,6 +19,8 @@ import { Checkout } from "../components/Checkout.jsx"
 import { AgendamentoComponente } from "../components/AgendamentoComponent.jsx"
 import { parse, isBefore, compareAsc } from 'date-fns'
 import { config, Api2 } from '../config.js'
+import { useSearchParams } from "next/navigation"
+import { format } from "date-fns"
 
 const AgendamentoConsulta = ({ 
   EspecialidadeMedica,
@@ -72,6 +74,27 @@ const AgendamentoConsulta = ({
   const [notHorarios, setNotHorarios] = useState(false)
   const [horariosAntigos, setHorariosAntigos] = useState(false)
   const [onePhotoPatient, setOnePhotoPatient] = useState(false)
+    
+  const [okUTM, setOkUTM] = useState(false)
+
+  const params = useSearchParams()
+  
+  const referrer = params.get('UTM_Referrer') 
+  const funil = params.get('UTM_Funil') 
+  const temp = params.get('UTM_Temp')  
+  const rota = params.get('UTM_Rota')
+  const source = params.get('UTM_Source') 
+  const medium = params.get('UTM_Medium') 
+  const campaign = params.get('UTM_Campaign') 
+  const term = params.get('UTM_Term') 
+  const content = params.get('UTM_Content')  
+
+  useEffect(() => {
+    if(referrer && funil && temp && rota && source && medium && campaign && term && content){
+      setOkUTM(true)
+    }
+
+  },[okUTM])
 
   const CadastroFinalSucess = secureLocalStorage.getItem('CadastroEndSucess')
 
@@ -144,6 +167,17 @@ const AgendamentoConsulta = ({
      }
    },[DoencaInputAutocomplete])
 
+
+   const TrackingUTMCS = useMutation(
+    async (valueRequest) => {
+      try {
+        const response = await axios.post(`${config.apiBaseUrl}/api/tracking-utm-cs`, valueRequest)
+        return response.data
+      } catch (error) {
+        console.error('Error in Tracking UTM CS', error);
+      }
+    }
+  )
 
    const getPhotoPaciente = useMutation(async (valueRequest) => {
     try {
@@ -230,6 +264,26 @@ useEffect(() => {
 
     try{
       await AgendamentoMarcado.mutateAsync(body)
+      
+      if(okUTM){
+        const currentDate = new Date()
+        const formattedDate = format(currentDate, 'dd/MM/yyyy')
+        
+        await TrackingUTMCS.mutateAsync({
+          id: id,
+          data: formattedDate, 
+          UTM_Referrer: decodeURIComponent(referrer),
+          UTM_Funil: decodeURIComponent(funil),
+          UTM_Temp: decodeURIComponent(temp),
+          UTM_Rota: decodeURIComponent(rota),
+          UTM_Source: decodeURIComponent(source),
+          UTM_Medium: decodeURIComponent(medium),
+          UTM_Campaign: decodeURIComponent(campaign),
+          UTM_Term: decodeURIComponent(term),
+          UTM_Content: decodeURIComponent(content),
+        })
+      }
+
       setIDHorario(null)
       setSnackbarMessage2(`${NamePaciente} sua consulta foi marcada com ${NomeMedico}, voce pode acompanhar o status dela pela sua Agenda!`)
       handleSnackBarOpen2()
@@ -473,7 +527,7 @@ useEffect(() => {
 
          </DialogContent>
        <DialogActions style={{display:'flex', justifyContent:'center'}}>
-         <button  className="w-72 h-12 rounded-full bg-red-600 text-white font-light"
+         <button className="w-72 h-12 rounded-full bg-red-600 text-white font-light"
           onClick={HandleCheckout}>
             <p className="font-bold text-white">
             {Horarios.length > 0 ? titleButon : 'Escolher outro Médico'} 

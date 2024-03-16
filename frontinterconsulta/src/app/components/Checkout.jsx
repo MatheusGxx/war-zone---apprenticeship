@@ -16,7 +16,7 @@ import { config } from '../config.js'
 import Logo from '../public/logo.png'
 import { DocumentsSelectPaciente } from '../partials/DocumentosSelect'
 import { Checkbox } from '@mui/material'
-import DocumentScannerIcon from '@mui/icons-material/DocumentScanner';
+import DocumentScannerIcon from '@mui/icons-material/DocumentScanner'
 
 export const Checkout = ({ 
     FotoMedico,
@@ -58,7 +58,6 @@ export const Checkout = ({
     name: '',
     focus: '',
   })
-
 
   useEffect(() => {
 

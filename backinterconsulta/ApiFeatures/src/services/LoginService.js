@@ -166,7 +166,7 @@ export const Register = async (body, res) =>{
        }
        
        //Production
-       axios.post('http://back-a:8081/api2/automatic-whatsapp', idPaciente)
+        axios.post('http://back-a:8081/api2/automatic-whatsapp', idPaciente)
        //Development
        //axios.post('http://localhost:8081/api2/automatic-whatsapp', idPaciente)
 

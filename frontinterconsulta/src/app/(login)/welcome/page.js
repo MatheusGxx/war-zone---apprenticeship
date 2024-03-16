@@ -1,18 +1,45 @@
 'use client'
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import ImageLogin from '../../public/ImageLogin.png'
 import Logo from '../../public/logo.png'
 import SecondLogo from '../../public/Logo2.png'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 
 const Welcome = () => {
 
-  const Router = useRouter()
+  const [okUTM, setOkUTM] = useState(false)
 
-  const HandleClick = async (route) =>{
-      await Router.push(`/welcome/${route}`)
+  const Router = useRouter()
+  const params = useSearchParams()
+
+  const referrer = params.get('UTM_Referrer') 
+  const funil = params.get('UTM_Funil') 
+  const temp = params.get('UTM_Temp')  
+  const rota = params.get('UTM_Rota')
+  const source = params.get('UTM_Source') 
+  const medium = params.get('UTM_Medium') 
+  const campaign = params.get('UTM_Campaign') 
+  const term = params.get('UTM_Term') 
+  const content = params.get('UTM_Content')
+  
+  useEffect(() => {
+    if(referrer && funil && temp && rota && source && medium && campaign && term && content){
+      setOkUTM(true)
+    }
+
+  },[okUTM])
+
+  const HandleClick = (route) => {
+      if(okUTM){
+        Router.push(`/welcome/${route}?UTM_Referrer=${encodeURIComponent(referrer)}&UTM_Funil=${encodeURIComponent(funil)}&UTM_Temp=${encodeURIComponent(temp)}&UTM_Rota=${encodeURIComponent(rota)}&UTM_Source=${encodeURIComponent(source)}&UTM_Medium=${encodeURIComponent(medium)}&UTM_Campaign=${encodeURIComponent(campaign)}&UTM_Term=${encodeURIComponent(term)}&UTM_Content=${encodeURIComponent(content)}`)
+      }else{
+        Router.push(`/welcome/${route}`)
+      }
   }
+
+
   return(
     <>
       <main className="flex">

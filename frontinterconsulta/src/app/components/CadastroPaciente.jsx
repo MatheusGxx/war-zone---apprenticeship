@@ -5,13 +5,13 @@ import Logo2 from '../public/Logo2.png';
 import Image from 'next/image';
 import { TextField, CircularProgress, Snackbar, Alert, Stack, SnackbarContent } from '@mui/material';
 import IconBack from '../partials/IconBack.js';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { useMutation } from '@tanstack/react-query'
 import { config } from '../config.js'
 import { Autocomplete } from '@mui/material'
 import axios from 'axios'
 import secureLocalStorage from 'react-secure-storage'
-
+import { format } from 'date-fns'
 
 const CadastroPacienteLead = ({ title,subtitle, ImagemLateral, apelido, mensagem}) => {
   const [snackbarOpen, setSnackbarOpen] = useState(false)
@@ -22,10 +22,42 @@ const CadastroPacienteLead = ({ title,subtitle, ImagemLateral, apelido, mensagem
   const [number, setNumber] = useState('55')
   const [sintomasandDoencas, setSintomasAndDoencas] = useState(null)
   const [doenca, setDoenca] = useState(null)
+  const [okUTM, setOkUTM] = useState(false)
+
+  const params = useSearchParams()
 
   const Router = useRouter()
 
   const route = usePathname()
+  
+  const referrer = params.get('UTM_Referrer') 
+  const funil = params.get('UTM_Funil') 
+  const temp = params.get('UTM_Temp')  
+  const rota = params.get('UTM_Rota')
+  const source = params.get('UTM_Source') 
+  const medium = params.get('UTM_Medium') 
+  const campaign = params.get('UTM_Campaign') 
+  const term = params.get('UTM_Term') 
+  const content = params.get('UTM_Content')
+
+  useEffect(() => {
+    if(referrer && funil && temp && rota && source && medium && campaign && term && content){
+      setOkUTM(true)
+    }
+
+  },[okUTM])
+
+  
+  const TrackingUTMAQ = useMutation(
+    async (valueRequest) => {
+      try {
+        const response = await axios.post(`${config.apiBaseUrl}/api/tracking-utm-aq`, valueRequest)
+        return response.data
+      } catch (error) {
+        console.error('Error in Tracking UTM AQ', error);
+      }
+    }
+  )
 
   const getSintomasAndDoencas = useMutation(
     async (valueRequest) => {
@@ -43,18 +75,37 @@ const CadastroPacienteLead = ({ title,subtitle, ImagemLateral, apelido, mensagem
   const CreateRequestMutation = useMutation(
     async (valueRequest) => {
       const response = await axios.post(`${config.apiBaseUrl}/api/register`, valueRequest)
-      console.log(response.data)
       return response.data
     },
     {
-      onSuccess: (data)  => {  
+      onSuccess: async (data)  => {  
         const { id, token, NomePaciente, Doenca } = data 
         secureLocalStorage.setItem('token', token)
         secureLocalStorage.setItem('id', id)
         secureLocalStorage.setItem('NomePaciente', NomePaciente)
         secureLocalStorage.setItem('Doenca', Doenca)
 
-        Router.push(`/especialistas-disponiveis`)
+        const currentDate = new Date()
+        const formattedDate = format(currentDate, 'dd/MM/yyyy')
+        
+        if(okUTM){
+          await TrackingUTMAQ.mutateAsync({
+            id: id,
+            data: formattedDate, 
+            UTM_Referrer: decodeURIComponent(referrer),
+            UTM_Funil: decodeURIComponent(funil),
+            UTM_Temp: decodeURIComponent(temp),
+            UTM_Rota: decodeURIComponent(rota),
+            UTM_Source: decodeURIComponent(source),
+            UTM_Medium: decodeURIComponent(medium),
+            UTM_Campaign: decodeURIComponent(campaign),
+            UTM_Term: decodeURIComponent(term),
+            UTM_Content: decodeURIComponent(content),
+          })
+          Router.push(`/especialistas-disponiveis?UTM_Referrer=${encodeURIComponent(referrer)}&UTM_Funil=${encodeURIComponent(funil)}&UTM_Temp=${encodeURIComponent(temp)}&UTM_Rota=${encodeURIComponent(rota)}&UTM_Source=${encodeURIComponent(source)}&UTM_Medium=${encodeURIComponent(medium)}&UTM_Campaign=${encodeURIComponent(campaign)}&UTM_Term=${encodeURIComponent(term)}&UTM_Content=${encodeURIComponent(content)}`);
+        }else{
+          Router.push('/especialistas-disponiveis')
+        }
       },
     }
   )
@@ -68,6 +119,7 @@ const CadastroPacienteLead = ({ title,subtitle, ImagemLateral, apelido, mensagem
         doenca: doenca,
         route: route,
       })
+      
       secureLocalStorage.setItem('InitialContact', 'true')
     } catch (error) {
       setSnackbarMessage(`${apelido}, Email ou Telefone ja estao em uso por favor escolha outro telefone ou email`);
