@@ -35,7 +35,7 @@ const Main = ({title, subTitle, Component}) => {
 
       </section>
 
-      <div className='bg-white min-h-[300px] w-7/12 sm:w-full md:w-full lg:w-full rounded-lg flex flex-col'>
+      <div className='bg-white min-h-[300px] w-7/12 sm:w-full md:w-full lg:w-full rounded-lg flex flex-col border border-blue-500'>
         <Component />
       </div>
 

@@ -11,8 +11,8 @@ import { models } from "../../MongoDB/Schemas/Schemas.js"
 import { Criptografia } from "../utils/Functions/Criptografia.js"
 import  axios from 'axios'
 import slugfy from 'slugify'
-import { ConvertingIdadee, Medicamentos } from "../utils/Functions/Converting.js"
-import { customAlphabet } from 'nanoid';
+import { ConvertingIdadee, Medicamentos, ConvertingAnoFormação } from "../utils/Functions/Converting.js"
+import { customAlphabet } from 'nanoid'
 
 const secretKey = crypto.randomBytes(32).toString('hex')
 
@@ -339,7 +339,7 @@ export const RegisterEnd = async (body, params, file, res) => {
           Médico.TituloEspecialista = TituloEspecialista
           Médico.FormacaoEspecialista = FormacaoEspecialista
           Médico.AnoGraduacao = AnoGraduacao
-          Médico.QuantidadeTempoAnoGraduacao = ConvertingIdadee(AnoGraduacao)
+          Médico.QuantidadeTempoAnoGraduacao = ConvertingAnoFormação(AnoGraduacao)
           Médico.PosGraduacao = PosGraduacao
           Médico.AreadeAtuacao = AreadeAtuacao
           Médico.EspecialidadeMedica = EspecialidadeMedica
@@ -591,33 +591,13 @@ export const getListDoencasDoctor = async (body, res) => {
     }
 }
 
-export const CreateLeadLandingPage = async (nome,email,telefone,doenca,res) => {
+
+export const sendEmailRecuperePassword = (res) => {
   try{
-
-    const numericAlphabet = '0123456789';
-    const generateNumericId = customAlphabet(numericAlphabet, 10)
-    const numericPasswordPatient = generateNumericId()
-    
-
-   const NewLead = await models.ModelRegisterPaciente.create({
-      nome,
-      senha: await Criptografia(numericPasswordPatient),
-      email,
-      Doenca: doenca,
-      telefone,
-    })
-
-    // 30 Dias em segundos
-    const expiresInSeconds = 30 * 24 * 60 * 60
-
-    const id = NewLead._id
-    const token = jwt.sign({ userId: NewLead._id }, secretKey, { expiresIn: expiresInSeconds });
-    const NomePaciente = NewLead.nome
-    const Doenca = NewLead.Doenca
-
-    return res.status(200).json({ id, token, NomePaciente, Doenca })
+   const getUserMédico = ''
+   const getUserPaciente = ''
+   const getUserUnidade = ''
   }catch(err){
-    return res.status(400).json({ message: 'Erro ao cadastrar Lead da Landing Page'})
+    return res.status(400).json({ message: 'Error in Send Email for Recupere Password' })
   }
 }
-

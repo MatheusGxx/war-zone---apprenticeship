@@ -22,13 +22,6 @@ export const NavPaciente = ({
           <p className='text-blue-800 sm:text-sm whitespace-nowrap font-bold'> Especialistas Disponiveis</p>
        </Link> 
 
-       {NomeUnidade ? 
-          <Link href="/especialistas-disponiveis" className='sm:hidden md:hidden lg:hidden'>
-          <p className='text-blue-800 sm:text-sm whitespace-nowrap font-bold'> Intergestão</p>
-          </Link> 
-       : null
-       }
-
             {FotoPaciente ? 
                <div 
                 className='mt-[-5px] relative cursor-pointer'

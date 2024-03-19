@@ -66,14 +66,6 @@ export const RegisterFourDoctor = (
       setCurrentStep((prevStep) => (prevStep > 1 ? prevStep - 1 : prevStep))
     }
          
-    const regex = /^(\d{0,2})\/?(\d{0,2})\/?(\d{0,4})$/
-
-    const handleData = (e) => {
-      const value = e.target.value.replace(/[^0-9]/g, '');
-      const formattedValue = value.replace(regex, '$1/$2/$3')
-      setAnoGraduacao(formattedValue);
-    }
-
     const handleSnackbarClose = () => {
       setSnackbarOpen(false)
     };
@@ -101,9 +93,9 @@ export const RegisterFourDoctor = (
                    InputProps={{
                     sx: { borderBottom: "1px solid blue" },
                   }}
-                   type="text"
+                   type="number"
                    required
-                   onChange={(e) => handleData(e)}
+                   onChange={(e) => setAnoGraduacao(e.target.value)}
                    value={anograduacao}/>
 
                 <TextField

@@ -132,7 +132,7 @@ export const PopUpBlood = () => {
         
 
         <div className="flex justify-center items-center flex-col gap-5 mt-10 w-full">
-           <h1 className='font-bold text-red-600'> {NomePaciente} foram encontrados ({quantidade}) Doadores Compativeis com {tipo} em {cidade}</h1>
+           <h1 className='font-bold text-red-600 sm:text-center'> {NomePaciente} foram encontrados ({quantidade}) Doadores Compativeis com {tipo} em {cidade}</h1>
 
            <div className="flex gap-5 w-full justify-center items-center mt-5"> 
            <button

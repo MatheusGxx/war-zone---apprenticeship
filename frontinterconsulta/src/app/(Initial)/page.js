@@ -5,6 +5,7 @@ import Logo from '../public/logo.png'
 import Link from 'next/link'
 import secureLocalStorage from 'react-secure-storage'
 import { useRouter } from 'next/navigation'
+
 const Home = () => {
   
   const RedirectNavigation = useRouter()

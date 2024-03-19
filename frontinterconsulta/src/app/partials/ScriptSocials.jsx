@@ -1,9 +1,10 @@
 import Script from "next/script"
+import Head from 'next/head'
 
 export const ScriptsSocials = () => {
     return (
         <>
-  <head>
+  <Head>
         {/* Meta tag de verificação do Google */}
         <meta name="google-site-verification" content="FKYy_DJtljy6hYA4y7URZOS6xqc2-jlWDFZPvZQjTwo"/>        {/* Meta tag de verificação do Facebook */}
         <meta name="facebook-domain-verification" content="ev6rgb99es8cruxsiir09ntwmv2yqn"/>
@@ -57,7 +58,7 @@ export const ScriptsSocials = () => {
           gtag('config', 'G-9BND46GSNV');
           `,
         }} />
-      </head>
+      </Head>
         </>
     )   
 }

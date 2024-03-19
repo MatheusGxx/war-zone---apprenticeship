@@ -24,11 +24,13 @@ export const NavUnidadeSaude = ({
               <p className='text-blue-800 sm:text-sm whitespace-nowrap font-bold'> Inter Gestão </p>
             </Link> 
              
-            <Link href="/especialistas-disponiveis" className='sm:hidden md:hidden lg:hidden'>
-             <p className='text-blue-800 sm:text-sm whitespace-nowrap font-bold'> Especialistas Disponiveis</p>
-            </Link> 
-
-
+            <div className='container'>
+             <Link href="/agenda" className='sm:w-full md:w-full lg:w-full xl:-w-full'> 
+             <button className='w-36 h-10 bg-blue-600 rounded-full font-bold text-white xl:hidden'> 
+             <p className='sm:text-s
+              m text-center'> Programação </p></button>
+            </Link>
+             </div>
 
              {FotoUnidade ? 
                <div 
@@ -82,14 +84,6 @@ export const NavUnidadeSaude = ({
                 <p className='text-blue-800 sm:text-sm font-bold'>Login</p>
               </Link>
             }
-
-            <div className='container'>
-             <Link href="/agenda" className='sm:w-full md:w-full lg:w-full xl:-w-full'> 
-             <button className='w-36 h-10 bg-red-600 rounded-full font-bold text-white xl:hidden'> 
-             <p className='sm:text-s
-              m text-center'> Agenda </p></button>
-            </Link>
-             </div>
         </>
     )
 }

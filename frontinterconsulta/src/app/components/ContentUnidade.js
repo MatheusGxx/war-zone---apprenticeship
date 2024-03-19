@@ -1,12 +1,11 @@
 'use client'
 import { useState, useRef, useEffect } from 'react';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload'
-import { Snackbar , Alert, TextField, Autocomplete, CircularProgress, InputAdornment, Typography } from "@mui/material"
-import { EspecialidadesAtendidas } from '../partials/EspecialidadesAtendidas'
+import { Snackbar , Alert, TextField, Autocomplete, CircularProgress, Typography } from "@mui/material"
 import { useMutation } from '@tanstack/react-query'
 import { MedicoCarousel } from '../partials/CarroselMédico.js'
 import InsertEmoticonIcon from '@mui/icons-material/InsertEmoticon'
 import { EspecialidadesUnidades } from '../partials/EspecialidadesUnidade'
+import AttachFileIcon from '@mui/icons-material/AttachFile'
 
 import axios from 'axios'
 import Image from "next/image";
@@ -18,6 +17,7 @@ import { parse } from 'date-fns'
 import { Api2 } from '../config.js'
 import { config } from '../config.js'
 import { PacienteFaltando } from '../partials/PacientesFaltando.jsx'
+import Link from 'next/link'
 
 const ContentUnidade = () => {
   const[especialidade, setEspecialidade] = useState('')
@@ -54,6 +54,10 @@ const ContentUnidade = () => {
   const[pacienteFaltando, setPacienteSobrando] = useState(null)
   const[onPopup, setOnPopup] = useState(false)
   const[pacientes, setPacientes] = useState(false)
+  const[finalDiasAtendimentos,  setFinalDiasAtendimentos] = useState(null)
+  const[numeroAtendimentosDias, setNumeroAtendimentosDias] = useState(null)
+  const[quantidadeCasosClinicos, setQuantidadeCasosClinicos] = useState(null)
+  const[ArrendondamentoDiaFraseFinalNumber, setArrendondamentoDiaFraseFinalNumber] = useState(null)
 
   const { vertical, horizontal } = position
 
@@ -65,7 +69,24 @@ const ContentUnidade = () => {
   
   const OriginalUnidadeUnidade = NameUnidadeSaude ? NameUnidadeSaude : ''
 
+  const NomeMedico = secureLocalStorage.getItem('NomeMedico')
+  const NomePaciente = secureLocalStorage.getItem('NomePaciente')
+
+  const token = secureLocalStorage.getItem('token')
+
   const Route = usePathname()
+
+  const resetStateOnError = () => {
+    setVisibileButton(true);
+    setVisiblePlan(false)
+    setSelectedFile(null)
+    setMessageErr('')
+    setOkCasosClinicos(false)
+
+    if (hiddenFileInput.current) {
+      hiddenFileInput.current.value = null
+    }
+  }
 
   const CreateRequestMutation = useMutation(async (valueRequest) => {
     const response = await axios.post(`${Api2.apiBaseUrl}/api2/process-planilha/${id}`, valueRequest)
@@ -75,23 +96,51 @@ const ContentUnidade = () => {
       const CPFSPacientes = data.map((data) => data.CPF)
       PostConsolidado(CPFSPacientes)
       setMessageUnidade(`${OriginalUnidadeUnidade}, Nós acabamos de informar todos os Pacientes da sua planilha que voce esta procurando médico para eles!`)
+    },
+    onError: () => {
+       resetStateOnError()
     }
   })
 
   const CreateConsolidado = useMutation(async (valueRequest) => {
     const response = await axios.post(`${Api2.apiBaseUrl}/api2/get-consolidado`, valueRequest)
-    console.log(response.data)
     return response.data
   },{
-    onSuccess: () => {
+    onSuccess: (data) => {
+      const { 
+        Inicio, 
+        Fim, 
+        SomaAtendimentosDia, 
+        MessageAtendimentosDia, 
+        ArrendondamentoDiaFraseFinal, 
+        QuantidadeMedicosDisponiveis, 
+        FinalDiasAtendimentos, 
+        NumeroAtendimentosFinais, 
+        QuantidadeCasosClinicos, 
+        CustoEstilizado, 
+        Consolidado, 
+        MedicosDisponiveis
+       } = data
       setOkCasosClinicos(false)
+      setInicioMedicos(Inicio)
+      setFimMedicos(Fim)
+      setHorasMedicas(SomaAtendimentosDia)
+      setAtendimentos(MessageAtendimentosDia)
+      setArrendondamentoDiaFraseFinalNumber(ArrendondamentoDiaFraseFinal)
+      setMedicosDisponiveis(QuantidadeMedicosDisponiveis)
+      setFinalDiasAtendimentos(FinalDiasAtendimentos)
+      setNumeroAtendimentosDias(NumeroAtendimentosFinais)
+      setQuantidadeCasosClinicos(QuantidadeCasosClinicos)
+      setCusto(CustoEstilizado)
+      setConsolidado(Consolidado)
+      setSuccessData(MedicosDisponiveis)
+      setOn(false)
     },
     onError: (err) => {
       setMessageErr(err.response.data.error)
       setSnackbarMessage(err.response.data.error)
       handleSnackBarOpen()
-      setVisibileButton(true)
-      setVisiblePlan(false)
+      resetStateOnError()
       console.error(err.response.data.error)  
     }
   })
@@ -132,9 +181,13 @@ const ContentUnidade = () => {
       divInfoRef.current.scrollIntoView({
         behavior: 'smooth',
         block: 'start',
-      });
-    }
-  }, [horasMedicas, atendimentos, medicos, consolidado, on, reset, inicio, fim, pacienteFaltando]);
+      })
+    } 
+     
+    console.log(`State Button: ${visibleButton}`)
+    console.log(`Visible Plan: ${visiblePlan}`)
+    console.log(`on: ${on}`)
+  }, [horasMedicas, atendimentos, medicos, consolidado, on, reset, inicio, fim, pacienteFaltando, visiblePlan, visibleButton, on])
   
   
   const NotificationPatientsAndDoctor = async () =>{
@@ -174,13 +227,13 @@ const ContentUnidade = () => {
   const regex = /^(\d{0,2})\/?(\d{0,2})\/?(\d{0,4})$/
 
   const handleFileChange = (event) => {
-    const file = event.target.files[0];
+    const file = event.target.files[0]
     const fileName = file ? file.name : ''
     setVisiblePlan(() => fileName)
-    setVisibileButton(false)
+    setVisibileButton(false)  
 
     setSelectedFile(file);
-  };
+  }
 
   const RemoveFileChange = () => {
     hiddenFileInput.current.value = ''
@@ -233,7 +286,7 @@ const ContentUnidade = () => {
 
   const PostConsolidado = async (CPFsPacientes) => {
     try{
-      const data = await CreateConsolidado.mutateAsync({
+       await CreateConsolidado.mutateAsync({
         inicio: inicio,
         fim: fim,
         total: valorConsulta,
@@ -242,16 +295,6 @@ const ContentUnidade = () => {
         EspecialidadeMedica: especialidade,
         CPFsPacientes: CPFsPacientes
       })
-
-      setInicioMedicos(data.Inicio)
-      setFimMedicos(data.Fim)
-      setHorasMedicas(data.SomaAtendimentosDia)
-      setAtendimentos(data.MessageAtendimentosDia)
-      setMedicosDisponiveis(data.QuantidadeMedicosDisponiveis)
-      //setCusto(data.CustoEstilizado)
-      setConsolidado(data.Consolidado)
-      setSuccessData(data.MedicosDisponiveis)
-      setOn(false)
     }catch(err){
       return err
     }
@@ -324,211 +367,206 @@ const ContentUnidade = () => {
      setVisiblePlan(false)
      HandleClickEnd()
   }
+
   return (
     <>
-      <div className='flex flex-col gap-10 m-10 sm:ml-0 sm:flex sm:justify-center md:justify-center'>
-        {on === true ?
-        <>
-        <div className="flex items-center justify-center gap-10 sm:flex sm:flex-col sm:gap-5">
-            <Autocomplete
-              value={especialidade === '' ? null : especialidade}
-              onChange={(event, newValue) => {
-                if (newValue !== null) {
-                  setEspecialidade(newValue)
-                }
-              }}
-              options={EspecialidadesUnidades}
-              noOptionsText="Sem resultados"
-              renderInput={(params) => <TextField {...params} label="Especialidade Médica" variant="standard" />}
-              className=" w-10/12 border-b border-blue-500 sm:w-full"
-            />
-          </div>
-
-          <div className='flex justify-center items-center gap-5'>
-          <TextField
+       {token && NameUnidadeSaude ? 
+          <div className='flex flex-col gap-5 m-10 sm:flex sm:justify-center sm:items-center md:justify-center w-full'>
+          {on === true ?
+          <>
+          <h1 className="font-bold text-blue-500 text-center text-2xl"> Solicite o seu Agendamento </h1>
+  
+          <div className="flex flex-col justify-center items-center sm:flex sm:flex-col sm:gap-5 sm:w-full">
+              <h1 className='font-semibold text-blue-500 mb-[-2px] mt-2 text-lg'> Especialidade Médica *</h1>
+              <Autocomplete
+                value={especialidade === '' ? null : especialidade}
+                onChange={(event, newValue) => {
+                  if (newValue !== null) {
+                    setEspecialidade(newValue)
+                  }
+                }}
+                options={EspecialidadesUnidades}
+                noOptionsText="Sem resultados"
+                renderInput={(params) =>
+                   <TextField {...params} 
+                   label="Selecione a Especialidade Desejada"
+                   variant="standard"/>
+                  }
+                className=" w-10/12 border-b border-blue-500 sm:w-full"
+              />
+            </div>
+  
+            <div className='flex justify-center items-center gap-10 sm:flex-col'>
+  
+            <div className="flex flex-col gap-2 w-full">
+            <h1 className='font-semibold text-blue-500 text-lg whitespace-nowrap'> Data de Inicio dos Atendimentos *</h1>
+            <TextField
               variant="standard"
-              label="Data Inicio"
+              label="Selecione a Data de Inicio"
               InputProps={{
                 sx: { borderBottom: "1px solid blue" },
               }}
               type="text"
               required
               onChange={handleInicioChange}
-              className="w-1/2 sm:w-full"
+              className="w-full sm:w-full"
               value={inicio}
             />
-            <TextField
-              variant="standard"
-              label="Data Fim"
-              InputProps={{
-                sx: { borderBottom: "1px solid blue" },
-              }}
-              type="text"
-              required
-              onChange={handleFimChange}
-              className="w-1/2 sm:w-full"
-              value={fim}
-            />
-          </div>
-
-          <input
-            type="file"
-            className="hidden"
-            onChange={handleFileChange}
-            ref={hiddenFileInput}
-          />
-              
-           <div className="flex justify-center flex-col items-center gap-5">
-      
-           {visibleButton ?
-              <button className="bg-blue-600 rounded-full w-52 h-10 flex gap-3 p-2" onClick={handleClick}>
-              <CloudUploadIcon style={{ color: 'white' }} />
-              <p className='text-white font-bold'> Subir casos Clinicos</p>
-              </button>
-                : ''
-            }
-          
-            {visiblePlan ? 
-              <>
-                <div className="flex items-center justify-center">
-                <h1> Nome da Planilha selecionada: <span className="font-bold text-blue-500">{visiblePlan}</span> <DeleteIcon color="primary" onClick={RemoveFileChange} className="cursor-pointer"/> </h1> 
-                 </div>
-                </>
-           : ''}
-           
-           
-           {visiblePlan && messageErr === '' ?   
-           <button className='bg-blue-600 rounded-full p-2 w-full' onClick={HandleOkCasosClinicos}>
-            <p className='font-bold text-white'> Enviar Casos Clinicos </p>
-           </button> : ''
-           }       
-
-            {okCasosClinicos && messageErr === '' && 
-            <div className='flex gap-4 flex-col justify-center items-center'>
-              <div className='flex gap-4'>
-              <InsertEmoticonIcon color="primary" fontSize='large'/>
-              <h1 className='font-bold text-blue-500 text-center'> {messageUnidade} </h1>
-              </div>
-              <div className='flex gap-4'>
-              <CircularProgress color="primary" size={24}/>
-              <h1 className='font-bold text-blue-500 animate-pulse text-center'> Aguarde Estamos preparando o Consolidado para a sua gestão </h1>
-              </div>
+  
             </div>
-            }
-        </div>
-        </>
-         : ''}
-          
-
-        {horasMedicas !== '' && atendimentos !== '' && medicos  && consolidado !== '' && successData !== null ?
-          <>
-        <div className='flex justify-center items-center flex-col gap-5'>
-          <div className=' flex justify-center items-center flex-col border-blue-500 border-4 rounded-lg w-full p-5 gap-5' ref={divInfoRef}>
-        
-           <div className="flex gap-5 justify-center items-center mb-5 mt-5">
-              <Image src={Logo} alt="Logo Interconsulta" height={40} width={40} className="animate-spin-slow"/>
-              <h1 className='text-2xl text-blue-600 font-bold'> {OriginalUnidadeUnidade} Segue a sua Programaçao abaixo </h1>
-           </div>
-           <div className="flex justify-center items-center gap-10 mb-5">
-             <TextField
-             variant="standard"
-             label="Data Inicio"
-             InputProps={{
-               sx: { borderBottom: '1px solid blue' },
-               readOnly: true,
-             }}
-             type="text"
-             required
-             onChange={(e) => setInicioMedicos(e.target.value)}
-             className="w-1/3 sm:w-full"
-             value={InicioMedicos}
-           />
-        
+  
+            <div className='flex flex-col gap-2 w-full'>
+            <h1 className='font-semibold text-blue-500 text-lg whitespace-nowrap'> Data do Fim dos Atendimentos *</h1>
             <TextField
-             variant="standard"
-             label="Data Fim"
-             InputProps={{
-               sx: { borderBottom: '1px solid blue' },
-               readOnly: true,
-             }}
-             type="text"
-             required
-             onChange={(e) => setFimMedicos(e.target.value)}
-             className="w-1/3 sm:w-full"
-             value={FimMedicos}
-           />
-           <TextField
-             variant="standard"
-             label="Total Atendimentos Disponiveis"
-             InputProps={{
-               sx: { borderBottom: '1px solid blue' },
-               readOnly: true,
-             }}
-             type="text"
-             required
-             onChange={(e) => setHorasMedicas(e.target.value)}
-             className="w-1/3 sm:w-full"
-             value={horasMedicas}
+                variant="standard"
+                label="Selecione a Data de Fim"
+                InputProps={{
+                  sx: { borderBottom: "1px solid blue" }
+              }}
+                type="text"
+                required
+                onChange={handleFimChange}
+                className="w-full sm:w-full"
+                value={fim}
+              />
+            </div>
+          
+            </div>
+  
+            <input
+              type="file"
+              className="hidden"
+              onChange={(e) =>  handleFileChange(e)}
+              ref={hiddenFileInput}
             />
-        </div>
-
-          {CreateRequestMutation.isLoading &&
-                <Image src={Logo} alt="Logo Interconsulta" height={50} width={50} className="animate-pulse"/>
-          }
-        {successData &&
-            <>
-          <div className='flex justify-center items-center w-full'>
-              <h2 className='text-blue-600 font-bold text-2xl text-center'> Total de Médicos Disponiveis em {especialidade} ({medicos})</h2>
+                
+             <div className="flex justify-center gap-3 flex-col items-center">
+        
+             {visibleButton ?
+             <>
+              <button className="bg-blue-600 rounded-full w-52 h-10 flex gap-2 p-2 justify-center items-center" onClick={handleClick}> 
+                  <AttachFileIcon  style={{ color: 'white' }}/>
+                  <p className='text-white font-bold text-center'> 
+                  Anexar Planilha
+                  </p>
+                </button>
+                <p className='font-bold text-blue-400'> Planilha formato Execel: .xlsx</p>
+             </>
+                  : ''
+              }
+            
+              {visiblePlan ? 
+                <>
+                   <div className="flex items-center justify-center">
+                  <h1> Nome da Planilha selecionada: <span className="font-bold text-blue-500">{visiblePlan}</span> <DeleteIcon color="primary" onClick={RemoveFileChange} className="cursor-pointer"/> </h1> 
+                   </div>
+                  </>
+             : ''}
+             
+             
+             {visiblePlan &&   
+             <button className='bg-blue-600 rounded-full p-2 w-full' onClick={HandleOkCasosClinicos}>
+              <p className='font-bold text-white'> Analisar Lista </p>
+             </button> 
+             }       
+  
+              {okCasosClinicos && messageErr === '' && 
+              <div className='flex gap-4 flex-col justify-center items-center'>
+                <div className='flex gap-4'>
+                <InsertEmoticonIcon color="primary" fontSize='large'/>
+                <h1 className='font-bold text-blue-500 text-center'> {messageUnidade} </h1>
+                </div>
+                <div className='flex gap-4'>
+                <CircularProgress color="primary" size={24}/>
+                <h1 className='font-bold text-blue-500 animate-pulse text-center'> Aguarde Estamos avaliando a sua lista de pacientes </h1>
+                </div>
+              </div>
+              }
           </div>
+          </>
+           : ''}
+            
+  
+          {horasMedicas !== '' && atendimentos !== '' && medicos  && consolidado !== '' && successData !== null ?
+            <>
+          <div className='flex justify-center items-center flex-col gap-5 w-full'>
+            <div className=' flex justify-center items-center flex-col w-full p-5 gap-5' ref={divInfoRef}>
+              <h1 className="text-center text-2xl font-bold text-blue-500"> Acabe com as Filas! </h1>
+             <h1 className='text-center text-lg leading-8 whitespace-normal'> Voce possui <span className='font-bold text-blue-500'> {medicos} </span> {medicos > 1 ? 'Médicos' : 'Médico'} com horario disponivel na unidade de saúde 
+               <span className='font-bold text-blue-500'> {NameUnidadeSaude} </span> entre os dias <span className='font-bold text-blue-500'> {InicioMedicos}  </span> e  <span className='font-bold text-blue-500'> {FimMedicos} </span>. 
+              Com isso, se cada Médico fizer em média <span className='font-bold text-blue-500'> {ArrendondamentoDiaFraseFinalNumber} </span> atendimentos por dia, no final de <span className='font-bold text-blue-500'> {finalDiasAtendimentos} </span> {finalDiasAtendimentos > 1 ? 'Dias' : 'Dia'},
+              voce poderá atender <span className='font-bold text-blue-500'> {horasMedicas} </span> do total de <span className='font-bold text-blue-500'> {quantidadeCasosClinicos} </span> pacientes que precisam de <span className='font-bold text-blue-500'> {especialidade.replace("UPA01 - ", "")} </span>.
+             </h1>
+            
+            {CreateRequestMutation.isLoading &&
+                  <Image src={Logo} alt="Logo Interconsulta" height={50} width={50} className="animate-pulse"/>
+            }
+           </div>
+  
+        {pacienteFaltando > 0 && 
+          <> 
+          <button className="border-red-500 border-4 rounded-lg p-2 animate-pulse" onClick={HandlePopUp}>
+            <p className='font-bold text-red-500'>  {OriginalUnidadeUnidade} tem {pacienteFaltando}  Pacientes da sua Demanda sobrando, clique aqui para ve-los!</p>
+          </button>
           </>
         }
-
-       <div className="border-b-2 border-blue-500  w-full  pt-3 sm:hidden md:hidden lg:hidden xl:hidden"></div>
-
-       <div className='flex gap-5 justify-center items-center whitespace-nowrap'>
-          <h1 className='font-bold text-red-600 whitespace-normal text-center'> {consolidado} </h1>
-       </div>
-    </div>
-
-      {pacienteFaltando && 
-        <> 
-        <button className="border-red-500 border-4 rounded-lg p-2 animate-pulse" onClick={HandlePopUp}>
-          <p className='font-bold text-red-500'>  {OriginalUnidadeUnidade} tem {pacienteFaltando}  Pacientes da sua Demanda sobrando, clique aqui para ve-los!</p>
+  
+      <div className={`flex flex-col gap-5`}>
+        <button 
+          className={`bg-blue-500
+            p-2 rounded-full text-white font-bold min-w-[150px] flex items-center justify-center gap-5 cursor-pointer`}
+          onClick={NotificationPatientsAndDoctor}
+          disabled={agendamentoOn === true || NotificationConfirmationDoctorAndPatient.isLoading}
+        >
+          {NotificationConfirmationDoctorAndPatient.isLoading ? (
+            <>
+            <CircularProgress size={24} /> Estamos Notificando os Nossos Médicos Aguarde...
+            </>
+          ) : (
+            <p className='whitespace-nowrap'>
+              {NotificationConfirmationDoctorAndPatient.isSuccess && agendamentoOn
+                ? `${OriginalUnidadeUnidade} Obrigado pelos agendamentos todos os Médicos e Pacientes foram Notificados!`
+                : 'Agendar consultas Médicas'}
+            </p>
+          )}
         </button>
-        </>
-      }
-
-    <div className={`flex gap-5 ${NotificationConfirmationDoctorAndPatient.isSuccess && agendamentoOn && 'flex-col gap-5'}`}>
-      <button 
-        className={`${NotificationConfirmationDoctorAndPatient.isSuccess && agendamentoOn ? 'bg-blue-500' : 'bg-green-400'}
-          p-2 rounded-full text-white font-bold min-w-[150px] flex items-center justify-center gap-5 cursor-pointer`}
-        onClick={NotificationPatientsAndDoctor}
-        disabled={agendamentoOn === true || NotificationConfirmationDoctorAndPatient.isLoading}
-      >
-        {NotificationConfirmationDoctorAndPatient.isLoading ? (
-          <>
-          <CircularProgress size={24} /> Estamos Notificando os Nossos Médicos Aguarde...<div className='flex justify-center items-center'> </div>
-          </>
-        ) : (
-          <p className='whitespace-nowrap'>
-            {NotificationConfirmationDoctorAndPatient.isSuccess && agendamentoOn
-              ? `${OriginalUnidadeUnidade} Obrigado por solicitar o agendamento todos os Médicos e Pacientes foram Notificados!`
-              : 'Solicitar Agendamento'}
-          </p>
-        )}
-      </button>
-
-      <button>
-        <h2 className='text-red-600 font-bold whitespace-nowrap cursor-pointer' onClick={Reset}>
-          Refazer Programação
-        </h2>
-      </button>
-    </div>
-
+  
+        <button>
+          <h2 className='text-red-600 font-bold whitespace-nowrap cursor-pointer' onClick={Reset}>
+            Refazer Programação
+          </h2>
+        </button>
       </div>
+  
+        </div>
+         </>
+            : ''}
+        </div>
+       :
+       NomeMedico ? 
+       <div className='flex flex-col justify-center items-center gap-5'>
+        <h1 className='font-bold text-2xl text-blue-500 text-center'> Dr(a) o Intergestão esta disponivel apenas para Gestores de Saude!</h1>
+       </div> 
+       :
+       NomePaciente ?
+       <>
+         <div className='flex flex-col justify-center items-center gap-5'>
+        <h1 className='font-bold text-2xl text-blue-500 text-center'> Paciente, Intergestão esta disponivel apenas para Gestores de Saude!</h1>
+       </div> 
        </>
-          : ''}
-      </div>
+       :
+       <>
+       <div className='flex flex-col justify-center items-center gap-5'>
+          <h1 className='font-bold text-2xl text-blue-500 text-center'>Faça seu login pra acessar essa área da plataforma.</h1>
+          <Link href="/welcome" className='w-full flex justify-center items-center'>
+          <button className='p-2 rounded-full bg-blue-500 w-1/2'> 
+          <p className='font-bold text-white'> Login </p> 
+          </button>
+          </Link>
+       </div>
+       </>
+      }
+   
 
       {onPopup &&
        <PacienteFaltando

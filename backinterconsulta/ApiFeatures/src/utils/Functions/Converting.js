@@ -76,7 +76,15 @@ export const ConvertingIdadee = (data) => {
   }
 
   // Calcula a diferença em anos entre a data de nascimento e a data atual
-  const idade = differenceInYears(new Date(), dataNascimento);
+  const idade = differenceInYears(new Date(), dataNascimento)
 
-  return idade;
+  return idade
 }
+
+export const ConvertingAnoFormação = (data) => {
+  const AnoDeFormação = new Date(data, 0, 1).getFullYear();
+  const AnoAtual = new Date().getFullYear();
+  const TempoDeFormação = AnoAtual - AnoDeFormação;
+  return TempoDeFormação;
+}
+

@@ -8,7 +8,7 @@ const  UnidadeEspecialista = () =>{
   return(
     <>
     <Suspense fallback={Loading}>
-    <MainUnidade title="Gestão Integrada de Recursos" subTitle="Gestor, baixe sua planilha de exemplo aqui!" Component={ContentUnidade}/>
+    <MainUnidade title="Gestão Integrada Descentralizada da Saúde" subTitle="Dimensione a equipe médica e tenha total controle dos agendamentos em suas mãos" Component={ContentUnidade}/>
     </Suspense>
     </>
   )

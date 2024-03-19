@@ -48,6 +48,8 @@ export const ProcessCosolidado = async (body) => {
         }
       ]
     })
+    console.log(`Médicos: ${MedicosDisponiveis}`)
+  
 
     const DataDoctorsDisponiveis = MedicosDisponiveis.map(data => ({ ids: data._id }));
 
@@ -226,6 +228,10 @@ export const ProcessCosolidado = async (body) => {
       SomaAtendimentosDia,
       MessageAtendimentosDia,
       QuantidadeMedicosDisponiveis,
+      ArrendondamentoDiaFraseFinal,
+      FinalDiasAtendimentos: DiferençaEntreDiasDosMedicos,
+      NumeroAtendimentosFinais: Final,
+      QuantidadeCasosClinicos: QuantidadeCasosClinicos,
       //CustoEstilizado,
       Consolidado,
       MedicosDisponiveis,

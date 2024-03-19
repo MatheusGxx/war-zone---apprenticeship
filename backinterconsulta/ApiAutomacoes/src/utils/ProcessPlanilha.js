@@ -58,16 +58,17 @@ export const ProcessPlanilha = async (body, params, file, filename) => {
           Email: data['Email'],
         }))
         
-        await BulkMessageQueueWarn.add('BulkMessageWarn', { 
-          DataPatients,  
-          NomeUnidade: NameUnidade
-        })
   
       let ObjectData = []
         
-      const VerifyAreaAtuaçao = jsonArray.map((data) => data.Especialidade)
-        const todasIguais = VerifyAreaAtuaçao.every(area => area === EspecialidadeMedica) // Compara o Array de AreasdeAtuaçao vindo da planilha com a String Area de Atuaçao vinda do front se for igual passa se nao for nao passa.
+      const VerifyEspecialidade= jsonArray.map((data) => data.Especialidade)
+        const todasIguais = VerifyEspecialidade.every(area => area === EspecialidadeMedica) // Compara o Array de AreasdeAtuaçao vindo da planilha com a String Area de Atuaçao vinda do front se for igual passa se nao for nao passa.
           if(todasIguais){ 
+
+            //await BulkMessageQueueWarn.add('BulkMessageWarn', { 
+              //DataPatients,  
+              //NomeUnidade: NameUnidade
+            //})
               const pacientes = jsonArray.map( async (data) => { // aqui é a conversao de uma planilha do execel para json usando xlsx  
              
                 const HistoricoData = {
@@ -145,7 +146,7 @@ export const ProcessPlanilha = async (body, params, file, filename) => {
               return ObjectData
                 
             }else{
-              return { error: 'Area de Atuaçao escolhida é imcompativel com a da planilha escolhida abaixo' }
+              return { error: 'Especialidade Médica é imcompativel com a da planilha escolhida abaixo' }
             } 
           }
       

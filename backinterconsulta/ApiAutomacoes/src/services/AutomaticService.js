@@ -1,6 +1,7 @@
 import { getClient, CreateInstance } from "../utils/Functions/Whatsapp.js";
 import { models } from '../../MongoDB/Schemas/Schemas.js'
 import { EmailQueue, WhatsappQueue, ResumoQueue, SendDocumentsQueue, BulkMessageQueueConfirmation } from "../utils/Queues.js"
+import { customAlphabet } from 'nanoid'
 
 export const AutomaticWhatsapp = async (body, res) => {
   const { 
@@ -320,9 +321,6 @@ export const sendDocumentsPatient = async (id, res, files) => {
     return res.status(500).json({ message: 'Erro Internal Server'})
   }
 }
-
-
-
 
 export const SavedConsultaUnidadeSaude = async (body, res) => {
   const { IDSMedicos, IDUnidade ,Solicitante, Casos, Status, CPFPacientes, DataInicioConsolidado , DataFimConsolidado, PacientesQueSuportamos, NomeUnidade } = body
@@ -678,5 +676,49 @@ export const WarningDoctorHorariosAntigos = async (NomePacienteWarningDoctorHora
    return res.status(200).json({ message: 'Médico Notificado com Sucesso'})
   }catch(err){
     return res.status(400).json({ message: 'Erro ao Notificar Médico que ele nao tem Horarios'})
+  }
+}
+
+
+export const CreateLeadLandingPage = async (nome,email,telefone,doenca,res) => {
+  try{
+
+    const numericAlphabet = '0123456789';
+    const generateNumericId = customAlphabet(numericAlphabet, 10)
+    const numericPasswordPatient = generateNumericId()
+    
+
+   const NewLead = await models.ModelRegisterPaciente.create({
+      nome,
+      senha: await Criptografia(numericPasswordPatient),
+      email,
+      Doenca: doenca,
+      telefone,
+    })
+
+    // 30 Dias em segundos
+    const expiresInSeconds = 30 * 24 * 60 * 60
+
+    const id = NewLead._id
+    const token = jwt.sign({ userId: NewLead._id }, secretKey, { expiresIn: expiresInSeconds });
+    const NomePaciente = NewLead.nome
+    const Doenca = NewLead.Doenca
+
+    res.status(200).json({ id, token, NomePaciente, Doenca })
+
+    await WhatsappQueue.add('Whatsapp', {
+      numero:`${telefone}`,
+      mensagem: `Ola, ${nome} Seja bem vindo, Segue o seu acesso a plataforma\nEmail:${email}\nSenha:${numericPasswordPatient}`
+    })
+ 
+    await EmailQueue.add('Email',
+    {
+      to: `${email}`, 
+      subject: `Seja bem vindo ${nome}`,
+      message: `Ola, ${nome} Seja bem vindo, Segue o seu acesso a plataforma\nEmail:${email}\nSenha:${numericPasswordPatient}`
+    })
+ 
+  }catch(err){
+    return res.status(400).json({ message: 'Erro ao cadastrar Lead da Landing Page'})
   }
 }

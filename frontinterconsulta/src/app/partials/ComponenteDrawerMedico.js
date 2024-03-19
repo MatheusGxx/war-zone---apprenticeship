@@ -73,13 +73,6 @@ export const ComponentDrawerMédico = ({ Navigation, Loggout, Image }) =>{
             <ListItemText> Perfil </ListItemText>
           </ListItemButton>
 
-          <ListItemButton onClick={() => Navigation('/casos-clinicos')}>
-            <ListItemIcon>
-              <AccessTimeIcon color="primary" />
-            </ListItemIcon>
-            <ListItemText> Seus Horarios </ListItemText>
-          </ListItemButton>
-
           <ListItemButton onClick={() => Navigation('/agenda')}>
             <ListItemIcon>
               <EventAvailableIcon color='primary' />

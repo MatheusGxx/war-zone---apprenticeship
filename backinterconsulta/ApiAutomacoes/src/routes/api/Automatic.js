@@ -5,12 +5,13 @@ const router = Router()
 
 import { 
   AutomaticWhatsapp, 
-  sendDocumentsPatient, 
+  sendDocumentsPatient,
   SavedConsultaUnidadeSaude,
   AcceptMedical,
   RejectMedical,
   WarningDoctorNotSchedules,
-  WarningDoctorHorariosAntigos
+  WarningDoctorHorariosAntigos,
+  CreateLeadLandingPage,
 } from '../../services/AutomaticService.js'
 
 import uploadSignedDocuments from '../../utils/MulterSignDocuments.js'
@@ -105,9 +106,9 @@ router.post('/send-documents-patient', uploadSignedDocuments.any(),
 )
 
 router.post('/process-planilha/:id', uploadPlanilha.single('file'), async (req, res) => {
-  console.log(req.params.id);
-  console.log(req.body);
-  console.log(req.file);
+  console.log(req.params.id)
+  console.log(req.body)
+  console.log(req.file)
 
   const body = {
     EspecialidadeMedica: req.body.EspecialidadeMedica,
@@ -243,5 +244,15 @@ router.post('/warning-doctor-horarios-antigos',
         console.log(req.body)
        }
 )
+
+router.post('/create-lead',
+      async(req, res) => {
+        const { nome, email, telefone, doenca } = req.body
+        CreateLeadLandingPage(nome,email,telefone,doenca,res)
+        
+        console.log(req.body)
+      } 
+)
+
 
 export default router

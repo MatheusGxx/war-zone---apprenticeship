@@ -11,7 +11,7 @@ import ExitToAppIcon from '@mui/icons-material/ExitToApp'
 import EventAvailableIcon from '@mui/icons-material/EventAvailable'
 import secureLocalStorage from 'react-secure-storage'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle'
-import BloodtypeIcon from '@mui/icons-material/Bloodtype';
+import BloodtypeIcon from '@mui/icons-material/Bloodtype'
 import { config } from '../config.js'
 import { useBlood } from '../context/context.js'
 
@@ -30,7 +30,6 @@ export const ComponentDrawerPaciente = ({ Navigation, Loggout, Image }) =>{
     setBlood(true)
    }
  }
-
 
  return(
   <>
@@ -54,7 +53,7 @@ export const ComponentDrawerPaciente = ({ Navigation, Loggout, Image }) =>{
                 }
               </ListItemIcon>
               <div className="flex justify-center items-center">
-                <ListItemText sx={{ color: 'blue', fontWeight: 'bold'}}>{nome}</ListItemText>
+                <ListItemText sx={{ color: 'blue', fontWeight: 'bold'}}> {nome}</ListItemText>
               </div>
             </div>
           </ListItemButton>

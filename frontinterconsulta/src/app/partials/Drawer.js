@@ -7,7 +7,8 @@ import {
 import secureLocalStorage from 'react-secure-storage'
 import { usePathname } from 'next/navigation'
 import { config } from '../config.js'
-
+import { useHorariosDoctor } from '../context/context'
+import { useBlood } from '../context/context.js'
 
 export const DrawerComponent = ({ open, Close, Navigation}) =>{
 
@@ -25,6 +26,27 @@ export const DrawerComponent = ({ open, Close, Navigation}) =>{
   const Paciente = secureLocalStorage.getItem('NomePaciente')
   const Unidade = secureLocalStorage.getItem('NomeUnidade')
 
+  const idMedico = secureLocalStorage.getItem('id')
+
+  const { setHorariosDoctor } = useHorariosDoctor()
+  const { setBlood } = useBlood()
+
+    const HandleHistorico = () => {
+      if(!idMedico){
+        alert('Voce nao esta logado')
+      }else{
+        setHorariosDoctor(true)
+      }
+    }
+
+    const HandleBlood = () => {
+      if(!Paciente){
+        alert('Voce nao esta Logado')
+      }else{
+        setBlood(true)
+      }
+    }
+
   return(
     <>
        <Drawer anchor="top" open={open} onClose={Close}>
@@ -37,6 +59,10 @@ export const DrawerComponent = ({ open, Close, Navigation}) =>{
            <ListItemButton onClick={() => Navigation('/agenda')}>
                   <ListItemText> Agenda </ListItemText>
            </ListItemButton>
+
+           <ListItemButton  onClick={() => HandleHistorico()}>
+                  <ListItemText> Horarios </ListItemText>
+           </ListItemButton>
         </List>
         }
 
@@ -44,14 +70,14 @@ export const DrawerComponent = ({ open, Close, Navigation}) =>{
                 <List>
                   <ListItemButton onClick={() => Navigation('/especialistas-disponiveis')}>
                           <ListItemText> Especialistas Disponiveis </ListItemText>
-                  </ListItemButton>
-
-                  <ListItemButton onClick={() => Navigation('/unidade-especialista')}>
-                          <ListItemText> Inter Gestão </ListItemText>
-                  </ListItemButton>
+                  </ListItemButton> 
 
                   <ListItemButton onClick={() => Navigation('/agenda')}>
                           <ListItemText> Agenda </ListItemText>
+                  </ListItemButton>
+
+                  <ListItemButton onClick={() => HandleBlood()}>
+                          <ListItemText> Ache um Doador de Sangue </ListItemText>
                   </ListItemButton>
                 </List>
         }
@@ -62,10 +88,6 @@ export const DrawerComponent = ({ open, Close, Navigation}) =>{
                    <ListItemButton onClick={() => Navigation('/unidade-especialista')}>
                                 <ListItemText> Inter Gestão </ListItemText>
                       </ListItemButton>
-
-                   <ListItemButton onClick={() => Navigation('/especialistas-disponiveis')}>
-                           <ListItemText> Especialistas Disponiveis </ListItemText>
-                    </ListItemButton>
 
                      <ListItemButton onClick={() => Navigation('/agenda')}>
                               <ListItemText> Agenda </ListItemText>
@@ -83,7 +105,7 @@ export const DrawerComponent = ({ open, Close, Navigation}) =>{
                 <ListItemText> Agenda </ListItemText>
          </ListItemButton>
 
-         <ListItemButton> Horarios </ListItemButton>
+         <ListItemButton onClick={() => HandleHistorico()}> Horarios </ListItemButton>
       </List>
         }
         
@@ -93,29 +115,26 @@ export const DrawerComponent = ({ open, Close, Navigation}) =>{
                           <ListItemText> Especialistas Disponiveis </ListItemText>
                   </ListItemButton>
 
-                  <ListItemButton onClick={() => Navigation('/unidade-especialista')}>
-                          <ListItemText> Inter Gestão </ListItemText>
-                  </ListItemButton>
-
                   <ListItemButton onClick={() => Navigation('/agenda')}>
                           <ListItemText> Agenda </ListItemText>
                   </ListItemButton>
+
+                  <ListItemButton onClick={() => HandleBlood()}>
+                          <ListItemText> Ache um Doador de Sangue </ListItemText>
+                  </ListItemButton>
                 </List>
         }
+
         {Agenda && Unidade &&
          <List>
 
-                   <ListItemButton onClick={() => Navigation('/unidade-especialista')}>
-                                <ListItemText> Inter Gestão </ListItemText>
-                      </ListItemButton>
+              <ListItemButton onClick={() => Navigation('/unidade-especialista')}>
+                   <ListItemText> Inter Gestão </ListItemText>
+              </ListItemButton>
 
-                   <ListItemButton onClick={() => Navigation('/especialistas-disponiveis')}>
-                           <ListItemText> Especialistas Disponiveis </ListItemText>
-                    </ListItemButton>
-
-                     <ListItemButton onClick={() => Navigation('/agenda')}>
-                              <ListItemText> Agenda </ListItemText>
-                     </ListItemButton>
+              <ListItemButton onClick={() => Navigation('/agenda')}>
+                   <ListItemText> Agenda </ListItemText>
+              </ListItemButton>
                  </List>
         }
 

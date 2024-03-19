@@ -78,6 +78,7 @@ const Login = ({ title, ImagemLateral, MessageButton, secondRoute, treeRoute, pl
       if(tokenStorage && ModelidUser &&  NomeMedicoStorage && AreadeAtuacaoStorage && CRMStorage && FotoStorageMedico && TypeDoctorStorage){
         console.log('Medico ja esta autenticado no interconsulta =/')
       }else{
+        secureLocalStorage.clear()
         secureLocalStorage.setItem('token', token)
         secureLocalStorage.setItem(`id`, ModelidUserLogged)
         secureLocalStorage.setItem('NomeMedico', NomeMedico)
@@ -99,6 +100,7 @@ const Login = ({ title, ImagemLateral, MessageButton, secondRoute, treeRoute, pl
       if(tokenStoragePaciente && ModelidUserPaciente &&  NomeStoragePaciente && Doenca && FotoStoragePaciente){
         console.log('Usuario ja esta autenticado no interconsulta =/')
       }else{
+        secureLocalStorage.clear()
         secureLocalStorage.setItem('token', token)
         secureLocalStorage.setItem(`id`, ModelidUserLogged)
         secureLocalStorage.setItem('NomePaciente', NomePaciente)
@@ -119,6 +121,7 @@ const Login = ({ title, ImagemLateral, MessageButton, secondRoute, treeRoute, pl
       if(tokenStorageUnidade && ModelidUserUnidade && NomeStorageUnidade && FotoStorageUnidade){
         console.log('Usuario ja esta autenticado no interconsulta =/')
       }else{
+        secureLocalStorage.clear()
         secureLocalStorage.setItem('token', token)
         secureLocalStorage.setItem(`id`, ModelidUserLogged)
         secureLocalStorage.setItem('NomeUnidade', NomeUnidade)

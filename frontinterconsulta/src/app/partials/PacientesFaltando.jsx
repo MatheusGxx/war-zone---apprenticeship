@@ -3,10 +3,9 @@ import React, { useState, useEffect } from 'react';
 import { Dialog, DialogTitle, DialogContent } from '@mui/material'
 import Image from 'next/image'
 import Logo from '../public/logo.png'
-import Logo2 from '../public/Logo2.png'
+import Logo2 from '../public/LogoInterGestão.png'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-
-
+  
 export const PacienteFaltando = ({ NomeUnidade, QuantidadePacientesFaltando, Pacientes, onClose }) => {
   const [open, setOpen] = useState(false);
 
