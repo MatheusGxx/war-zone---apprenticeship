@@ -2,6 +2,7 @@ import { getClient, CreateInstance } from "../utils/Functions/Whatsapp.js";
 import { models } from '../../MongoDB/Schemas/Schemas.js'
 import { EmailQueue, WhatsappQueue, ResumoQueue, SendDocumentsQueue, BulkMessageQueueConfirmation } from "../utils/Queues.js"
 import { customAlphabet } from 'nanoid'
+import jwt from 'jsonwebtoken'
 
 export const AutomaticWhatsapp = async (body, res) => {
   const { 
