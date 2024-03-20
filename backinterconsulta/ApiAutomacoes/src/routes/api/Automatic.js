@@ -12,6 +12,8 @@ import {
   WarningDoctorNotSchedules,
   WarningDoctorHorariosAntigos,
   CreateLeadLandingPage,
+  sendEmailRecuperePassword,
+  
 } from '../../services/AutomaticService.js'
 
 import uploadSignedDocuments from '../../utils/MulterSignDocuments.js'
@@ -252,6 +254,15 @@ router.post('/create-lead',
         
         console.log(req.body)
       } 
+)
+
+
+router.post('/send-email-recupere-password',
+      async(req, res) => {
+        const { email, person } = req.body
+        sendEmailRecuperePassword(email, person, res)
+        console.log(req.body)
+      }
 )
 
 

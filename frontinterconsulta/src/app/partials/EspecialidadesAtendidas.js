@@ -4,4 +4,5 @@ export const EspecialidadesAtendidas = [
   'Ginecologia',
   'Neurocirurgia',
   'Cardiologia',
+  'Clínico Geral',
 ]

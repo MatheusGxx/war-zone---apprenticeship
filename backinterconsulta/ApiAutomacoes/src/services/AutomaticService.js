@@ -2,7 +2,10 @@ import { getClient, CreateInstance } from "../utils/Functions/Whatsapp.js";
 import { models } from '../../MongoDB/Schemas/Schemas.js'
 import { EmailQueue, WhatsappQueue, ResumoQueue, SendDocumentsQueue, BulkMessageQueueConfirmation } from "../utils/Queues.js"
 import { customAlphabet } from 'nanoid'
+import crypto from 'crypto'
 import jwt from 'jsonwebtoken'
+
+const secretKey = crypto.randomBytes(32).toString('hex')
 
 export const AutomaticWhatsapp = async (body, res) => {
   const { 
@@ -121,10 +124,8 @@ export const AutomaticWhatsapp = async (body, res) => {
 
       case '/welcome/login-unidade/cadastro-unidade':
         const dataUnidade = await models.ModelRegisterUnidadeSaude.findById(IdentificadorUnidade)
-     
-        const urlUnidade = `https://interconsulta.org/welcome/login-unidade/cadastro-unidade/obrigado-unidade?id=${dataUnidade._id}`
-
-        const messageUnidade = `Ola Unidade de Saude ${dataUnidade.nome}, Nos do interconsulta ficamos felizes por você se cadastrar na nossa plataforma. Para finalizar o seu cadastro e ter acesso aos nossos especialistas para resolver todos os seus casos clinicos, clique no link abaixo:\n${urlUnidade}`
+    
+        const messageUnidade = `Ola Unidade de Saude ${dataUnidade.nome}, Nos do interconsulta ficamos felizes por você se cadastrar na nossa plataforma.`
 
         await WhatsappQueue.add('Whatsapp', {
           numero:`${dataUnidade.telefone}`,
@@ -185,10 +186,8 @@ export const AutomaticWhatsapp = async (body, res) => {
 
       case '/welcome/login-unidade/cadastro-unidade/obrigado-unidade':
          const dataObrigadoUnidade = await models.ModelRegisterUnidadeSaude.findById(IdentificadorObrigadoUnidade)
-
-         const urlObrigadoUnidade = `https://interconsulta.org/unidade-especialista`
    
-         const messageObrigadoUnidade = `Parabens ${dataObrigadoUnidade.nome} agora voce se tornou uma oficialmente uma Unidade de Saude do #Interconsulta para subir todos os seus casos clinicos e achar os especialistas para atende-los clique no Link abaixo!\n${urlObrigadoUnidade}`
+         const messageObrigadoUnidade = `Parabens ${dataObrigadoUnidade.nome} agora voce se tornou uma oficialmente uma Unidade de Saude do #Interconsulta`
  
          await WhatsappQueue.add('Whatsapp', {
           numero:`${dataObrigadoUnidade.telefone}`,
@@ -721,5 +720,104 @@ export const CreateLeadLandingPage = async (nome,email,telefone,doenca,res) => {
  
   }catch(err){
     return res.status(400).json({ message: 'Erro ao cadastrar Lead da Landing Page'})
+  }
+}
+
+export const sendEmailRecuperePassword = async (email, person, res) => {
+  try{
+   const alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+   const generateRandomCode = customAlphabet(alphabet, 10)
+   const code = generateRandomCode()
+
+   const expirationDate = new Date();
+   expirationDate.setHours(expirationDate.getHours() + 1)
+
+   switch (person) {
+    case 'medico':
+
+      const getMedico = await models.ModelRegisterMédico.findOne({ email: email })
+      
+      if(!getMedico){
+        return res.status(400).json({ notEmail: 'Dr(a) email nao esta cadastrado!'})
+      }
+
+      await EmailQueue.add('Email',
+      {
+        to: `${email}`, 
+        subject: `Seu Codigo de Recuperação de Senha - Interconsulta  `,
+        message: `Ola, Segue o seu Codigo de recuperação de senha: ${code}`
+      })
+
+      await models.ModelRegisterMédico.findOneAndUpdate({ 
+        email: email
+    }, {
+      $push: {
+        'PasswordRecovery': { code: code, expirationCode: expirationDate }
+    }
+    })
+
+      res.status(200).json({ message: 'Codigo enviado ao Email com Sucesso!'})
+
+      break
+    case 'paciente':
+
+      const getPaciente = await models.ModelRegisterPaciente.findOne({ email: email })
+      
+      if(!getPaciente){
+        return res.status(400).json({ notEmail: 'Paciente email nao esta cadastrado!'})
+      }
+
+
+      await EmailQueue.add('Email',
+      {
+        to: `${email}`, 
+        subject: `Seu Codigo de Recuperação de Senha - Interconsulta  `,
+        message: `Ola, Segue o seu Codigo de recuperação de senha: ${code}`
+      })
+
+      await models.ModelRegisterPaciente.findOneAndUpdate({ 
+        email: email
+    }, {
+      $push: {
+        'PasswordRecovery': { code: code, expirationCode: expirationDate }
+       }
+    })
+
+      res.status(200).json({ message: 'Codigo enviado ao Email com Sucesso!'})
+
+      break;
+    case 'unidade':
+
+    const getUnidade = await models.ModelRegisterUnidadeSaude.findOne({ email: email })
+      
+    if(!getUnidade){
+        return res.status(400).json({ notEmail: 'Unidade email nao esta cadastrado!'})
+    }
+
+    await EmailQueue.add('Email',
+    {
+      to: `${email}`, 
+      subject: `Seu Codigo de Recuperação de Senha - Interconsulta  `,
+      message: `Ola, Segue o seu Codigo de recuperação de senha: ${code}`
+    })
+
+    await models.ModelRegisterUnidadeSaude.findOneAndUpdate({ 
+        email: email
+    }, {
+      $push: {
+        'PasswordRecovery': { code: code, expirationCode: expirationDate }
+      }
+    })
+
+    res.status(200).json({ message: 'Codigo enviado ao Email com Sucesso!'})
+  
+      break
+    default:
+      return res.status(400).json({ error: 'Person does not exist in Interconsulta'})
+  }
+
+  }catch(err){
+    console.log(err); 
+    return res.status(400).json({ message: 'Error in Send Email for Recupere Password' })
   }
 }

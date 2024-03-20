@@ -298,15 +298,15 @@ export const Checkout = ({
           null
         }
 
-        <Snackbar
+         <Snackbar
             open={snackbarOpen} 
             autoHideDuration={6000}
             onClose={handleSnackbarClose}
             anchorOrigin={{ vertical, horizontal }}
           >
-            <Alert onClose={handleSnackbarClose} severity="success">
+          <Alert onClose={handleSnackbarClose} severity="success">
               {snackbarMessage}
-            </Alert>
+          </Alert>
           </Snackbar>
         </>
     )

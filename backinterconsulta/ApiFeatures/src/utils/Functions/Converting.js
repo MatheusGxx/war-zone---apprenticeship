@@ -1,4 +1,14 @@
-import { format, parse, isValid, differenceInYears, addDays, isDate, addSeconds } from 'date-fns'
+import {
+   format,
+   parse, 
+   isValid, 
+   differenceInYears, 
+   addDays, 
+   isDate, 
+   addSeconds, 
+   isWithinInterval, 
+   addHours 
+} from 'date-fns'
 
 export const ConvertingDate = (data, Campo) => {
   const diasDesdeReferencia = data[`${Campo}`];
@@ -88,3 +98,16 @@ export const ConvertingAnoFormação = (data) => {
   return TempoDeFormação;
 }
 
+export const VerifyHoursCode = (expirationCode) => {
+
+  const expirationWithinOneHour = expirationCode.some((expiration) => {
+    const expirationDate = new Date(expiration);
+    const now = new Date();
+    const oneHourFromNow = addHours(now, 1);
+    
+    // Verifica se o código de expiração está dentro de uma hora a partir de agora
+    return isWithinInterval(expirationDate, { start: now, end: oneHourFromNow });
+})
+
+   return expirationWithinOneHour
+}

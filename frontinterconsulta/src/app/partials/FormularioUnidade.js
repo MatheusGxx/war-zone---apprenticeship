@@ -88,10 +88,6 @@ const FormularioUnidade = () => {
     if (endereco === '' || nome === '' || cpnj === '' || especialidade === '') {
       setSnackbarMessage("Ops, você não preencheu todos os campos. Preencha todos os campos obrigatórios.");
       handleSnackBarOpen();
-    } else if (!foto) {
-      setFotoError(true);
-      setSnackbarMessage("Por favor, selecione uma foto.");
-      handleSnackBarOpen();
     } else {
       HandleClickFinal()
     }

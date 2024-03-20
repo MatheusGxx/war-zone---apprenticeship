@@ -25,6 +25,10 @@ const Login = ({ title, ImagemLateral, MessageButton, secondRoute, treeRoute, pl
   const route = usePathname()
   const params = useSearchParams()
 
+  const RotaMédico = '/welcome/login-medico'
+  const RotaPaciente = '/welcome/login-paciente'
+  const RotaUnidade = '/welcome/login-unidade'
+
   const referrer = params.get('UTM_Referrer') 
   const funil = params.get('UTM_Funil') 
   const temp = params.get('UTM_Temp')  
@@ -132,8 +136,16 @@ const Login = ({ title, ImagemLateral, MessageButton, secondRoute, treeRoute, pl
     }
   })
 
-  const HandleClickPassword = async (route) =>{
-     Router.push(`/welcome/${route}`)
+  const HandleClickPassword = async () =>{
+     if(route === RotaMédico){
+      Router.push(`/welcome/rec-password?person=medico`)
+     }
+     if(route === RotaPaciente){
+      Router.push(`/welcome/rec-password?person=paciente`)
+     }
+     if(route === RotaUnidade){
+      Router.push(`/welcome/rec-password?person=unidade`)
+     }
   }
 
   const HandleClickCadastro = async () =>{
@@ -226,7 +238,10 @@ const Login = ({ title, ImagemLateral, MessageButton, secondRoute, treeRoute, pl
               onChange={(e) => setSenha(e.target.value)}
               type='password'/>
 
-              <h3 className='font-bold cursor-pointer' onClick={() => HandleClickPassword('/rec-password')}> Esqueceu sua Senha?</h3>
+              <h3 className='font-bold cursor-pointer' 
+              onClick={() => HandleClickPassword()}> 
+              Esqueceu sua Senha?
+              </h3>
             </div>
 
               <button className='w-72 h-12 rounded-full bg-indigo-950 text-white font-light' onClick={() => HandleClickLogin()}> 

@@ -11,7 +11,7 @@ import { models } from "../../MongoDB/Schemas/Schemas.js"
 import { Criptografia } from "../utils/Functions/Criptografia.js"
 import  axios from 'axios'
 import slugfy from 'slugify'
-import { ConvertingIdadee, Medicamentos, ConvertingAnoFormação } from "../utils/Functions/Converting.js"
+import { ConvertingIdadee, Medicamentos, ConvertingAnoFormação, VerifyHoursCode } from "../utils/Functions/Converting.js"
 import { customAlphabet } from 'nanoid'
 
 const secretKey = crypto.randomBytes(32).toString('hex')
@@ -592,12 +592,128 @@ export const getListDoencasDoctor = async (body, res) => {
 }
 
 
-export const sendEmailRecuperePassword = (res) => {
+export const ValidatorCodeEmail = async(code, person, res) => {
+
   try{
-   const getUserMédico = ''
-   const getUserPaciente = ''
-   const getUserUnidade = ''
+    switch(person){
+      case 'medico':
+
+      const userMedico = await models.ModelRegisterMédico.findOne(
+        { 'PasswordRecovery.code': code },
+        { 'PasswordRecovery.$': 1 } 
+      );
+  
+      const Expiration1 = userMedico.PasswordRecovery.map((data) => data.expirationCode)
+
+      const ValidatorExpiration = VerifyHoursCode(Expiration1)
+      if(ValidatorExpiration){
+          res.status(200).json({
+             message: 'Code de Validação de redefinição de senha, validado com sucesso!', 
+             id: userMedico._id, 
+            })
+      }else{
+        res.status(400).json({ notCode: 'Code de Validação de Redefinição de Senha invalido'})
+      }
+  
+        break
+
+      case 'paciente':
+
+      const userPaciente = await models.ModelRegisterPaciente.findOne(
+        { 'PasswordRecovery.code': code },
+        { 'PasswordRecovery.$': 1 }
+      );  
+  
+      const Expiration2 = userPaciente.PasswordRecovery.map((data) => data.expirationCode)
+      const ValidatorExpiration2 = VerifyHoursCode(Expiration2)
+  
+      if(ValidatorExpiration2){
+          res.status(200).json({ 
+            message: 'Code de Validação de redefinição de senha, validado com sucesso!', 
+            id: userPaciente._id, 
+          })
+      }else{
+        res.status(400).json({ notCode: 'Code de Validação de Redefinição de Senha invalido'})
+      }
+  
+        break
+
+      case 'unidade':
+   
+      const userUnidadeSaude = await models.ModelRegisterUnidadeSaude.findOne(
+        { 'PasswordRecovery.code': code  },
+        { 'PasswordRecovery.$': 1 }
+      )
+        
+      const Expiration3 = userUnidadeSaude.PasswordRecovery.map((data) => data.expirationCode)
+
+      const ValidatorExpiration3 = VerifyHoursCode(Expiration3)
+      if(ValidatorExpiration3){
+          res.status(200).json({ 
+          message: 'Code de Validação de redefinição de senha, validado com sucesso!', 
+          id: userUnidadeSaude._id, 
+         })
+      }else{
+        res.status(400).json({ notCode: 'Code de Validação de Redefinição de Senha invalido'})
+      }
+  
+        break
+      default:
+        return res.status(400).json({ message: 'Code Inválido' })
+    }
+
   }catch(err){
-    return res.status(400).json({ message: 'Error in Send Email for Recupere Password' })
+    console.log(err)
+    return res.status(400).json({ message: 'Error in Validator Code with Email'})
+  }
+    
+}
+
+
+export const UpdatePassword = async (id,newPassword,person,res) => {
+
+  try{
+
+    const CriptoNewPassword = await Criptografia(newPassword)
+
+    switch(person){
+      case 'medico':
+      
+      await models.ModelRegisterMédico.findByIdAndUpdate(
+        id,
+        { senha: CriptoNewPassword },
+        { new: true }
+      )
+
+       res.status(200).json({ message: 'Password of Doctor updated successfully'})
+                   
+      break
+
+      case 'paciente':
+      
+      await models.ModelRegisterPaciente.findByIdAndUpdate(
+        id,
+        { senha: CriptoNewPassword },
+        { new: true }
+      )
+
+      res.status(200).json({ message: 'Password of Patient updated successfully'})
+      
+      break
+
+      case 'unidade':
+
+      await models.ModelRegisterUnidadeSaude.findByIdAndUpdate(
+        id,
+        { senha: CriptoNewPassword },
+        { new: true }
+      )
+     
+       res.status(200).json({ message: 'Password of Health unit updated successfully'})
+      break
+    }
+  }catch(err){
+    console.log(err)
+    return res.status(400).json({ message: 'Error in update password'})
   }
 }

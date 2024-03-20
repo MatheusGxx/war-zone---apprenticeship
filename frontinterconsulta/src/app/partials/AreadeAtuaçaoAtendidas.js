@@ -27,4 +27,5 @@ export const AreadeAtuacaoAtendidas = [
   'Psiquiatria da Infância e Adolescência',
   'Psiquiatria Forense',
   'Sexologia',
+  'Clinico Geral'
 ]

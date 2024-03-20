@@ -96,8 +96,8 @@ const Nav = () => {
     <nav 
     className='p-3 flex justify-between 
     border-b border-blue-500 border-l border-r rounded-b-lg 
-    sm:flex sm:flex-col sm:justify-center items-center sm:w-full
-    sm:gap-5
+    sm:flex sm:justify-center items-center sm:w-full
+    sm:gap-5 
     md:flex md:flex-col md:justify-center md:items-center 
     md:w-full md:gap-5
     lg:flex lg:flex-col lg:justify-center lg:items-center lg:w-full lg:gap-5 lg:p-2
@@ -140,7 +140,7 @@ const Nav = () => {
 
       <div 
       className='flex gap-10 justify-center items-center
-      sm:w-10/12 sm:flex-col sm:gap-1
+      sm:w-10/12 sm:gap-1
       md:w-1/2 md:flex-col md:gap-1
       lg:flex-col lg:gap-1
       '>

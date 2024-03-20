@@ -5,6 +5,8 @@ import {
    Register,
    RegisterEnd,
    getListDoencasDoctor,
+   ValidatorCodeEmail,
+   UpdatePassword,
 } from '../../services/LoginService.js'
 
 const router = Router()
@@ -129,17 +131,21 @@ router.post('/obrigado/:id', uploadPhotos.single("file") ,async (req, res ) => {
         console.log(req.body)
 })
 
-
-router.post('/recupere-password',
-       async(req, res) => {
-        const { email } = req.body
-        
-        
-      
+router.post('/validator-code-email', 
+      async(req, res) => {
+         const { code, person } = req.body
+         ValidatorCodeEmail(code, person, res)
         console.log(req.body)
-       }
+      }
 )
 
+router.post('/update-password',
+      async(req, res) => {
+       const { id, newPassword, person } = req.body
+       UpdatePassword(id, newPassword, person, res)
+       console.log(req.body)
+      }
+)
 
 
 export default router

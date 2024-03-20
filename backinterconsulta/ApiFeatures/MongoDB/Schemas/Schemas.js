@@ -113,6 +113,10 @@ const RegisterMédico = new mongoose.Schema({
   EmailContador: String,
   TelefoneContador:String,
   TypeDoctor: String,
+  PasswordRecovery: [{
+    code: String,
+    expirationCode: Date
+  }],
   DoencasAndSintomas: [{
     Doenca: String,
     Sintomas: [String],
@@ -242,6 +246,10 @@ const RegisterPaciente = new mongoose.Schema({
   GifDoenca: String,
   QueixaInicial: String,
   ChavePix: String,
+  PasswordRecovery: [{
+    code: String,
+    expirationCode: Date
+  }],
   TrackingUTMAQ:[{
     data: String,
     UTM_Referrer: String,
@@ -328,6 +336,10 @@ const RegisterUnidadeSaude = new mongoose.Schema({
   CPNJ: String,
   EspecialidadeDesejada: String,
   Foto: String,
+  PasswordRecovery: [{
+    code: String,
+    expirationCode: Date
+  }],
   GestoesSolicitadas: [{
     ...ModelGestoesSolicitadas  
   }],

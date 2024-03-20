@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import Logo from '../public/logo.png';
 import Logo2 from '../public/Logo2.png';
 import Image from 'next/image';
-import { TextField, CircularProgress, Snackbar, Alert, Stack, SnackbarContent } from '@mui/material';
+import { TextField, CircularProgress, Snackbar, Alert, Stack, SnackbarContent, Checkbox } from '@mui/material';
 import IconBack from '../partials/IconBack.js';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { useMutation } from '@tanstack/react-query'
@@ -23,6 +23,11 @@ const CadastroPacienteLead = ({ title,subtitle, ImagemLateral, apelido, mensagem
   const [sintomasandDoencas, setSintomasAndDoencas] = useState(null)
   const [doenca, setDoenca] = useState(null)
   const [okUTM, setOkUTM] = useState(false)
+  const [acceptTerms, setAcceptTerms] = useState([])
+  
+  useEffect(() => {
+    
+  },[acceptTerms])
 
   const params = useSearchParams()
 
@@ -128,11 +133,14 @@ const CadastroPacienteLead = ({ title,subtitle, ImagemLateral, apelido, mensagem
   }
 
   const HandleClickEnd = async () => {
-    if (name === '' || email === '' || number === '') {
+    if (name === '' || email === '' || number === '' || doenca === null) {
       setSnackbarMessage(`Por favor ${apelido} preencha todos os dados de Cadastro`);
       handleSnackBarOpen();
-    } else {
-      HandleClick();
+    }else if(acceptTerms.length === 0){
+      setSnackbarMessage(`${apelido} Voce precisa Aceitar os termos de uso para se cadastrar no Interconsulta!`)
+      handleSnackBarOpen()
+    }else {
+      HandleClick()
     }
   };
 
@@ -150,7 +158,19 @@ const CadastroPacienteLead = ({ title,subtitle, ImagemLateral, apelido, mensagem
     const formattedValue = newValue.startsWith('55') ? newValue : '55' + newValue.substring(2)
     // Define o valor no estado
     setNumber(formattedValue);
-  };
+  }
+
+  const AcceptTermsOfUse = (event, value) => {
+    if (event.target.checked) {
+      setAcceptTerms((prev) => [...prev, value]);
+    } else {
+      setAcceptTerms((prev) => prev.filter((accept) => accept !== value))
+    }
+  }  
+
+  const HandleViewTermsOfUse = () => {
+    Router.push('/termos')
+  }
 
   return (
     <>
@@ -158,7 +178,7 @@ const CadastroPacienteLead = ({ title,subtitle, ImagemLateral, apelido, mensagem
      <div className='flex'>
   
         <div className='w-1/2 sm:w-full md:w-full lg:w-full'>
-        <section className="flex flex-col gap-10 justify-center items-center sm:gap-5 lg:gap-6 mt-16">
+        <section className="flex flex-col gap-8 justify-center items-center sm:gap-5 lg:gap-6 mt-16">
           <div className="justify-center items-center">
             <Image src={Logo2} alt="Logo Interconsulta" height={250} width={250}  />
           </div>
@@ -221,6 +241,13 @@ const CadastroPacienteLead = ({ title,subtitle, ImagemLateral, apelido, mensagem
             />
             }
              />
+
+                  
+            <div className='flex justify-center items-center gap-3'>
+                <Checkbox onChange={(event) => AcceptTermsOfUse(event, 'cheked')}  />
+                <h1 className=''> Li e estou de acordo com  o <span className='font-bold text-blue-500 cursor-pointer' onClick={() => HandleViewTermsOfUse()}> Termos de uso e Politica de Privacidade </span></h1>
+              </div>
+
 
         <button className={'w-72 h-12 rounded-full text-white font-light bg-indigo-950 '}
         onClick={() => HandleClickEnd()}>
