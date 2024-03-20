@@ -1,7 +1,14 @@
 import Image from 'next/image'
 import Logo from '../../public/logo.png'
+import { useRouter } from 'next/navigation';
+
 
 const TermosDeUso = () => {
+  const Router = useRouter()
+
+  const HandleBackRouter = () => {
+    Router.back()
+  }
     return (
       <div className="min-h-screen flex justify-center items-center p-8">
         <div className="border-2 border-blue-500 rounded-xl w-10/12 p-5">
@@ -54,6 +61,12 @@ const TermosDeUso = () => {
           <p>
             Ao utilizar a plataforma interconsulta.org, você concorda com estes Termos de Uso. Se você não concordar com qualquer parte destes Termos, por favor, não utilize nossos serviços.
           </p>
+
+          <div className='flex justify-center items-center w-full'>
+              <button className='p-2 bg-blue-500 rounded-full w-1/2' onClick={() => HandleBackRouter()}>
+                 <p className='font-bold text-white'> Voltar </p>
+              </button>
+          </div>
         </div>
       </div>
     );
