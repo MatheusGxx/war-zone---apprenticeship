@@ -121,6 +121,7 @@ const ContentUnidade = () => {
         Consolidado, 
         MedicosDisponiveis
        } = data
+
       setOkCasosClinicos(false)
       setInicioMedicos(Inicio)
       setFimMedicos(Fim)
@@ -135,6 +136,7 @@ const ContentUnidade = () => {
       setConsolidado(Consolidado)
       setSuccessData(MedicosDisponiveis)
       setOn(false)
+      
     },
     onError: (err) => {
       setMessageErr(err.response.data.error)
@@ -340,11 +342,13 @@ const ContentUnidade = () => {
     const DataFim = parse(`${fim}`, 'dd/MM/yyyy', new Date())
   
     if (especialidade === '' || inicio === '' || fim === '' || selectedFile === null) {
-      setSnackbarMessage("Ops, você não preencheu todos os campos Obrigatórios para subir os seus Casos clinicos");
-      handleSnackBarOpen();
+      setSnackbarMessage("Ops, você não preencheu todos os campos Obrigatórios para subir os seus Casos clinicos")
+      handleSnackBarOpen()
+      resetStateOnError()
     } else if (DataInicio >= DataFim) {
       setSnackbarMessage('Ops Unidade, a Data de Inicio sempre tem que ser inferior a Data Fim');
-      handleSnackBarOpen();
+      handleSnackBarOpen()
+      resetStateOnError()
     } else {
       HandleClickFinal();
     }

@@ -5,7 +5,7 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos'
 import Image from 'next/image'
 import Logo from '../public/logo.png'
-
+import { FormatPhoneNumber } from '../utils/FormatPhoneNumber'
 export const RegisterSixDoctor = (
   {
   setCPNJMedico,
@@ -30,6 +30,7 @@ export const RegisterSixDoctor = (
   emailContador,
   setNumeroContador,
   numeroContador,
+  dddPais,
   setCurrentStep
   }
   ) => {
@@ -74,12 +75,14 @@ export const RegisterSixDoctor = (
         camposVazios.push('Numero Contador')
       }
     
-    
       if (camposVazios.length > 0) {
         const camposFaltantes = camposVazios.join(', ')
         setSnackbarMessage(`Ops Doutor, você não preencheu o(s) campo(s): ${camposFaltantes}.`);
         handleSnackBarOpen();
-      } else {
+      } else if(numeroContador.length < 14){
+        setSnackbarMessage(`Dr o numero do contador deve haver 11 digitos. `);
+        handleSnackBarOpen();
+      }else {
         handleNextClick();
       }
     }
@@ -98,6 +101,12 @@ export const RegisterSixDoctor = (
   
     const handleSnackBarOpen = () =>{
       setSnackbarOpen(true)
+    }
+
+    const OnChangeInputNumber = (e) => {
+
+      const formattedNumber = FormatPhoneNumber(e.target.value);
+      setNumeroContador(formattedNumber)
     }
       
       
@@ -218,17 +227,39 @@ export const RegisterSixDoctor = (
           required
           onChange={(e) => setEmailContador(e.target.value)}
           value={emailContador}/>
+         
+         <div className='flex gap-4 justify-center items-center'>
+         <TextField
+            label="DDD Pais"
+            variant="standard"
+            className='w-1/6'
+            InputProps={{
+              sx: { borderBottom: "1px solid blue" },
+              inputProps: {
+                  style: {
+                      textAlign: "center", // Centraliza o texto horizontalmente
+                  },
+              },
+              readOnly: true
+          }}
+            type="tel"
+            value={dddPais}
+            inputMode="numeric" // Especifica o modo de entrada numérica
+          />
 
          <TextField
            variant="standard"
-           label="Numero Contador"
+           label="Numero Contador - Ex: 11984252343"
            InputProps={{
              sx: { borderBottom: "1px solid blue" }, // Define a cor da linha inferior
            }}
-           type="text"
+           type="tel"
+           inputMode="numeric"
            required
-           onChange={(e) => setNumeroContador(e.target.value)}
+           onChange={(e) => OnChangeInputNumber(e)}
+           className="w-full"
            value={numeroContador}/>
+         </div>
 
           <div className="w-full flex justify-between items-center">
               <ArrowBackIosIcon color="primary" className="cursor-pointer" onClick={handleBackClick}/>

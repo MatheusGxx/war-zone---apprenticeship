@@ -27,13 +27,13 @@ export const CreateLaudo = async (
   BairroPaciente,
   RuaPaciente,
   ContatoPaciente,
+  FichaPaciente,
   DiagnósticoPaciente,
   TratamentoPaciente,
   MedicaçãoPaciente,
   FerramentaTerapeuticaPaciente,
   ProgressoPaciente,
   RecomendaçoesFuturasPaciente,
-  FichaPaciente,
   EndereçoMedico,
 ) => {
       return new Promise((resolve, reject) => {
@@ -67,13 +67,13 @@ export const CreateLaudo = async (
               BairroPaciente,
               RuaPaciente,
               ContatoPaciente,
+              FichaPaciente,
               DiagnósticoPaciente,
               TratamentoPaciente,
               MedicaçãoPaciente,
               FerramentaTerapeuticaPaciente,
               ProgressoPaciente,
               RecomendaçoesFuturasPaciente,
-              FichaPaciente,
               EndereçoMedico,
           )
 

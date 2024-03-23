@@ -8,6 +8,7 @@ import IconBack from '../partials/IconBack.js';
 import { useRouter, usePathname } from 'next/navigation';
 import { useMutation } from '@tanstack/react-query'
 import { config } from '../config.js'
+import { FormatPhoneNumber } from '../utils/FormatPhoneNumber';
 import axios from 'axios'
 
 const Cadastro = ({ title, OneRoute, SecondRoute, TreeRoute, apelido, mensagem}) => {
@@ -17,7 +18,8 @@ const Cadastro = ({ title, OneRoute, SecondRoute, TreeRoute, apelido, mensagem})
   const [name, setName] = useState('')
   const [senha, setSenha] = useState('')
   const [email, setEmail] = useState('')
-  const [number, setNumber] = useState('55')
+  const [dddPais, setDDDPais] = useState('55')
+  const [number, setNumber] = useState('')
   const [acceptTerms, setAcceptTerms] = useState([])
 
   const Router = useRouter()
@@ -26,7 +28,7 @@ const Cadastro = ({ title, OneRoute, SecondRoute, TreeRoute, apelido, mensagem})
 
   useEffect(() => {
     
-  },[acceptTerms])
+  },[acceptTerms,number])
 
   const CreateRequestMutation = useMutation(
     async (valueRequest) => {
@@ -43,11 +45,14 @@ const Cadastro = ({ title, OneRoute, SecondRoute, TreeRoute, apelido, mensagem})
 
   const HandleClick = async () => {
     try {
+        const ConjuntingNumber = dddPais + number
+        const NumberOriginal = ConjuntingNumber.replace(/[\s()]/g, '')
+
         await CreateRequestMutation.mutateAsync({
         nome: name,
         senha: senha,
         email: email,
-        telefone: number,
+        telefone: NumberOriginal,
         route: route,
       });
     } catch (error) {
@@ -60,6 +65,9 @@ const Cadastro = ({ title, OneRoute, SecondRoute, TreeRoute, apelido, mensagem})
     if (name === '' || senha === '' || email === '' || number === '') {
       setSnackbarMessage(`Por favor ${apelido} preencha todos os dados de Cadastro`);
       handleSnackBarOpen();
+    }else if(number.length < 14){
+      setSnackbarMessage(`${apelido} o numero escrito acima precisa ter 11 digitos`)
+      handleSnackBarOpen()
     }else if(acceptTerms.length === 0){
       setSnackbarMessage(`${apelido} Voce precisa Aceitar os termos de uso para se cadastrar no Interconsulta!`);
       handleSnackBarOpen();
@@ -77,11 +85,9 @@ const Cadastro = ({ title, OneRoute, SecondRoute, TreeRoute, apelido, mensagem})
   }
 
   const OnChangeInputNumber = (e) => {
-    const newValue = e.target.value.replace(/[^0-9]/g, '');
-    // Se o valor não começar com "55", mantenha "55" no início
-    const formattedValue = newValue.startsWith('55') ? newValue : '55' + newValue.substring(2)
-    // Define o valor no estado
-    setNumber(formattedValue)
+
+    const formattedNumber = FormatPhoneNumber(e.target.value);
+    setNumber(formattedNumber)
   }
 
    const AcceptTermsOfUse = (event, value) => {
@@ -92,9 +98,15 @@ const Cadastro = ({ title, OneRoute, SecondRoute, TreeRoute, apelido, mensagem})
         }
     }
 
-    const HandleViewTermsOfUse = () => {
+   const HandleViewTermsOfUse = () => {
       Router.push('/termos')
     }
+    
+    const HandleViewPrivacity = () => {
+      Router.push('/privacidade')
+     }
+
+
 
   return (
     <>
@@ -112,7 +124,8 @@ const Cadastro = ({ title, OneRoute, SecondRoute, TreeRoute, apelido, mensagem})
           <TextField
             label="Nome Completo"
             variant="standard"
-            sx={{ width: '300px' }}
+            sx={{ width: '400px' }}
+            className="sm:w-8/12"
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -122,29 +135,50 @@ const Cadastro = ({ title, OneRoute, SecondRoute, TreeRoute, apelido, mensagem})
           <TextField
             label="Seu e-mail de uso"
             variant="standard"
-            sx={{ width: '300px' }}
+            sx={{ width: '400px' }}
+            className="sm:w-8/12"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
           />
 
-         <TextField
+         <div className='flex gap-4 justify-center items-center'>
+        <TextField
+            label="DDD Pais"
+            variant="standard"
+            className='w-1/6'
+            InputProps={{
+              inputProps: {
+                  style: {
+                      textAlign: "center", // Centraliza o texto horizontalmente
+                  },
+              },
+              readOnly: true
+          }}
+            type="tel"
+            value={dddPais}
+            inputMode="numeric" // Especifica o modo de entrada numérica
+          />
+
+          <TextField
             label="Whatsapp para contato ex: 11893724023"
             variant="standard"
             sx={{ width: '300px' }}
+            className="sm:w-7/12"
             type="tel"
             value={number}
             inputMode="numeric" // Especifica o modo de entrada numérica
-            pattern="^55\d*$" // Usa uma expressão regular para permitir apenas números começando com "55"
             onChange={OnChangeInputNumber}
             required
           />
+        </div>
 
           <TextField
             label="Sua melhor Senha"
             variant="standard"
-            sx={{ width: '300px' }}
+            sx={{ width: '400px' }}
+            className="sm:w-8/12"
             type="password"
             value={senha}
             onChange={(e) => setSenha(e.target.value)}
@@ -152,12 +186,8 @@ const Cadastro = ({ title, OneRoute, SecondRoute, TreeRoute, apelido, mensagem})
           />
 
           <div className='flex justify-center items-center gap-3'>
-              <Checkbox onChange={(event) => AcceptTermsOfUse(event, 'cheked')}  />
-              <h1> Li e estou de acordo com  o  <span className='font-bold text-blue-500 cursor-pointer'
-               onClick={() => HandleViewTermsOfUse()}>
-                 Termos de uso e Politica de Privacidade
-                  </span>
-              </h1>
+            <Checkbox onChange={(event) => AcceptTermsOfUse(event, 'cheked')}  />
+             <h1> Li e estou de acordo com  o <span className='font-bold text-blue-500 cursor-pointer' onClick={() => HandleViewTermsOfUse()}> Termos de uso </span> e <span className='font-bold text-blue-500 cursor-pointer' onClick={() => HandleViewPrivacity()}> Politica de Privacidade </span></h1>
           </div>
 
       <button className={'w-72 h-12 rounded-full text-white font-light bg-indigo-950 '}
@@ -167,10 +197,6 @@ const Cadastro = ({ title, OneRoute, SecondRoute, TreeRoute, apelido, mensagem})
 
       </button>
             
-      {CreateRequestMutation.isSuccess &&  <Stack spacing={2} sx={{ maxWidth: 600}}>
-         <SnackbarContent message={`${mensagem}`} sx={{backgroundColor: 'blue'}}/>
-      </Stack>}
-
           <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
             <Alert onClose={handleSnackbarClose} severity="error">
               {snackbarMessage}

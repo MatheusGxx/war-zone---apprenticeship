@@ -5,7 +5,7 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos'
 import Logo from '../public/logo.png'
 import Image from 'next/image'
-
+import { FormatPhoneNumber } from '../utils/FormatPhoneNumber'
 
 export const RegisterTreePatient = ({
     setNomeAcompanhante,
@@ -16,6 +16,7 @@ export const RegisterTreePatient = ({
     emailAcompanhante,
     setCurrentStep,
     NomePaciente,
+    dddPais
 }) => {
 
   const [snackbarOpen, setSnackbarOpen] = useState(false)
@@ -50,13 +51,11 @@ export const RegisterTreePatient = ({
   const handleBackClick = () => {
     setCurrentStep((prevStep) => (prevStep > 1 ? prevStep - 1 : prevStep));
   }
-
+ 
   const OnChangeInputNumber = (e) => {
-    const newValue = e.target.value.replace(/[^0-9]/g, '');
 
-    const formattedValue = newValue.startsWith('55') ? newValue : '55' + newValue.substring(2);
-
-    setTelefoneAcompanhante(formattedValue);
+    const formattedNumber = FormatPhoneNumber(e.target.value);
+    setTelefoneAcompanhante(formattedNumber)
   }
 
   const handleSnackbarClose = () => {
@@ -84,20 +83,40 @@ export const RegisterTreePatient = ({
         type="text"
         required
       />
+        <div className='flex gap-4 justify-center items-center'>
+        <TextField
+            label="DDD Pais"
+            variant="standard"
+            className='w-1/6'
+            InputProps={{
+              inputProps: {
+                  style: {
+                      textAlign: "center", // Centraliza o texto horizontalmente
+                  },
+              },
+              sx: { borderBottom: "1px solid blue" },
+              readOnly: true
+          }}
+            type="tel"
+            value={dddPais}
+            inputMode="numeric" // Especifica o modo de entrada numérica
+          />
 
-     <TextField
-       label="Telefone Acompanhante"
-       variant="standard"
-       InputProps={{
-        sx: { borderBottom: "1px solid blue" }
-      }}
-       type="tel"
-       value={telefoneAcompanhante}
-       inputMode="numeric"
-       pattern="^55\d*$"
-       onChange={OnChangeInputNumber} 
-       required
-     />
+          <TextField
+            label="Telefone do Acompanhante - Ex: 11984252343"
+            variant="standard"
+            sx={{ width: '300px' }}
+            InputProps={{
+              sx: { borderBottom: "1px solid blue" }
+            }}
+            className="w-full sm:w-7/12"
+            type="tel"
+            value={telefoneAcompanhante}
+            inputMode="numeric" // Especifica o modo de entrada numérica
+            onChange={OnChangeInputNumber}
+            required
+          />
+        </div>
 
     <TextField
         variant="standard"

@@ -65,13 +65,13 @@ export const  CreatingDocumentsDoctor = async (body, res) => {
     `${catchingPatientbyIdentifier.map((data) => data.EnderecoPaciente)}`,  // Bairro Paciente faltando
     `${catchingPatientbyIdentifier.map((data) => data.CEP)}`,  // Rua  Paciente faltando
     `${catchingPatientbyIdentifier.map((data) => data.telefone)}`,  // Bairro Paciente faltando
+    `${UltimaConsulta.FichaPaciente}`, // Ficha do Paciente
     `${UltimaConsulta.Diagnostico}`, // Diagnóstico 
     `${UltimaConsulta.Tratamento}`, //Tratamento
     `${(UltimaConsulta.ReceitasSimples.map(data => data.ReceitaSimplesSolicitada)).concat(UltimaConsulta.ReceitasControlada.map(data => data.ReceitaControladaSolicitada)).join(', ')}`,
     `${UltimaConsulta.FerramentasTerapeuticas}`,// Ferramenta Terapeutica
     `${UltimaConsulta.Progresso}`, // Progresso
     `${UltimaConsulta.RecomendacoesFuturas}`, // Recomendaçoes Futuras
-    `${UltimaConsulta.FichaPaciente}`,
     `${getDataDoctor.EnderecoMedico}`,
   )
 
@@ -403,6 +403,7 @@ export const SavedConsultaMedico = async (body, res) => {
         id, 
         {
           $set: {
+            'ConsultasSolicitadasPacientes.$[element].FichaPaciente': FichaPaciente,
             'ConsultasSolicitadasPacientes.$[element].Status': `Atendida por ${dataDoctor.NomeEspecialista}`,
             'ConsultasSolicitadasPacientes.$[element].Diagnostico': Diagnostico,
             'ConsultasSolicitadasPacientes.$[element].Tratamento': Tratamento,
@@ -450,7 +451,7 @@ export const SavedConsultaMedico = async (body, res) => {
       if (updateStateConsultaMedico) {
         res.status(200).json({ message: 'Atualização da Consulta feita com Sucesso' })
        //Production
-       axios.post('http://back-a:8081/api2/automatic-whatsapp', {
+      axios.post('http://back-a:8081/api2/automatic-whatsapp', {
           route: '/resumo-casos-clinicos',
           FichaPaciente: FichaPaciente,
           Diagnostico: Diagnostico,
@@ -637,7 +638,6 @@ export const ConclusionConsultaDeleteHorario = async (body, res) => {
       console.log(error)
      }   
 }
-
 
 export const getConsultaParticularDoctor = async (body, res) => {
   try {

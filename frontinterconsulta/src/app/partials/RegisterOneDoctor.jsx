@@ -57,7 +57,7 @@ export const RegisterOneDoctor = (
         camposVazios.push('Data de Nascimento');
       }
       if(typeMedico === ''){
-        camposVazios.push('typeMedico')
+        camposVazios.push('Tipo de Atendimento')
       }
     
       if (camposVazios.length > 0) {
@@ -65,8 +65,7 @@ export const RegisterOneDoctor = (
         setSnackbarMessage(`Ops Doutor, você não preencheu o(s) campo(s): ${camposFaltantes}.`);
         handleSnackBarOpen();
       } else {
-
-        handleNextClick();
+        handleNextClick()
       }
     }
     

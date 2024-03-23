@@ -41,6 +41,7 @@ export const EndRegisterPatient = () => {
   const [currentStep, setCurrentStep] = useState(1)
   const [croppedImage, setCroppedImage] = useState(null)
   const [croppedFile, setCroppedFile] = useState(null)
+  const [dddPais, setDDDPais] = useState('55')
   const { setRegisterEndOk } = useEndRegister()
 
   const doenca = secureLocalStorage.getItem('Doenca')
@@ -65,6 +66,10 @@ export const EndRegisterPatient = () => {
   })
   
   const HandleClickFinal = async () =>{
+
+    const ConjuntingNumber = dddPais + telefoneAcompanhante
+    const NumberOriginal = ConjuntingNumber.replace(/[\s()]/g, '')
+
     const formData = new FormData()
     formData.append("Genero", genero)
     formData.append("Data", data)
@@ -76,7 +81,7 @@ export const EndRegisterPatient = () => {
 
     formData.append('CartaoSUS', cartaoSUS)
     formData.append('NomeAcompanhante', nomeAcompanhante)
-    formData.append('TelefoneAcompanhante', telefoneAcompanhante)
+    formData.append('TelefoneAcompanhante', NumberOriginal)
     formData.append('EmailAcompanhante', EmailAcompanhante)
     formData.append('EnderecoPaciente', Endereco)
     formData.append('CidadePaciente', cidade)
@@ -187,6 +192,7 @@ export const EndRegisterPatient = () => {
                emailAcompanhante={EmailAcompanhante}
                setCurrentStep={setCurrentStep}
                NomePaciente={NomePaciente}
+               dddPais={dddPais}
                />
              }
 

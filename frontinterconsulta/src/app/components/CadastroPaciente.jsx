@@ -12,6 +12,7 @@ import { Autocomplete } from '@mui/material'
 import axios from 'axios'
 import secureLocalStorage from 'react-secure-storage'
 import { format } from 'date-fns'
+import { FormatPhoneNumber } from '../utils/FormatPhoneNumber'
 
 const CadastroPacienteLead = ({ title,subtitle, ImagemLateral, apelido, mensagem}) => {
   const [snackbarOpen, setSnackbarOpen] = useState(false)
@@ -19,15 +20,16 @@ const CadastroPacienteLead = ({ title,subtitle, ImagemLateral, apelido, mensagem
 
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
-  const [number, setNumber] = useState('55')
+  const [dddPais, setDDDPais] = useState('55')
+  const [number, setNumber] = useState('')
   const [sintomasandDoencas, setSintomasAndDoencas] = useState(null)
   const [doenca, setDoenca] = useState(null)
   const [okUTM, setOkUTM] = useState(false)
   const [acceptTerms, setAcceptTerms] = useState([])
   
   useEffect(() => {
-    
-  },[acceptTerms])
+
+  },[acceptTerms, number])
 
   const params = useSearchParams()
 
@@ -85,6 +87,7 @@ const CadastroPacienteLead = ({ title,subtitle, ImagemLateral, apelido, mensagem
     {
       onSuccess: async (data)  => {  
         const { id, token, NomePaciente, Doenca } = data 
+        secureLocalStorage.clear()
         secureLocalStorage.setItem('token', token)
         secureLocalStorage.setItem('id', id)
         secureLocalStorage.setItem('NomePaciente', NomePaciente)
@@ -117,10 +120,13 @@ const CadastroPacienteLead = ({ title,subtitle, ImagemLateral, apelido, mensagem
   
   const HandleClick = async () => {
     try {
+      const ConjuntingNumber = dddPais + number
+      const NumberOriginal = ConjuntingNumber.replace(/[\s()]/g, '')
+
        await CreateRequestMutation.mutateAsync({
         nome: name,
         email: email,
-        telefone: number,
+        telefone: NumberOriginal,
         doenca: doenca,
         route: route,
       })
@@ -136,6 +142,9 @@ const CadastroPacienteLead = ({ title,subtitle, ImagemLateral, apelido, mensagem
     if (name === '' || email === '' || number === '' || doenca === null) {
       setSnackbarMessage(`Por favor ${apelido} preencha todos os dados de Cadastro`);
       handleSnackBarOpen();
+    }else if(number.length < 14){
+      setSnackbarMessage(`${apelido} o numero escrito acima precisa ter 11 digitos`)
+      handleSnackBarOpen()
     }else if(acceptTerms.length === 0){
       setSnackbarMessage(`${apelido} Voce precisa Aceitar os termos de uso para se cadastrar no Interconsulta!`)
       handleSnackBarOpen()
@@ -152,13 +161,13 @@ const CadastroPacienteLead = ({ title,subtitle, ImagemLateral, apelido, mensagem
     setSnackbarOpen(false);
   }
 
-  const OnChangeInputNumber = (e) => {
-    const newValue = e.target.value.replace(/[^0-9]/g, '');
-    // Se o valor não começar com "55", mantenha "55" no início
-    const formattedValue = newValue.startsWith('55') ? newValue : '55' + newValue.substring(2)
-    // Define o valor no estado
-    setNumber(formattedValue);
-  }
+ 
+const OnChangeInputNumber = (e) => {
+
+  const formattedNumber = FormatPhoneNumber(e.target.value);
+  setNumber(formattedNumber)
+}
+
 
   const AcceptTermsOfUse = (event, value) => {
     if (event.target.checked) {
@@ -171,6 +180,11 @@ const CadastroPacienteLead = ({ title,subtitle, ImagemLateral, apelido, mensagem
   const HandleViewTermsOfUse = () => {
     Router.push('/termos')
   }
+  
+  const HandleViewPrivacity = () => {
+    Router.push('/privacidade')
+  }
+
 
   return (
     <>
@@ -178,7 +192,7 @@ const CadastroPacienteLead = ({ title,subtitle, ImagemLateral, apelido, mensagem
      <div className='flex'>
   
         <div className='w-1/2 sm:w-full md:w-full lg:w-full'>
-        <section className="flex flex-col gap-8 justify-center items-center sm:gap-5 lg:gap-6 mt-16">
+        <section className="flex flex-col gap-8 justify-center items-center sm:gap-5 lg:gap-6 mt-16 w-full">
           <div className="justify-center items-center">
             <Image src={Logo2} alt="Logo Interconsulta" height={250} width={250}  />
           </div>
@@ -198,7 +212,8 @@ const CadastroPacienteLead = ({ title,subtitle, ImagemLateral, apelido, mensagem
           <TextField
             label="Nome Completo"
             variant="standard"
-            sx={{ width: '300px' }}
+            sx={{ width: '400px' }}
+            className="sm:w-8/12"
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -208,26 +223,48 @@ const CadastroPacienteLead = ({ title,subtitle, ImagemLateral, apelido, mensagem
         <TextField
             label="Seu e-mail de uso"
             variant="standard"
-            sx={{ width: '300px' }}
+            sx={{ width: '400px' }}
+            className="sm:w-8/12"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
+          />
+        
+        <div className='flex gap-4 justify-center items-center'>
+        <TextField
+            label="DDD Pais"
+            variant="standard"
+            className='w-1/6'
+            InputProps={{
+              inputProps: {
+                  style: {
+                      textAlign: "center", // Centraliza o texto horizontalmente
+                  },
+              },
+              readOnly: true
+          }}
+            type="tel"
+            value={dddPais}
+            inputMode="numeric" // Especifica o modo de entrada numérica
           />
 
           <TextField
             label="Whatsapp para contato ex: 11893724023"
             variant="standard"
             sx={{ width: '300px' }}
+            className="sm:w-7/12"
             type="tel"
             value={number}
             inputMode="numeric" // Especifica o modo de entrada numérica
-            pattern="^55\d*$" // Usa uma expressão regular para permitir apenas números começando com "55"
             onChange={OnChangeInputNumber}
             required
           />
+        </div>
 
-          <Autocomplete
+        <div className='w-full flex justify-center items-center'>
+        
+        <Autocomplete
              value={doenca === '' ? null : doenca}
              onChange={(event, newValue) => {
               if (newValue !== null) {
@@ -237,17 +274,17 @@ const CadastroPacienteLead = ({ title,subtitle, ImagemLateral, apelido, mensagem
              options={sintomasandDoencas}
              noOptionsText="Sem resultados"
              renderInput={(params) => <TextField {...params} label="Doença" variant="standard" 
-             sx={{ width: '300px' }}
             />
             }
-             />
+            className="w-[400px] sm:w-8/12"
+        />
 
-                  
+        </div>
+        
             <div className='flex justify-center items-center gap-3'>
-                <Checkbox onChange={(event) => AcceptTermsOfUse(event, 'cheked')}  />
-                <h1 className=''> Li e estou de acordo com  o <span className='font-bold text-blue-500 cursor-pointer' onClick={() => HandleViewTermsOfUse()}> Termos de uso e Politica de Privacidade </span></h1>
-              </div>
-
+               <Checkbox onChange={(event) => AcceptTermsOfUse(event, 'cheked')}  />
+               <h1> Li e estou de acordo com  o <span className='font-bold text-blue-500 cursor-pointer' onClick={() => HandleViewTermsOfUse()}> Termos de uso </span> e <span className='font-bold text-blue-500 cursor-pointer' onClick={() => HandleViewPrivacity()}> Politica de Privacidade </span></h1>
+            </div>
 
         <button className={'w-72 h-12 rounded-full text-white font-light bg-indigo-950 '}
         onClick={() => HandleClickEnd()}>

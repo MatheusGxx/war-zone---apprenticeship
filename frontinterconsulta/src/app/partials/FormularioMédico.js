@@ -62,6 +62,7 @@ const FormularioMédico = () => {
   const [croppedImage, setCroppedImage] = useState(null)
   const [croppedFile, setCroppedFile] = useState(null)
   const [typeDoctorPublic, setTypeDoctorPublic] = useState(false)
+  const [dddPais, setDDDPais] = useState('55')
 
   useEffect(() => {
 
@@ -107,6 +108,9 @@ const FormularioMédico = () => {
   }
 
   const HandleClickFinal = async () => {
+    const ConjuntingNumber = dddPais + numeroContador
+    const NumberOriginal = ConjuntingNumber.replace(/[\s()]/g, '')
+
     const formData = new FormData();
     formData.append("NomeConhecido", nome)
     formData.append("TituloEspecialista", titulo)
@@ -139,7 +143,7 @@ const FormularioMédico = () => {
     formData.append('Estado', estado)
     formData.append('CEPMedico', cepMedico)
     formData.append('EmailContador', emailContador),
-    formData.append('TelefoneContador', numeroContador)
+    formData.append('TelefoneContador', NumberOriginal)
     formData.append('TypeDoctor', typeDoctor)
     formData.append("route", Router)
     formData.append("file", croppedFile)
@@ -299,6 +303,7 @@ const FormularioMédico = () => {
                       setNumeroContador={setNumeroContador}
                       emailContador={emailContador}
                       numeroContador={numeroContador}
+                      dddPais={dddPais}
                       setCurrentStep={setCurrentStep}
                     />
                 }

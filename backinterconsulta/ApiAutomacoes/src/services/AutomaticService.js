@@ -4,6 +4,7 @@ import { EmailQueue, WhatsappQueue, ResumoQueue, SendDocumentsQueue, BulkMessage
 import { customAlphabet } from 'nanoid'
 import crypto from 'crypto'
 import jwt from 'jsonwebtoken'
+import { Criptografia } from "../utils/Criptografia.js";
 
 const secretKey = crypto.randomBytes(32).toString('hex')
 
@@ -719,6 +720,7 @@ export const CreateLeadLandingPage = async (nome,email,telefone,doenca,res) => {
     })
  
   }catch(err){
+    console.log(err)
     return res.status(400).json({ message: 'Erro ao cadastrar Lead da Landing Page'})
   }
 }

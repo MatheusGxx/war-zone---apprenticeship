@@ -2,6 +2,7 @@ import { models } from '../../../MongoDB/Schemas/Schemas.js'
 import { GPT } from "./IA.js"
 
 export const ResumoCasoClinico = async (
+  FichaPaciente,
   Diagnostico, 
   Tratamento, 
   FerramentasTerapeuticas,
@@ -18,6 +19,7 @@ export const ResumoCasoClinico = async (
 
     const FraseCasoClinico = await GPT(`
     Resuma em um parágrafo as informações desse caso clínico,
+    Ficha do Paciente: ${FichaPaciente}
     Diagnóstico: ${Diagnostico},
     Tratamento: ${Tratamento},
     Ferramentas Terapêuticas: ${FerramentasTerapeuticas},

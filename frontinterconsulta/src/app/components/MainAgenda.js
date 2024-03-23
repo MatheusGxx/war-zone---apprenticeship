@@ -49,6 +49,8 @@ import TabPanel from '@mui/lab/TabPanel'
 
 import { PatientsDoctor } from './PatientsDoctor'
 import { PopupCancelPaciente } from '../partials/PopUpCancelPaciente'
+import { useSearchParams } from 'next/navigation'
+import VideoCameraFrontIcon from '@mui/icons-material/VideoCameraFront';
 
 export const MainAgenda = () => {
 
@@ -96,6 +98,7 @@ export const MainAgenda = () => {
   const [idConsultaPaciente, setidConsultaPaciente] = useState('')
   const [idHorarioConsultaPaciente, setidHorarioConsultaPaciente] = useState('')
   const [horarioSelecionadoPaciente, setidHorarioSelecionadoPaciente] = useState('')
+  const [okUTM, setOkUTM] = useState(false)
 
   const { horariosDoctor } = useHorariosDoctor()
   const { blood } = useBlood()
@@ -111,13 +114,31 @@ export const MainAgenda = () => {
   const token = secureLocalStorage.getItem('token')
 
   const Router = useRouter()
+  const params = useSearchParams()
 
   const queryClient = useQueryClient()
+
+  const referrer = params.get('UTM_Referrer') 
+  const funil = params.get('UTM_Funil') 
+  const temp = params.get('UTM_Temp')  
+  const rota = params.get('UTM_Rota')
+  const source = params.get('UTM_Source') 
+  const medium = params.get('UTM_Medium') 
+  const campaign = params.get('UTM_Campaign') 
+  const term = params.get('UTM_Term') 
+  const content = params.get('UTM_Content')
 
 
   useEffect(() => {
     
   },[casoClinicoClicked, idCasoPaciente2, idCasoUnidade2, CPFPaciente2, idMedico])
+
+  useEffect(() => {
+    if(referrer && funil && temp && rota && source && medium && campaign && term && content){
+      setOkUTM(true)
+    }
+
+  },[okUTM])
   
 
   const NomeMedicoLocal = secureLocalStorage.getItem('NomeMedico')
@@ -429,15 +450,13 @@ const HandleConsulta = async (id) => {
   }
 }
 
-  const handleLaudo = async (idConsulta) => {
-
-    const body = {
-        id: id,
-       IdentificadorConsulta: idConsulta
-    }
-    await getLaudo.mutateAsync(body)
+  const HandleLogin = () => {
+     if(okUTM){
+      Router.push(`/welcome?UTM_Referrer=${encodeURIComponent(referrer)}&UTM_Funil=${encodeURIComponent(funil)}&UTM_Temp=${encodeURIComponent(temp)}&UTM_Rota=${encodeURIComponent(rota)}&UTM_Source=${encodeURIComponent(source)}&UTM_Medium=${encodeURIComponent(medium)}&UTM_Campaign=${encodeURIComponent(campaign)}&UTM_Term=${encodeURIComponent(term)}&UTM_Content=${encodeURIComponent(content)}`)
+     }else{
+      Router.push('/welcome')
+     }
   }
-
 
   return(
     <>
@@ -615,7 +634,7 @@ const HandleConsulta = async (id) => {
                      <th className="border-b bg-white text-black py-2 px-4 font-normal">
                       <div className='flex items-center justify-center'>
                       <div className="bg-blue-500 rounded-full h-3 w-3 inline-block mr-2"></div>
-                        {NomePacienteLocal ? 'Status':
+                        {NomePacienteLocal ? 'Consulta':
                         <>  
                          <p className='whitespace-nowrap'> Linha da vida </p>
                         </>
@@ -694,8 +713,9 @@ const HandleConsulta = async (id) => {
                       </div> : null}
 
                       {row.Status.includes('Confirmada') ?
-                      <div className="flex justify-center items-center">
-                        <Image src={Confirmado2} alt='Atendida' height={20} width={20}/> 
+                      <div className="flex justify-center items-center gap-3">
+                        <VideoCameraFrontIcon color="primary" className="animate-pulse" sx={{ fontSize: 30 }}/>
+                        <h1 className='font-bold text-blue-500'> Ir para a consulta </h1>
                       </div> : null}
 
                       {row.Status.includes('Atendida') ?
@@ -843,11 +863,12 @@ const HandleConsulta = async (id) => {
                   
                  :  
                   row.Status.includes('Confirmada') &&
-                  <GroupsIcon 
-                  color="primary"
-                  onClick={() => HandleConsulta(row._id)}
-                  disabled={GenerateLink.isLoading}
-                  className='cursor-pointer'
+                  <VideoCameraFrontIcon
+                   color="primary"
+                   className="animate-pulse cursor-pointer"
+                   onClick={() => HandleConsulta(row._id)}
+                   disabled={GenerateLink.isLoading}
+                   sx={{ fontSize: 30 }}
                   />
                   } 
                  </td>               
@@ -949,11 +970,12 @@ const HandleConsulta = async (id) => {
               <h1 className='text-2xl font-bold text-black sm:text-xl sm:text-center md:text-center lg:text-center'> Ops infelizmente voce não esta Logado, logue agora para poder ver suas Consultas!</h1>
             </div>
           </div>
-          <Link href='/welcome' className='w-full flex justify-center items-center'>
-          <button className='p-2 bg-red-500 rounded-full w-1/2 text-white font-bold sm:w-full animate-pulse cursor-pointer'> 
+         
+          <button 
+          className='p-2 bg-red-500 rounded-full w-10/12 text-white font-bold sm:w-full animate-pulse cursor-pointer'
+          onClick={() => HandleLogin()}> 
           Fazer Login 
           </button>
-          </Link>
         </div>
         </>
       } 

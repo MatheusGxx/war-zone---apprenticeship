@@ -1,7 +1,8 @@
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path'
 
-export const Laudo = (doc,
+export const Laudo = (
+    doc,
     DataAtual,
     NomeMedico,
     EspecialideMedico,
@@ -20,13 +21,13 @@ export const Laudo = (doc,
     BairroPaciente,
     RuaPaciente,
     ContatoPaciente,
+    FichaPaciente,
     DiagnósticoPaciente,
     TratamentoPaciente,
     MedicaçãoPaciente,
     FerramentaTerapeuticaPaciente,
     ProgressoPaciente,
     RecomendaçoesFuturasPaciente,
-    FichaPaciente,
     EndereçoMedico,
     ) => {
 
@@ -73,6 +74,16 @@ export const Laudo = (doc,
     doc.text(`Bairro: ${BairroPaciente}`)
     doc.text(`Rua: ${RuaPaciente}`) 
     doc.text(`Contato: ${ContatoPaciente}`)
+
+    doc.moveDown()
+    
+    doc.font('Helvetica-Bold')
+    .fontSize(11)
+    .text('Ficha de Atendimento')
+
+    doc.moveDown()
+
+    doc.font('Helvetica').fontSize(10).text(`${FichaPaciente}`)
 
     doc.moveDown()
 
@@ -133,16 +144,6 @@ export const Laudo = (doc,
     doc.moveDown()
 
     doc.font('Helvetica').fontSize(10).text(`${RecomendaçoesFuturasPaciente}`)
-
-    doc.moveDown()
-
-    doc.font('Helvetica-Bold')
-    .fontSize(11)
-    .text('Ficha de Atendimento')
-
-    doc.moveDown()
-
-    doc.font('Helvetica').fontSize(10).text(`${FichaPaciente}`)
 
     doc.moveDown()
     doc.moveDown()

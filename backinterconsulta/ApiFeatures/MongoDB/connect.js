@@ -1,6 +1,6 @@
 import mongoose from "mongoose"
 
-const connect = () =>{
+const connect = () => {
   mongoose.connect('mongodb+srv://matheusfff02:030503Aa@instacemongointerconsul.1gfrhkw.mongodb.net/')
 
   const db = mongoose.connection

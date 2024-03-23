@@ -40,7 +40,7 @@ const ReuniaoMédico = () =>{
   const [startConsulta, SetStartConsulta] = useState('')
   const [nameInitialPatient, setNameInitialPatient] = useState('')
   const [ficha, setFicha] = useState('')
-  const [diasAfastamento, setDiasAfastamento] = useState(null)
+  const [diasAfastamento, setDiasAfastamento] = useState('')
   const [cid, setCID] = useState('')
 
   const[open, setOpen] = useState('')
@@ -233,7 +233,7 @@ const ReuniaoMédico = () =>{
     if (receitaControlada !== '') {
       DocumentosPreenchidos.push('Receita Controlada')
     }
-    if (diasAfastamento !== null ) {
+    if (diasAfastamento !== '' ) {
       DocumentosPreenchidos.push('Dias de Afastamento')
     }
     if(cid !== ''){

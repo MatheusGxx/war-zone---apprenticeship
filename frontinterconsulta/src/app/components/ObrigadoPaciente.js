@@ -84,14 +84,12 @@ const ObrigadoPaciente = () =>{
    <>
    
    {getDoctor.isLoading ? 
-     <div className='flex justify-center items-center'>
+     <div className=' min-h-screen flex justify-center items-center'>
      <Image src={Logo} alt="Logo Interconsulta" width={100} height={100} className='animate-pulse'/>
      </div>
      :
     <>
-   <div className='flex justify-center w-full sm:gap-0 sm:pt-0 -mt-5'>
-
-     <div className='flex flex-col w-full sm:w-full gap-3'>
+   <div className='min-h-screen flex justify-center items-center w-full sm:gap-0 sm:pt-0 flex-col'>
 
       <h1 className="font-bold text-4xl leading-tight sm:text-center sm:text-2xl text-center text-blue-900">{NomePaciente} Obrigado por Utilizar<br/>os serviços do <span className="text-blue-500">#Interconsulta</span></h1>
       <div className='w-full flex flex-col justify-center items-center gap-5'>
@@ -164,7 +162,6 @@ const ObrigadoPaciente = () =>{
         </div>
 
         </div>
-      </div>
     </>
      }
    </>
