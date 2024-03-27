@@ -4,7 +4,8 @@ import { EmailQueue, WhatsappQueue, ResumoQueue, SendDocumentsQueue, BulkMessage
 import { customAlphabet } from 'nanoid'
 import crypto from 'crypto'
 import jwt from 'jsonwebtoken'
-import { Criptografia } from "../utils/Criptografia.js";
+import { Criptografia } from "../utils/Criptografia.js"
+import { parseDate } from "../utils/Functions/Converting.js"
 
 const secretKey = crypto.randomBytes(32).toString('hex')
 
@@ -325,7 +326,7 @@ export const sendDocumentsPatient = async (id, res, files) => {
 
 export const SavedConsultaUnidadeSaude = async (body, res) => {
   const { IDSMedicos, IDUnidade ,Solicitante, Casos, Status, CPFPacientes, DataInicioConsolidado , DataFimConsolidado, PacientesQueSuportamos, NomeUnidade } = body
-   
+  
    try {
 
      const getUnidade = await models.ModelRegisterUnidadeSaude.findById(IDUnidade)
@@ -342,8 +343,7 @@ export const SavedConsultaUnidadeSaude = async (body, res) => {
        CPFPaciente: data.CPF,
       }))
 
-  
-      const NumberPatients = getPacientes.length
+      //const NumberPatients = getPacientes.length
 
      for (const medico of getMedicos) {
        const ConsultaUnidadedeSaude = {
@@ -422,11 +422,11 @@ export const SavedConsultaUnidadeSaude = async (body, res) => {
 
      await medico.save()
 
-     if(NumberPatients <= PacientesQueSuportamos){ // Pacientes que suportamos é maior que o numero de pacientes da Planilha
+     if(QuantidadeCasosClinicos <= PacientesQueSuportamos){ // Pacientes que suportamos é maior que o numero de pacientes da Planilha
         const PacientesTotais = DataPatient
 
-        const DataInicioConsolidadoDate = new Date(DataInicioConsolidado)
-        const DataFimConsolidadoDate = new Date(DataFimConsolidado)
+        const DataInicioConsolidadoDate = parseDate(DataInicioConsolidado)
+        const DataFimConsolidadoDate = parseDate(DataFimConsolidado)
         
         const getPacientesTotaisAgendaMédica = await models.ModelRegisterMédico.find({
           'ConsultasUnidadedeSaude.Casos.CPF': { $in: PacientesTotais.map((data) => data.CPFPaciente) },
@@ -437,8 +437,11 @@ export const SavedConsultaUnidadeSaude = async (body, res) => {
         )
         
         const datasNoIntervalo = Datas.filter(data => {
-          const dataConsulta = new Date(data)
-          return dataConsulta >= DataInicioConsolidadoDate && dataConsulta <= DataFimConsolidadoDate
+          // Separando o dia, mês e ano da string de data
+          const [dia, mes, ano] = data.split('/')
+          // Criando a data no formato 'AAAA/MM/DD'
+          const dataConsulta = new Date(`${ano}-${mes}-${dia}`)
+          return dataConsulta >= DataInicioConsolidadoDate && dataConsulta <= DataFimConsolidadoDate;
         })
 
         models.ModelRegisterMédico.findOne({ 'ConsultasUnidadedeSaude.Casos.CPF': { $in: PacientesTotais.map((data) => data.CPFPaciente)} })
@@ -451,7 +454,7 @@ export const SavedConsultaUnidadeSaude = async (body, res) => {
           const consultas = medico.ConsultasUnidadedeSaude.filter(consulta => {
             return datasNoIntervalo.includes(consulta.Data)
           })
-          
+                    
           const NomeUnidade = getUnidade.nomeInstituicao
           const EndereçoUnidade = getUnidade.Endereco
           await BulkMessageQueueConfirmation.add('BulkMessageNotification', {
@@ -461,17 +464,15 @@ export const SavedConsultaUnidadeSaude = async (body, res) => {
           }) 
 
         })
-        .catch(err => {
+        .catch(err => { 
           console.error('Erro ao buscar médico:', err)
         })
         
-  
-
-      }else if(PacientesQueSuportamos < NumberPatients){ // Tem mais pacientes na planilha do que a nossa capacidade de Atendimento
+      }else if(PacientesQueSuportamos < QuantidadeCasosClinicos){ // Tem mais pacientes na planilha do que a nossa capacidade de Atendimento
         const PacientesLimitados = DataPatient.slice(0, PacientesQueSuportamos)
 
-        const DataInicioConsolidadoDate = new Date(DataInicioConsolidado)
-        const DataFimConsolidadoDate = new Date(DataFimConsolidado)
+        const DataInicioConsolidadoDate = parseDate(DataInicioConsolidado)
+        const DataFimConsolidadoDate = parseDate(DataFimConsolidado)
         
         const getPacientesTotaisAgendaMédica = await models.ModelRegisterMédico.find({
           'ConsultasUnidadedeSaude.Casos.CPF': { $in: PacientesLimitados.map((data) => data.CPFPaciente) },
@@ -480,10 +481,13 @@ export const SavedConsultaUnidadeSaude = async (body, res) => {
         const Datas = getPacientesTotaisAgendaMédica.flatMap((data) =>
           data.ConsultasUnidadedeSaude.flatMap(data => data.Data)
         )
-        
+
         const datasNoIntervalo = Datas.filter(data => {
-          const dataConsulta = new Date(data)
-          return dataConsulta >= DataInicioConsolidadoDate && dataConsulta <= DataFimConsolidadoDate
+          // Separando o dia, mês e ano da string de data
+          const [dia, mes, ano] = data.split('/');
+          // Criando a data no formato 'AAAA/MM/DD'
+          const dataConsulta = new Date(`${ano}-${mes}-${dia}`)
+          return dataConsulta >= DataInicioConsolidadoDate && dataConsulta <= DataFimConsolidadoDate;
         })
 
         models.ModelRegisterMédico.findOne({ 'ConsultasUnidadedeSaude.Casos.CPF': { $in: PacientesLimitados.map((data) => data.CPFPaciente)} })

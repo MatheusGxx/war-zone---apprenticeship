@@ -20,7 +20,7 @@ const ContentMédico = () => {
   const [notLogged, setNotLogged] = useState(false)
   const [notHorarios, setNotHorarios] = useState(false)
   const [selectedCasosClinicos, setSelectedCasosClinicos] = useState([])
-  const { horariosDoctor } = useHorariosDoctor()
+  const {  setHorariosDoctor, horariosDoctor } = useHorariosDoctor()
   const Navigation = useRouter()
 
   const idLocal = typeof window !== 'undefined' ? secureLocalStorage.getItem('id') : false
@@ -28,6 +28,15 @@ const ContentMédico = () => {
 
   const AreadeAtuaçaoLocal = secureLocalStorage.getItem('AreadeAtuacao')
   const AreadeAtuaçao = AreadeAtuaçaoLocal || ''
+  const InitialContactDoctor = secureLocalStorage.getItem('InitialContact')
+
+
+  useEffect(() => {
+    if(InitialContactDoctor){
+      setHorariosDoctor(true)
+     }
+  },[InitialContactDoctor])
+
 
   useEffect(() => {
 
@@ -109,7 +118,6 @@ const ContentMédico = () => {
             </div>
           ) :  null}
 
-          {notHorarios && <PopUpMedicoHoras onClose={() => CloseNotHorarios()} />}
         </div>
 
         <div className="flex justify-end mt-5 mr-3 mb-5">

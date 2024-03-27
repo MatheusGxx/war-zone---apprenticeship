@@ -1,4 +1,4 @@
-export const TitutloEspecialista = [
+export const TituloEspecialista = [
   'Dr.',
   'Dra.'
 ]

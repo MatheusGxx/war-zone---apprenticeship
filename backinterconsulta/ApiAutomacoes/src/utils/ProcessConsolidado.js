@@ -116,6 +116,14 @@ export const ProcessCosolidado = async (body) => {
     const SomaAtendimentosDia = AtendimentosDiasNoIntervalo.length
     console.log(`Quantidade de Atendimentos Médicos que suportamos: ${SomaAtendimentosDia}`)
 
+    let SomaAtendimentoDiaFinal
+
+    if(SomaAtendimentosDia >= QuantidadeCasosClinicos){
+        SomaAtendimentoDiaFinal = QuantidadeCasosClinicos
+    }else{
+         SomaAtendimentoDiaFinal = SomaAtendimentosDia
+    }
+
     const SubstraçaoMessageAtendimentosDia =  SomaAtendimentosDia - QuantidadeCasosClinicos
 
     const MessageAtendimentosDia = SubstraçaoMessageAtendimentosDia
@@ -216,7 +224,7 @@ export const ProcessCosolidado = async (body) => {
         Nome: data.nome.toString(),
         Especialidade: data.EspecialidadeMedica.toString(),
         AreadeAtuacao: data.AreadeAtuacao.toString(),
-        CRM: data.CRM.toString(),
+        CRM: data.CRM?.toString(),
       }))
      })
      await UnidadedeSaude.save()
@@ -225,7 +233,7 @@ export const ProcessCosolidado = async (body) => {
     return {
       Inicio,
       Fim,
-      SomaAtendimentosDia,
+      SomaAtendimentoDiaFinal,
       MessageAtendimentosDia,
       QuantidadeMedicosDisponiveis,
       ArrendondamentoDiaFraseFinal,

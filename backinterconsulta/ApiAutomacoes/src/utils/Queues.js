@@ -156,7 +156,7 @@ const WorkerBulkMessageConfirmation = new Worker('BulkMessageNotification', asyn
        } = job.data
          
        await Promise.all([
-        BulkMessageEmailPatientPublicConfirmation(consultas, NomeUnidade, EndereçoUnidade),
+        //BulkMessageEmailPatientPublicConfirmation(consultas, NomeUnidade, EndereçoUnidade),
         BulkMessageWhatsappPatientConfirmation(consultas, NomeUnidade, EndereçoUnidade),
          //BulkMessageEmailDoctorPublicConfirmation(body),
         //BulkMessageWhatsappDoctorConfirmation(body)

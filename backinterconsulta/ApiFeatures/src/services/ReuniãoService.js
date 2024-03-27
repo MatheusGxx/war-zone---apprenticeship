@@ -18,7 +18,6 @@ export const  CreatingDocumentsDoctor = async (body, res) => {
   const { idMedico, IdentificadorConsultaPaciente } = body
 
   try {
-
     
   const currentFilePath = fileURLToPath(import.meta.url)
   const currentDir = dirname(currentFilePath)

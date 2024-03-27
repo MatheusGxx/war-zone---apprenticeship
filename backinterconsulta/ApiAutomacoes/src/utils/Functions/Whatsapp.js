@@ -92,8 +92,8 @@ export const BulkMessageWhatsappPatientConfirmation = async (consultas, NomeUnid
     client = await venom.create({
       session: 'Interconsulta',
     }).catch((error) => {
-      console.log('Erro ao Iniciar o Venom', error);
-    });
+      console.log('Erro ao Iniciar o Venom', error)
+    })
   }
 
  const delay = 1000
@@ -155,7 +155,6 @@ export const BulkMessageWhatsappDoctorConfirmation = async(body) => {
      });
    })
  )
-
 }
 
 export const SendDocumentsWhatsapp = async (numeroPaciente, filesPath, MensagemPaciente) => {

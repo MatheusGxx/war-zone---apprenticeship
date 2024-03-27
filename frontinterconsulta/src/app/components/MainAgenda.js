@@ -50,7 +50,8 @@ import TabPanel from '@mui/lab/TabPanel'
 import { PatientsDoctor } from './PatientsDoctor'
 import { PopupCancelPaciente } from '../partials/PopUpCancelPaciente'
 import { useSearchParams } from 'next/navigation'
-import VideoCameraFrontIcon from '@mui/icons-material/VideoCameraFront';
+import VideoCameraFrontIcon from '@mui/icons-material/VideoCameraFront'
+import FormularioMédico from '../partials/FormularioMédico'
 
 export const MainAgenda = () => {
 
@@ -99,8 +100,10 @@ export const MainAgenda = () => {
   const [idHorarioConsultaPaciente, setidHorarioConsultaPaciente] = useState('')
   const [horarioSelecionadoPaciente, setidHorarioSelecionadoPaciente] = useState('')
   const [okUTM, setOkUTM] = useState(false)
+  const [notRegisterFullDoctor, setNotRegisterFullDoctor] = useState(false)
+  const [statusRegisterDoctor, setStatusRegisterDoctor] = useState(false)
 
-  const { horariosDoctor } = useHorariosDoctor()
+  const { setHorariosDoctor, horariosDoctor } = useHorariosDoctor()
   const { blood } = useBlood()
 
   const[setidLink, setIdLink] = useState('')
@@ -112,6 +115,8 @@ export const MainAgenda = () => {
   const id = idLocal || ''
 
   const token = secureLocalStorage.getItem('token')
+  const StatusRegisterDoctor = secureLocalStorage.getItem('StatusRegister')
+  const InitialContactDoctor = secureLocalStorage.getItem('InitialContact')
 
   const Router = useRouter()
   const params = useSearchParams()
@@ -128,10 +133,16 @@ export const MainAgenda = () => {
   const term = params.get('UTM_Term') 
   const content = params.get('UTM_Content')
 
-
   useEffect(() => {
-    
-  },[casoClinicoClicked, idCasoPaciente2, idCasoUnidade2, CPFPaciente2, idMedico])
+    if(InitialContactDoctor){
+      setHorariosDoctor(true)
+     }
+    if(StatusRegisterDoctor === false){
+      setStatusRegisterDoctor(false)
+    }else{
+      setStatusRegisterDoctor(true)
+    }
+  },[casoClinicoClicked, idCasoPaciente2, idCasoUnidade2, CPFPaciente2, idMedico, horariosDoctor, notRegisterFullDoctor, StatusRegisterDoctor, InitialContactDoctor, statusRegisterDoctor])
 
   useEffect(() => {
     if(referrer && funil && temp && rota && source && medium && campaign && term && content){
@@ -140,7 +151,6 @@ export const MainAgenda = () => {
 
   },[okUTM])
   
-
   const NomeMedicoLocal = secureLocalStorage.getItem('NomeMedico')
   const NomeMedico = NomeMedicoLocal || ''
   const NomePacienteLocal = secureLocalStorage.getItem('NomePaciente')
@@ -159,7 +169,7 @@ export const MainAgenda = () => {
     },
     {
       onSettled: () => {
-        queryClient.invalidateQueries('Consultas');
+        queryClient.invalidateQueries('Consultas')
       },
     }
   )
@@ -356,66 +366,72 @@ export const MainAgenda = () => {
 
   const ConfirmationConsultas = async () => {
 
-      if(idCasoUnidade2[0].length > 0){
-        try{
-           const body = {
-             id: idCasoUnidade2,
-             status: `Confirmada por ${NomeMedico}`,
-             idMedico: id,
-             CPFPacientePublico: CPFPaciente2,
-             NomePacientePublico: NomePacientePublico,
-             Solicitante: Solicitante,
-             Data: Data,
-             Inicio: Inicio,
-             Fim: Fim,
-           }
-           await UpdateConsulta.mutateAsync(body)
-           setCasoClinicoClicked([])
-           setidCasoPaciente2([])
-           setIdCasoUnidade2([])
-           setCPFPaciente2([])
-           setIDMedico('')
-           setNomePacientePublico('')
-           setSolicitante('')
-           setData('')
-           setInicio('')
-           setFim('')
-           setSelectedSolicitante(null)
-           setDisableArrayNotObjetcts(false)
-  
-        }catch(e){
-          throw new Error('Fetching Data Error', e)
-        }
+      if(statusRegisterDoctor === false){
+        setNotRegisterFullDoctor(true)
       }else{
-        try{
-          const body = {
-            Data: Data,
-            Inicio: Inicio,
-            Fim: Fim,
-            idMedico: id,
-            idPacienteParticular: idCasoPaciente2,
-            status: `Confirmada por ${NomeMedico}`
+        if(idCasoUnidade2[0].length > 0){
+          try{
+             const body = {
+               id: idCasoUnidade2,
+               status: `Confirmada por ${NomeMedico}`,
+               idMedico: id,
+               CPFPacientePublico: CPFPaciente2,
+               NomePacientePublico: NomePacientePublico,
+               Solicitante: Solicitante,
+               Data: Data,
+               Inicio: Inicio,
+               Fim: Fim,
+             }
+             await UpdateConsulta.mutateAsync(body)
+             setCasoClinicoClicked([])
+             setidCasoPaciente2([])
+             setIdCasoUnidade2([])
+             setCPFPaciente2([])
+             setIDMedico('')
+             setNomePacientePublico('')
+             setSolicitante('')
+             setData('')
+             setInicio('')
+             setFim('')
+             setSelectedSolicitante(null)
+             setDisableArrayNotObjetcts(false)
+             setNotRegisterFullDoctor(false)
+    
+          }catch(e){
+            throw new Error('Fetching Data Error', e)
+          }
+        }else{
+          try{
+            const body = {
+              Data: Data,
+              Inicio: Inicio,
+              Fim: Fim,
+              idMedico: id,
+              idPacienteParticular: idCasoPaciente2,
+              status: `Confirmada por ${NomeMedico}`
+             }
+            await UpdateConsulta.mutateAsync(body)
+            setCheckedIndex(null);
+            setCasoClinicoClicked([])
+            setIdLink(idCasoPaciente2)
+            secureLocalStorage.setItem('ConsultaPacienteParticular', idCasoPaciente2)
+            setidCasoPaciente2([])
+            setIdCasoUnidade2([])
+            setCPFPaciente2([])
+            setNomePacientePublico('')
+            setSolicitante('')
+            setIDMedico('')
+            setData('')
+            setInicio('')
+            setFim('')
+            setDisableArrayObject(false)
+            setNotRegisterFullDoctor(false)
+  
+           }catch(e){
+             throw new Error('Error Fetching Data', e)
            }
-          await UpdateConsulta.mutateAsync(body)
-          setCheckedIndex(null);
-          setCasoClinicoClicked([])
-          setIdLink(idCasoPaciente2)
-          secureLocalStorage.setItem('ConsultaPacienteParticular', idCasoPaciente2)
-          setidCasoPaciente2([])
-          setIdCasoUnidade2([])
-          setCPFPaciente2([])
-          setNomePacientePublico('')
-          setSolicitante('')
-          setIDMedico('')
-          setData('')
-          setInicio('')
-          setFim('')
-          setDisableArrayObject(false)
-
-         }catch(e){
-           throw new Error('Error Fetching Data', e)
-         }
-      }
+        }
+      } 
 }
 
     const handleChange = (event, newValue) => {
@@ -1003,6 +1019,10 @@ const HandleConsulta = async (id) => {
 
       {blood &&
         <PopUpBlood/>
+      }
+
+      {notRegisterFullDoctor &&
+       <FormularioMédico render={() => setNotRegisterFullDoctor(false)}/>
       }
    
     </>

@@ -52,9 +52,9 @@ const AcceptMedicalAppointment = () => {
         <>
         <div className="min-h-[90vh] flex justify-center items-center flex-col gap-5">
             
-       {FotoUnidade ? 
+       {FotoUnidade === null ? 
         <Image src={`${config.apiBaseUrl}/${FotoUnidade}`} width={300} height={300} alt="Foto Unidade de Saude"/> :
-        <Image alt="Logo Interconsulta" src={Logo} width={40} height={40} className='mr-5 animate-spin-slow'/>
+        <Image alt="Logo Interconsulta" src={Logo} width={200} height={200} className='mr-5 animate-spin-slow'/>
        }
       <h1 className='text-2xl sm:text-xl'> Ola {NomePatient} </h1>
       <h1 className='text-2xl sm:text-lg sm:text-center whitespace-pre-wrap text-center'> 
@@ -77,7 +77,7 @@ const AcceptMedicalAppointment = () => {
 
       {confirmation ? 
       <>
-      <h1 className='font-bold text-blue-500 text-xl text-center'>  Parabens {NomePatient} a sua consulta foi confirmada não se esqueça ela ocorra em: {date} as {InicioConsulta}</h1>
+      <h1 className='font-bold text-blue-500 text-xl text-center'>  Parabens {NomePatient} a sua consulta foi confirmada não se esqueça ela ira ocorrer em: {date} as {InicioConsulta}</h1>
       </> : 
       reject ?
        <>

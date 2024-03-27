@@ -30,6 +30,8 @@ function PopUpMedicoHoras({ onClose }) {
   const [tempoConsulta, setTempoConsulta] = useState('')
   const { setHorariosDoctor } = useHorariosDoctor()
 
+  const InitialContactDoctor = secureLocalStorage.getItem('InitialContact')
+
   const HoraInicio =  parse(`${data} ${inicio}`,  'dd/MM/yyyy HH:mm', new Date())
   const HoraFim = parse(`${data} ${fim}`,  'dd/MM/yyyy HH:mm', new Date())
 
@@ -157,6 +159,10 @@ function PopUpMedicoHoras({ onClose }) {
 
   const handleClose = async () => {
     setOpen(false)
+
+    if(InitialContactDoctor){
+       secureLocalStorage.removeItem('InitialContact')
+    }
     setHorariosDoctor(false)
   }
   const handleDataChange = (e) => {

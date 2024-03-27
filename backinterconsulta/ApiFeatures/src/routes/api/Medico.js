@@ -9,8 +9,9 @@ import {
   deleteHorarios,
   VerifyMedico,
   getCasosClinicos,
-  DeleteIntervalo
-}  from '../../services/MedicoSerivce.js'
+  DeleteIntervalo,
+  VerifyRegisterTottalySuccess
+}  from '../../services/MedicoService.js'
 import uploadIcons from '../../utils/multerIcons.js'
 
 router.post('/info-medico/:id', async (req,res) =>{
@@ -126,6 +127,15 @@ router.delete('/delete-intervalo/:id/:idHorarioo',
         DeleteIntervalo(params, res)
         console.log(req.params.id, req.params.idHorarioo)
        }  
+)
+
+
+router.post('/verify-doctor',
+       async(req,res) => {
+          const { email } = req.body 
+          VerifyRegisterTottalySuccess(email, res)
+          console.log(req.body)
+       }
 )
 
 

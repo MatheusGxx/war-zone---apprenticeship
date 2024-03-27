@@ -718,9 +718,9 @@ export const DeleteCasoClinicoPacienteParticular = async (body, res) => {
          }
    
       //Production
-      axios.post('http://back-a:8081/api2/automatic-whatsapp', body)
+       axios.post('http://back-a:8081/api2/automatic-whatsapp', body)
       //Development
-     //axios.post('http://localhost:8081/api2/automatic-whatsapp', body)
+      //axios.post('http://localhost:8081/api2/automatic-whatsapp', body)
 
     } else {
       res.status(404).json({ message: 'Erro ao excluir consulta' });

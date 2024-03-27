@@ -12,14 +12,9 @@ import Logo from '../public/logo.png'
 
 export const RegisterTwoDoctor = (
   {
-    especialidade,
-    setEspecialidade,
-    atuacao,
-    setAtuacao,
     setResumo,
     resumo,
     setCurrentStep,
-    typeDoctorPublic
   }
   ) => {
 
@@ -27,14 +22,8 @@ export const RegisterTwoDoctor = (
     const [snackbarMessage, setSnackbarMessage] = useState("")
 
     const Verification = () => {
-      let camposVazios = [];
+      let camposVazios = []
     
-      if (especialidade === '') {
-        camposVazios.push('Especialidade Médica');
-      }
-      if (atuacao === 'Área de Atuação Médica Principal') {
-        camposVazios.push('');
-      }
       if (resumo === '') {
         camposVazios.push('Conte um pouco sobre sua carreira médica e trajetória profissional');
       }
@@ -66,40 +55,14 @@ export const RegisterTwoDoctor = (
     }
   return(
     <>
-      <h1 className="text-blue-500 text-center"> 
-      Especialidade Médica Principal
+      <h1 className="text-blue-500 text-center text-lg font-semibold"> 
+       Resumo Profissional
       </h1>
-
-      <Autocomplete
-        value={especialidade === '' ? null : especialidade}
-        onChange={(event, newValue) => {
-          if (newValue !== null) {
-            setEspecialidade(newValue);
-          }
-        }}
-        options={typeDoctorPublic ? EspecialidadesUnidades : EspecialidadesAtendidas}
-        noOptionsText="Sem resultados"
-        renderInput={(params) => <TextField {...params} label="Especialidade Médica" variant="standard" />}
-        className="w-full border-b border-blue-500 sm:w-full"
-      />
-
-      <Autocomplete
-        value={atuacao === '' ? null : atuacao}
-        onChange={(event, newValue) => {
-          if (newValue !== null) {
-                setAtuacao(newValue);
-            }
-          }}
-        options={AreadeAtuacaoAtendidas}
-        noOptionsText="Sem resultados"
-        renderInput={(params) => <TextField {...params} label="Área de Atuação Médica Principal" variant="standard" />}
-        className="w-full border-b border-blue-500 sm:w-full"
-      />
 
       <TextField
         label="Conte um pouco sobre sua carreira médica e trajetória profissional"
         multiline
-        rows={4} 
+        rows={6} 
         variant="standard" 
         InputProps={{
           sx: { borderBottom: "1px solid blue" }, // Define a cor da linha inferior
@@ -109,10 +72,17 @@ export const RegisterTwoDoctor = (
         required
       />
 
-      <div className="w-full flex justify-between items-center">
-      <ArrowBackIosIcon color="primary" className="cursor-pointer" onClick={handleBackClick}/>
+     <div className="w-full flex justify-between items-center">
+        <div className='flex gap-3 cursor-pointer' onClick={handleBackClick}>
+        <ArrowBackIosIcon color="primary"/>
+        <h1 className='font-bold text-blue-500'> Voltar </h1>
+        </div>
       <Image src={Logo} width={50} height={50} alt="Logo Interconsulta" className="animate-spin-slow"/>
-      <ArrowForwardIosIcon color="primary" className="cursor-pointer" onClick={Verification}/>    
+
+        <div className='flex gap-3 cursor-pointer' onClick={Verification}>
+        <h1 className='font-bold text-blue-500'> Avançar </h1>
+        <ArrowForwardIosIcon color="primary"/> 
+        </div>  
       </div>
 
       <Snackbar

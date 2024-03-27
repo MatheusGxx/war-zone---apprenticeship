@@ -177,7 +177,7 @@ const Nav = () => {
           </>
          }
   
-        {RouteAgenda && LocalNomeMedico  && 
+        {RouteAgenda && LocalNomeMedico && 
         <>
           <NavMédico
            OpenDrawerMedico={() => OpenDrawerMedico()}

@@ -497,3 +497,24 @@ export const DeleteIntervalo = async (params, res ) =>{
     console.log(e)
   }
 } 
+
+
+export const VerifyRegisterTottalySuccess = async (email, res) => {
+   try{
+     const getDoctor = await models.ModelRegisterMédico.findOne({ email: email })
+
+     if(!getDoctor){
+      return res.status(200).json({ message: 'Doctor of not existing in Database of Interconsulta'})
+     }
+
+     const CRMMédico = getDoctor.CRM
+
+     if(CRMMédico){
+       return res.status(200).json({ valid: true })
+     }else{
+      return res.status(200).json({ valid: false })
+     }
+   }catch(err){
+    return res.status(400).json({ message: 'Error in ValidatorRegisterTottaly of Doctor'})
+   }
+}

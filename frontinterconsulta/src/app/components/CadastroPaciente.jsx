@@ -1,6 +1,5 @@
 'use client'
 import { useState, useEffect } from 'react';
-import Logo from '../public/logo.png';
 import Logo2 from '../public/Logo2.png';
 import Image from 'next/image';
 import { TextField, CircularProgress, Snackbar, Alert, Stack, SnackbarContent, Checkbox } from '@mui/material';
@@ -91,7 +90,9 @@ const CadastroPacienteLead = ({ title,subtitle, ImagemLateral, apelido, mensagem
         secureLocalStorage.setItem('token', token)
         secureLocalStorage.setItem('id', id)
         secureLocalStorage.setItem('NomePaciente', NomePaciente)
+        secureLocalStorage.setItem('StatusRegister', false)
         secureLocalStorage.setItem('Doenca', Doenca)
+
 
         const currentDate = new Date()
         const formattedDate = format(currentDate, 'dd/MM/yyyy')
@@ -191,8 +192,8 @@ const OnChangeInputNumber = (e) => {
      
      <div className='flex'>
   
-        <div className='w-1/2 sm:w-full md:w-full lg:w-full'>
-        <section className="flex flex-col gap-8 justify-center items-center sm:gap-5 lg:gap-6 mt-16 w-full">
+        <div className='w-1/2 sm:w-full md:w-full lg:w-full h-screen flex justify-center items-center'>
+        <section className="flex flex-col gap-8 justify-center items-center sm:gap-5 lg:gap-6 w-full">
           <div className="justify-center items-center">
             <Image src={Logo2} alt="Logo Interconsulta" height={250} width={250}  />
           </div>
@@ -253,7 +254,7 @@ const OnChangeInputNumber = (e) => {
             label="Whatsapp para contato ex: 11893724023"
             variant="standard"
             sx={{ width: '300px' }}
-            className="sm:w-7/12"
+            className="sm:w-6/12"
             type="tel"
             value={number}
             inputMode="numeric" // Especifica o modo de entrada numérica

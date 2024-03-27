@@ -15,7 +15,7 @@ export const EndReuniaoDoctor = ({ nomeDoctor }) => {
   
     const handleClose = () => {
       setOpen(false)
-    };
+    }
   
     return (
       <>

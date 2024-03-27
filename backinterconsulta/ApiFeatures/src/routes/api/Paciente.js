@@ -114,12 +114,12 @@ router.post('/verify-data-patient',
        async(req, res) => {
 
        const body = {
-        id: req.body.id
+        email: req.body.email
        }
        
         VerifyDataPatient(body, res)
 
-        console.log(`ID do Paciente, ${req.body.id}`)
+        console.log(req.body)
        }
 )
 

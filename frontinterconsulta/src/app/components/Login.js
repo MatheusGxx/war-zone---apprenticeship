@@ -46,11 +46,54 @@ const Login = ({ title, ImagemLateral, MessageButton, secondRoute, treeRoute, pl
 
   },[okUTM])
 
+  
+  const ValidatorDoctor = useMutation(async (valueRequest) => {
+    try{
+      const response = await axios.post(`${config.apiBaseUrl}/api/verify-doctor`, valueRequest)
+      return response.data
+    }catch(err){
+      console.log(err)
+    }
+  },{
+    onSuccess: (data) => {
+      const { valid } = data
+
+      if(valid === false){
+        secureLocalStorage.setItem('StatusRegister', false)
+        Router.push(`${plataform}`)
+      }else{
+        secureLocalStorage.setItem('StatusRegister', true)
+        Router.push(`${plataform}`)
+      }
+    }
+  })
+ 
+  const ValidatorPaciente = useMutation(async (valueRequest) => {
+    try{
+      const response = await axios.post(`${config.apiBaseUrl}/api/verify-data-patient`, valueRequest)
+      return response.data
+    }catch(err){
+      console.log(err)
+    }
+  },{
+    onSuccess: (data) => {
+      const { valid } = data
+ 
+      if(valid === false){
+        secureLocalStorage.setItem('StatusRegister', false)
+        Router.push(`${plataform}`)
+      }else{
+        secureLocalStorage.setItem('StatusRegister', true)
+        Router.push(`${plataform}`)
+      }
+    }
+  })
+
   const CreateRequestMutation = useMutation(async (valueRequest) =>{
     const response = await axios.post(`${config.apiBaseUrl}/api/login`, valueRequest)
     return response.data
   },{
-    onSuccess: (data) => { 
+    onSuccess: async (data) => { 
 
       const { 
          token,
@@ -79,6 +122,7 @@ const Login = ({ title, ImagemLateral, MessageButton, secondRoute, treeRoute, pl
       const FotoStorageMedico = secureLocalStorage.getItem('FotoMedico')
       const TypeDoctorStorage = secureLocalStorage.getItem('TypeDoctor')
 
+
       if(tokenStorage && ModelidUser &&  NomeMedicoStorage && AreadeAtuacaoStorage && CRMStorage && FotoStorageMedico && TypeDoctorStorage){
         console.log('Medico ja esta autenticado no interconsulta =/')
       }else{
@@ -91,6 +135,9 @@ const Login = ({ title, ImagemLateral, MessageButton, secondRoute, treeRoute, pl
         secureLocalStorage.setItem('FotoMedico', FotoMedico)
         secureLocalStorage.setItem('TypeDoctor', TypeDoctor)
       }
+
+      await ValidatorDoctor.mutateAsync({ email: email })
+
       break
 
       case '/welcome/login-paciente':
@@ -110,8 +157,10 @@ const Login = ({ title, ImagemLateral, MessageButton, secondRoute, treeRoute, pl
         secureLocalStorage.setItem('NomePaciente', NomePaciente)
         secureLocalStorage.setItem('Doenca', DoencaPaciente)
         secureLocalStorage.setItem('FotoPaciente', FotoPaciente)
-        secureLocalStorage.setItem('RegisterSucessPatient', 'cadastroFinalizado')
       }
+
+      await ValidatorPaciente.mutateAsync({ email: email })
+
       break
 
       case '/welcome/login-unidade':
@@ -124,12 +173,14 @@ const Login = ({ title, ImagemLateral, MessageButton, secondRoute, treeRoute, pl
 
       if(tokenStorageUnidade && ModelidUserUnidade && NomeStorageUnidade && FotoStorageUnidade){
         console.log('Usuario ja esta autenticado no interconsulta =/')
+        Router.push(`${plataform}`)
       }else{
         secureLocalStorage.clear()
         secureLocalStorage.setItem('token', token)
         secureLocalStorage.setItem(`id`, ModelidUserLogged)
         secureLocalStorage.setItem('NomeUnidade', NomeUnidade)
         secureLocalStorage.setItem('FotoUnidade', FotoUnidade)
+        Router.push(`${plataform}`)
       }
 
      }
@@ -158,16 +209,12 @@ const Login = ({ title, ImagemLateral, MessageButton, secondRoute, treeRoute, pl
 
   const HandleClick = async () => {
     try {
-      const response = await CreateRequestMutation.mutateAsync({
+      await CreateRequestMutation.mutateAsync({
         email: email,
         senha: senha,
         route: route,
       })
   
-      if (response) {
-
-        Router.push(`${plataform}`);
-      }
     } catch (error) {
       if (error.response && error.response.status === 401) {
         setSnackbarMessage(`${apelido}, suas credenciais de login estão incorretas =/`);
@@ -245,7 +292,10 @@ const Login = ({ title, ImagemLateral, MessageButton, secondRoute, treeRoute, pl
             </div>
 
               <button className='w-72 h-12 rounded-full bg-indigo-950 text-white font-light' onClick={() => HandleClickLogin()}> 
-              {CreateRequestMutation.isLoading ? <CircularProgress size={24}/> : MessageButton}
+              {CreateRequestMutation.isLoading  || ValidatorDoctor.isLoading || ValidatorPaciente.isLoading ?
+               <CircularProgress size={24}/> 
+               : MessageButton
+               }
               </button>
 
               

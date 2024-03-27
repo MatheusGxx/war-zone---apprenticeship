@@ -18,7 +18,7 @@ import { RegisterSixDoctor } from './RegisterSixDoctor.jsx'
 import { RegisterMédicoSeven } from './RegisterDoctorSeven.jsx'
 import { config } from '../config.js'
 
-const FormularioMédico = () => {
+const FormularioMédico = ({ render }) => {
   const [open, setOpen] = useState(false);
   const hiddenFileInput = useRef(null)
   const [snackbarOpen, setSnackbarOpen] = useState(false)
@@ -28,14 +28,11 @@ const FormularioMédico = () => {
   const [nome, setNome] = useState('')
   const [titulo, setTitulo] = useState('')
   const [formacao, setFormacao] = useState('')
-  const [especialidade, setEspecialidade] = useState('')
-  const [atuacao, setAtuacao] = useState('')
   const [crm, setCRM] = useState('')
   const [ufCRM, setUFCRM] = useState('')
   const [rqe, setRQE] = useState('')
   const [certificacao, setCertificacao] = useState('')
   const [resumo, setResumo] = useState('')
-  const [precoConsulta, setPrecoConsulta] = useState('')
   const [posGraducao, setPosGraduacao] = useState('')
   const [dataNascimento, setDataNascimento] = useState('')
   const [ferramentaTerapeutica, setFerramentasTerapeuticas] = useState([])
@@ -57,78 +54,50 @@ const FormularioMédico = () => {
   const [cepMedico, setCEPMedico] = useState('')
   const [emailContador, setEmailContador] = useState('')
   const [numeroContador, setNumeroContador] = useState('')
-  const [typeDoctor, setTypeDoctor] = useState('')
   const [currentStep, setCurrentStep] = useState(1)
   const [croppedImage, setCroppedImage] = useState(null)
   const [croppedFile, setCroppedFile] = useState(null)
-  const [typeDoctorPublic, setTypeDoctorPublic] = useState(false)
   const [dddPais, setDDDPais] = useState('55')
 
   useEffect(() => {
+    setOpen(true)
+  },[])
 
-  },[typeDoctorPublic])
+  const id = secureLocalStorage.getItem('id')
 
-  const Params = useSearchParams()
-
-  const parametrer = Params.get('id')
-
-  const Router = usePathname()
+  const Router = '/welcome/login-medico/cadastro-medico/obrigado-medico'
 
   const NavegationPage = useRouter()
 
   const CreateRequestMutation  = useMutation( async (valueRequest) => {
-    const response = await axios.post(`${config.apiBaseUrl}/api/obrigado/${parametrer}`, valueRequest)
+    const response = await axios.post(`${config.apiBaseUrl}/api/obrigado/${id}`, valueRequest)
     return response.data
   },{
     onSuccess:(data) =>{
-      const { token, NomeMedico, AreaAtuacao, CRMM, FotoMedico, TypeDoctorr } = data
-      secureLocalStorage.setItem('token', token)
-      secureLocalStorage.setItem('id', parametrer)
-      secureLocalStorage.setItem('NomeMedico', NomeMedico)
-      secureLocalStorage.setItem('AreadeAtuacao', AreaAtuacao)
+      const { CRMM, FotoMedico } = data
       secureLocalStorage.setItem('CRMMedico', CRMM)
       secureLocalStorage.setItem('FotoMedico', FotoMedico)
-      secureLocalStorage.setItem('TypeDoctor', TypeDoctorr)
+      secureLocalStorage.setItem('StatusRegister', true)
     }
   })
 
-  const getListDoencasDoctor = useMutation( async (valueRequest) => {
-    const response = await axios.post(`${config.apiBaseUrl}/api/saved-list-doencas-and-photo-especiality`, valueRequest)
-    return response.data
-  })
-
-  useEffect(() => {
-    if(especialidade !== ''){
-      getListDoencasDoctor.mutateAsync({ Especialidade: especialidade, id: parametrer})
-    }
-  },[especialidade])
-
-  const handleOpenClick = () => {
-    setOpen(true);
-  }
 
   const HandleClickFinal = async () => {
     const ConjuntingNumber = dddPais + numeroContador
     const NumberOriginal = ConjuntingNumber.replace(/[\s()]/g, '')
 
     const formData = new FormData();
-    formData.append("NomeConhecido", nome)
-    formData.append("TituloEspecialista", titulo)
     formData.append("FormacaoEspecialista", formacao)
     formData.append('AnoGraduacao', anograduacao)
     formData.append("PosGraduacao", posGraducao )
-    formData.append("EspecialidadeMedica", especialidade)
-    formData.append("AreadeAtuacao", atuacao);
     formData.append("CRM", crm)
     formData.append("UFCRM", ufCRM)
     formData.append('InstituicaoResidencia', instituicaoResidencia)
     formData.append("DataNascimento", dataNascimento)
     formData.append("RQE", rqe);
     formData.append("Certificacao", certificacao)
-    formData.append("PrecoConsulta", precoConsulta)
     formData.append("ResumoProfissional", resumo)
     formData.append("FerramentasTerapeuticas", ferramentaTerapeutica)
-    formData.append("Slug", nome)
     formData.append("NomeTitular", nometitular)
     formData.append("NumeroConta", numeroconta)
     formData.append("NumeroAgencia", numeroAgencia)
@@ -144,18 +113,20 @@ const FormularioMédico = () => {
     formData.append('CEPMedico', cepMedico)
     formData.append('EmailContador', emailContador),
     formData.append('TelefoneContador', NumberOriginal)
-    formData.append('TypeDoctor', typeDoctor)
     formData.append("route", Router)
     formData.append("file", croppedFile)
 
     try {
       await CreateRequestMutation.mutateAsync(formData)
-      NavegationPage.push(`/casos-clinicos`)
+      setOpen(false)
+      if(render){
+        render()
+      }
     } catch (err) {
       setSnackbarMessage(
         'Ops Algo deu errado :(, parece que você não fez o primeiro cadastro, volte e faça o primeiro cadastro'
-      );
-      handleSnackBarOpen();
+      )
+      handleSnackBarOpen()
     }
   }
 
@@ -175,14 +146,10 @@ const FormularioMédico = () => {
 
   return (
     <>
-      <button onClick={() => handleOpenClick()} className="w-72 h-12 rounded-full bg-indigo-950 text-white font-light">
-           Finalizar Cadastro
-      </button>
-     
         <Dialog open={open}
          PaperProps={{
           style: {
-            maxWidth: '600px', 
+            maxWidth: '700px', 
             width: '100%',
           },
         }}
@@ -198,6 +165,9 @@ const FormularioMédico = () => {
           </DialogTitle>
           </div>
             <DialogContent className="w-full">
+            <h1 className="font-semibold text-blue-500 text-center text-xl sm:text-md mb-4"> 
+            Dr(a) Termine o Cadastro!
+            </h1>
                 <div className="flex flex-col gap-3">
 
                 {currentStep === 1 &&
@@ -208,25 +178,17 @@ const FormularioMédico = () => {
                   setNome={setNome}
                   nome={nome}
                   setDataNascimento={setDataNascimento}
-                  dataNascimento={dataNascimento}
-                  setTypeMedico={setTypeDoctor}
-                  typeMedico={typeDoctor}
+                  dataNascimento={dataNascimento}                
                   setCurrentStep={setCurrentStep}
-                  setTypeDoctorPublic={setTypeDoctorPublic}
                   />
                 }
 
                 {currentStep === 2 &&
                 //Especialidade Médica Principal
-                  <RegisterTwoDoctor
-                   especialidade={especialidade}
-                   setEspecialidade={setEspecialidade}
-                   atuacao={atuacao}
-                   setAtuacao={setAtuacao}
+                  <RegisterTwoDoctor                   
                    setResumo={setResumo}
                    resumo={resumo}
                    setCurrentStep={setCurrentStep}
-                   typeDoctorPublic={typeDoctorPublic}
                    />
                 }
 
@@ -263,8 +225,6 @@ const FormularioMédico = () => {
                 {currentStep === 5  &&
                 //Preferencias de Pagamento
                     <RegisterFiveDoctor 
-                      setPrecoConsulta={setPrecoConsulta}
-                      precoConsulta={precoConsulta}
                       setNomeTitular={setNomeTitular}
                       nometitular={nometitular}
                       setNumeroConta={setNumeroConta}

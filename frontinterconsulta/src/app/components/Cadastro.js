@@ -92,7 +92,7 @@ const Cadastro = ({ title, OneRoute, SecondRoute, TreeRoute, apelido, mensagem})
 
    const AcceptTermsOfUse = (event, value) => {
         if (event.target.checked) {
-          setAcceptTerms((prev) => [...prev, value]);
+          setAcceptTerms((prev) => [...prev, value])
         } else {
           setAcceptTerms((prev) => prev.filter((accept) => accept !== value))
         }

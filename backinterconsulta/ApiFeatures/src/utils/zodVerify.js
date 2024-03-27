@@ -11,28 +11,27 @@ export const VerifyRegister = z.object({
   email: z.string().email(),
   telefone: z.string().min(6),
   route: z.string(),
-  doenca: z.string().optional()
+  doenca: z.string().optional(),
+  EspecialidadeMedica: z.string().optional(),
+  AreadeAtuacao: z.string().optional(),
+  TypeDoctor: z.string().optional(),
+  valorConsulta: z.string().optional(),
+  tituloEspecialista: z.string().optional()
 })
 
 
 export const VerifyDataMédico = z.object({
-  NomeConhecido: z.string(),
-  TituloEspecialista: z.string(),
   FormacaoEspecialista: z.string(),
   AnoGraduacao: z.string(),
   PosGraduacao: z.string(),
-  EspecialidadeMedica: z.string(),
-  AreadeAtuacao: z.string(),
   CRM: z.string(),
   UFCRM: z.string(),
   InstituicaoResidencia: z.string(),
   DataNascimento: z.string(),
   RQE: z.string(),
   Certificacao: z.string(),
-  PrecoConsulta: z.string(),
   ResumoProfissional: z.string(),
   FerramentasTerapeuticas: z.string(),
-  Slug: z.string(),
   NomeTitular: z.string(),
   NumeroConta: z.string(),
   NumeroAgencia: z.string(),
@@ -47,8 +46,7 @@ export const VerifyDataMédico = z.object({
   Cidade: z.string(),
   Estado: z.string(),
   CEPMedico: z.string(),
-  TypeDoctor: z.string()
-});
+})
 
 export const VerifyDataPaciente = z.object({
   Genero: z.string(),

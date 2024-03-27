@@ -4,7 +4,6 @@ import {
    Login,
    Register,
    RegisterEnd,
-   getListDoencasDoctor,
    ValidatorCodeEmail,
    UpdatePassword,
 } from '../../services/LoginService.js'
@@ -34,7 +33,12 @@ router.post('/register', async (req, res ) => {
       email: req.body.email,
       telefone: req.body.telefone,
       route: req.body.route,
-      doenca: req.body.doenca
+      doenca: req.body.doenca,
+      typeDoctor: req.body.typeDoctor, 
+      especialidade: req.body.especialidade,
+      AreaAtuacao: req.body.AreaAtuacao,
+      valorConsulta: req.body.valorConsulta,
+      tituloEspecialista: req.body.tituloEspecialista
      }
 
      const response = res
@@ -50,23 +54,17 @@ router.post('/obrigado/:id', uploadPhotos.single("file") ,async (req, res ) => {
        console.log(req.file)
    
        const body = {
-         NomeConhecido: req.body.NomeConhecido,
-         TituloEspecialista: req.body.TituloEspecialista,
          FormacaoEspecialista: req.body.FormacaoEspecialista,
          AnoGraduacao: req.body.AnoGraduacao,
          PosGraduacao: req.body.PosGraduacao,
-         EspecialidadeMedica: req.body.EspecialidadeMedica,
-         AreadeAtuacao: req.body.AreadeAtuacao,
          DataNascimento: req.body.DataNascimento,
          CRM: req.body.CRM,
          UFCRM: req.body.UFCRM,
          InstituicaoResidencia: req.body.InstituicaoResidencia,
          RQE: req.body.RQE,
          Certificacao: req.body.Certificacao,
-         PrecoConsulta: req.body.PrecoConsulta,
          ResumoProfissional: req.body.ResumoProfissional,
          FerramentasTerapeuticas: req.body. FerramentasTerapeuticas,
-         Slug: req.body.Slug,
          NomeTitular: req.body.NomeTitular,
          NumeroConta: req.body.NumeroConta,
          NumeroAgencia: req.body.NumeroAgencia,
@@ -83,7 +81,6 @@ router.post('/obrigado/:id', uploadPhotos.single("file") ,async (req, res ) => {
          CEPMedico: req.body.CEPMedico,
          EmailContador: req.body.EmailContador,
          TelefoneContador: req.body.TelefoneContador,
-         TypeDoctor: req.body.TypeDoctor,
          Genero: req.body.Genero,
          Data: req.body.Data,
          Doenca: req.body.Doenca,
@@ -118,17 +115,6 @@ router.post('/obrigado/:id', uploadPhotos.single("file") ,async (req, res ) => {
        const response = res
        await RegisterEnd(body, params, PathFoto, response)
 
-})
-
- router.post('/saved-list-doencas-and-photo-especiality', 
-       async(req, res) => {
-        const body = {
-          Especialidade: req.body.Especialidade,
-          id: req.body.id
-        }
-         
-        getListDoencasDoctor(body, res)
-        console.log(req.body)
 })
 
 router.post('/validator-code-email', 

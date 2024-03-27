@@ -37,8 +37,8 @@ const ContentPaciente = () => {
   const[fotoMedico, setFotoMedico] = useState(null)
   const[avaliacoesDoctor, setAvaliacoesDoctor] = useState(null)
   const[endRegister, setEndRegister] = useState(false)
-  const[isValid, setIsValid] = useState(null)
   const[okUTM, setOkUTM] = useState(false)
+  const[statusRegisterPaciente, setStatusRegisterPaciente] = useState(false)
   const { blood } = useBlood()
 
   const queryClient = useQueryClient()
@@ -59,26 +59,19 @@ const ContentPaciente = () => {
   const id = idLocal || ''
 
   const RegisterSucessPatient = secureLocalStorage.getItem('RegisterSucessPatient')
-
   const InitialContant = secureLocalStorage.getItem('InitialContact')
-
-  const VerifyDataPatient = useMutation(
-    async (valueRequest) => {
-      try {
-        const response = await axios.post(`${config.apiBaseUrl}/api/verify-data-patient`, valueRequest)
-        setIsValid(response.data.valid)
-        return response.data.valid
-      } catch (error) {
-        console.error('Error in VerifyDataPatient:', error);
-      }
-    }
-  )
-
+  const StatusRegisterPaciente = secureLocalStorage.getItem('StatusRegister')
 
   useEffect(() =>{
     const Token = secureLocalStorage.getItem('id')
     setToken(Token)
-  },[])
+
+    if(StatusRegisterPaciente === false){
+      setStatusRegisterPaciente(false)
+    }else{
+      setStatusRegisterPaciente(true)
+    }
+  },[statusRegisterPaciente])
 
   
   const referrer = params.get('UTM_Referrer') 
@@ -168,16 +161,6 @@ const ContentPaciente = () => {
   useEffect(() => {
    
   },[logged])
-
-  useEffect(() => {
-    const UpdateDataPatient = async () => {
-      if (!RegisterSucessPatient) {
-        await VerifyDataPatient.mutateAsync({ id: id });
-      }
-    };
-  
-    UpdateDataPatient();
-  }, [RegisterSucessPatient])
   
   const CreateRequestMutation = useMutation(
     async (valueRequest) => {
@@ -187,6 +170,7 @@ const ContentPaciente = () => {
       return response.data
     }
   )
+  
   const getSintomasAndDoencas = useMutation(
     async (valueRequest) => {
       const response = await axios.post(`${config.apiBaseUrl}/api/get-sintomas-doencas`, valueRequest)
@@ -207,7 +191,7 @@ const ContentPaciente = () => {
     )   => {
 
     if(token !== null){  // Se tiver Logado
-      if(isValid === false){
+      if(statusRegisterPaciente === false){
        setEndRegister(true)
        setEspecialidade(Especialidade)
        setNomeProfissional(nameProfissional)
@@ -217,7 +201,7 @@ const ContentPaciente = () => {
        setFotoMedico(fotoMedico)
        setValorConsulta(ValorConsulta)
        setAvaliacoesDoctor(Avaliacoes)
-      }else if(RegisterSucessPatient){
+      }else if(statusRegisterPaciente === true){
         setLogged(true)
         setEspecialidade(Especialidade)
         setNomeProfissional(nameProfissional)
@@ -259,7 +243,7 @@ const ContentPaciente = () => {
     <>
       <div className="flex gap-6 items-center mt-1 ml-7 sm:ml-0 sm:justify-center md:justify-center md:ml-0">
         <h1 className="text-blue-900 font-bold pt-2 sm:hidden md:hidden lg:text-sm">
-          Nos conte o que voce esta Sentido:
+          Digite os seus Sintomas ou Doença:
           </h1>
 
         <Autocomplete
@@ -319,7 +303,7 @@ const ContentPaciente = () => {
                         }
                       </div>
                       <div className="flex gap-3 justify-center items-center">
-                        <p className="sm:text-center text-center text-blue-500 font-bold">{medico.NomeEspecialista}</p>
+                        <p className="sm:text-center text-center text-blue-500 font-bold">{medico.NomeEspecialista ? medico.NomeEspecialista : medico.nome}</p>
                         <div className="mt-1">
                          <div className="bg-green-500 rounded-full h-2 w-2"></div>
                         </div>
@@ -369,7 +353,7 @@ const ContentPaciente = () => {
                       }
                       </div>
                       <div className="flex gap-3 justify-center items-center">
-                        <p className="sm:text-center text-center text-blue-500 font-bold">{medico.NomeEspecialista}</p>
+                        <p className="sm:text-center text-center text-blue-500 font-bold">{medico.NomeEspecialista ? medico.NomeEspecialista : medico.nome}</p>
                         <div className="mt-1"> 
                       
                          <div className="bg-green-500 rounded-full h-2 w-2"></div>

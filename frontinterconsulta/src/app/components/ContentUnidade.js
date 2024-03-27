@@ -58,6 +58,7 @@ const ContentUnidade = () => {
   const[numeroAtendimentosDias, setNumeroAtendimentosDias] = useState(null)
   const[quantidadeCasosClinicos, setQuantidadeCasosClinicos] = useState(null)
   const[ArrendondamentoDiaFraseFinalNumber, setArrendondamentoDiaFraseFinalNumber] = useState(null)
+  const[endMessage, setEndMessage] = useState(false)
 
   const { vertical, horizontal } = position
 
@@ -110,7 +111,7 @@ const ContentUnidade = () => {
       const { 
         Inicio, 
         Fim, 
-        SomaAtendimentosDia, 
+        SomaAtendimentoDiaFinal, 
         MessageAtendimentosDia, 
         ArrendondamentoDiaFraseFinal, 
         QuantidadeMedicosDisponiveis, 
@@ -125,7 +126,7 @@ const ContentUnidade = () => {
       setOkCasosClinicos(false)
       setInicioMedicos(Inicio)
       setFimMedicos(Fim)
-      setHorasMedicas(SomaAtendimentosDia)
+      setHorasMedicas(SomaAtendimentoDiaFinal)
       setAtendimentos(MessageAtendimentosDia)
       setArrendondamentoDiaFraseFinalNumber(ArrendondamentoDiaFraseFinal)
       setMedicosDisponiveis(QuantidadeMedicosDisponiveis)
@@ -153,6 +154,7 @@ const ContentUnidade = () => {
   },{
     onSuccess: () => {
       PostFilaDeEspera()
+      setEndMessage(true)
     }
   })
 
@@ -185,10 +187,7 @@ const ContentUnidade = () => {
         block: 'start',
       })
     } 
-     
-    console.log(`State Button: ${visibleButton}`)
-    console.log(`Visible Plan: ${visiblePlan}`)
-    console.log(`on: ${on}`)
+  
   }, [horasMedicas, atendimentos, medicos, consolidado, on, reset, inicio, fim, pacienteFaltando, visiblePlan, visibleButton, on])
   
   
@@ -284,6 +283,7 @@ const ContentUnidade = () => {
     setVisibileButton(true)
     setPacienteSobrando(null)
     setOnPopup(false)
+    setEndMessage(false)
   }
 
   const PostConsolidado = async (CPFsPacientes) => {
@@ -403,10 +403,10 @@ const ContentUnidade = () => {
             <div className='flex justify-center items-center gap-10 sm:flex-col'>
   
             <div className="flex flex-col gap-2 w-full">
-            <h1 className='font-semibold text-blue-500 text-lg whitespace-nowrap'> Data de Inicio dos Atendimentos *</h1>
+            <h1 className='font-semibold text-blue-500 text-lg whitespace-nowrap'> Data de Início dos Atendimentos *</h1>
             <TextField
               variant="standard"
-              label="Selecione a Data de Inicio"
+              label="Selecione a Data de Início"
               InputProps={{
                 sx: { borderBottom: "1px solid blue" },
               }}
@@ -454,7 +454,7 @@ const ContentUnidade = () => {
                   Anexar Planilha
                   </p>
                 </button>
-                <p className='font-bold text-blue-400'> Planilha formato Execel: .xlsx</p>
+                <p className='font-bold text-blue-400'> Planilha formato Excel: .xlsx</p>
              </>
                   : ''
               }
@@ -469,7 +469,7 @@ const ContentUnidade = () => {
              
              
              {visiblePlan &&   
-             <button className='bg-blue-600 rounded-full p-2 w-full' onClick={HandleOkCasosClinicos}>
+             <button className='bg-blue-600 rounded-full p-2 w-1/3' onClick={HandleOkCasosClinicos}>
               <p className='font-bold text-white'> Analisar Lista </p>
              </button> 
              }       
@@ -477,12 +477,8 @@ const ContentUnidade = () => {
               {okCasosClinicos && messageErr === '' && 
               <div className='flex gap-4 flex-col justify-center items-center'>
                 <div className='flex gap-4'>
-                <InsertEmoticonIcon color="primary" fontSize='large'/>
-                <h1 className='font-bold text-blue-500 text-center'> {messageUnidade} </h1>
-                </div>
-                <div className='flex gap-4'>
                 <CircularProgress color="primary" size={24}/>
-                <h1 className='font-bold text-blue-500 animate-pulse text-center'> Aguarde Estamos avaliando a sua lista de pacientes </h1>
+                <h1 className='font-bold text-blue-500 animate-pulse text-center'> Analisando Planilha </h1>
                 </div>
               </div>
               }
@@ -493,51 +489,64 @@ const ContentUnidade = () => {
   
           {horasMedicas !== '' && atendimentos !== '' && medicos  && consolidado !== '' && successData !== null ?
             <>
-          <div className='flex justify-center items-center flex-col gap-5 w-full'>
-            <div className=' flex justify-center items-center flex-col w-full p-5 gap-5' ref={divInfoRef}>
+          <div className='flex justify-center items-center flex-col gap-5 w-full' ref={divInfoRef}>
+            {endMessage ? 
+            <>
+            <h1 className='text-center text-2xl font-bold text-blue-500'> Notificações Enviadas com Sucesso! </h1>
+             <h1 className='font-normal text-center text-lg'> {NameUnidadeSaude}, sua equipe médica e os pacientes da lista foram notificados e agendados com sucesso.</h1>
+            </>
+             :
+             <div className=' flex justify-center items-center flex-col w-full p-5 gap-5'>
               <h1 className="text-center text-2xl font-bold text-blue-500"> Acabe com as Filas! </h1>
-             <h1 className='text-center text-lg leading-8 whitespace-normal'> Voce possui <span className='font-bold text-blue-500'> {medicos} </span> {medicos > 1 ? 'Médicos' : 'Médico'} com horario disponivel na unidade de saúde 
-               <span className='font-bold text-blue-500'> {NameUnidadeSaude} </span> entre os dias <span className='font-bold text-blue-500'> {InicioMedicos}  </span> e  <span className='font-bold text-blue-500'> {FimMedicos} </span>. 
-              Com isso, se cada Médico fizer em média <span className='font-bold text-blue-500'> {ArrendondamentoDiaFraseFinalNumber} </span> atendimentos por dia, no final de <span className='font-bold text-blue-500'> {finalDiasAtendimentos} </span> {finalDiasAtendimentos > 1 ? 'Dias' : 'Dia'},
-              voce poderá atender <span className='font-bold text-blue-500'> {horasMedicas} </span> do total de <span className='font-bold text-blue-500'> {quantidadeCasosClinicos} </span> pacientes que precisam de <span className='font-bold text-blue-500'> {especialidade.replace("UPA01 - ", "")} </span>.
-             </h1>
-            
-            {CreateRequestMutation.isLoading &&
-                  <Image src={Logo} alt="Logo Interconsulta" height={50} width={50} className="animate-pulse"/>
+              <h1 className='text-center text-lg leading-8 whitespace-normal'> Você possui <span className='font-bold text-blue-500'> {medicos} </span> {medicos > 1 ? 'médicos' : 'médico'} com horário disponível na Unidade de Saúde 
+                <span className='font-bold text-blue-500'> {NameUnidadeSaude} </span> entre os dias <span className='font-bold text-blue-500'> {InicioMedicos}  </span> e  <span className='font-bold text-blue-500'> {FimMedicos} </span>. 
+              Com isso, se cada médico fizer em média <span className='font-bold text-blue-500'> {ArrendondamentoDiaFraseFinalNumber} </span> atendimentos por dia, no final de <span className='font-bold text-blue-500'> {finalDiasAtendimentos} </span> {finalDiasAtendimentos > 1 ? 'dias' : 'dia'},
+              você poderá atender <span className='font-bold text-blue-500'> {horasMedicas} </span> do total de <span className='font-bold text-blue-500'> {quantidadeCasosClinicos} </span> pacientes que precisam de <span className='font-bold text-blue-500'> {especialidade.replace("UPA01 - ", "")} </span>.
+              </h1>
+              {CreateRequestMutation.isLoading &&
+                    <Image src={Logo} alt="Logo Interconsulta" height={50} width={50} className="animate-pulse"/>
+              }
+            </div>
             }
-           </div>
   
         {pacienteFaltando > 0 && 
           <> 
-          <button className="border-red-500 border-4 rounded-lg p-2 animate-pulse" onClick={HandlePopUp}>
-            <p className='font-bold text-red-500'>  {OriginalUnidadeUnidade} tem {pacienteFaltando}  Pacientes da sua Demanda sobrando, clique aqui para ve-los!</p>
+          <h1 className='font-normal text-center text-lg'> 
+          Abaixo seguem pacientes que não conseguiram horário para que eles sejam colocados em prioridade na próxima lista de agendamento.
+          </h1>
+          <button className="bg-blue-500 rounded-full p-2 animate-pulse w-1/2 sm:w-full" onClick={HandlePopUp}>
+            <p className='font-bold text-white whitespace-nowrap'>  Pacientes Não Agendados </p>
           </button>
           </>
         }
   
       <div className={`flex flex-col gap-5`}>
+        {endMessage ? 
+        null
+        : 
         <button 
-          className={`bg-blue-500
-            p-2 rounded-full text-white font-bold min-w-[150px] flex items-center justify-center gap-5 cursor-pointer`}
-          onClick={NotificationPatientsAndDoctor}
-          disabled={agendamentoOn === true || NotificationConfirmationDoctorAndPatient.isLoading}
-        >
-          {NotificationConfirmationDoctorAndPatient.isLoading ? (
-            <>
-            <CircularProgress size={24} /> Estamos Notificando os Nossos Médicos Aguarde...
-            </>
-          ) : (
-            <p className='whitespace-nowrap'>
-              {NotificationConfirmationDoctorAndPatient.isSuccess && agendamentoOn
-                ? `${OriginalUnidadeUnidade} Obrigado pelos agendamentos todos os Médicos e Pacientes foram Notificados!`
-                : 'Agendar consultas Médicas'}
-            </p>
-          )}
-        </button>
-  
+        className={`bg-blue-500
+          p-2 rounded-full text-white font-bold w-full flex items-center justify-center gap-5 cursor-pointer`}
+        onClick={NotificationPatientsAndDoctor}
+        disabled={agendamentoOn === true || NotificationConfirmationDoctorAndPatient.isLoading}
+      >
+        {NotificationConfirmationDoctorAndPatient.isLoading ? (
+          <>
+          <CircularProgress size={24} color='inherit'/> Notificando a Rede
+          </>
+        ) : (
+          <p className='whitespace-nowrap'>
+            {NotificationConfirmationDoctorAndPatient.isSuccess && agendamentoOn
+              ? `${OriginalUnidadeUnidade}`
+              : 'Agendar Consultas Médicas'}
+          </p>
+        )}
+      </button>
+        }
+
         <button>
           <h2 className='text-red-600 font-bold whitespace-nowrap cursor-pointer' onClick={Reset}>
-            Refazer Programação
+            {endMessage ? 'Fazer Nova Programação' : 'Refazer Programação'}
           </h2>
         </button>
       </div>

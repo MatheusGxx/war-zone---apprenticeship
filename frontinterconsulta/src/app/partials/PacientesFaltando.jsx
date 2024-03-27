@@ -39,7 +39,9 @@ export const PacienteFaltando = ({ NomeUnidade, QuantidadePacientesFaltando, Pac
             height={100}
           />
         </div>
-          <DialogTitle className='text-red-600 font-bold'> { NomeUnidade } Segue os seus { QuantidadePacientesFaltando } Pacientes que ficaram faltando para suprir a sua demanda </DialogTitle>
+          <DialogTitle className='text-red-600 font-bold text-center'> 
+          { NomeUnidade }, ainda restam { QuantidadePacientesFaltando }  pacientes para serem agendados. <br/>Segue a lista dos pacientes em prioridade para os próximos agendamentos.
+          </DialogTitle>
           <DialogContent>
             {Pacientes.map((data, index) => {
                 return (
@@ -52,7 +54,7 @@ export const PacienteFaltando = ({ NomeUnidade, QuantidadePacientesFaltando, Pac
   
             })}
           </DialogContent>
-          <button onClick={() => handleClose()} className="w-11/12 h-12 rounded-full bg-red-600 text-white font-bold">
+          <button onClick={() => handleClose()} className="w-1/3 h-10 rounded-full bg-red-600 text-white font-bold">
                <p className="whitespace-nowrap"> Fechar </p>
             </button>
         </div>

@@ -113,7 +113,7 @@ export const RegisterSixDoctor = (
   return(
     <>
      
-     <h1 className="text-blue-500 text-center"> Ficha de Cadastro </h1>
+     <h1 className="text-blue-500 text-center text-lg font-semibold"> Ficha de Cadastro </h1>
 
         <TextField
            variant="standard"
@@ -261,11 +261,18 @@ export const RegisterSixDoctor = (
            value={numeroContador}/>
          </div>
 
-          <div className="w-full flex justify-between items-center">
-              <ArrowBackIosIcon color="primary" className="cursor-pointer" onClick={handleBackClick}/>
-              <Image src={Logo} width={50} height={50} alt="Logo Interconsulta" className="animate-spin-slow"/>
-              <ArrowForwardIosIcon color="primary" className="cursor-pointer" onClick={Verification}/>    
-           </div>
+         <div className="w-full flex justify-between items-center">
+            <div className='flex gap-3 cursor-pointer' onClick={handleBackClick}>
+            <ArrowBackIosIcon color="primary"/>
+            <h1 className='font-bold text-blue-500'> Voltar </h1>
+            </div>
+          <Image src={Logo} width={50} height={50} alt="Logo Interconsulta" className="animate-spin-slow"/>
+
+            <div className='flex gap-3 cursor-pointer' onClick={Verification}>
+            <h1 className='font-bold text-blue-500'> Avançar </h1>
+            <ArrowForwardIosIcon color="primary"/> 
+            </div>  
+         </div>
 
            <Snackbar
               open={snackbarOpen}

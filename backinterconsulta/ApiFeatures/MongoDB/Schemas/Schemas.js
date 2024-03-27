@@ -74,7 +74,6 @@ const ModelGestoesSolicitadas = {
 const RegisterMédico = new mongoose.Schema({
   ...DadosIniciais,
   NomeEspecialista: String,
-  NomeConhecido:String,
   TituloEspecialista: String,
   FormacaoEspecialista: String,
   PosGraduacao: String,

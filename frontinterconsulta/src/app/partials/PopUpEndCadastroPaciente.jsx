@@ -60,7 +60,7 @@ export const EndRegisterPatient = () => {
       secureLocalStorage.setItem('FotoPaciente', FotoPaciente)
       setOpen(false)
       secureLocalStorage.setItem('CadastroEndSucess', true)
-      secureLocalStorage.setItem('RegisterSucessPatient', 'cadastroFinalizado')
+      secureLocalStorage.setItem('StatusRegister', true)
       setRegisterEndOk(true)
     }
   })

@@ -1,10 +1,10 @@
 'use client'
-import Cadastro from '../../../../components/Cadastro.js'
+import CadastroDoctor from "@/app/components/CadastroDoctor"
 
 const CadastroMédico = () =>{
   return(
     <>
-   <Cadastro title="Cadastre-se abaixo Dr(a)" OneRoute="/login-medico" SecondRoute="/cadastro-medico" TreeRoute="/obrigado-medico" apelido="Dr(a)" mensagem="Voce esta muito Proximo de se tornar um Médico Oficial do Interconsulta"/>
+   <CadastroDoctor title="Cadastre-se abaixo Dr(a)" apelido="Dr(a)"/>
     </>
   )
 }

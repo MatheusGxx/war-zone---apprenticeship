@@ -16,7 +16,7 @@ import { customAlphabet } from 'nanoid'
 
 const secretKey = crypto.randomBytes(32).toString('hex')
 
-export const Login = async (body, res) =>{
+export const Login = async (body, res) => {
   const { email, senha, route } = body
 
   try{ 
@@ -83,7 +83,7 @@ export const Login = async (body, res) =>{
 }
 
 export const Register = async (body, res) =>{
-  const { nome, senha, email, telefone, route, doenca } = body
+  const { nome, senha, email, telefone, route, doenca, typeDoctor, especialidade, AreaAtuacao, valorConsulta, tituloEspecialista } = body
 
   try{
     VerifyRegister.parse(body)
@@ -101,17 +101,85 @@ export const Register = async (body, res) =>{
       if (!!await models.ModelRegisterMédico.findOne({ email }) || !!await models.ModelRegisterMédico.findOne({ telefone })) {
         error = 'Email ou telefone já estão em uso por outros Médicos';
       } else {
+
+        const NomeEspecialista = tituloEspecialista + " " + nome
+
         const newPassword = await Criptografia(senha);
         const newMedico = new models.ModelRegisterMédico({
           nome,
           senha: newPassword,
           email,
           telefone,
-        });
-
+          TypeDoctor: typeDoctor,
+          EspecialidadeMedica: especialidade,
+          AreadeAtuacao: AreaAtuacao,
+          PrecoConsulta: valorConsulta,
+          TituloEspecialista: tituloEspecialista,
+          NomeEspecialista: NomeEspecialista
+        })
+        
         const savedMedico = await newMedico.save()
+        const token = jwt.sign({userId: savedMedico._id}, secretKey, {expiresIn: '1h'})
 
-        res.status(200).json({ _id: savedMedico._id });
+        res.status(200).json({
+           token: token,
+          _id: savedMedico._id,
+          NomeMedico: savedMedico.NomeEspecialista,
+          Especialidade: savedMedico.EspecialidadeMedica,
+          TypeDoctorr: savedMedico.TypeDoctor,
+        })
+
+        
+        const NomeEspecialistaSemPonto = NomeEspecialista.replace('.', '')
+
+        // ------------------------!! Slug Dinamico !!----------------------//
+
+        const PurificationSlug = 
+        slugfy(NomeEspecialistaSemPonto, 
+          { 
+            replacement: '-', remove: undefined, lower: true, strict: false, trim: true 
+          })
+
+        let EndSlug = PurificationSlug
+  
+        let QuerySlug = await models.ModelRegisterMédico.findOne({ Slug: EndSlug });
+  
+        if (QuerySlug) {
+
+          let counter = 1
+
+          while (QuerySlug) { // Enquanto existir o slug no DB o looping vai ocorrer
+            EndSlug = `${PurificationSlug}-${counter}` // atribuindo o counter 1 no slug
+            QuerySlug = await models.ModelRegisterMédico.findOne({ Slug: EndSlug }); // Verifica se o novo Slug com o contador já existe no DB. Se existir o counter++ percorre todos os numeros de slugs cadastrados no db e adiciona um numero novo com um valor adicional +1 no novo Slug.
+            counter++
+          }
+        }
+
+           // ------------------------!! Slug Dinamico !!----------------------//
+
+           // ------------------------!! Saved List of disease and saved Photo of Especiality and Saved Slug Doctor !!----------------------//
+
+        if(typeDoctor === 'Atendimento Particular'){
+          const getDoctor = await models.ModelRegisterMédico.findById(savedMedico._id)
+      
+          const QueryEspecialidadeList = await models.List.findOne({ Especialidade: especialidade })
+          
+          if(!QueryEspecialidadeList){
+            return res.json({ message: 'Tipo de Doutor nao Atende Doenças no banco de dados do Interconsulta'})
+          }
+        
+          getDoctor.DoencasAndSintomas = QueryEspecialidadeList.DoencasESintomas
+          const ImageEspecialidade = `icons/${especialidade}.png`
+        
+          getDoctor.FotoEspecialidade = ImageEspecialidade
+
+          getDoctor.Slug = EndSlug
+        
+          getDoctor.save()
+        }
+
+          // ------------------------!! Saved List of disease and saved Photo of Especiality and Saved Slug Doctor !!----------------------//
+
 
         const IdentificadorMedico =  savedMedico._id
 
@@ -125,7 +193,7 @@ export const Register = async (body, res) =>{
         //Development
         //axios.post('http://localhost:8081/api2/automatic-whatsapp', idMédico)
       }
-      break;
+      break
 
     case '/welcome/login-paciente/cadastro-paciente':
 
@@ -183,7 +251,8 @@ export const Register = async (body, res) =>{
           senha: newPassword,
           email,
           telefone,
-        });
+        })
+
         const savedUnidade = await newUnidade.save()
 
         res.status(200).json({ _id: savedUnidade._id })
@@ -215,23 +284,17 @@ export const RegisterEnd = async (body, params, file, res) => {
 
   
    const { 
-    NomeConhecido, 
-    TituloEspecialista, 
     FormacaoEspecialista, 
     AnoGraduacao, 
     PosGraduacao, 
-    EspecialidadeMedica, 
-    AreadeAtuacao, 
     CRM,
     UFCRM,
     InstituicaoResidencia, 
     DataNascimento, 
     RQE, 
     Certificacao, 
-    PrecoConsulta, 
     ResumoProfissional, 
     FerramentasTerapeuticas,
-    Slug,
     NomeTitular,
     NumeroConta,
     NumeroAgencia,
@@ -248,7 +311,6 @@ export const RegisterEnd = async (body, params, file, res) => {
     CEPMedico,
     EmailContador,
     TelefoneContador,
-    TypeDoctor,
     Genero, 
     Data, 
     Doenca, 
@@ -277,8 +339,8 @@ export const RegisterEnd = async (body, params, file, res) => {
    const { id } = params
    
   /*try{
-  const dataMedico = { NomeConhecido, TituloEspecialista, FormacaoEspecialista, AnoGraduacao, PosGraduacao, EspecialidadeMedica, AreadeAtuacao, CRM, UFCRM, InstituicaoResidencia, DataNascimento, RQE, Certificacao, PrecoConsulta, ResumoProfissional,  FerramentasTerapeuticas, Slug, NomeTitular, NumeroConta, NumeroAgencia, Banco, ChavePix,  CPNJMedico, CPFMedico, RazaoSocialEmpresa,NomeFantasia,  EnderecoMedico, Bairro,Cidade, Estado, CEPMedico, EmailContador,
-  TelefoneContador, TypeDoctor }
+  const dataMedico = { FormacaoEspecialista, AnoGraduacao, PosGraduacao, CRM, UFCRM, InstituicaoResidencia, DataNascimento, RQE, Certificacao, ResumoProfissional,  FerramentasTerapeuticas, NomeTitular, NumeroConta, NumeroAgencia, Banco, ChavePix,  CPNJMedico, CPFMedico, RazaoSocialEmpresa,NomeFantasia,  EnderecoMedico, Bairro,Cidade, Estado, CEPMedico, EmailContador,
+  TelefoneContador }
 
   const dataPaciente = { Genero, Data, Doenca, TipoSanguineo, EstadoCivil, Profissao, CPF, CEP,  EnderecoPaciente, CidadePaciente, EstadoPaciente, Pais, CartaoSUS, NomeAcompanhante, TelefoneAcompanhante, EmailAcompanhante, }
 
@@ -303,46 +365,12 @@ export const RegisterEnd = async (body, params, file, res) => {
     
       if(Médico){
 
-        const NomeEspecialista = TituloEspecialista + " " + NomeConhecido
-        const NomeEspecialistaSemPonto = NomeEspecialista.replace('.', '')
-
-
-        // ------------------------!! Slug Dinamico !!----------------------//
-
-        const PurificationSlug = 
-        slugfy(NomeEspecialistaSemPonto, 
-          { 
-            replacement: '-', remove: undefined, lower: true, strict: false, trim: true 
-          })
-
-        let EndSlug = PurificationSlug
-  
-        let QuerySlug = await models.ModelRegisterMédico.findOne({ Slug: EndSlug });
-  
-        if (QuerySlug) {
-
-          let counter = 1
-
-          while (QuerySlug) { // Enquanto existir o slug no DB o looping vai ocorrer
-            EndSlug = `${PurificationSlug}-${counter}` // atribuindo o counter 1 no slug
-            QuerySlug = await models.ModelRegisterMédico.findOne({ Slug: EndSlug }); // Verifica se o novo Slug com o contador já existe no DB. Se existir o counter++ percorre todos os numeros de slugs cadastrados no db e adiciona um numero novo com um valor adicional +1 no novo Slug.
-            counter++
-          }
-        }
-
-           // ------------------------!! Slug Dinamico !!----------------------//
-
         try{
 
-          Médico.NomeEspecialista = NomeEspecialista
-          Médico.NomeConhecido = NomeConhecido
-          Médico.TituloEspecialista = TituloEspecialista
           Médico.FormacaoEspecialista = FormacaoEspecialista
           Médico.AnoGraduacao = AnoGraduacao
           Médico.QuantidadeTempoAnoGraduacao = ConvertingAnoFormação(AnoGraduacao)
           Médico.PosGraduacao = PosGraduacao
-          Médico.AreadeAtuacao = AreadeAtuacao
-          Médico.EspecialidadeMedica = EspecialidadeMedica
           Médico.CRM = CRM
           Médico.UFCRM =  UFCRM
           Médico.InstituicaoResidencia = InstituicaoResidencia
@@ -350,10 +378,8 @@ export const RegisterEnd = async (body, params, file, res) => {
           Médico.Idade = ConvertingIdadee(DataNascimento)
           Médico.RQE = RQE
           Médico.Certificacao = Certificacao
-          Médico.PrecoConsulta = PrecoConsulta
           Médico.ResumoProfissional = ResumoProfissional
           Médico.FerramentasTerapeuticas =  FerramentasTerapeuticas
-          Médico.Slug = EndSlug
           Médico.NomeTitular = NomeTitular
           Médico.NumeroConta = NumeroConta
           Médico.NumeroAgencia = NumeroAgencia
@@ -370,27 +396,18 @@ export const RegisterEnd = async (body, params, file, res) => {
           Médico.CEPMedico = CEPMedico,
           Médico.EmailContador = EmailContador,
           Médico.TelefoneContador = TelefoneContador,
-          Médico.TypeDoctor = TypeDoctor,
           Médico.Foto = file
         
           await Médico.save();
 
-          const token = jwt.sign({userId: Médico._id}, secretKey, {expiresIn: '1h'})
-
-          const NomeMedico = Médico.NomeEspecialista
-          const AreaAtuacao = Médico.AreadeAtuacao
           const CRMM = Médico.CRM
           const getFotoMedico = Médico.Foto
           const FotoMedico = getFotoMedico ? getFotoMedico : null
-          const TypeDoctorr = Médico.TypeDoctor
         
           res.status(200).
-          json({ token, 
-                 NomeMedico, 
-                 AreaAtuacao,
-                 CRMM,
-                 FotoMedico,
-                 TypeDoctorr
+          json({ 
+                 CRMM, 
+                 FotoMedico
                })
           
           const IdentificadorObrigadoMedico =  Médico._id
@@ -401,7 +418,7 @@ export const RegisterEnd = async (body, params, file, res) => {
           }
           
           //Production
-          axios.post('http://back-a:8081/api2/automatic-whatsapp', dataMedico)
+           axios.post('http://back-a:8081/api2/automatic-whatsapp', dataMedico)
           //Development
           //axios.post('http://localhost:8081/api2/automatic-whatsapp', dataMedico)
         
@@ -554,7 +571,7 @@ export const RegisterEnd = async (body, params, file, res) => {
       }
       break
     default:
-      return res.status(404).json({message: 'Rota Invalida'})
+      return res.status(404).json({ message: 'Rota Invalida'})
 
   }
 
@@ -562,35 +579,6 @@ export const RegisterEnd = async (body, params, file, res) => {
     return res.status(400).json({ error })
   }
 }
-
-export const getListDoencasDoctor = async (body, res) => {
-  const { id , Especialidade } = body
-  
-    try{
-      const getDoctor = await models.ModelRegisterMédico.findById(id)
-
-      if(!getDoctor){
-        return res.status(400).json({ message: 'Médico nao cadastrado no Interconsulta'})
-      }
-    
-      const QueryEspecialidadeList = await models.List.findOne({ Especialidade: Especialidade })
-      
-      if(!QueryEspecialidadeList){
-        return res.json({ message: 'Tipo de Doutor nao Atende Doenças no banco de dados do Interconsulta'})
-      }
-    
-      getDoctor.DoencasAndSintomas = QueryEspecialidadeList.DoencasESintomas
-      const ImageEspecialidade = `icons/${Especialidade}.png`
-    
-      getDoctor.FotoEspecialidade = ImageEspecialidade
-    
-      getDoctor.save()
-  
-    }catch(err){
-      return res.status(400).json({ err })
-    }
-}
-
 
 export const ValidatorCodeEmail = async(code, person, res) => {
 

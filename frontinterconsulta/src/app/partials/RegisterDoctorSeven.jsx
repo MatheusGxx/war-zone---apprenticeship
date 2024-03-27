@@ -60,7 +60,7 @@ export const RegisterMédicoSeven = ({
 
   return (
     <>
-      <h1 className="text-blue-500 text-center"> Foto do Médico:</h1>
+      <h1 className="text-blue-500 text-center text-lg font-semibold"> Foto do Médico:</h1>
 
       {Foto ? (
         <div className="flex justify-center items-center">

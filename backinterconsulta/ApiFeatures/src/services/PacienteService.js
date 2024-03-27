@@ -284,8 +284,11 @@ export const GetDataSintomasAndDoenca = async (res) => {
     const Sintomas = getDoencas.map(data => data.DoencasESintomas.map(data => data.Sintomas.map(data => data))).flat(2);
     
     const arr = [...Doencas, ...Sintomas];
+    
+    // Filtrando duplicatas usando um conjunto (Set)
+    const uniqueArr = [...new Set(arr)]
 
-    res.status(200).json({ arr });
+    res.status(200).json({ arr: uniqueArr });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Erro ao obter dados de doenças e sintomas.' });
@@ -295,33 +298,23 @@ export const GetDataSintomasAndDoenca = async (res) => {
 
 
 export const VerifyDataPatient = async (body, res) => {
-    const { id } = body
-
+    const { email } = body
     try{
 
-      if(id === ''){
-        return res.status(400).json({ message: 'Paciente nao esta logado'})
+      const getEmailPatient = await models.ModelRegisterPaciente.findOne({ email: email })
+
+      if(!getEmailPatient){
+        return res.status(400).json({ message: 'Paciente does not exist in database of Interconsulta'})
       }
 
-      const getDataPatient = await models.ModelRegisterPaciente.findById(id)
+      const CPFPaciente = getEmailPatient.CPF
 
-      if(!getDataPatient){
-        return res.status(200).json({ message: 'Paciente Nao esta cadastrado no Interconsulta'})
+      if(CPFPaciente){
+         return res.status(200).json({ valid: true })
+      }else{
+         return res.status(200).json({ valid: false })
       }
 
-    const CPFPatient = getDataPatient.CPF
-    const Data = getDataPatient.Data
-    const Genero = getDataPatient.Genero
-    const NomeAcompanhante = getDataPatient.NomeAcompanhante
-    const TelefoneAcompanhante =  getDataPatient.TelefoneAcompanhante
-    const EmailAcompanhante = getDataPatient.EmailAcompanhante
-
-
-    if(CPFPatient && Data && Genero && NomeAcompanhante && TelefoneAcompanhante && EmailAcompanhante){
-       return res.status(200).json({ valid: true })
-    }else{
-       return res.json({ valid: false })
-    }
     }catch(error){
       console.log(error)
     }
