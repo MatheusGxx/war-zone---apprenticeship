@@ -23,7 +23,7 @@ const MainMedico = ({title, subTitle, Component}) => {
 
       </section>
 
-      <div className='bg-white min-h-[300px] w-3/4 sm:w-full md:w-full lg:w-full rounded-lg flex flex-col gap-4'>
+      <div className='bg-white min-h-[300px] w-3/4 sm:w-full md:w-full lg:w-full rounded-lg flex flex-col gap-4 border border-blue-500'>
         <Component />
       </div>
       

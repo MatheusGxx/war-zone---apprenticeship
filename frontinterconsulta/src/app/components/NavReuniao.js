@@ -58,7 +58,7 @@ const NavReunião = () => {
   }
 
   if(minutes <= 4){
-    setReuniaoAcabando(true)
+    //setReuniaoAcabando(true)
   }
 
   return(

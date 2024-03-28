@@ -13,6 +13,7 @@ import {
   WarningDoctorHorariosAntigos,
   CreateLeadLandingPage,
   sendEmailRecuperePassword,
+  DoctorNotificationPatient,
   
 } from '../../services/AutomaticService.js'
 
@@ -265,5 +266,15 @@ router.post('/send-email-recupere-password',
       }
 )
 
+router.post('/doctor-notification-patient',
+       async(req, res) => {
+
+        const { idD, idP  } = req.body
+      
+        DoctorNotificationPatient( idD, idP, res)
+
+        console.log(req.body)
+       }
+)
 
 export default router

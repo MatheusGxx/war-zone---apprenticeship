@@ -8,7 +8,7 @@ import {
   getHorarios,
   deleteHorarios,
   VerifyMedico,
-  getCasosClinicos,
+  getPatients,
   DeleteIntervalo,
   VerifyRegisterTottalySuccess
 }  from '../../services/MedicoService.js'
@@ -102,17 +102,14 @@ router.post('/verify-medico/:id', async (req,res) => {
     VerifyMedico(params,response)
 })
 
-router.post('/get-casos-clinicos/:id', uploadIcons.single('file'), async (req,res) =>{
+router.get('/get-patients/:id',
+    async (req,res) =>{
 
-  const params = {
-    id: req.params.id
-  }
-  
-  console.log(`ID para pegar os casos clinicos da area de atuaçao do médico ${req.params.id}`)
-  const response = res
-   
-  getCasosClinicos(params, response)
-
+    const params = {
+      id: req.params.id
+    } 
+      
+    getPatients(params, res)
 })
 
 

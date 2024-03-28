@@ -823,7 +823,39 @@ export const sendEmailRecuperePassword = async (email, person, res) => {
   }
 
   }catch(err){
-    console.log(err); 
+    console.log(err)
     return res.status(400).json({ message: 'Error in Send Email for Recupere Password' })
+  }
+}
+
+export const DoctorNotificationPatient = async (idD, idP, res) => {
+  try{
+   const getDoctor = await models.ModelRegisterMédico.findById(idD)
+   const getPatient =  await models.ModelRegisterPaciente.findById(idP)
+
+   if(getDoctor.CapacityNotification === 3){
+    return res.status(200).json({ doesNotSuportNotification: `${getDoctor.NomeEspecialista} Voce ja notificou 3 Pacientes para Notificar mais, atenda pelo menos um dos 3 que voce notificou anteriormente ou algum paciente aleatorio.` })
+   }else{
+     getDoctor.CapacityNotification += 1
+     getPatient.SolicitationDoctors = getDoctor._id
+
+     getDoctor.save()
+     getPatient.save()
+
+     await EmailQueue.add('Email', { 
+      to: getPatient.email,
+      subject: `O Médico(a) ${getDoctor.NomeEspecialista} esta interessado em voce!`,
+      message: `${getPatient.nome} o Dr(a) ${getDoctor.NomeEspecialista} tem interesse em resolver a sua dor, entre no #Interconsulta e resolva o seu problema com o(a) ${getDoctor.NomeEspecialista} no link a seguir: https://interconsulta.org/especialista/${getDoctor.Slug}`
+     })
+  
+     await WhatsappQueue.add('Whatsapp', {
+      numero: getPatient.telefone,
+      mensagem: `${getPatient.nome} o Dr(a) ${getDoctor.NomeEspecialista} tem interesse em resolver a sua dor, entre no #Interconsulta e resolva o seu problema com o(a) ${getDoctor.NomeEspecialista} no link abaixo\n\nhttps://interconsulta.org/especialista/${getDoctor.Slug}`
+     })
+
+     return res.status(200).json({ NotificationOk: 'Paciente Notificado com sucesso!'})
+   }
+  }catch(err){
+    return res.status(400).json({ message: 'Error in Doctor Notification the Patient'})
   }
 }

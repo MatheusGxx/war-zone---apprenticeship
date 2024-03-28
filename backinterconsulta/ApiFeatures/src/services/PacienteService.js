@@ -86,10 +86,10 @@ export const GetRecomendacoesEspecialistas = async (body, res) => {
     const ModelEspecialista = await models.ModelRegisterMédico.findOne({ Slug: slugIdentificador })
 
   if (ModelEspecialista) {
-      const ExtractAreadeAtuaçaoModel = ModelEspecialista.AreadeAtuacao
+      const ExtractEspecialidade = ModelEspecialista.EspecialidadeMedica
 
       const QueryEspecialidadesDB = await models.ModelRegisterMédico.find({
-          AreadeAtuacao: ExtractAreadeAtuaçaoModel ,
+          EspecialidadeMedica: ExtractEspecialidade,
           Slug: { $ne: slugIdentificador } //  $ne = Nao igual a
       })
 
@@ -288,10 +288,10 @@ export const GetDataSintomasAndDoenca = async (res) => {
     // Filtrando duplicatas usando um conjunto (Set)
     const uniqueArr = [...new Set(arr)]
 
-    res.status(200).json({ arr: uniqueArr });
+    res.status(200).json({ arr: uniqueArr })
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Erro ao obter dados de doenças e sintomas.' });
+    res.status(500).json({ error: 'Erro ao obter dados de doenças e sintomas.' })
   }
 }
 

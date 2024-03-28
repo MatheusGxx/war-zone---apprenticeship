@@ -49,13 +49,13 @@ export const Login = async (body, res) => {
       const QueryMedico = await models.ModelRegisterMédico.findOne({ email: user.email})
 
       const NomeMedico = QueryMedico.NomeEspecialista
-      const AreaAtuacao = QueryMedico.AreadeAtuacao
+      const Especialidade = QueryMedico.EspecialidadeMedica
       const CRMM = QueryMedico.CRM
       const getFotoMedico = QueryMedico.Foto
       const FotoMedico = getFotoMedico ? getFotoMedico : null
       const TypeDoctor = QueryMedico.TypeDoctor
 
-      return res.status(200).json({ token, NomeMedico, AreaAtuacao, CRMM, ModelidUserLogged, FotoMedico, TypeDoctor })
+      return res.status(200).json({ token, NomeMedico, Especialidade, CRMM, ModelidUserLogged, FotoMedico, TypeDoctor })
 
     case '/welcome/login-paciente':
       const QueryPaciente = await models.ModelRegisterPaciente.findOne({ email: user.email})

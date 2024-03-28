@@ -4,7 +4,7 @@ import fs from 'fs'
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path'
 import { models } from '../../../MongoDB/Schemas/Schemas.js';
-const readFileAsync = promisify(fs.readFile);
+const readFileAsync = promisify(fs.readFile)
 
 const Transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -14,7 +14,7 @@ const Transporter = nodemailer.createTransport({
         pass: '@InterConsulta2024',
         clientId: '344062049191-2m2u2nustn7rupk8esk0254fq2f7308i.apps.googleusercontent.com',
         clientSecret: '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',
-        refreshToken: '1//04aAXh-4_bPmGCgYIARAAGAQSNwF-L9IrLP5IPsKqZK8Cc2T2pDmVMi3vzRI-Pi9gYNef1_B5OCcF3FV_iBjfcumVvyGOFBs7Mrw'
+        refreshToken: '1//04_9mTZCkJ8fSCgYIARAAGAQSNwF-L9IrdzucV6p2O_cf7DsCE_7FYCnrZNbcZhr0QSmYu3uLwu3N5hfs9hHqKSqut_Z0zoc_fVM'
     }
 })
 

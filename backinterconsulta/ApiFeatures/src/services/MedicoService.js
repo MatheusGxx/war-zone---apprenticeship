@@ -363,76 +363,51 @@ export const VerifyMedico = async(params, res) => {
 }
 
 
-export const getCasosClinicos = async (params, res) => {
+export const getPatients = async (params, res) => {
   const { id } = params
 
-
   try{
-    const ModelMedico = await models.ModelRegisterMédico.findById(id);
+    const Doctor = await models.ModelRegisterMédico.findById(id)
 
-    if (!ModelMedico) {
-      return res.status(404).json({ message: 'Médico não está cadastrado no banco de dados do interconsulta =/' });
+    if (!Doctor) {
+      return res.status(404).json({ error: 'Médico não está cadastrado no banco de dados do interconsulta =/' })
     }
+
+    const WaitListDiasenseDoctor = Doctor.DoencasAndSintomas
+
+    const Doencas = WaitListDiasenseDoctor.map(data => data.Doenca).flat()
+    const Sintomas = WaitListDiasenseDoctor.map(data => data.Sintomas).flat(2)
+    
+    const arr = [...Doencas, ...Sintomas]
   
-    const Especialidade = ModelMedico.EspecialidadeMedica
+    // Filtrando duplicatas usando um conjunto (Set)
+    const uniqueArr = [...new Set(arr)]
+
+    
+    const pacientes = await models.ModelRegisterPaciente.find({ Doenca: { $in: uniqueArr } })
+
+    let cleanPatients = []
+
+    pacientes.forEach(paciente => {
+      // Criar um novo objeto contendo apenas o nome e a doença do paciente
+      let pacienteSimples = {
+          id: paciente._id,
+          nome: paciente.nome.split(' ')[0],
+          doenca: paciente.Doenca,
+          Consultas: paciente.ConsultasSolicitadasPacientes.filter(data  => data.Status.includes('Atendida')).length,
+          DoctorsSolicitations: paciente.SolicitationDoctors,
+          FotoEspecialidade: Doctor.FotoEspecialidade
+      };
   
-    const EspecialidadeEncontrada = EspecialidadesAtendidas.includes(Especialidade);
+      cleanPatients.push(pacienteSimples)
+    })
   
-    if (EspecialidadeEncontrada) {
-      const ImageEspecialidade = `icons/${EspecialidadeEncontrada}.png`
-  
-      const documentosEspecialidade = await models.ModelCasosClinicos.find({
-        'Historico': {
-          $elemMatch: {
-            'EspecialidadeMedica': EspecialidadeEncontrada
-          }
-        }
-      })
-     
-      if (documentosEspecialidade.length > 0) {
-       
-          await models.ModelCasosClinicos.updateMany(
-          {
-            'Historico': {
-              $elemMatch: {
-                'EspecialidadeMedica': EspecialidadeEncontrada
-              }
-            }
-          },
-          {
-            $set: {
-              'Historico.$[elem].FotoEspecialidade': ImageEspecialidade
-            }
-          },
-          {
-            arrayFilters: [
-              {
-                'elem.EspecialidadeMedica': EspecialidadeEncontrada
-              }
-            ]
-          }
-        )
-  
-        const HistoricoCasosClinicos = await models.ModelCasosClinicos.find({
-          'Historico': {
-            $elemMatch: {
-              'EspecialidadeMedica': EspecialidadeEncontrada
-            }
-          }
-        })
-  
-        res.status(200).json({ HistoricoCasosClinicos })
-        
-  
-      } else {
-        console.log('Especialidade não encontrada em nenhum histórico.');
-        return res.status(404).json({ message: 'Especialidade não encontrada em nenhum histórico.' });
-      }
-    } else {
-      return res.status(400).json({ message: 'Especialidade Errada' });
-    }
-  }catch(e){
-    console.log(e)
+
+    return res.status(200).json({ cleanPatients })
+
+  }catch(err){
+    console.log(err)
+    return res.status(404).json({ error: 'Ocorreu um Erro ao Mostrar os Pacientes =/' })
   }
 
 }

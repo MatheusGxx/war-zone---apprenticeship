@@ -12,7 +12,6 @@ import IconBack from '../partials/IconBack.js'
 import axios from 'axios'
 import secureLocalStorage from 'react-secure-storage'
 
-
 const Login = ({ title, ImagemLateral, MessageButton, secondRoute, treeRoute, plataform, apelido }) => {
 
   const[email, setEmail] = useState('')
@@ -98,7 +97,7 @@ const Login = ({ title, ImagemLateral, MessageButton, secondRoute, treeRoute, pl
       const { 
          token,
          NomeMedico, 
-         AreaAtuacao,
+         Especialidade,
          CRMM,
          ModelidUserLogged,
          FotoMedico,
@@ -117,20 +116,20 @@ const Login = ({ title, ImagemLateral, MessageButton, secondRoute, treeRoute, pl
       const tokenStorage = secureLocalStorage.getItem('token')
       const ModelidUser = secureLocalStorage.getItem('id')
       const NomeMedicoStorage = secureLocalStorage.getItem('NomeMedico')
-      const AreadeAtuacaoStorage = secureLocalStorage.getItem('AreadeAtuacao')
+      const EspecialidadeStorage = secureLocalStorage.getItem('Especialidade')
       const CRMStorage = secureLocalStorage.getItem('CRMMedico')
       const FotoStorageMedico = secureLocalStorage.getItem('FotoMedico')
       const TypeDoctorStorage = secureLocalStorage.getItem('TypeDoctor')
 
 
-      if(tokenStorage && ModelidUser &&  NomeMedicoStorage && AreadeAtuacaoStorage && CRMStorage && FotoStorageMedico && TypeDoctorStorage){
+      if(tokenStorage && ModelidUser &&  NomeMedicoStorage && EspecialidadeStorage && CRMStorage && FotoStorageMedico && TypeDoctorStorage){
         console.log('Medico ja esta autenticado no interconsulta =/')
       }else{
         secureLocalStorage.clear()
         secureLocalStorage.setItem('token', token)
         secureLocalStorage.setItem(`id`, ModelidUserLogged)
         secureLocalStorage.setItem('NomeMedico', NomeMedico)
-        secureLocalStorage.setItem('AreadeAtuacao', AreaAtuacao)
+        secureLocalStorage.setItem('Especialidade', Especialidade)
         secureLocalStorage.setItem('CRMMedico', CRMM)
         secureLocalStorage.setItem('FotoMedico', FotoMedico)
         secureLocalStorage.setItem('TypeDoctor', TypeDoctor)

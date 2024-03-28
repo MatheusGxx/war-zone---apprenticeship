@@ -219,6 +219,7 @@ const RegisterMédico = new mongoose.Schema({
     NomePaciente: String,
   }],
   mediaAvaliacoes : Number,
+  CapacityNotification: Number
 })
 
 const RegisterPaciente = new mongoose.Schema({
@@ -249,6 +250,7 @@ const RegisterPaciente = new mongoose.Schema({
     code: String,
     expirationCode: Date
   }],
+  SolicitationDoctors: [String],
   TrackingUTMAQ:[{
     data: String,
     UTM_Referrer: String,

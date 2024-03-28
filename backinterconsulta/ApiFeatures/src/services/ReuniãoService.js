@@ -381,7 +381,7 @@ export const SavedConsultaMedico = async (body, res) => {
   try {
 
     const dataDoctor = await models.ModelRegisterMédico.findById(id)
-
+    dataDoctor.CapacityNotification = 0
 
     const QueryConsultaMedico = await models.ModelRegisterMédico.findOne(
       { 'ConsultasSolicitadasPacientes._id': IdentificadorConsulta },
@@ -441,11 +441,16 @@ export const SavedConsultaMedico = async (body, res) => {
                Especialidade,
              },
            },
+           $set: {
+            'ConsultasSolicitadasPacientes.$.Status': `Atendida por ${dataDoctor.NomeEspecialista} `
+            }
          },
          {
            new: true,
          }
        )
+
+       dataDoctor.save()
 
       if (updateStateConsultaMedico) {
         res.status(200).json({ message: 'Atualização da Consulta feita com Sucesso' })
