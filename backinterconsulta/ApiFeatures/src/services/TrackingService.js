@@ -1,8 +1,27 @@
 import { models } from "../../MongoDB/Schemas/Schemas.js"
-import { FacebookAdsApi, Content, CustomData, DeliveryCategory, EventRequest, UserData, ServerEvent } from 'facebook-nodejs-business-sdk';
+import { 
+  FacebookAdsApi, 
+  Content, 
+  CustomData, 
+  DeliveryCategory, 
+  EventRequest, 
+  UserData, 
+  ServerEvent,
+  AdAccount,
+  CustomAudience,
+} 
+from 'facebook-nodejs-business-sdk';
 
-const acessToken = 'EAAUiJgbgiB0BO6W0xRXkeg5hWpUejQ2fpyh1FkADIf2BZANjmkCnYnYrKU12cdSJBfcxjlfIa9IIR6N5MEPJddUwvZBkG5mjFsFwPIqN0amX97X3l9k9J5QCe7IfLmE6l0wCrPhlxYSOVP8lVwSzgrS4MneW5dsZBCngRhCmzfsVFlCjwcmIJp1ObCAdx5tBQZDZD'
+const acessToken = 'EAAFeDRIT1VABO7eOm1StK4jm69FCcWaaWZCEfH020KL6OQGZCOeEkZCts3FH3rGHb3I0Us7VLp38YG3TSmNvvd3NYC5ge1NOoR3mZBADzqZBMRmhjuCjEJI1dWlN7tS2A5ZB0RsnOTHGZBBcN9J1pKikwC2x5FmCZBzyUYBL97MN4ZBmglljDZAjhFQE2rbjdg7esA'
 const pixelID = '2228702834001265'
+//
+
+const AppID = '384885207586128'
+const SecretKey = '6cae87271ea5b55a4c46ac6f6a390e7a'
+const AccountID = '966818980974907'
+
+//
+
 FacebookAdsApi.init(acessToken)
 
 export const TrackingUTMAQ = async (
@@ -146,3 +165,55 @@ export const WarningFacebookConversion = (req,res) => {
     return res.status(400).json({ message: 'Erro ao enviar evento de conversão para o Facebook'})
   }
 }
+
+export const CreateCustomAudience = async (req, res) => {
+  try{
+
+    //const customAudience = new CustomAudience(null, AccountID)
+
+    const audienceParams = {
+      name: 'Meu Público Personalizado', // Nome do Publico 
+      prefill: true, // Rastreia toda a ação do usuario no site antes do momento de criar o publico.
+      retention_days: 30, // Numero de dias para manter alguem no publico.
+      rule: {
+        inclusions: {
+          operator: 'or',
+          rules: [
+            {
+              event_sources: [
+                {
+                  id: pixelID,
+                  type: 'pixel'
+                }
+              ],
+              retention_seconds: 8400,
+              filter: {
+                operator: 'and',
+                filters: [
+                  {
+                    field: 'event',
+                    operator: '=',
+                    value: 'Purchase' 
+                  }                  
+                ]
+              }
+            }
+          ]
+        }
+      }
+    }
+
+    const customaudiences = await (new AdAccount(AccountID)).createCustomAudience(
+      [],
+      audienceParams
+    ) 
+
+    console.log(`Publico Personalizado criado com sucesso!`, customaudiences)
+  }catch(err){
+    console.log(err)
+    return res.status(400).json({ message: 'Error in Created Custom Audience'})
+  }
+}
+
+
+
