@@ -1,7 +1,4 @@
 'use client'
-import Image from 'next/image'
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
-import Rating from '@mui/material/Rating'
 import { TextField, Autocomplete, Snackbar, Alert } from '@mui/material'
 import FileCopyIcon from '@mui/icons-material/FileCopy';
 import { FormasDePagamento } from '../partials/FormasPagamentos'
@@ -17,6 +14,7 @@ import Logo from '../public/logo.png'
 import { DocumentsSelectPaciente } from '../partials/DocumentosSelect'
 import { Checkbox } from '@mui/material'
 import DocumentScannerIcon from '@mui/icons-material/DocumentScanner'
+import { useConversionInitiateCheckout } from '../hooks/useInitiateCheckout.js'
 
 export const Checkout = ({ 
     FotoMedico,
@@ -31,6 +29,8 @@ export const Checkout = ({
     idMedico,
     setDocumentos,
     documentos,
+    route,
+    idPaciente
      }) => {
 
     
@@ -43,6 +43,8 @@ export const Checkout = ({
    const [cartaoDeCredito, setCartaoDeCredito] = useState(false)
    const [snackbarOpen, setSnackbarOpen] = useState(false)
    const [snackbarMessage, setSnackbarMessage] = useState("")
+
+   useConversionInitiateCheckout(route,idPaciente)
 
    const [position, setPosition] = useState({
     vertical: 'top',

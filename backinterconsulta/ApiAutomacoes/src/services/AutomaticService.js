@@ -20,6 +20,9 @@ export const AutomaticWhatsapp = async (body, res) => {
      IdentificadorUnidadeSaudeRoute,
      IdentificadorPacientePublico,
      IdentificadorPacienteParticular,
+     NomePacienteAgendamento,
+     EmailPacienteAgendamento,
+     TelefonePacienteAgendamento,
      TelefoneMedicoAgendamento,
      EmailMedico,
      NomeMedico,
@@ -46,9 +49,15 @@ export const AutomaticWhatsapp = async (body, res) => {
      NumeroMedicoExclusao,
      NomeMedicoExclusao,
      NomePacienteExclusao,
+     EmailPacienteExclusao,
+     TelefonePacienteExclusao,
      DataExclusaoPaciente,
      InicioExlusaoPaciente,
      FimExclusaoPaciente,
+     NomePacienteFinaleConsulta,
+     TelefonePacienteFinaleConsulta,
+     EmailPacienteFinaleConsulta,
+     NomeMedicoFinaleConsulta,
      FichaPaciente,
      Diagnostico,
      Tratamento,
@@ -206,7 +215,8 @@ export const AutomaticWhatsapp = async (body, res) => {
        break
        
         case '/especialistas-disponiveis-agendamento':
-
+          
+        // Médico
         await WhatsappQueue.add('Whatsapp', {
           numero:`${TelefoneMedicoAgendamento}`,
           mensagem: `Ola ${NomeMedico}, o Paciente, ${NomePaciente} agendou uma consulta com voce\nna Data de ${DataAgendamento} as ${InicioAgendamento} a ${FimAgendamento} Entre no Link abaixo para confirmar a sua consulta:\nwww.interconsulta.org/agenda`
@@ -219,20 +229,33 @@ export const AutomaticWhatsapp = async (body, res) => {
           message:`Ola ${NomeMedico}, o Paciente, ${NomePaciente} agendou uma consulta com voce\nna Data de ${DataAgendamento} as ${InicioAgendamento} a ${FimAgendamento} Entre no Link abaixo para confirmar a sua consulta:\nwww.interconsulta.org/agenda`
         })
         
+        //Paciente
+        await WhatsappQueue.add('Whatsapp', {
+          numero:`${TelefonePacienteAgendamento}`,
+          mensagem: `Parabens!!! ${NomePacienteAgendamento}, Voce acabou de agendar uma consulta com o ${NomeMedico} Na seguinte Data: ${DataAgendamento} as ${InicioAgendamento} a ${FimAgendamento}.`
+        })
+
+        await EmailQueue.add('Email',
+        {
+          to: `${EmailPacienteAgendamento}`, 
+          subject: `${NomePacienteAgendamento} sua consulta foi Agendada com sucesso! `,
+          message:`Parabens!!! ${NomePacienteAgendamento}, Voce acabou de agendar uma consulta com o ${NomeMedico}\nNa seguinte Data: ${DataAgendamento} as ${InicioAgendamento} a ${FimAgendamento}.`
+        })
+
         break
 
         case '/confirmaçao-consulta-medico':
 
         await WhatsappQueue.add('Whatsapp', {
           numero:`${NumeroPacienteAceitouConsulta}`,
-          mensagem:`${NomeMedicoAceitouConsulta} Informa: Ola ${NomePacienteAceitouConsulta} acabei de aceitar a consulta\nda Data de: ${DataAceitouConsulta} que começa das ${InicioAceitouConsulta} a ${FimAceitouConsulta}\nentre agora na sua agenda para acessar o Link da consulta:\nwww.interconsulta.org/agenda`
+          mensagem:`${NomeMedicoAceitouConsulta} Informa: Ola ${NomePacienteAceitouConsulta} acabei de aceitar a sua consulta\nda Data de: ${DataAceitouConsulta} que começa das ${InicioAceitouConsulta} a ${FimAceitouConsulta}\nentre agora na sua agenda para acessar o Link da consulta:\nwww.interconsulta.org/agenda`
         })
 
         await EmailQueue.add('Email',
         {
           to: `${EmailPacienteAceitouConsulta}`, 
           subject: `Ola Paciente ${NomeMedicoAceitouConsulta}, o médico aceitou a sua consulta`,
-          message:`${NomeMedicoAceitouConsulta} Informa: Ola ${NomePacienteAceitouConsulta} acabei de aceitar a consulta\nda Data de: ${DataAceitouConsulta} que começa das ${InicioAceitouConsulta} a ${FimAceitouConsulta}\nentre agora na sua agenda para acessar o Link da consulta:\nwww.interconsulta.org/agenda`
+          message:`${NomeMedicoAceitouConsulta} Informa: Ola ${NomePacienteAceitouConsulta} acabei de aceitar a sua consulta\nda Data de: ${DataAceitouConsulta} que começa das ${InicioAceitouConsulta} a ${FimAceitouConsulta}\nentre agora na sua agenda para acessar o Link da consulta:\nwww.interconsulta.org/agenda`
         })
 
         break
@@ -253,7 +276,8 @@ export const AutomaticWhatsapp = async (body, res) => {
         break
 
         case '/exclusion-consulta-paciente':
-
+        
+        //Médico
         await WhatsappQueue.add('Whatsapp', {
           numero:`${NumeroMedicoExclusao}`,
           mensagem: `Ola ${NomeMedicoExclusao}, Passando pra te avisar que o Paciente ${NomePacienteExclusao} cancelou a consulta da Data: ${DataExclusaoPaciente} das ${InicioExlusaoPaciente} a ${FimExclusaoPaciente} de voces.`
@@ -266,9 +290,39 @@ export const AutomaticWhatsapp = async (body, res) => {
           message: `Ola ${NomeMedicoExclusao}, Passando pra te avisar que o Paciente ${NomePacienteExclusao} cancelou a consulta da Data: ${DataExclusaoPaciente} das ${InicioExlusaoPaciente} a ${FimExclusaoPaciente} de voces.`
         })
 
+        //Paciente
+        await WhatsappQueue.add('Whatsapp', {
+          numero:`${TelefonePacienteExclusao}`,
+          mensagem: `${NomePacienteExclusao}, vimos que voce acabou de cancelar a sua consulta da data de ${DataExclusaoPaciente} com o ${NomeMedicoExclusao}, caso queira voltar a agendar com outro médico no interconsulta esteja livre e a vontade para voltar, em https://interconsulta.org/especialistas-disponiveis .`
+        })
+
+        await EmailQueue.add('Email',
+        {
+          to: `${EmailPacienteExclusao}`, 
+          subject: `${NomePacienteExclusao}, Vimos que voce cancelou  a consulta =/`,
+          message:  `${NomePacienteExclusao}, vimos que voce acabou de cancelar a sua consulta da data de ${DataExclusaoPaciente} com o ${NomeMedicoExclusao}, caso queira voltar a agendar com outro médico no interconsulta esteja livre e a vontade para voltar, em https://interconsulta.org/especialistas-disponiveis .`
+        })
+
+
         break
 
-        case '/resumo-casos-clinicos':
+        case '/resumo-casos-clinicos-and-notification-patient':
+          NomePacienteFinaleConsulta,
+          TelefonePacienteFinaleConsulta,
+          EmailPacienteFinaleConsulta,
+
+          await WhatsappQueue.add('Whatsapp', {
+            numero:`${TelefonePacienteFinaleConsulta}`,
+            mensagem: `${NomePacienteFinaleConsulta}, sua consulta com o ${NomeMedicoFinaleConsulta} foi finalizada com succeso, aguarde em breve iremos encaminhar os seus documentos via whatsapp e email.`
+          })
+  
+          await EmailQueue.add('Email',
+          {
+            to: `${EmailPacienteFinaleConsulta}`, 
+            subject: `Consulta Finalizada`,
+            message:  `${NomePacienteFinaleConsulta}, sua consulta com o ${NomeMedicoFinaleConsulta} foi finalizada com succeso, aguarde em breve iremos encaminhar os seus documentos via whatsapp e email.`
+          })
+
           await ResumoQueue.add('Resumo', {
             FichaPaciente,
             Diagnostico,
@@ -857,5 +911,31 @@ export const DoctorNotificationPatient = async (idD, idP, res) => {
    }
   }catch(err){
     return res.status(400).json({ message: 'Error in Doctor Notification the Patient'})
+  }
+}
+
+export const RecupereAvaliation = async (id, res) => {
+  try{
+    const getPatient = await models.ModelRegisterPaciente.findOne({ _id: id })
+
+    if(!getPatient){
+      return res.status(404).json({ message: 'Patient does not exist'})
+    }
+
+    const UltimaConsulta = getPatient.ConsultasSolicitadasPacientes[getPatient.ConsultasSolicitadasPacientes.length -1]
+
+    await EmailQueue.add('Email', { 
+      to: getPatient.email,
+      subject: `Voce nao Avaliou o Médico =/`,
+      message: `${getPatient.nome} você esqueceu de avaliar o médico. Para terminar a avaliação da sua consulta, entre no Link Abaixo: https://interconsulta.org/obrigado?idC=${encodeURIComponent(UltimaConsulta._id)}&nome=${encodeURIComponent(getPatient.nome)}&id=${encodeURIComponent(getPatient._id)}`
+    })
+  
+     await WhatsappQueue.add('Whatsapp', {
+      numero: getPatient.telefone,
+      mensagem: `${getPatient.nome} você esqueceu de avaliar o médico. Para terminar a avaliação da sua consulta, entre no Link Abaixo: https://interconsulta.org/obrigado?idC=${encodeURIComponent(UltimaConsulta._id)}&nome=${encodeURIComponent(getPatient.nome)}&id=${encodeURIComponent(getPatient._id)}`
+     })
+
+  }catch(err){
+    return res.status(400).json({ error: 'Internal Error Server' })
   }
 }

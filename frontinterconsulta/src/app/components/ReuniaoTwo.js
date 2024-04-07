@@ -6,7 +6,7 @@ import secureLocalStorage from 'react-secure-storage'
 import axios from 'axios'
 import { useMutation } from '@tanstack/react-query'
 import { PopUpEndReunião } from '../partials/popUpEndReuniao.js'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from "next/navigation"
 import { Snackbar, Alert } from '@mui/material'
 import { config } from '../config.js'
@@ -22,6 +22,7 @@ const ReuniaoTwo = () =>{
     vertical: 'top',
     horizontal: 'center'
   })
+  const [enteredRoom, setEnteredRoom] = useState(false)
 
   const { vertical, horizontal } = position
 
@@ -34,16 +35,39 @@ const ReuniaoTwo = () =>{
   const IdentificadorLocalConsulta = secureLocalStorage.getItem('ConsultaPacienteParticular')
   const IdentificadorConsulta = IdentificadorLocalConsulta || ''
   const Router = useRouter()
+
+  const PatientEnteredTheRoom = useMutation(async(valueBody) =>{
+    try{
+      const request = await axios.post(`${config.apiBaseUrl}/api/patient-came-in-room`, valueBody)
+      return request.data
+    }catch(err){
+      console.log(err)
+    }
+ })
   
   const VerifyEndRoomMutation = useMutation( async (valueBody) =>{
-    const request = await axios.post(`${config.apiBaseUrl}/api/verify-conclusion-room`, valueBody)
-    return request.data.Consulta
+    try{
+      const request = await axios.post(`${config.apiBaseUrl}/api/verify-conclusion-room`, valueBody)
+      return request.data.Consulta
+    }catch(err){
+      console.log(err)
+    }
   })
 
   const SavedConsulta = useMutation(async(valueBody) =>{
-    const request = await axios.post(`${config.apiBaseUrl}/api/conclusion-room-patient`, valueBody)
-    return request.data
+    try{
+      const request = await axios.post(`${config.apiBaseUrl}/api/conclusion-room-patient`, valueBody)
+      return request.data
+    }catch(err){
+      console.log(err)
+    }
  })
+
+ useEffect(() => {
+   setEnteredRoom(true)
+   if(enteredRoom) PatientEnteredTheRoom.mutateAsync({ id: IdentificadorLocalConsulta })
+
+ },[enteredRoom])
 
   const HandleEndConsulta = async () => {
     /*const body1 = {

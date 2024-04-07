@@ -234,7 +234,7 @@ export const ComponenteAudio = () => {
         </div>
 
         <div className='flex justify-center items-center gap-5 animate-pulse cursor-pointer mt-3' onClick={HandleNextResumoIA}>
-          <h1 className='text-blue-500 font-bold'> Receber detalhes sobre o seu caso de {Doenca} </h1>
+          <h1 className='text-blue-500 font-bold text-center'> Receber detalhes sobre o seu caso de {Doenca} </h1>
           <ArrowForwardIosIcon color="primary"/>
         </div>
       </animated.div>

@@ -18,7 +18,6 @@ const Login = ({ title, ImagemLateral, MessageButton, secondRoute, treeRoute, pl
   const[senha, setSenha] = useState('')
   const[snackbarOpen, setSnackbarOpen] = useState(false);
   const[snackbarMessage, setSnackbarMessage] = useState('');
-  const[okUTM, setOkUTM] = useState(false)
 
   const Router = useRouter()
   const route = usePathname()
@@ -27,24 +26,6 @@ const Login = ({ title, ImagemLateral, MessageButton, secondRoute, treeRoute, pl
   const RotaMédico = '/welcome/login-medico'
   const RotaPaciente = '/welcome/login-paciente'
   const RotaUnidade = '/welcome/login-unidade'
-
-  const referrer = params.get('UTM_Referrer') 
-  const funil = params.get('UTM_Funil') 
-  const temp = params.get('UTM_Temp')  
-  const rota = params.get('UTM_Rota')
-  const source = params.get('UTM_Source') 
-  const medium = params.get('UTM_Medium') 
-  const campaign = params.get('UTM_Campaign') 
-  const term = params.get('UTM_Term') 
-  const content = params.get('UTM_Content')
-
-  useEffect(() => {
-    if(referrer && funil && temp && rota && source && medium && campaign && term && content){
-      setOkUTM(true)
-    }
-
-  },[okUTM])
-
   
   const ValidatorDoctor = useMutation(async (valueRequest) => {
     try{
@@ -125,6 +106,7 @@ const Login = ({ title, ImagemLateral, MessageButton, secondRoute, treeRoute, pl
       if(tokenStorage && ModelidUser &&  NomeMedicoStorage && EspecialidadeStorage && CRMStorage && FotoStorageMedico && TypeDoctorStorage){
         console.log('Medico ja esta autenticado no interconsulta =/')
       }else{
+        let utms = secureLocalStorage.getItem('utms')
         secureLocalStorage.clear()
         secureLocalStorage.setItem('token', token)
         secureLocalStorage.setItem(`id`, ModelidUserLogged)
@@ -133,6 +115,7 @@ const Login = ({ title, ImagemLateral, MessageButton, secondRoute, treeRoute, pl
         secureLocalStorage.setItem('CRMMedico', CRMM)
         secureLocalStorage.setItem('FotoMedico', FotoMedico)
         secureLocalStorage.setItem('TypeDoctor', TypeDoctor)
+        secureLocalStorage.setItem('utms', utms)
       }
 
       await ValidatorDoctor.mutateAsync({ email: email })
@@ -150,12 +133,14 @@ const Login = ({ title, ImagemLateral, MessageButton, secondRoute, treeRoute, pl
       if(tokenStoragePaciente && ModelidUserPaciente &&  NomeStoragePaciente && Doenca && FotoStoragePaciente){
         console.log('Usuario ja esta autenticado no interconsulta =/')
       }else{
+        let utms = secureLocalStorage.getItem('utms')
         secureLocalStorage.clear()
         secureLocalStorage.setItem('token', token)
         secureLocalStorage.setItem(`id`, ModelidUserLogged)
         secureLocalStorage.setItem('NomePaciente', NomePaciente)
         secureLocalStorage.setItem('Doenca', DoencaPaciente)
         secureLocalStorage.setItem('FotoPaciente', FotoPaciente)
+        secureLocalStorage.setItem('utms', utms)
       }
 
       await ValidatorPaciente.mutateAsync({ email: email })
@@ -199,11 +184,7 @@ const Login = ({ title, ImagemLateral, MessageButton, secondRoute, treeRoute, pl
   }
 
   const HandleClickCadastro = async () =>{
-     if(okUTM){
-      Router.push(`/welcome/${secondRoute}/${treeRoute}?UTM_Referrer=${encodeURIComponent(referrer)}&UTM_Funil=${encodeURIComponent(funil)}&UTM_Temp=${encodeURIComponent(temp)}&UTM_Rota=${encodeURIComponent(rota)}&UTM_Source=${encodeURIComponent(source)}&UTM_Medium=${encodeURIComponent(medium)}&UTM_Campaign=${encodeURIComponent(campaign)}&UTM_Term=${encodeURIComponent(term)}&UTM_Content=${encodeURIComponent(content)}`)
-    }else{
-      Router.push(`/welcome/${secondRoute}/${treeRoute}`)
-    }
+     Router.push(`/welcome/${secondRoute}/${treeRoute}`)
   }
 
   const HandleClick = async () => {

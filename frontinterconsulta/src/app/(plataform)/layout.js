@@ -8,45 +8,17 @@ import { RegisterEndProvider, ProviderHorariosDoctor, BloodProvider, } from '../
 import { useEffect } from 'react'
 import secureLocalStorage from 'react-secure-storage'
 import { ScriptsSocials } from '../partials/ScriptSocials'
+import { usePathname } from 'next/navigation'
+import { useTrackingUTM } from '../hooks/useTrackingUTM'
+import { useConversionViewContent } from '../hooks/useViewContent.js'
+
 const queryClient = new QueryClient()
 
 export default function RootLayout({ children }) {
   
-  const id = secureLocalStorage.getItem('id')
-  const NomeMedico = secureLocalStorage.getItem('NomeMedico')
-
-
-  useEffect(() => {
-    let idleTimer;
-    
-    const handleMouseMove = (event) => {
-      // Resetar o temporizador se houver movimento do mouse
-      clearTimeout(idleTimer);
-    
-      // Iniciar um novo temporizador para 5 segundos
-      idleTimer = setTimeout(() => {
-        // Usuario Ausente
-
-        //request online false
-      }, 5000) // 5 segundos em milissegundos
-    
-      // Imprimir as coordenadas do mouse
-      const { clientX, clientY } = event
-
-      if(NomeMedico){
-       //request online true
-      }
-    };
-    
-    // Adicione um ouvinte para o evento de movimento do mouse
-    document.addEventListener('mousemove', handleMouseMove);
-    
-    // Limpe o ouvinte quando o componente for desmontado
-    return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      clearTimeout(idleTimer)
-    };
-  }, []);
+  const route = usePathname()
+  useConversionViewContent(route)
+  useTrackingUTM()
   
 
   return (

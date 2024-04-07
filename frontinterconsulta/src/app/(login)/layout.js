@@ -2,11 +2,19 @@
 import '../globals.css'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ScriptsSocials } from '../partials/ScriptSocials'
+import { usePathname } from 'next/navigation'
+import { useConversionViewContent } from '../hooks/useViewContent.js'
+import { useTrackingUTM } from '../hooks/useTrackingUTM'
 
 const queryClient = new QueryClient()
 
 export default function RootLayout({ children }) {
 
+  const route = usePathname()
+  useConversionViewContent(route);
+  useTrackingUTM()
+
+  
   return (
     <html lang="pt-br">
       <ScriptsSocials/>
@@ -20,4 +28,3 @@ export default function RootLayout({ children }) {
     </html>
   )
 }
-

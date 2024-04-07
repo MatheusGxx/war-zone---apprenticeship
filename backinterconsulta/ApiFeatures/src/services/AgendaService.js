@@ -6,7 +6,9 @@ import { ValidatorDateAndTime, calculateTimeDifference } from "../utils/Function
 import axios from 'axios'
 import { TraduçaoAudioParaTextoIA  } from '../utils/Functions/TraduçaoAudio.js'
 import { Payment, MercadoPagoConfig } from 'mercadopago'
-import { Pix, CartãoDeCrédito } from "../utils/Payment/Payments.js";
+import { Pix, CartãoDeCrédito } from "../utils/Payment/Payments.js"
+import dotenv from 'dotenv'
+dotenv.config()
 
 const alphabet = '0123456789';
 const generateFourDigitNumber = customAlphabet(alphabet, 4)
@@ -94,6 +96,9 @@ export const SavedConsultaPacienteParticular = async (body, res) => {
 
     const body = {
        route: '/especialistas-disponiveis-agendamento',
+       NomePacienteAgendamento: getPaciente.nome,
+       EmailPacienteAgendamento: getPaciente.email,
+       TelefonePacienteAgendamento: getPaciente.telefone,
        TelefoneMedicoAgendamento: getMedico.telefone,
        EmailMedico: getMedico.email,
        NomeMedico: getMedico.NomeEspecialista,
@@ -103,10 +108,7 @@ export const SavedConsultaPacienteParticular = async (body, res) => {
        NomePaciente: getPaciente.nome
     }
     
-    //Production
-    axios.post('http://back-a:8081/api2/automatic-whatsapp', body)
-    //Development
-    //axios.post('http://localhost:8081/api2/automatic-whatsapp', body)
+     axios.post(process.env.APISecondURL ?? 'http://localhost:8081/api2/automatic-whatsapp', body)
 
    }catch(e){
      return res.status(500).json({ message: 'Error internal in Server'})
@@ -508,10 +510,7 @@ export const UpdateConsulta = async (body, res) => {
           route: '/confirmaçao-consulta-medico'
         }
         
-        //Production
-        axios.post('http://back-a:8081/api2/automatic-whatsapp', body)
-        //Development
-        //axios.post('http://localhost:8081/api2/automatic-whatsapp', body)
+        axios.post(process.env.APISecondURL ?? 'http://localhost:8081/api2/automatic-whatsapp', body)
       } else {
         res.status(500).json({ message: 'Erro ao fazer Atualização' });
       }
@@ -643,10 +642,7 @@ export const DeleteCasoClinico = async (body, res) => {
           route: '/rejeicao-consulta-medico'
         }
         
-        //Production
-        axios.post('http://back-a:8081/api2/automatic-whatsapp', body)
-       //Development
-       //axios.post('http://localhost:8081/api2/automatic-whatsapp', body)
+        axios.post(process.env.APISecondURL ?? 'http://localhost:8081/api2/automatic-whatsapp', body)
       }
      }
   }catch(error){
@@ -711,16 +707,15 @@ export const DeleteCasoClinicoPacienteParticular = async (body, res) => {
          NumeroMedicoExclusao:NumeroMedico,
          NomeMedicoExclusao: NomeMedico,
          NomePacienteExclusao: Paciente.nome,
+         EmailPacienteExclusao: Paciente.email,
+         TelefonePacienteExclusao: Paciente.telefone,
          DataExclusaoPaciente: Data,
          InicioExlusaoPaciente: Inicio,
          FimExclusaoPaciente: Fim,
          route: '/exclusion-consulta-paciente'
          }
    
-      //Production
-       axios.post('http://back-a:8081/api2/automatic-whatsapp', body)
-      //Development
-      //axios.post('http://localhost:8081/api2/automatic-whatsapp', body)
+       axios.post(process.env.APISecondURL ?? 'http://localhost:8081/api2/automatic-whatsapp', body)
 
     } else {
       res.status(404).json({ message: 'Erro ao excluir consulta' });
@@ -945,8 +940,8 @@ export const PaymentDoctor = async (body, res) => {
     const getPaciente = await models.ModelRegisterPaciente.findById(id)
 
     const client = new MercadoPagoConfig({ accessToken: 'APP_USR-1485714438717131-011321-a805841cf5cb2ccf3b83011440e05639-505908896' })
-  
-    let paymentMessage
+    const payment = new Payment(client);
+
   
     const AmountNumeric = parseFloat(ValorConsulta)
   

@@ -14,6 +14,7 @@ import {
   CreateLeadLandingPage,
   sendEmailRecuperePassword,
   DoctorNotificationPatient,
+  RecupereAvaliation,
   
 } from '../../services/AutomaticService.js'
 
@@ -41,7 +42,10 @@ router.post('/automatic-whatsapp', async (req, res) => {
     IdentificadorObrigadoUnidade: req.body.IdentificadorObrigadoUnidade,
     IdentificadorUnidadeSaudeRoute: req.body. IdentificadorUnidadeSaudeRoute,
     IdentificadorPacientePublico: req.body.IdentificadorPacientePublico,
-    IdentificadorPacienteParticular: req.body. IdentificadorPacienteParticular,
+    IdentificadorPacienteParticular: req.body.IdentificadorPacienteParticular,
+    NomePacienteAgendamento: req.body.NomePacienteAgendamento,
+    EmailPacienteAgendamento: req.body.EmailPacienteAgendamento,
+    TelefonePacienteAgendamento: req.body.TelefonePacienteAgendamento,
     TelefoneMedicoAgendamento: req.body.TelefoneMedicoAgendamento,
     EmailMedico: req.body.EmailMedico,
     NomeMedico: req.body.NomeMedico,
@@ -68,9 +72,15 @@ router.post('/automatic-whatsapp', async (req, res) => {
     NumeroMedicoExclusao:req.body.NumeroMedicoExclusao,
     NomeMedicoExclusao: req.body.NomeMedicoExclusao,
     NomePacienteExclusao: req.body.NomePacienteExclusao,
+    EmailPacienteExclusao: req.body.EmailPacienteExclusao,
+    TelefonePacienteExclusao: req.body.TelefonePacienteExclusao,
     DataExclusaoPaciente: req.body.DataExclusaoPaciente,
     InicioExlusaoPaciente: req.body.InicioExlusaoPaciente,
     FimExclusaoPaciente: req.body.FimExclusaoPaciente,
+    NomePacienteFinaleConsulta: req.body.NomePacienteFinaleConsulta,
+    TelefonePacienteFinaleConsulta: req.body.TelefonePacienteFinaleConsulta,
+    EmailPacienteFinaleConsulta: req.body.EmailPacienteFinaleConsulta,
+    NomeMedicoFinaleConsulta: req.body.NomeMedicoFinaleConsulta,
     FichaPaciente: req.body.FichaPaciente,
     Diagnostico: req.body.Diagnostico,
     Tratamento: req.body.Tratamento,
@@ -257,7 +267,6 @@ router.post('/create-lead',
       } 
 )
 
-
 router.post('/send-email-recupere-password',
       async(req, res) => {
         const { email, person } = req.body
@@ -274,6 +283,15 @@ router.post('/doctor-notification-patient',
         DoctorNotificationPatient( idD, idP, res)
 
         console.log(req.body)
+       }
+)
+
+
+router.post('/recupere-avaliation-doctor',
+       async(req, res) => {
+         const { id } = req.body
+         RecupereAvaliation(id, res)
+         console.log(req.body)
        }
 )
 

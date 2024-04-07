@@ -13,6 +13,8 @@ import  axios from 'axios'
 import slugfy from 'slugify'
 import { ConvertingIdadee, Medicamentos, ConvertingAnoFormação, VerifyHoursCode } from "../utils/Functions/Converting.js"
 import { customAlphabet } from 'nanoid'
+import dotenv from 'dotenv'
+dotenv.config()
 
 const secretKey = crypto.randomBytes(32).toString('hex')
 
@@ -188,10 +190,7 @@ export const Register = async (body, res) =>{
           route
         } 
         
-        //Production
-        axios.post('http://back-a:8081/api2/automatic-whatsapp', idMédico)
-        //Development
-        //axios.post('http://localhost:8081/api2/automatic-whatsapp', idMédico)
+        axios.post(process.env.APISecondURL ?? 'http://localhost:8081/api2/automatic-whatsapp', idMédico)
       }
       break
 
@@ -233,10 +232,7 @@ export const Register = async (body, res) =>{
          route
        }
        
-       //Production
-        axios.post('http://back-a:8081/api2/automatic-whatsapp', idPaciente)
-       //Development
-       //axios.post('http://localhost:8081/api2/automatic-whatsapp', idPaciente)
+        axios.post(process.env.APISecondURL ?? 'http://localhost:8081/api2/automatic-whatsapp', idPaciente)
 
       }
       break;
@@ -264,10 +260,7 @@ export const Register = async (body, res) =>{
           route,
         }
         
-        //Production
-        axios.post('http://back-a:8081/api2/automatic-whatsapp', idUnidade)
-        //Development
-        //axios.post('http://localhost:8081/api2/automatic-whatsapp', idUnidade)
+        axios.post(process.env.APISecondURL ?? 'http://localhost:8081/api2/automatic-whatsapp', idUnidade)
       }
       break;
 
@@ -417,10 +410,7 @@ export const RegisterEnd = async (body, params, file, res) => {
             route
           }
           
-          //Production
-           axios.post('http://back-a:8081/api2/automatic-whatsapp', dataMedico)
-          //Development
-          //axios.post('http://localhost:8081/api2/automatic-whatsapp', dataMedico)
+           axios.post(process.env.APISecondURL ?? 'http://localhost:8081/api2/automatic-whatsapp', dataMedico)
         
           }catch(err){
             console.log(err)
@@ -506,10 +496,7 @@ export const RegisterEnd = async (body, params, file, res) => {
               route
             }
  
-            //Production
-             axios.post('http://back-a:8081/api2/automatic-whatsapp', dataPaciente)
-            //Development
-            //axios.post('http://localhost:8081/api2/automatic-whatsapp', dataPaciente)
+             axios.post(process.env.APISecondURL ?? 'http://localhost:8081/api2/automatic-whatsapp' , dataPaciente)
         }catch(error){
           throw new Error(error)
         }
@@ -558,10 +545,7 @@ export const RegisterEnd = async (body, params, file, res) => {
           route
         }
         
-        //Production
-         axios.post('http://back-a:8081/api2/automatic-whatsapp', dataUnidade)
-        //Development
-        //axios.post('http://localhost:8081/api2/automatic-whatsapp', dataUnidade)
+         axios.post(process.env.APISecondURL ?? 'http://localhost:8081/api2/automatic-whatsapp', dataUnidade)
 
         }catch(err){
           console.log(err)

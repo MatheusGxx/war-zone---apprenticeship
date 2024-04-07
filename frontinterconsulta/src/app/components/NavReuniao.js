@@ -95,7 +95,7 @@ const NavReunião = () => {
      }
 
       <div className='pt-2 flex'>
-          <div  className='mt-[-10px] cursor-pointer flex gap-8 mr-5' >
+          <div className='mt-[-10px] cursor-pointer flex gap-8 mr-5' >
               <Avatar 
               style={{ width: 40, height: 40 }} 
               src={`${config.apiBaseUrl}/${FotoMedico ? FotoMedico : FotoPaciente ? FotoPaciente : FotoUnidade ? FotoUnidade : null}`}/>

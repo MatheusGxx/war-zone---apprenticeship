@@ -246,6 +246,7 @@ const RegisterPaciente = new mongoose.Schema({
   GifDoenca: String,
   QueixaInicial: String,
   ChavePix: String,
+  EntrouNaConsulta: { type: Boolean, default: false },
   PasswordRecovery: [{
     code: String,
     expirationCode: Date,

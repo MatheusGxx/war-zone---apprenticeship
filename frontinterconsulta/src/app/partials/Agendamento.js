@@ -75,28 +75,10 @@ const AgendamentoConsulta = ({
   const [horariosAntigos, setHorariosAntigos] = useState(false)
   const [onePhotoPatient, setOnePhotoPatient] = useState(false)
     
-  const [okUTM, setOkUTM] = useState(false)
-
   const params = useSearchParams()
-  
-  const referrer = params.get('UTM_Referrer') 
-  const funil = params.get('UTM_Funil') 
-  const temp = params.get('UTM_Temp')  
-  const rota = params.get('UTM_Rota')
-  const source = params.get('UTM_Source') 
-  const medium = params.get('UTM_Medium') 
-  const campaign = params.get('UTM_Campaign') 
-  const term = params.get('UTM_Term') 
-  const content = params.get('UTM_Content')  
-
-  useEffect(() => {
-    if(referrer && funil && temp && rota && source && medium && campaign && term && content){
-      setOkUTM(true)
-    }
-
-  },[okUTM])
 
   const CadastroFinalSucess = secureLocalStorage.getItem('CadastroEndSucess')
+  const utm = secureLocalStorage.getItem('utms')
 
   const Route = usePathname()
   const RouteEspecialistaDisponiveis = Route === '/especialistas-disponiveis'
@@ -116,6 +98,24 @@ const AgendamentoConsulta = ({
   const NamePaciente = NameLocalPaciente || ''
 
   const Resumo = secureLocalStorage.getItem('Sintoma')
+
+  const ScheduleConversion = useMutation(async (value) => {
+    try{
+      const response = await axios.post(`${config.apiBaseUrl}/api/warning-fb-conversion`, value);
+      return response.data
+    }catch(err){
+      console.log(err)
+    }
+  }) 
+
+  const PurchaseConversion = useMutation(async (value) => {
+    try{
+      const response = await axios.post(`${config.apiBaseUrl}/api/warning-fb-conversion`, value);
+      return response.data
+    }catch(err){
+      console.log(err)
+    }
+  }) 
 
   const WarningDoctorNotSchedules = useMutation(async (valueRequest) => {
     try {
@@ -152,12 +152,11 @@ const AgendamentoConsulta = ({
     setResumo(Resumo || '')
   }, [])
 
-
   useEffect(() => {
     if(Doenca){
        setDoenca(Doenca)
     }else{
-        setDoenca('')
+      setDoenca('')
     }
    },[Doenca])
 
@@ -212,10 +211,16 @@ useEffect(() => {
 }, [idLocal, onePhotoPatient])
 
 
-   const AgendamentoMarcado = useMutation(async (valueRequest) =>{
-    const request = axios.post(`${config.apiBaseUrl}/api/agendamento-paciente-particular`, valueRequest)
+ const AgendamentoMarcado = useMutation(async (valueRequest) =>{
+   const request = axios.post(`${config.apiBaseUrl}/api/agendamento-paciente-particular`, valueRequest)
     return request.data
-   })
+   },
+    {
+      onSuccess: async () => {
+        await PurchaseConversion.mutateAsync({ typeConversion: 'Purchase', pathname: Route, id: idLocal,  valueConsulta: ValorConsulta })
+      }
+    }
+   )
  
 
   const RoutePush = () =>{
@@ -265,23 +270,10 @@ useEffect(() => {
     try{
       await AgendamentoMarcado.mutateAsync(body)
       
-      if(okUTM){
-        const currentDate = new Date()
-        const formattedDate = format(currentDate, 'dd/MM/yyyy')
-        
-        await TrackingUTMCS.mutateAsync({
-          id: id,
-          data: formattedDate, 
-          UTM_Referrer: decodeURIComponent(referrer),
-          UTM_Funil: decodeURIComponent(funil),
-          UTM_Temp: decodeURIComponent(temp),
-          UTM_Rota: decodeURIComponent(rota),
-          UTM_Source: decodeURIComponent(source),
-          UTM_Medium: decodeURIComponent(medium),
-          UTM_Campaign: decodeURIComponent(campaign),
-          UTM_Term: decodeURIComponent(term),
-          UTM_Content: decodeURIComponent(content),
-        })
+      if(utm){
+        let utms = secureLocalStorage.getItem('utms')
+        utms['id'] = id
+        await TrackingUTMCS.mutateAsync(utms)
       }
 
       setIDHorario(null)
@@ -396,7 +388,7 @@ useEffect(() => {
      setFim(PrimeiroCampoIntervalo[1])
   }
 
-  const VerificationOne = () => {
+  const VerificationOne = async () => {
     if(selectedDate.length === 0 || resumo === '' || selectedIntervals.length === 0){
       setSnackbarMessage("Ops, Voce nao preencheu todos os campos para agendar a sua consulta =/");
       handleSnackBarOpen()
@@ -404,6 +396,7 @@ useEffect(() => {
         secureLocalStorage.removeItem('CadastroEndSucess')
       }
     }else{
+      await ScheduleConversion.mutateAsync({ typeConversion: 'Schedule', pathname: Route, id: idLocal })
       if(CadastroFinalSucess){
         secureLocalStorage.removeItem('CadastroEndSucess')
         secureLocalStorage.removeItem('Sintoma')
@@ -416,11 +409,11 @@ useEffect(() => {
     }
   }
 
-  const HandleCheckout = () => {
+  const HandleCheckout = async () => {
     if(checkout === true){
       HandleClickEnd()
     }
-    if(Horarios.length > 0 ){
+    if(Horarios.length > 0 && checkout === false){
        VerificationOne()
     }else{
       if(CadastroFinalSucess){
@@ -429,7 +422,7 @@ useEffect(() => {
         secureLocalStorage.removeItem('CadastroEndSucess')
         secureLocalStorage.removeItem('Sintoma')
         window.location.reload()
-      }else{
+      }else if(checkout === false){
         onClose()
         setOpen(false)
       }
@@ -520,6 +513,8 @@ useEffect(() => {
             idMedico={idMedico}
             setDocumentos={setDocumentos}
             documentos={documentos}
+            route={Route}
+            idPaciente={idLocal}
             />
            :
           null

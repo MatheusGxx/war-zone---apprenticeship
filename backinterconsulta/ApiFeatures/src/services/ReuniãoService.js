@@ -13,6 +13,9 @@ import axios from 'axios'
 import { fileURLToPath } from 'url'
 import { dirname, join } from 'path'
 
+import dotenv from 'dotenv'
+dotenv.config()
+
 export const  CreatingDocumentsDoctor = async (body, res) => {
   
   const { idMedico, IdentificadorConsultaPaciente } = body
@@ -454,40 +457,26 @@ export const SavedConsultaMedico = async (body, res) => {
 
       if (updateStateConsultaMedico) {
         res.status(200).json({ message: 'Atualização da Consulta feita com Sucesso' })
-       //Production
-      axios.post('http://back-a:8081/api2/automatic-whatsapp', {
-          route: '/resumo-casos-clinicos',
-          FichaPaciente: FichaPaciente,
-          Diagnostico: Diagnostico,
-          Tratamento: Tratamento,
-          FerramentasTerapeuticas: FerramentasTerapeuticas,
-          Progresso: Progresso,
-          SolicitacaoMateriais: SolicitacaoMateriais,
-          RecomendacoesFuturas: RecomendacoesFuturas,
-          EstadoPaciente: EstadoPaciente,
-          ReceitaSimples: ReceitasSimples,
-          ReceitaControlada: ReceitasControlada,
-          Atestado: Atestado,
-          Exame: ExameSolicitado,
-          result: result
-       }).then(response => response).catch(err => err)
-      //Development
-        /*axios.post('http://localhost:8081/api2/automatic-whatsapp', {
-          route: '/resumo-casos-clinicos',
-          FichaPaciente: FichaPaciente,
-          Diagnostico: Diagnostico,
-          Tratamento: Tratamento,
-          FerramentasTerapeuticas: FerramentasTerapeuticas,
-          Progresso: Progresso,
-          SolicitacaoMateriais: SolicitacaoMateriais,
-          RecomendacoesFuturas: RecomendacoesFuturas,
-          EstadoPaciente: EstadoPaciente,
-          ReceitaSimples: ReceitasSimples,
-          ReceitaControlada: ReceitasControlada,
-          Atestado: Atestado,
-          Exame: ExameSolicitado,
-          result: result
-         }).then(response => response).catch(err => err)*/
+        axios.post(process.env.APISecondURL ?? 'http://localhost:8081/api2/automatic-whatsapp', {
+            route: '/resumo-casos-clinicos-and-notification-patient',
+            NomePacienteFinaleConsulta: result.nome,
+            TelefonePacienteFinaleConsulta: result.telefone,
+            EmailPacienteFinaleConsulta: result.email,
+            NomeMedicoFinaleConsulta: dataDoctor.NomeEspecialista,
+            FichaPaciente: FichaPaciente,
+            Diagnostico: Diagnostico,
+            Tratamento: Tratamento,
+            FerramentasTerapeuticas: FerramentasTerapeuticas,
+            Progresso: Progresso,
+            SolicitacaoMateriais: SolicitacaoMateriais,
+            RecomendacoesFuturas: RecomendacoesFuturas,
+            EstadoPaciente: EstadoPaciente,
+            ReceitaSimples: ReceitasSimples,
+            ReceitaControlada: ReceitasControlada,
+            Atestado: Atestado,
+            Exame: ExameSolicitado,
+            result: result
+        }).then(response => response).catch(err => err)
         
       } else {  
         return res.status(200).json({ message: 'Erro ao atualizar a Consulta Atendida do Médico' });
@@ -551,7 +540,7 @@ export const DoctorAvaliations = async (body, res) =>{
 
 export const CalculingAvaliationsDoctor = async (body,res) => {
 
-  const { id, avaliacao,avaliacaoText, FotoPaciente, NomePaciente } = body
+  const { id, avaliacao ,avaliacaoText, FotoPaciente, NomePaciente } = body
 
   try{
     const getMedico = await models.ModelRegisterMédico.findOne({ _id: id})
@@ -574,11 +563,11 @@ export const CalculingAvaliationsDoctor = async (body,res) => {
     getMedico.mediaAvaliacoes = somaAvaliacoes / totalAvaliacoes
 
     await getMedico.save()
-
   
     res.status(200).json({ message: `Nova Media atribuido com sucesso ao  ${getMedico.NomeEspecialista}`})
-  }catch(e){
-    throw new Error('Error in Calculator Avalations Doctor ')
+
+  }catch(err){
+    return res.status(400).json({ error: 'Error in Calculator Avalations Doctor' })
   }
 }
 
@@ -1031,7 +1020,6 @@ export const ValidatorDocuments = async (id, res) => {
   }
 }
 
-
 export const AtualizedDocuments = async (receitaSimples, receitaControlada, atestado, exame, IdentificadorConsulta,res) => {
   try {
     if (receitaSimples !== null) {
@@ -1101,7 +1089,6 @@ export const AtualizedDocuments = async (receitaSimples, receitaControlada, ates
   }
 }
 
-
 export const getDataPatientEndRoom = async (id,res) => {
    try{
     const dataPatient = await models.ModelRegisterPaciente.findOne(
@@ -1110,7 +1097,6 @@ export const getDataPatientEndRoom = async (id,res) => {
 
     const NomePaciente = dataPatient.nome
     const FotoPaciente = dataPatient.Foto
-
 
     if(!dataPatient){
       return res.status(404).json({ message: 'Paciente nao existe dentro do banco de dados do Interconsulta'})
@@ -1122,7 +1108,6 @@ export const getDataPatientEndRoom = async (id,res) => {
     return res.status(500).json({ message: 'Error internal Server' })
    }
 }
-
 
 export const sendDocumentsPatient = async (id, res, files) => {
   try{
@@ -1136,8 +1121,7 @@ export const sendDocumentsPatient = async (id, res, files) => {
     const UltimaConsulta = getDataPaciente.ConsultasSolicitadasPacientes[getDataPaciente.ConsultasSolicitadasPacientes.length -1]
     const NomeMedico = UltimaConsulta.Solicitado
 
-    //Production
-    axios.post('http://back-a:8081/api2/automatic-whatsapp', {
+    axios.post(process.env.APISecondURL ?? 'http://localhost:8081/api2/automatic-whatsapp', {
       route: '/send-documents-patient',
       NamePatient: NomePaciente,
       NameDoctor: NomeMedico,
@@ -1145,17 +1129,22 @@ export const sendDocumentsPatient = async (id, res, files) => {
       NumberPatient: NumeroPaciente,
       EmailPatient: EmailPatient,
     }).then(response => response).catch(err => err)
-    //Development
-    /*axios.post('http://localhost:8081/api2/automatic-whatsapp', {
-      route: '/send-documents-patient',
-      NamePatient: NomePaciente,
-      NameDoctor: NomeMedico,
-      PathsFiles: files,
-      NumberPatient: NumeroPaciente,
-      EmailPatient: EmailPatient,
-    }).then(response => response).catch(err => err)*/
 
   }catch(error){
     return res.status(500).json({ message: 'Erro Internal Server'})
+  }
+}
+
+export const PatientCameinRoom = async (id, res) => {
+  try {
+    await models.ModelRegisterPaciente.findOneAndUpdate(
+      { 'ConsultasSolicitadasPacientes._id': id },
+      { $set: { 'ConsultasSolicitadasPacientes.$.EntrouNaConsulta': true } }
+    )
+
+    return res.status(200).json({ message: 'Success Came in Room of Patient' })
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ message: 'Error Internal Server' })
   }
 }

@@ -1014,7 +1014,7 @@ const HandleConsulta = async (id) => {
        }
 
        {horariosDoctor && 
-          <PopUpMedicoHoras/>
+         <PopUpMedicoHoras/>
        }
 
       {blood &&

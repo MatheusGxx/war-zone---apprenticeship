@@ -2,14 +2,13 @@ import {
      TrackingUTMAQ,
      TrackingUTMCS, 
      WarningFacebookConversion,
-     CreateCustomAudience
 } from '../../services/TrackingService.js'
 
 import { Router } from 'express'
 
 const router = Router()
 
-router.post('/tracking-utm-aq',
+router.post('/tracking-utm-aq', 
        async(req, res) => {
         const { 
             id,
@@ -22,7 +21,8 @@ router.post('/tracking-utm-aq',
             UTM_Medium,
             UTM_Campaign,
             UTM_Term,
-            UTM_Content} = req.body
+            UTM_Content
+        } = req.body
 
         TrackingUTMAQ(
             id, 
@@ -79,20 +79,12 @@ router.post('/tracking-utm-cs',
 
 router.post('/warning-fb-conversion',
        async(req, res) => {
-        
-        WarningFacebookConversion(req,res)
+        const { typeConversion, pathname, valueConsulta, id } = req.body
+
+        WarningFacebookConversion(req,res, typeConversion, pathname, valueConsulta, id)
         console.log(req.body)
        }
 )
-
-router.post('/create-custom-audience',
-        async(req, res) => {
-
-         CreateCustomAudience(res)
-         console.log(req.body)
-        }
-)
-
 
 
 export default router

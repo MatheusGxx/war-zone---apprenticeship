@@ -288,6 +288,7 @@ const RegisterPaciente = new mongoose.Schema({
     Resumo: String,
     idHorario: String,
     TempoConsulta: Number,
+    EntrouNaConsulta: { type: Boolean, default: false },
     DocumentosSolicitadosPaciente:[String],
     LinkConsulta: [{
       Link: String,

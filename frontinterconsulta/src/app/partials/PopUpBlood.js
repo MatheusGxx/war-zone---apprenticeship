@@ -20,6 +20,7 @@ import secureLocalStorage from 'react-secure-storage'
 import axios from 'axios'
 import { config } from '../config.js'
 import { useBlood } from '../context/context'
+
 const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="left" ref={ref} {...props} />;
 });
@@ -144,14 +145,14 @@ export const PopUpBlood = () => {
               <>
                 <CircularProgress size={24} />
                 <h1 className="whitespace-nowrap font-bold text-white">
-                  Notificando Doadores em {cidade}...
+                  Notificando Doadores em {cidade} ...
                 </h1>
               </>
             ) : (
               <p className='text-white font-bold whitespace-nowrap'>
                 {RequestNotificationPaciente.isSuccess && notification
                   ? `Parabens ${NomePaciente} Todos os Doadores compativeis com voce em ${cidade} foram Notificados`
-                  : `Notificar Doadores em ${cidade}`
+                  : `Notificar Doadores ${cidade ? `em ${cidade}` : ''}`
                 }
               </p>
             )}

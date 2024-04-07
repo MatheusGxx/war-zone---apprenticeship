@@ -5,12 +5,4 @@
 
      # Excluir do .env do frontend: 'NEXT_PUBLIC_API_BASE_URL=https://interconsulta.org', e deixar o .env vazio para acessar a porta 8080 do localhost da sua maquina.
 
-     # Trocar a String de connection do MongoDB 
-      de 
-     'mongodb+srv://matheusfff02:030503Aa@instacemongointerconsul.1gfrhkw.mongodb.net/'
-      para:
-     'mongodb+srv://matheusfff02:030503Aa@cluster0.qoa8un4.mongodb.net/'
-
-     # Ir na API de features e descomentar a request pra API de de automaçoes de 'Development' e comentar a de 'Production' para as requests entre as duas apis rodarem localmente em ambiente de desenvolvimento., arquivos para mudar: LoginService, AgendaService, ReuniãoService
-
-     # Mudar a config do Redis na API de Automaçao na propriedade host, trocar o valor de 'redis' para 'localhost'
+     # Excluir do .env do das 2 apis Features/Automação os 2 envs ou apagar as variaveis de dentro do env.

@@ -47,7 +47,7 @@ export const PopUpWarningDoctor = ({
 
   useEffect(() => {
     setOpen(true)
-  }, []);
+  }, [])
 
   const handleClose = () => {
     onClose()
@@ -122,7 +122,7 @@ export const PopUpWarningDoctor = ({
           }
          </button>
          <button onClick={() => handleClose()} className="w-11/12 h-12 rounded-full bg-red-600 text-white font-bold">
-               <p className="whitespace-nowrap">Voltar a Consulta </p>
+               <p className="whitespace-nowrap"> Voltar a Consulta </p>
          </button>
           </div>
 

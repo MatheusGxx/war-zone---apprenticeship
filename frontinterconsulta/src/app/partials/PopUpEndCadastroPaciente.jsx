@@ -49,13 +49,23 @@ export const EndRegisterPatient = () => {
   const NomePaciente = secureLocalStorage.getItem('NomePaciente')
 
   const Router = usePathname()
-   
+
+  const CompleteRegistrarionConversion = useMutation(async (value) => {
+    try{
+      const response = await axios.post(`${config.apiBaseUrl}/api/warning-fb-conversion`, value)
+      return response.data
+    }catch(err){
+      console.log(err)
+    }
+  }) 
+
   const CreateRequestMutation  = useMutation( async (valueRequest) => {
     const response = await axios.post(`${config.apiBaseUrl}/api/obrigado/${id}`, valueRequest)
     return response.data
   },{
     onSuccess:(data) => {
       const { FotoPaciente } = data
+      CompleteRegistrarionConversion.mutateAsync({ typeConversion: 'Complete Registration', pathname: Router, id })
       secureLocalStorage.removeItem('FotoPaciente')
       secureLocalStorage.setItem('FotoPaciente', FotoPaciente)
       setOpen(false)

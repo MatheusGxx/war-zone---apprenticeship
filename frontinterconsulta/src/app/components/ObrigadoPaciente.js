@@ -7,25 +7,31 @@ import axios from 'axios'
 import secureLocalStorage from 'react-secure-storage'
 import Rating from '@mui/material/Rating'
 import { TextField } from '@mui/material'
-import { useRouter } from 'next/navigation'
-import { config } from '../config.js'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { config, Api2 } from '../config.js'
 
-const ObrigadoPaciente = () =>{
+const ObrigadoPaciente = () => {
 
-  const [ratingValue, setRatingValue] = useState(1)
+  const [ratingValue, setRatingValue] = useState(0)
   const [idMedico, setidMedico] = useState(null)
   const [avaliacaoText, setAvaliacaoText] = useState('')
   const [NomeMedico, setNomeMedico] = useState('')
   const [empty, setEmpty] = useState(false)
   const [fotoPatient, setFotoPatient] = useState(null)
 
-  const IdentificadorConsultaLocal = secureLocalStorage.getItem('EndPaciente')
+  const params = useSearchParams()
+
+  const EndPacienteParams = params.get('idC')
+  const NomePacienteParams = params.get('nome')
+  const idParams = params.get('id')
+
+  const IdentificadorConsultaLocal = secureLocalStorage.getItem('EndPaciente') || decodeURIComponent(EndPacienteParams)
   const IdentificadorConsulta = IdentificadorConsultaLocal || ''
 
-  const NomePacienteLocal = secureLocalStorage.getItem('NomePaciente')
+  const NomePacienteLocal = secureLocalStorage.getItem('NomePaciente') || decodeURIComponent(NomePacienteParams)
   const NomePaciente = NomePacienteLocal || ''
 
-  const idLocal = secureLocalStorage.getItem('id')
+  const idLocal = secureLocalStorage.getItem('id') || decodeURIComponent(idParams)
   const id = idLocal || ''
 
   const[slugDoctor, setSlugDoctor] = useState('')
@@ -44,10 +50,19 @@ const ObrigadoPaciente = () =>{
     return request.data
   })
 
-  const getDataPatient = useMutation( async (valueBody) =>{
+  const getDataPatient = useMutation(async (valueBody) =>{
     const request = await axios.post(`${config.apiBaseUrl}/api/get-data-patient`, valueBody)
     setFotoPatient(request.data.FotoPaciente)
     return request.data.FotoPaciente
+  })
+
+  const RecupereAvaliationDoctor = useMutation( async (valueBody) =>{
+    try{
+      const request = await axios.post(`${Api2.apiBaseUrl}/api2/recupere-avaliation-doctor`, valueBody)
+      return request.data
+    }catch(err){
+      console.log(err)
+    }
   })
 
   useEffect(() =>{
@@ -77,12 +92,13 @@ const ObrigadoPaciente = () =>{
          })
       secureLocalStorage.removeItem('EndPaciente')
       Router.push('/especialistas-disponiveis')
+
+      if(ratingValue === 0) RecupereAvaliationDoctor.mutateAsync({ id: idLocal })
     } 
   }
 
   return(
-   <>
-   
+   <> 
    {getDoctor.isLoading ? 
      <div className=' min-h-screen flex justify-center items-center'>
      <Image src={Logo} alt="Logo Interconsulta" width={100} height={100} className='animate-pulse'/>

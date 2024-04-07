@@ -23,37 +23,24 @@ const CadastroPacienteLead = ({ title,subtitle, ImagemLateral, apelido, mensagem
   const [number, setNumber] = useState('')
   const [sintomasandDoencas, setSintomasAndDoencas] = useState(null)
   const [doenca, setDoenca] = useState(null)
-  const [okUTM, setOkUTM] = useState(false)
   const [acceptTerms, setAcceptTerms] = useState([])
+
+  const ConversionLead = useMutation(async (value) => {
+    const response = await axios.post(`${config.apiBaseUrl}/api/warning-fb-conversion`, value)
+    return response.data
+  })
+
+  let utms = secureLocalStorage.getItem('utms')
   
   useEffect(() => {
 
   },[acceptTerms, number])
 
-  const params = useSearchParams()
-
   const Router = useRouter()
 
   const route = usePathname()
-  
-  const referrer = params.get('UTM_Referrer') 
-  const funil = params.get('UTM_Funil') 
-  const temp = params.get('UTM_Temp')  
-  const rota = params.get('UTM_Rota')
-  const source = params.get('UTM_Source') 
-  const medium = params.get('UTM_Medium') 
-  const campaign = params.get('UTM_Campaign') 
-  const term = params.get('UTM_Term') 
-  const content = params.get('UTM_Content')
 
-  useEffect(() => {
-    if(referrer && funil && temp && rota && source && medium && campaign && term && content){
-      setOkUTM(true)
-    }
 
-  },[okUTM])
-
-  
   const TrackingUTMAQ = useMutation(
     async (valueRequest) => {
       try {
@@ -77,7 +64,6 @@ const CadastroPacienteLead = ({ title,subtitle, ImagemLateral, apelido, mensagem
     getSintomasAndDoencas.mutateAsync()
   }, [])
 
-
   const CreateRequestMutation = useMutation(
     async (valueRequest) => {
       const response = await axios.post(`${config.apiBaseUrl}/api/register`, valueRequest)
@@ -86,35 +72,23 @@ const CadastroPacienteLead = ({ title,subtitle, ImagemLateral, apelido, mensagem
     {
       onSuccess: async (data)  => {  
         const { id, token, NomePaciente, Doenca } = data 
+        
+        if(utms){
+          utms['id'] = id
+        }
+        await TrackingUTMAQ.mutateAsync(utms)
+        await ConversionLead.mutateAsync({ typeConversion: 'Lead', pathname: route, id })
+        
         secureLocalStorage.clear()
         secureLocalStorage.setItem('token', token)
         secureLocalStorage.setItem('id', id)
         secureLocalStorage.setItem('NomePaciente', NomePaciente)
         secureLocalStorage.setItem('StatusRegister', false)
         secureLocalStorage.setItem('Doenca', Doenca)
-
-
-        const currentDate = new Date()
-        const formattedDate = format(currentDate, 'dd/MM/yyyy')
-        
-        if(okUTM){
-          await TrackingUTMAQ.mutateAsync({
-            id: id,
-            data: formattedDate, 
-            UTM_Referrer: decodeURIComponent(referrer),
-            UTM_Funil: decodeURIComponent(funil),
-            UTM_Temp: decodeURIComponent(temp),
-            UTM_Rota: decodeURIComponent(rota),
-            UTM_Source: decodeURIComponent(source),
-            UTM_Medium: decodeURIComponent(medium),
-            UTM_Campaign: decodeURIComponent(campaign),
-            UTM_Term: decodeURIComponent(term),
-            UTM_Content: decodeURIComponent(content),
-          })
-          Router.push(`/especialistas-disponiveis?UTM_Referrer=${encodeURIComponent(referrer)}&UTM_Funil=${encodeURIComponent(funil)}&UTM_Temp=${encodeURIComponent(temp)}&UTM_Rota=${encodeURIComponent(rota)}&UTM_Source=${encodeURIComponent(source)}&UTM_Medium=${encodeURIComponent(medium)}&UTM_Campaign=${encodeURIComponent(campaign)}&UTM_Term=${encodeURIComponent(term)}&UTM_Content=${encodeURIComponent(content)}`);
-        }else{
-          Router.push('/especialistas-disponiveis')
-        }
+        if(utms){
+         secureLocalStorage.setItem('utms', utms)
+        }        
+        Router.push(`/especialistas-disponiveis`);
       },
     }
   )

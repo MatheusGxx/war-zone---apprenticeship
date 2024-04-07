@@ -11,8 +11,6 @@ const Obrigado = ({ImagemLateral, title, copy}) =>{
 
   const pathname = usePathname()
 
-  const RotaMédico = pathname === `/welcome/login-medico/cadastro-medico/obrigado-medico`;
-
   const RotaUnidade = pathname ===  '/welcome/login-unidade/cadastro-unidade/obrigado-unidade'
 
   return(
@@ -33,7 +31,6 @@ const Obrigado = ({ImagemLateral, title, copy}) =>{
   
             <h3 className="whitespace-pre-wrap text-lg text-center sm:text-base">{copy}</h3>
 
-            {RotaMédico && <FormularioMédico />}
             {RotaUnidade && <FormularioUnidade/>}
             
               <Image

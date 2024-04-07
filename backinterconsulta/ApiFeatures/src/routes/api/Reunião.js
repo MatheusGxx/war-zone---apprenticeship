@@ -31,7 +31,8 @@ import
     ValidatorDocuments, 
     AtualizedDocuments,
     sendDocumentsPatient,
-    getDataPatientEndRoom 
+    getDataPatientEndRoom,
+    PatientCameinRoom,
    }
  from "../../services/ReuniãoService.js"
 import uploadSignedDocuments from '../../utils/multerSignDocument.js'
@@ -362,6 +363,14 @@ router.post('/send-documents-patient', uploadSignedDocuments.any(),
 
         const { id } = req.body
         sendDocumentsPatient(id, res, PathDocumentSign)
+       }
+)
+
+router.post('/patient-came-in-room',
+       async(req, res) => {
+        const { id } = req.body 
+        PatientCameinRoom(id, res)
+        console.log(req.body)
        }
 )
 

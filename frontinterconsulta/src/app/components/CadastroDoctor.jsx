@@ -51,6 +51,7 @@ const CadastroDoctor = ({ title, apelido }) => {
       onSuccess: (data) => { 
         const { token, _id, NomeMedico, Especialidade, TypeDoctorr } = data
 
+        let utms = secureLocalStorage.getItem('utms')
         secureLocalStorage.clear()
         secureLocalStorage.setItem('token', token)
         secureLocalStorage.setItem('id', _id)
@@ -59,6 +60,7 @@ const CadastroDoctor = ({ title, apelido }) => {
         secureLocalStorage.setItem('Especialidade', Especialidade)
         secureLocalStorage.setItem('StatusRegister', false)
         secureLocalStorage.setItem('InitialContact', 'true')
+        secureLocalStorage.setItem('utms', utms)
 
         Router.push(`/casos-clinicos`)
       },

@@ -27,26 +27,43 @@ export const CreateInstance = async () => {
 
 export const getClient = () => {
   return client
-};
+}
 
 export const EnviarMensagem = async (numero, mensagem) => {
   try {
-    if(client){
-      console.log('Instancia do Venom ja esta Criada')
-    }else{
-      client = await venom.create({
-        session: 'Interconsulta',
-      }).catch((error) => {
-        console.log('Erro ao Iniciar o Venom', error);
-      });
-    }
-    
-      const Mensagem = await client.sendText(`${numero}@c.us`, mensagem);
-      console.log(`Mensagem no WhatsApp enviada para: ${numero}, Texto Enviado: ${Mensagem.text}, Status do Erro: ${Mensagem.erro}`);
+    let timeoutID;
+    const timeoutPromise = new Promise((_, reject) => {
+      timeoutID = setTimeout(() => {
+        reject(new Error('Tempo limite de envio excedido'));
+      },100000) 
+    });
+
+    const mensagemPromise = new Promise(async (resolve, reject) => {
+      try {
+        if (client) {
+          console.log('Instância do Venom já está criada');
+        } else {
+          client = await venom.create({
+            session: 'Interconsulta',
+          });
+        }
+
+        const Mensagem = await client.sendText(`${numero}@c.us`, mensagem);
+        console.log(`Mensagem no WhatsApp enviada para: ${numero}, Texto Enviado: ${Mensagem.text}, Status do Erro: ${Mensagem.erro}`);
+        resolve();
+      } catch (error) {
+        reject(error);
+      }
+    });
+
+    // Executar ambas as promessas e aguardar a primeira a ser concluída
+    await Promise.race([mensagemPromise, timeoutPromise]);
+
+    clearTimeout(timeoutID); // Limpar o timeout se a operação for concluída antes do tempo limite
   } catch (error) {
     console.log('Erro ao enviar Mensagem para o Usuario', error);
   }
-}
+};
 
 export const BulkMessageWhatsappPatientPublic = async (dataPatients, NomeUnidade) => {
   try {

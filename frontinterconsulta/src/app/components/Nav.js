@@ -45,19 +45,25 @@ const Nav = () => {
 
   const HandleDrawer = () => setOpen(!open)
 
-  const LoggoutDrawerMedico = (route) => {
+  const LoggoutDrawer = (route) => {
     switch (Route) {
       case '/especialistas-disponiveis':
         Router.push(route);
+        const utms = secureLocalStorage.getItem('utms')
         secureLocalStorage.clear()
+        secureLocalStorage.setItem('utms', utms)
         break;
       case '/casos-clinicos':
         Router.push(route);
+        const utms2 = secureLocalStorage.getItem('utms')
         secureLocalStorage.clear()
+        secureLocalStorage.setItem('utms', utms2)
         break;
       case '/unidade-especialista':
         Router.push(route);
+        const utms3 = secureLocalStorage.getItem('utms')
         secureLocalStorage.clear()
+        secureLocalStorage.setItem('utms', utms3)
         break
 
       case '/agenda':
@@ -67,16 +73,23 @@ const Nav = () => {
       const Unidade =  secureLocalStorage.getItem('NomeUnidade')
 
       if(Medico){
-        Router.push(route);
+        Router.push(route)
+        const utms = secureLocalStorage.getItem('utms')
         secureLocalStorage.clear()
+        secureLocalStorage.setItem('utms', utms)
+
       }
       if(Paciente){
         Router.push(route);
+        const utms = secureLocalStorage.getItem('utms')
         secureLocalStorage.clear()
+        secureLocalStorage.setItem('utms', utms)
       }
       if(Unidade){
         Router.push(route)
+        const utms = secureLocalStorage.getItem('utms')
         secureLocalStorage.clear()
+        secureLocalStorage.setItem('utms', utms)
       }
       break
       default:
@@ -149,7 +162,7 @@ const Nav = () => {
           <NavMédico
           OpenDrawerMedico={() => OpenDrawerMedico()}
           openDrawer={openDrawer}
-          LoggoutDrawerMedico={LoggoutDrawerMedico}
+          LoggoutDrawerMedico={LoggoutDrawer}
           HandleNavigationDrawer={HandleNavigationDrawer}
           />
          </>
@@ -160,7 +173,7 @@ const Nav = () => {
            <NavPaciente
             OpenDrawerMedico={() => OpenDrawerMedico()}
             openDrawer={openDrawer}
-            LoggoutDrawerMedico={LoggoutDrawerMedico}
+            LoggoutDrawerMedico={LoggoutDrawer}
             HandleNavigationDrawer={HandleNavigationDrawer}
            />
           </>
@@ -171,7 +184,7 @@ const Nav = () => {
            <NavUnidadeSaude
             OpenDrawerMedico={() => OpenDrawerMedico()}
             openDrawer={openDrawer}
-            LoggoutDrawerMedico={LoggoutDrawerMedico}
+            LoggoutDrawerMedico={LoggoutDrawer}
             HandleNavigationDrawer={HandleNavigationDrawer}
            />
           </>
@@ -182,7 +195,7 @@ const Nav = () => {
           <NavMédico
            OpenDrawerMedico={() => OpenDrawerMedico()}
            openDrawer={openDrawer}
-           LoggoutDrawerMedico={LoggoutDrawerMedico}
+           LoggoutDrawerMedico={LoggoutDrawer}
            HandleNavigationDrawer={HandleNavigationDrawer}
           />
         </> 
@@ -193,7 +206,7 @@ const Nav = () => {
          <NavPaciente
           OpenDrawerMedico={() => OpenDrawerMedico()}
           openDrawer={openDrawer}
-          LoggoutDrawerMedico={LoggoutDrawerMedico}
+          LoggoutDrawerMedico={LoggoutDrawer}
           HandleNavigationDrawer={HandleNavigationDrawer}
            />
         </> 
@@ -204,7 +217,7 @@ const Nav = () => {
           <NavUnidadeSaude
            OpenDrawerMedico={() => OpenDrawerMedico()}
            openDrawer={openDrawer}
-           LoggoutDrawerMedico={LoggoutDrawerMedico}
+           LoggoutDrawerMedico={LoggoutDrawer}
            HandleNavigationDrawer={HandleNavigationDrawer}
            />
         </> 
