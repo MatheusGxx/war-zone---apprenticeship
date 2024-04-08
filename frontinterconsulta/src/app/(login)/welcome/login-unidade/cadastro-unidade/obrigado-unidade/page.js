@@ -5,11 +5,7 @@ import ImagemLateralObrigadoUnidade from '../../../../../public/ObrigadoUnidade.
 const ObrigadoUnidade = () =>{
   return(
     <>
-     <Obrigado ImagemLateral={ImagemLateralObrigadoUnidade} title="Parabens Unidade de Saude"  copy="Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-     Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
-     when an unknown printer took a galley of type and scrambled it to make a type specimen book, Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-     Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
-     when an unknown printer took a galley of type and scrambled it to make a type specimen book."/>
+     <Obrigado ImagemLateral={ImagemLateralObrigadoUnidade} title="Bem-vindo ao Interconsulta!" copy="É um prazer recebê-lo em nossa plataforma, onde priorizamos a eficiência, transparência e a qualidade. Ao finalizar seu cadastro, você terá acesso a uma ampla gama de serviços em gestão e comunicação em saúde de alta qualidade. Nossa equipe está aqui para garantir uma experiência personalizada e eficiente em cada interação. Conte conosco para guiá-lo em sua jornada de cuidados com a gestão de pacientes, e estamos ansiosos para trabalhar juntos. Seja bem-vindo!"/>
     </>
   )
 }
