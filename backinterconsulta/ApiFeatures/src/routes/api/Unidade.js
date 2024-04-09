@@ -21,4 +21,5 @@ router.post('/get-wait-list',
         console.log(req.body)
        }
 )
+
 export default router

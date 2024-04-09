@@ -338,6 +338,7 @@ const RegisterUnidadeSaude = new mongoose.Schema({
   CPNJ: String,
   EspecialidadeDesejada: String,
   Foto: String,
+  codeUnidade: String,
   PasswordRecovery: [{
     code: String,
     expirationCode: Date,

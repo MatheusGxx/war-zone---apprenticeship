@@ -88,6 +88,7 @@ const Login = ({ title, ImagemLateral, MessageButton, secondRoute, treeRoute, pl
          FotoPaciente,
          NomeUnidade,
          FotoUnidade,
+         codeUnit,
         } = data
       
      switch(route){
@@ -101,7 +102,6 @@ const Login = ({ title, ImagemLateral, MessageButton, secondRoute, treeRoute, pl
       const CRMStorage = secureLocalStorage.getItem('CRMMedico')
       const FotoStorageMedico = secureLocalStorage.getItem('FotoMedico')
       const TypeDoctorStorage = secureLocalStorage.getItem('TypeDoctor')
-
 
       if(tokenStorage && ModelidUser &&  NomeMedicoStorage && EspecialidadeStorage && CRMStorage && FotoStorageMedico && TypeDoctorStorage){
         console.log('Medico ja esta autenticado no interconsulta =/')
@@ -153,9 +153,9 @@ const Login = ({ title, ImagemLateral, MessageButton, secondRoute, treeRoute, pl
       const ModelidUserUnidade = secureLocalStorage.getItem('id')
       const NomeStorageUnidade = secureLocalStorage.getItem('NomeUnidade')
       const FotoStorageUnidade = secureLocalStorage.getItem('FotoUnidade')
+      const codeUnitStorageUnidade = secureLocalStorage.getItem('codeUnidade')
    
-
-      if(tokenStorageUnidade && ModelidUserUnidade && NomeStorageUnidade && FotoStorageUnidade){
+      if(tokenStorageUnidade && ModelidUserUnidade && NomeStorageUnidade && FotoStorageUnidade && codeUnitStorageUnidade){
         console.log('Usuario ja esta autenticado no interconsulta =/')
         Router.push(`${plataform}`)
       }else{
@@ -164,6 +164,7 @@ const Login = ({ title, ImagemLateral, MessageButton, secondRoute, treeRoute, pl
         secureLocalStorage.setItem(`id`, ModelidUserLogged)
         secureLocalStorage.setItem('NomeUnidade', NomeUnidade)
         secureLocalStorage.setItem('FotoUnidade', FotoUnidade)
+        secureLocalStorage.setItem('codeUnidade', codeUnit)
         Router.push(`${plataform}`)
       }
 

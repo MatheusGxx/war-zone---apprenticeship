@@ -71,5 +71,5 @@ export const VefiryDataUnidade = z.object({
   Endereco: z.string(),
   nomeInstituicao: z.string(),
   CPNJ: z.string(),
-  EspecialidadeDesejada: z.string(),
+  codeUnidade: z.string(),
 })

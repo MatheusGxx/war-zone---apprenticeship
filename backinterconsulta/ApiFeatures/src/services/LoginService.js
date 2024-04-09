@@ -75,8 +75,9 @@ export const Login = async (body, res) => {
     const NomeUnidade = QueryUnidade.nomeInstituicao
     const getFotoUnidade = QueryUnidade.Foto
     const FotoUnidade = getFotoUnidade ? getFotoUnidade : null
+    const codeUnit = QueryUnidade.codeUnidade
 
-    return res.status(200).json({ token, NomeUnidade, ModelidUserLogged, FotoUnidade })
+    return res.status(200).json({ token, NomeUnidade, ModelidUserLogged, FotoUnidade, codeUnit })
       
     default:
       console.log('Rota para enviar os dados no endpoint de valor invalida');
@@ -320,12 +321,10 @@ export const RegisterEnd = async (body, params, file, res) => {
     NomeAcompanhante, 
     TelefoneAcompanhante, 
     EmailAcompanhante,
-
-
     Endereco, 
     nomeInstituicao, 
     CPNJ, 
-    EspecialidadeDesejada, 
+    codeUnidade,
     route
    } = body
 
@@ -337,7 +336,7 @@ export const RegisterEnd = async (body, params, file, res) => {
 
   const dataPaciente = { Genero, Data, Doenca, TipoSanguineo, EstadoCivil, Profissao, CPF, CEP,  EnderecoPaciente, CidadePaciente, EstadoPaciente, Pais, CartaoSUS, NomeAcompanhante, TelefoneAcompanhante, EmailAcompanhante, }
 
-  const dataUnidade = { Endereco, nomeInstituicao, CPNJ, EspecialidadeDesejada }
+  const dataUnidade = { Endereco, nomeInstituicao, CPNJ, codeUnidade }
    
 
    VefiryData(route, dataMedico, dataPaciente, dataUnidade )
@@ -520,8 +519,8 @@ export const RegisterEnd = async (body, params, file, res) => {
         Unidade.Endereco = Endereco
         Unidade.nomeInstituicao = nomeInstituicao
         Unidade.CPNJ = CPNJ
-        Unidade.EspecialidadeDesejada = EspecialidadeDesejada
         Unidade.Foto = file
+        Unidade.codeUnidade = codeUnidade
 
         await Unidade.save()
              
@@ -530,12 +529,14 @@ export const RegisterEnd = async (body, params, file, res) => {
         const NomeUnidade = Unidade.nomeInstituicao
         const getFotoUnidade = Unidade.Foto
         const FotoUnidade = getFotoUnidade ? getFotoUnidade : null
+        const codeUnit = Unidade.codeUnidade
         
         res.status(200)
         .json({
               token, 
               NomeUnidade,
-              FotoUnidade
+              FotoUnidade,
+              codeUnit
              })
 
         const IdentificadorObrigadoUnidade =  Unidade._id
@@ -545,17 +546,17 @@ export const RegisterEnd = async (body, params, file, res) => {
           route
         }
         
-         axios.post(process.env.APISecondURL ?? 'http://localhost:8081/api2/automatic-whatsapp', dataUnidade)
+         //axios.post(process.env.APISecondURL ?? 'http://localhost:8081/api2/automatic-whatsapp', dataUnidade)
 
         }catch(err){
-          console.log(err)
+          return res.status(400).json({ error: err })
         }
       }else{
         error = 'Erro ao tentar salvar os dados finais da Unidade de Saude'
       }
       break
     default:
-      return res.status(404).json({ message: 'Rota Invalida'})
+      return res.status(404).json({ message: 'Rota Invalida' })
 
   }
 
@@ -687,5 +688,28 @@ export const UpdatePassword = async (id,newPassword,person,res) => {
   }catch(err){
     console.log(err)
     return res.status(400).json({ message: 'Error in update password'})
+  }
+}
+
+export const getCodeUnits = async (res) => {
+  try {
+    const codes = await models.ModelRegisterUnidadeSaude.distinct('codeUnidade');
+    return res.status(200).json({ codes })
+  } catch (err) {
+    return res.status(404).json({ error: 'Error in Get Codes Unit' })
+  }
+}
+
+export const VerifyCodeUnit = async (codeUnidade, res) => {
+  try{
+    const codes = await models.ModelRegisterUnidadeSaude.findOne({ codeUnidade: codeUnidade })
+
+    if(codes){
+      return res.status(200).json({ codeExisting: true })
+    }else{
+      return res.status(200).json({ codeExisting: false })
+    }
+  }catch(err){
+    return res.status(500).json({ error: 'Error in Verify Code Unit'})
   }
 }

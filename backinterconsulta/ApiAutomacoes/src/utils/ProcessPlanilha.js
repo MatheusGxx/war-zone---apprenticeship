@@ -76,7 +76,7 @@ export const ProcessPlanilha = async (body, params, file, filename) => {
                   UnidadeSaude: data['Unidade-de-Saúde'],
                   Posiçao: data['Posição'],
                   MatrículaProntuário: data['Matrícula-Prontuário'],
-                  CartãoSUS: data['Cartão-SUS'],
+                  CartãoSUS: data['Cartao-SUS'],
                   Acompanhante: data['Acompanhante'], 
                   TelefoneAcompanhante: data['Telefone-Acompanhante'],
                   EmailAcompanhante: data['Email-Acompanhante'],

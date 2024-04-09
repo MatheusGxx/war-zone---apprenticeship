@@ -7,7 +7,7 @@ import { TextField, CircularProgress, Snackbar, Alert, Checkbox, Autocomplete } 
 import { TypesDoctors } from './TypesDoctors'
 import IconBack from '../partials/IconBack.js';
 import { useRouter, usePathname } from 'next/navigation';
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { config } from '../config.js'
 import { FormatPhoneNumber } from '../utils/FormatPhoneNumber'
 import { EspecialidadesAtendidas } from "../partials/EspecialidadesAtendidas.js"
@@ -33,6 +33,7 @@ const CadastroDoctor = ({ title, apelido }) => {
   const [atuacao, setAtuacao] = useState('')
   const [valorConsulta, setValorConsulta] = useState('')
   const [titulo, setTitulo] = useState('')
+  const [keyDoctor, setKeyDoctor] = useState('')
 
   const Router = useRouter()
 
@@ -41,6 +42,22 @@ const CadastroDoctor = ({ title, apelido }) => {
   useEffect(() => {
     
   },[acceptTerms,number, typeDoctor])
+
+  const[download, setDownload] = useState('')
+    
+  const getCodes = async () => {
+    try {
+      const response = await axios.get(`${config.apiBaseUrl}/api/get-codes-units`)
+      return response.data.codes
+    } catch (error) {
+      throw new Error('Erro ao fazer o download da planilha');
+    }
+  }
+
+  const queryKey = ['codes', keyDoctor]
+  const { data } = useQuery(queryKey, ()  => getCodes(keyDoctor))
+  
+  const EspeciliatyUnits = data ? EspecialidadesUnidades(data) : ['Carregando...']
 
   const CreateRequestMutation = useMutation(
     async (valueRequest) => {
@@ -92,7 +109,7 @@ const CadastroDoctor = ({ title, apelido }) => {
   }
 
   const HandleClickEnd = async () => {
-    if (name === '' || senha === '' || email === '' || number === '' || typeDoctor === '' || especialidade === '' || atuacao === '' || valorConsulta === '' || titulo === '') {
+    if (name === '' || senha === '' || email === '' || number === '' || typeDoctor === '' || especialidade === '' || valorConsulta === '' || titulo === '') {
       setSnackbarMessage(`Por favor ${apelido} preencha todos os dados de Cadastro`);
       handleSnackBarOpen();
     }else if(number.length < 14){
@@ -262,7 +279,7 @@ const CadastroDoctor = ({ title, apelido }) => {
                 setEspecialidade(newValue);
               }
             }}
-            options={typeDoctor === 'Atendimento Público' ? EspecialidadesUnidades : EspecialidadesAtendidas}
+            options={typeDoctor === 'Atendimento Público' ? EspeciliatyUnits : EspecialidadesAtendidas}
             noOptionsText="Sem resultados"
             renderInput={(params) => <TextField {...params} label="Especialidade Médica" variant="standard" />}
             sx={{ width: '400px' }}

@@ -44,10 +44,10 @@ const Baixar = () =>{
   return(
     <>
        <button
-        className='w-36 h-10 bg-red-600 rounded-full font-bold text-white sm:w-36 sm:h-8'
+        className='w-1/3 h-1/3 bg-red-600 rounded-lg font-bold text-white sm:w-36 sm:h-8'
         onClick={handleDownload}>
         <div className="flex justify-center items-center gap-3">
-          <p>Baixar</p>
+          <p className='text-xl'>Baixar Planilha </p>
           <DownloadingIcon/>
         </div>
        </button>

@@ -6,6 +6,8 @@ import {
    RegisterEnd,
    ValidatorCodeEmail,
    UpdatePassword,
+   getCodeUnits,
+   VerifyCodeUnit,
 } from '../../services/LoginService.js'
 
 const router = Router()
@@ -101,7 +103,7 @@ router.post('/obrigado/:id', uploadPhotos.single("file") ,async (req, res ) => {
          Endereco: req.body.Endereco,
          nomeInstituicao: req.body.nomeInstituicao,
          CPNJ: req.body.CPNJ,
-         EspecialidadeDesejada: req.body.EspecialidadeDesejada,
+         codeUnidade: req.body.codeUnidade,
          route: req.body.route,
        }
 
@@ -133,6 +135,20 @@ router.post('/update-password',
       }
 )
 
+router.get('/get-codes-units',
+      async(req, res) => {
+       getCodeUnits(res)
+      }
+)
+
+router.post('/verify-code', 
+      async(req, res) => {
+         const { codeUnit } = req.body
+         
+         VerifyCodeUnit(codeUnit, res)
+         console.log(req.body)
+      }
+)
 
 export default router
 

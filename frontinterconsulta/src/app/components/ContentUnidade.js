@@ -74,6 +74,10 @@ const ContentUnidade = () => {
   const NomePaciente = secureLocalStorage.getItem('NomePaciente')
 
   const token = secureLocalStorage.getItem('token')
+  const codeUnidade = secureLocalStorage.getItem('codeUnidade')
+  const ArrCodeUnidade = [codeUnidade]
+
+  const EspecialidadesUnidade = EspecialidadesUnidades(ArrCodeUnidade)
 
   const Route = usePathname()
 
@@ -389,7 +393,7 @@ const ContentUnidade = () => {
                     setEspecialidade(newValue)
                   }
                 }}
-                options={EspecialidadesUnidades}
+                options={EspecialidadesUnidade}
                 noOptionsText="Sem resultados"
                 renderInput={(params) =>
                    <TextField {...params} 

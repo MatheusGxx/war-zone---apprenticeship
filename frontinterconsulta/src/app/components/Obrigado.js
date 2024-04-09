@@ -7,7 +7,7 @@ import FormularioUnidade from '../partials/FormularioUnidade.js'
 import { config } from '../config.js'
 
 
-const Obrigado = ({ImagemLateral, title, copy}) =>{
+const Obrigado = ({ ImagemLateral, title, copy }) =>{
 
   const pathname = usePathname()
 
@@ -23,14 +23,16 @@ const Obrigado = ({ImagemLateral, title, copy}) =>{
            />  
         </section>
 
-        <section className="w-1/2 sm:w-full md:w-full lg:w-full">
-            <div className='flex flex-col gap-16 sm:gap-12 md:gap-5 lg:gap-6 items-center justify-center mt-32 sm:mt-6'>
+        <section className="w-1/2 sm:w-full md:w-full lg:w-full h-screen flex justify-center items-center">
+            <div className='flex flex-col gap-16 sm:gap-12 md:gap-5 lg:gap-6 items-center justify-center sm:mt-6'>
             <div className='flex'>
-              <h1 className='text-red-500 text-3xl text-center sm:text-lg'>{title}</h1>
+              <h1 className='text-red-500 text-3xl text-center sm:text-2xl'>{title}</h1>
+            </div>
+
+            <div className='w-10/12'>
+            <h3 className="whitespace-pre-wrap text-lg text-center sm:text-base">{copy}</h3>
             </div>
   
-            <h3 className="whitespace-pre-wrap text-lg text-center sm:text-base">{copy}</h3>
-
             {RotaUnidade && <FormularioUnidade/>}
             
               <Image

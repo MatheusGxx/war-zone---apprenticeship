@@ -13,16 +13,16 @@ import { config } from '../config.js'
 const FormularioUnidade = () => {
   const [open, setOpen] = useState(false);
   const hiddenFileInput = useRef(null);
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false)
   const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [foto, setFoto] = useState(null);
-  const [fotoError, setFotoError] = useState(false);
+  const [foto, setFoto] = useState(null)
+  const [fotoError, setFotoError] = useState(false)
+  const [codeUnidade, setCodeUnidade] = useState('')
   
   const [endereco, setEndereco] = useState('');
 
   const [nome, setNome] = useState('');
   const [cpnj, setCPNJ] = useState('');
-  const [especialidade, setEspecialidade] = useState('');
 
   const Params = useSearchParams()
 
@@ -32,16 +32,37 @@ const FormularioUnidade = () => {
 
   const NavegationPage = useRouter()
    
+ 
+  const VerifyCode = useMutation( async (valueRequest) =>{
+    const response = await axios.post(`${config.apiBaseUrl}/api/verify-code`, valueRequest)
+    return response.data
+  },{
+    onSuccess: (data) => {
+      const { codeExisting } = data
+
+      if(codeExisting === true){
+        setSnackbarMessage(
+          'O Codigo de Unidade de saúde ja esta sendo Utilizado por outra Unidade'
+        );
+        handleSnackBarOpen();
+      }else{
+         HandleClickFinal()
+      }
+    }
+  })
+
+   
   const CreateRequestMutation = useMutation( async (valueRequest) =>{
     const response = await axios.post(`${config.apiBaseUrl}/api/obrigado/${parametrer}`, valueRequest)
     return response.data
   },{
     onSuccess:(data) =>{
-      const { token, NomeUnidade, FotoUnidade } = data
+      const { token, NomeUnidade, FotoUnidade, codeUnit } = data
       secureLocalStorage.setItem('token', token)
       secureLocalStorage.setItem('id', parametrer)
       secureLocalStorage.setItem('NomeUnidade', NomeUnidade)
       secureLocalStorage.setItem('FotoUnidade', FotoUnidade)
+      secureLocalStorage.setItem('codeUnidade', codeUnit)
     }
   })
 
@@ -59,7 +80,7 @@ const FormularioUnidade = () => {
     formData.append("Endereco", endereco);
     formData.append("nomeInstituicao", nome);
     formData.append("CPNJ", cpnj);
-    formData.append("EspecialidadeDesejada", especialidade);
+    formData.append('codeUnidade', codeUnidade)
     formData.append("route", Router);
     formData.append("file", foto);
   
@@ -85,11 +106,11 @@ const FormularioUnidade = () => {
   };
 
   const HandleClickEnd = () => {
-    if (endereco === '' || nome === '' || cpnj === '' || especialidade === '') {
+    if (endereco === '' || nome === '' || cpnj === '' || codeUnidade === '') {
       setSnackbarMessage("Ops, você não preencheu todos os campos. Preencha todos os campos obrigatórios.");
       handleSnackBarOpen();
     } else {
-      HandleClickFinal()
+      VerifyCode.mutateAsync({ codeUnidade: codeUnidade })
     }
   };
 
@@ -120,6 +141,19 @@ const FormularioUnidade = () => {
         </div>
         <DialogContent>
           <div className="flex flex-col gap-5">
+
+          <TextField
+              variant="standard"
+              label="Nome da Empresa/Instituiçao"
+              InputProps={{
+                sx: { borderBottom: "1px solid blue" }
+              }}
+              type="text"
+              value={nome}
+              onChange={(e) => setNome(e.target.value)}
+              required
+            />
+
             <TextField
               variant="standard"
               label="Endereço da Empresa"
@@ -129,18 +163,6 @@ const FormularioUnidade = () => {
               type="text"
               value={endereco}
               onChange={(e) => setEndereco(e.target.value)}
-              required
-            />
-
-            <TextField
-              variant="standard"
-              label="Nome da Empresa/Instituiçao"
-              InputProps={{
-                sx: { borderBottom: "1px solid blue" }
-              }}
-              type="text"
-              value={nome}
-              onChange={(e) => setNome(e.target.value)}
               required
             />
 
@@ -156,15 +178,15 @@ const FormularioUnidade = () => {
               required
             />
 
-            <TextField
+           <TextField
               variant="standard"
-              label="Especialidade Desejada"
+              label="Código da Unidade de Sáude"
               InputProps={{
                 sx: { borderBottom: "1px solid blue" }
               }}
               type="text"
-              onChange={(e) => setEspecialidade(e.target.value)}
-              value={especialidade}
+              onChange={(e) => setCodeUnidade(e.target.value)}
+              value={codeUnidade}
               required
             />
 

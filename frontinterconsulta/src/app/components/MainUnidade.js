@@ -19,7 +19,9 @@ const MainUnidade = ({title, subTitle, Component}) =>{
         </h2>
   
           <div className="flex gap-10 sm:gap-5 flex-wrap sm:justify-center md:justify-center lg:justify-center xl:justify-center w-full xl:flex xl:flex-col xl:items-center justify-center items-center">
-            <h2 className="text-xl text-blue-700 font-bold sm:text-sm whitespace-wrap lg:text-xl md:text-center xl:text-center text-center">{subTitle}</h2>
+            <h2 className="text-xl text-blue-700 font-bold sm:text-sm whitespace-wrap lg:text-xl md:text-center xl:text-center text-center">
+              {subTitle}
+            </h2>
           </div>
 
         </div>

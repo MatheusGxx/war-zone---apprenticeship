@@ -136,7 +136,7 @@ export const AutomaticWhatsapp = async (body, res) => {
       case '/welcome/login-unidade/cadastro-unidade':
         const dataUnidade = await models.ModelRegisterUnidadeSaude.findById(IdentificadorUnidade)
     
-        const messageUnidade = `Ola Unidade de Saude ${dataUnidade.nome}, Nos do interconsulta ficamos felizes por você se cadastrar na nossa plataforma.`
+        const messageUnidade = `Olá ${dataUnidade.nome}, nós do Interconsulta ficamos felizes por você se cadastrar na nossa plataforma.`
 
         await WhatsappQueue.add('Whatsapp', {
           numero:`${dataUnidade.telefone}`,
@@ -198,7 +198,7 @@ export const AutomaticWhatsapp = async (body, res) => {
       case '/welcome/login-unidade/cadastro-unidade/obrigado-unidade':
          const dataObrigadoUnidade = await models.ModelRegisterUnidadeSaude.findById(IdentificadorObrigadoUnidade)
    
-         const messageObrigadoUnidade = `Parabens ${dataObrigadoUnidade.nome} agora voce se tornou uma oficialmente uma Unidade de Saude do #Interconsulta`
+         const messageObrigadoUnidade = `Parabéns ${dataObrigadoUnidade.nomeInstituicao} agora você se tornou oficialmente uma Unidade de Saúde do #Interconsulta`
  
          await WhatsappQueue.add('Whatsapp', {
           numero:`${dataObrigadoUnidade.telefone}`,

@@ -12,7 +12,6 @@ import {
   DeleteIntervalo,
   VerifyRegisterTottalySuccess
 }  from '../../services/MedicoService.js'
-import uploadIcons from '../../utils/multerIcons.js'
 
 router.post('/info-medico/:id', async (req,res) =>{
      
