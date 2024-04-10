@@ -703,8 +703,7 @@ export const getCodeUnits = async (res) => {
 export const VerifyCodeUnit = async (codeUnidade, res) => {
   try{
     const codes = await models.ModelRegisterUnidadeSaude.findOne({ codeUnidade: codeUnidade })
-
-    if(codes.codeUnidade){
+    if(codes){
       return res.status(200).json({ codeExisting: true })
     }else{
       return res.status(200).json({ codeExisting: false })

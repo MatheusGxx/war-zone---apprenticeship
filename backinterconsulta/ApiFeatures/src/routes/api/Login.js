@@ -143,9 +143,9 @@ router.get('/get-codes-units',
 
 router.post('/verify-code', 
       async(req, res) => {
-         const { codeUnit } = req.body
+         const { codeUnidade } = req.body
          
-         VerifyCodeUnit(codeUnit, res)
+         VerifyCodeUnit(codeUnidade, res)
          console.log(req.body)
       }
 )

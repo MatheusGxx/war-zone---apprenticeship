@@ -77,12 +77,12 @@ const FormularioUnidade = () => {
   const HandleClickFinal = async () => {
     const formData = new FormData();
   
-    formData.append("Endereco", endereco);
-    formData.append("nomeInstituicao", nome);
-    formData.append("CPNJ", cpnj);
+    formData.append("Endereco", endereco)
+    formData.append("nomeInstituicao", nome)
+    formData.append("CPNJ", cpnj)
     formData.append('codeUnidade', codeUnidade)
-    formData.append("route", Router);
-    formData.append("file", foto);
+    formData.append("route", Router)
+    formData.append("file", foto)
   
     try {
       await CreateRequestMutation.mutateAsync(formData);
@@ -107,7 +107,7 @@ const FormularioUnidade = () => {
 
   const HandleClickEnd = () => {
     if (endereco === '' || nome === '' || cpnj === '' || codeUnidade === '') {
-      setSnackbarMessage("Ops, você não preencheu todos os campos. Preencha todos os campos obrigatórios.");
+      setSnackbarMessage("Ops, você não preencheu todos os campos. Preencha todos os campos obrigatórios.")
       handleSnackBarOpen();
     } else {
       VerifyCode.mutateAsync({ codeUnidade: codeUnidade })
@@ -119,7 +119,7 @@ const FormularioUnidade = () => {
   };
 
   const handleSnackBarOpen = () => {
-    setSnackbarOpen(true);
+    setSnackbarOpen(true)
   };
 
   return (
