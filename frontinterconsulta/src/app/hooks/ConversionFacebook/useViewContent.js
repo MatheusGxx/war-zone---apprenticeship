@@ -1,7 +1,7 @@
 'use client'
 import axios from 'axios';
 import { useEffect, useState } from 'react'
-import { config } from '../config'
+import { config } from '../../config'
 
 export const useConversionViewContent = (pathname) => {
   const [load, setLoad] = useState(false)
@@ -20,3 +20,6 @@ export const useConversionViewContent = (pathname) => {
 
   return ConversionViewContent
 }
+
+
+

@@ -20,6 +20,8 @@ import { AgendamentoComponente } from "../components/AgendamentoComponent.jsx"
 import { parse, isBefore, compareAsc } from 'date-fns'
 import { config, Api2 } from '../config.js'
 import { useSearchParams } from "next/navigation"
+import { ConversionGoogle } from "../utils/gtag"
+import { ConversionGooglePurchase } from '../utils/gtag'
 import { format } from "date-fns"
 
 const AgendamentoConsulta = ({ 
@@ -218,6 +220,14 @@ useEffect(() => {
     {
       onSuccess: async () => {
         await PurchaseConversion.mutateAsync({ typeConversion: 'Purchase', pathname: Route, id: idLocal,  valueConsulta: ValorConsulta })
+        ConversionGooglePurchase(
+          'conversion_event_purchase_1', 
+          'Interacao_do_Usuario', 
+          'Compra', 
+           ValorConsulta, 
+           Route,
+           NomeMedico
+          )
       }
     }
    )
@@ -397,6 +407,8 @@ useEffect(() => {
       }
     }else{
       await ScheduleConversion.mutateAsync({ typeConversion: 'Schedule', pathname: Route, id: idLocal })
+      ConversionGoogle('conversion_event_book_appointment', 'Interacao_do_Usuario', 'Agendamento', 0, Route)
+
       if(CadastroFinalSucess){
         secureLocalStorage.removeItem('CadastroEndSucess')
         secureLocalStorage.removeItem('Sintoma')

@@ -15,6 +15,7 @@ import { RegisterFourPatient } from "./RegisterFourPatient"
 import { RegisterFivePatient } from "./RegisterFivePatient"
 import { useEndRegister } from "../context/context"
 import { config } from '../config.js'
+import { ConversionGoogle } from "../utils/gtag";
 
 export const EndRegisterPatient = () => {
   const [open, setOpen] = useState(false);
@@ -66,6 +67,7 @@ export const EndRegisterPatient = () => {
     onSuccess:(data) => {
       const { FotoPaciente } = data
       CompleteRegistrarionConversion.mutateAsync({ typeConversion: 'Complete Registration', pathname: Router, id })
+      ConversionGoogle('conversion_event_signup', 'Interacao_do_Usuario', 'Cadastrado Final', 0, Router)
       secureLocalStorage.removeItem('FotoPaciente')
       secureLocalStorage.setItem('FotoPaciente', FotoPaciente)
       setOpen(false)

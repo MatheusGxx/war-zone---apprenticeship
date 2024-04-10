@@ -233,7 +233,7 @@ export const Register = async (body, res) =>{
          route
        }
        
-        axios.post(process.env.APISecondURL ?? 'http://localhost:8081/api2/automatic-whatsapp', idPaciente)
+      axios.post(process.env.APISecondURL ?? 'http://localhost:8081/api2/automatic-whatsapp', idPaciente)
 
       }
       break;
@@ -546,7 +546,7 @@ export const RegisterEnd = async (body, params, file, res) => {
           route
         }
         
-         //axios.post(process.env.APISecondURL ?? 'http://localhost:8081/api2/automatic-whatsapp', dataUnidade)
+         axios.post(process.env.APISecondURL ?? 'http://localhost:8081/api2/automatic-whatsapp', dataUnidade)
 
         }catch(err){
           return res.status(400).json({ error: err })

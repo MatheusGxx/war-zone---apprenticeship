@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import axios from 'axios'
-import { config } from "../config"
+import { config } from "../../config"
 import { useMutation } from '@tanstack/react-query'
 
 export const useConversionInitiateCheckout = (pathname, id) => {

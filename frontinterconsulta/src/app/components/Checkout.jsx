@@ -14,8 +14,8 @@ import Logo from '../public/logo.png'
 import { DocumentsSelectPaciente } from '../partials/DocumentosSelect'
 import { Checkbox } from '@mui/material'
 import DocumentScannerIcon from '@mui/icons-material/DocumentScanner'
-import { useConversionInitiateCheckout } from '../hooks/useInitiateCheckout.js'
-
+import { useConversionInitiateCheckout } from '../hooks/ConversionFacebook/useInitiateCheckout.js'
+import { useInitiateCheckGoogleAds } from '../hooks/ConversionGoogle/useInitateCheckouGoogleAds';
 export const Checkout = ({ 
     FotoMedico,
     avaliacoes, 
@@ -45,6 +45,7 @@ export const Checkout = ({
    const [snackbarMessage, setSnackbarMessage] = useState("")
 
    useConversionInitiateCheckout(route,idPaciente)
+   useInitiateCheckGoogleAds('conversion_event_begin_checkout', 'Visualizacao_de_Componente', 'Iniciou Compra', ValorConsulta, route)
 
    const [position, setPosition] = useState({
     vertical: 'top',

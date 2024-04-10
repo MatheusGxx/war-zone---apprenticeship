@@ -44,7 +44,7 @@ const Home = () => {
      </h1>
 
      <footer>
-      <h1>
+      <h1 className='text-center'>
          Desenvolvido por: Negócios Digitais LTDA Copyright © 2024 Negócios Digitais LTDA. Todos os direitos reservados | <Link href="/privacidade"> <span className='font-semibold text-blue-500 cursor-pointer'> Política de Privacidade  </span> </Link>
       </h1>
      </footer>

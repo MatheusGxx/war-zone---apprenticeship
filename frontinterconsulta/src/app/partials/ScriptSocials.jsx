@@ -1,6 +1,7 @@
 import Script from "next/script"
 
 export const ScriptsSocials = () => {
+    
     return (
         <>
   <head>
@@ -45,7 +46,7 @@ export const ScriptsSocials = () => {
             
               gtag('config', 'AW-11476579486');
               `,
-            }} />  
+         }} />  
         { /* Google Analytics  */}
         <Script src="https://www.googletagmanager.com/gtag/js?id=G-9BND46GSNV" strategy="lazyOnload"/>
         <Script id="google-tag-manager-2" strategy="lazyOnload" dangerouslySetInnerHTML={{

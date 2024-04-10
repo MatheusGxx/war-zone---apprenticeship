@@ -10,7 +10,7 @@ from 'facebook-nodejs-business-sdk'
 
 export const ConversionViewContent = async (nameConversion, req, pathname, acessTokenConversionFacebook, pixelIDFacebook) => {
     try{
-
+         
         const current_timestamp = Math.floor(new Date() / 1000)
         
         const userData = new UserData() 

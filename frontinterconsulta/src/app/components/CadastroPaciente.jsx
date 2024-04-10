@@ -12,6 +12,7 @@ import axios from 'axios'
 import secureLocalStorage from 'react-secure-storage'
 import { format } from 'date-fns'
 import { FormatPhoneNumber } from '../utils/FormatPhoneNumber'
+import { ConversionGoogle } from '../utils/gtag.js'
 
 const CadastroPacienteLead = ({ title,subtitle, ImagemLateral, apelido, mensagem}) => {
   const [snackbarOpen, setSnackbarOpen] = useState(false)
@@ -85,6 +86,8 @@ const CadastroPacienteLead = ({ title,subtitle, ImagemLateral, apelido, mensagem
         secureLocalStorage.setItem('NomePaciente', NomePaciente)
         secureLocalStorage.setItem('StatusRegister', false)
         secureLocalStorage.setItem('Doenca', Doenca)
+        ConversionGoogle('conversion_event_contact', 'Interacao_do_Usuario', 'Cadastrado', 0, route)
+        window.gtag && window.gtag('event', 'conversion_event_contact')
         if(utms){
          secureLocalStorage.setItem('utms', utms)
         }        

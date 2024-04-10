@@ -14,7 +14,7 @@ const Transporter = nodemailer.createTransport({
         pass: '@InterConsulta2024',
         clientId: '344062049191-2m2u2nustn7rupk8esk0254fq2f7308i.apps.googleusercontent.com',
         clientSecret: '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',
-        refreshToken: '1//04kNWv2suyP9aCgYIARAAGAQSNwF-L9IrSoesGygr9i4MRKgA9cl94tGjDji5VJeYOjwKq7abG50LOixOVkgH3CiJ5Pn6u4ZG_D4'
+        refreshToken: '1//04NS3whpinm7gCgYIARAAGAQSNwF-L9IraNbiVyI1YIMQv-Co5whYHYFvKI-kdhw1rmQStFd5OrstNedjnnKLlMesB5zh9sHRHik'
     }
 })
 
