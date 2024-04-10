@@ -546,7 +546,7 @@ export const RegisterEnd = async (body, params, file, res) => {
           route
         }
         
-         axios.post(process.env.APISecondURL ?? 'http://localhost:8081/api2/automatic-whatsapp', dataUnidade)
+        axios.post(process.env.APISecondURL ?? 'http://localhost:8081/api2/automatic-whatsapp', dataUnidade)
 
         }catch(err){
           return res.status(400).json({ error: err })
@@ -704,7 +704,7 @@ export const VerifyCodeUnit = async (codeUnidade, res) => {
   try{
     const codes = await models.ModelRegisterUnidadeSaude.findOne({ codeUnidade: codeUnidade })
 
-    if(codes){
+    if(codes.codeUnidade){
       return res.status(200).json({ codeExisting: true })
     }else{
       return res.status(200).json({ codeExisting: false })
