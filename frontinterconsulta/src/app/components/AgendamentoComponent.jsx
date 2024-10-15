@@ -130,7 +130,7 @@ const IniciarGravacao = async () => {
       setGravando(false)
     };
 
-    setGravando(true);
+    setGravando(true)
     mediaRecorder.current.start();
   } catch (error) {
     console.error('Erro ao iniciar a gravação de áudio:', error);

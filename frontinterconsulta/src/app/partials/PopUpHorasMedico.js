@@ -207,12 +207,7 @@ function PopUpMedicoHoras({ onClose }) {
   return (
     <>
       <Dialog open={open} onClose={handleClose}  
-      PaperProps={{
-          style: {
-            maxWidth: '1250px', 
-            width: '100%',
-          },
-        }}>
+    >
         <div className="flex flex-col justify-center items-center">
           <div className="pt-6">
             <Image src={Logo2} alt="Segundo Logo Interconsulta" width={200} height={100} />

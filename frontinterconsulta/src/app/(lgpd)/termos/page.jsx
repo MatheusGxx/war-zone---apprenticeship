@@ -14,7 +14,8 @@ const TermosDeUso = () => {
         <div className="border-2 border-blue-500 rounded-xl w-10/12 p-5">
 
            <div className="flex gap-3 mb-4">
-           <Image src={Logo} alt="Logo Atestado" width={50} height={50} className='sm:hidden md:hidden'/>            <div className='flex justify-center items-center'>
+           <Image src={Logo} alt="Logo Atestado" width={50} height={50} className='sm:hidden md:hidden'/>            
+           <div className='flex justify-center items-center'>
             <h1 className="text-2xl font-semibold">Termos de Uso - InterconsultaGID </h1>
             </div>
            </div>

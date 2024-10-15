@@ -157,7 +157,7 @@ router.post('/process-planilha/:id', uploadPlanilha.single('file'), async (req, 
   };
 
   // Adicionar o manipulador de eventos
-  queueEvents.on('completed', handleCompleted);
+  queueEvents.on('completed', handleCompleted)
 });
 
 

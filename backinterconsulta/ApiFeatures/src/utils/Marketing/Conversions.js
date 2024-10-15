@@ -57,7 +57,6 @@ export const CompleteRegistration = (email, telephone, req, pathname, acessToken
 
     ConversionMultiples('CompleteRegistration', email, telephone, req, pathname, acessTokenConversionFacebook, pixelIDFacebook)
 
-
   }catch(err){
     console.log(err)
   }  

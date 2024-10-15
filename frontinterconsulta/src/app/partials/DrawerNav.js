@@ -8,7 +8,6 @@ import { ComponentDrawerPaciente } from './ComponenteDrawerPaciente'
 import secureLocalStorage from 'react-secure-storage'
 import { config } from '../config.js'
 
-
 const DrawerPerfil = ({ open, Close, Loggout, Image, Navigation}) => {
 
   const NomeMedico = typeof window !== 'undefined' ? secureLocalStorage.getItem('NomeMedico') : false

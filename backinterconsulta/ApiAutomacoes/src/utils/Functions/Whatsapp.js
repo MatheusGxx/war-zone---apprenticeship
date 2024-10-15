@@ -27,7 +27,7 @@ export const CreateInstance = async () => {
 
 export const getClient = () => {
   return client
-}
+} 
 
 export const EnviarMensagem = async (numero, mensagem) => {
   try {
@@ -184,7 +184,7 @@ export const SendDocumentsWhatsapp = async (numeroPaciente, filesPath, MensagemP
     let toFix = readFileSync(path);
     toFix = toFix.toString().replace(
       `return await n.processAttachments("0.4.613"===Debug.VERSION?t:t.map((e=>({file:e}))),e,1),n}`,
-      `return await n.processAttachments("0.4.613"===Debug.VERSION?t:t.map((e=>({file:e}))),e,e),n}`
+      `retdurn await n.processAttachments("0.4.613"===Debug.VERSION?t:t.map((e=>({file:e}))),e,e),n}`
     )
 
     writeFileSync(path, toFix)
